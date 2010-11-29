@@ -1,4547 +1,2912 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="it_IT" sourcelanguage="en_US">
+<TS version="2.0" language="it_IT" sourcelanguage="en_US">
 <context>
-    <name>ButtonsPanel</name>
+    <name>Brush</name>
     <message>
-        <source>Edit Tween</source>
-        <translation>Modifica intercalazione</translation>
-    </message>
-    <message>
-        <source>Remove Tween</source>
-        <translation>Rimuovi intercalazione</translation>
-    </message>
-</context>
-<context>
-    <name>Configurator</name>
-    <message>
-        <source>Parameters</source>
-        <translation>Parametri</translation>
-    </message>
-    <message>
-        <source>Dot Spacing</source>
-        <translation type="unfinished">Spaziatura a punti</translation>
-    </message>
-    <message>
-        <source>Size Tolerance</source>
-        <translation type="unfinished">Tolleranza</translation>
-    </message>
-    <message>
-        <source>Smoothness</source>
-        <translation>Smussamento</translation>
-    </message>
-    <message>
-        <source>Position Tween</source>
-        <translation>Intercalazione di posizione</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Intercalazione di rotazione</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Intercalazione di scala</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Intercalazione di rottura</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Intercalazione di opacità</translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Intercalazione di colore</translation>
-    </message>
-    <message>
-        <source>This tool is just a &lt;b&gt;proof-of-concept&lt;/b&gt; of the basic algorithm for the Tupi&apos;s free-tracing vectorial brushes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Structure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Basic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Axial</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Organic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Run simulation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo LipSync Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>EraserTool</name>
-    <message>
-        <source>Eraser</source>
-        <translation>Gomma</translation>
-    </message>
-    <message>
-        <source>E</source>
-        <translation>E</translation>
-    </message>
-</context>
-<context>
-    <name>FillTool</name>
-    <message>
-        <source>Internal fill</source>
-        <translation>Applica riempimento</translation>
-    </message>
-    <message>
-        <source>Line fill</source>
-        <translation>Applica contorno</translation>
-    </message>
-    <message>
-        <source>I</source>
-        <translation>I</translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation>B</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>Sorry, Groups can&apos;t be filled yet</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>GeometricTool</name>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rettangolo</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>Ellisse</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Linea</translation>
-    </message>
-    <message>
-        <source>R</source>
-        <translation>R</translation>
-    </message>
-    <message>
-        <source>C</source>
-        <translation>C</translation>
-    </message>
-    <message>
-        <source>L</source>
-        <translation>L</translation>
-    </message>
-</context>
-<context>
-    <name>ImagePlugin</name>
-    <message>
-        <source>Image Sequence</source>
-        <translation type="unfinished">Serie di immagini</translation>
-    </message>
-</context>
-<context>
-    <name>InfoPanel</name>
-    <message>
-        <source>Tips</source>
-        <translation>Suggerimenti</translation>
-    </message>
-    <message>
-        <source>Shift + Left Mouse Button</source>
-        <translation>Shift + Pulsante sinistro del mouse</translation>
-    </message>
-    <message>
-        <source>Close the line path</source>
-        <translation>Chiudi percorso</translation>
-    </message>
-    <message>
-        <source>Shift</source>
-        <translation type="unfinished">Mano</translation>
-    </message>
-    <message>
-        <source>Align line to horizontal/vertical axis</source>
-        <translation>Allinea la linea agli assi verticale/orizzontale</translation>
-    </message>
-    <message>
-        <source>Set width/height proportional dimensions</source>
-        <translation>Imposta dimensioni di larghezza/altezza proporzionali</translation>
-    </message>
-    <message>
-        <source>Close line</source>
-        <translation>Chiudi linea</translation>
-    </message>
-    <message>
-        <source>X key or Right mouse button</source>
-        <translation>Tasto X o pulsante destro del mouse</translation>
-    </message>
-    <message>
-        <source>Mouse Right Click</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>InkTool</name>
-    <message>
-        <source>Ink</source>
-        <translation>Inchiostra</translation>
-    </message>
-    <message>
-        <source>K</source>
-        <translation>K</translation>
-    </message>
-</context>
-<context>
-    <name>KinasWidget</name>
-    <message>
-        <source>Tupi Script</source>
-        <translation type="unfinished">Tupi Script</translation>
-    </message>
-</context>
-<context>
-    <name>LibavPlugin</name>
-    <message>
-        <source>Video Formats</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>LipSyncManager</name>
-    <message>
-        <source>Import LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>NodesTool</name>
-    <message>
-        <source>Nodes Selection</source>
-        <translation type="unfinished">Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>N</source>
-        <translation type="unfinished">N</translation>
-    </message>
-</context>
-<context>
-    <name>PapagayoTool</name>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation type="unfinished">Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>lipsync:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PencilTool</name>
-    <message>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="86"/>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="185"/>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="191"/>
         <source>Pencil</source>
-        <translation>Matita</translation>
+        <translation type="unfinished">Matita</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="186"/>
         <source>P</source>
         <translation>P</translation>
     </message>
 </context>
 <context>
-    <name>PolyLineTool</name>
+    <name>CWFirstPage</name>
     <message>
-        <source>PolyLine</source>
-        <translation type="unfinished">Polilinea</translation>
+        <location filename="../../configwizard.cpp" line="82"/>
+        <source>Welcome</source>
+        <translation type="unfinished">Benvenuto</translation>
     </message>
     <message>
-        <source>S</source>
-        <translation type="unfinished">S</translation>
-    </message>
-</context>
-<context>
-    <name>PositionSettings</name>
-    <message>
-        <source>Component</source>
-        <translation>Componente</translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation>Posizione</translation>
-    </message>
-    <message>
-        <source>Starting at frame</source>
-        <translation>Inizia al fotogramma</translation>
-    </message>
-    <message>
-        <source>Frames Total</source>
-        <translation>Totale dei fotogrammi</translation>
-    </message>
-    <message>
-        <source>Cancel Tween</source>
-        <translation type="unfinished">Rimuovi intercalazione</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informazioni</translation>
-    </message>
-    <message>
-        <source>You must define a path for this Tween!</source>
-        <translation>Devi definire un percorso per questa intercalazione!</translation>
-    </message>
-    <message>
-        <source>Position Tween is set!</source>
-        <translation>L&apos;intercalazione di posizione è impostata!</translation>
-    </message>
-    <message>
-        <source>Close Tween properties</source>
-        <translation>Chiudi le proprietà delle intercalazioni</translation>
+        <location filename="../../configwizard.cpp" line="88"/>
+        <source>&lt;h1&gt;Welcome to the Tupi Configuration wizard!&lt;/h1&gt;&lt;br&gt;&lt;br&gt;&lt;table border=0 align=right &gt;&lt;tr&gt;&lt;td&gt;- Tupi is a 2D Animation Toolkit designed by animators for animators.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi is free/open software and it is covered under the GNU GPL license terms.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi is Software Project developed by Toonka Films (http://www.toonka.com)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;br&gt;&lt;br&gt;This is an &quot;easy to use tool&quot; to allow you to configure your Tupi environment.&lt;br&gt;&lt;br&gt;Please, choose the &quot;Next&quot; button to setting up some parameters&lt;br&gt; required to use Tupi correctly or use the &quot;Cancel&quot; button&lt;br&gt; to close this dialog. Enjoy Tupi!&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;em&gt;--The Tupi Team&lt;/em&gt;&lt;br&gt;&lt;br&gt;</source>
+        <translation type="unfinished">&lt;h1&gt;Benvenuto nello strumento di configurazione di Tupi!&lt;/h1&gt;&lt;br&gt;&lt;br&gt;&lt;table border=0 align=right &gt;&lt;tr&gt;&lt;td&gt;- Tupi e&apos; uno strumento per l&apos;animazione 2D sviluppato da animatori per animatori.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi e&apos; un software libero, rilasciato sotto licenza GNU GPL.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi e&apos; un progetto sviluppato da LabToon (http://www.labtoon.org)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;br&gt;&lt;br&gt;Questo e&apos; uno strumento che ti permette di personalizzare facilmente il tuo ambiente di lavoro.&lt;br&gt;&lt;br&gt;Premere il pulsante &quot;Seguente&quot; per configurare alcuni parametri&lt;br&gt; richiesti per utilizzare Tupi correttamente oppure premere il pulsante &quot;Cancella&quot;&lt;br&gt; per chiudere questa finestra. Divertiti con Tupi!&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;em&gt;--Tupi Team&lt;/em&gt;&lt;br&gt;&lt;br&gt;</translation>
     </message>
 </context>
 <context>
-    <name>QObject</name>
+    <name>CWSecondPage</name>
     <message>
-        <source>Fatal Error</source>
-        <translation>Errore fatale</translation>
+        <location filename="../../configwizard.cpp" line="102"/>
+        <source>Configure Tupi</source>
+        <translation type="unfinished">Configurazione Tupi</translation>
     </message>
     <message>
-        <source>Well, Tupi has crashed...</source>
-        <translation>Be&apos;, Tupi è andato in crash...</translation>
+        <location filename="../../configwizard.cpp" line="109"/>
+        <source>&lt;h3&gt;Step 1&lt;h3&gt;</source>
+        <translation type="unfinished">Passo 1</translation>
     </message>
     <message>
-        <source>Close</source>
-        <translation>Chiudi</translation>
+        <location filename="../../configwizard.cpp" line="110"/>
+        <source>Choose your Tupi installation directory</source>
+        <translation type="unfinished">Seleziona la directory di installazione di Tupi</translation>
     </message>
     <message>
-        <source>Re-launch Tupi</source>
-        <translation>Riavvia Tupi</translation>
+        <location filename="../../configwizard.cpp" line="118"/>
+        <source>Choose the directory where Tupi is installed</source>
+        <translation type="unfinished">Seleziona la directory dove e&apos; installato Tupi</translation>
     </message>
     <message>
-        <source>This is a general failure</source>
-        <translation>Errore generale</translation>
+        <location filename="../../configwizard.cpp" line="120"/>
+        <location filename="../../configwizard.cpp" line="145"/>
+        <source>Browse...</source>
+        <translation type="unfinished">Sfoglia...</translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation>Informazioni</translation>
+        <location filename="../../configwizard.cpp" line="129"/>
+        <source>Choose a temporal directory</source>
+        <translation type="unfinished">Seleziona una directory temporanea</translation>
     </message>
     <message>
-        <source>Warning</source>
-        <translation>Avvertimento</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Critical</source>
-        <translation>Critico</translation>
-    </message>
-    <message>
-        <source>add</source>
-        <translation>aggiungi</translation>
-    </message>
-    <message>
-        <source>remove</source>
-        <translation>elimina</translation>
-    </message>
-    <message>
-        <source>move</source>
-        <translation>sposta</translation>
-    </message>
-    <message>
-        <source>lock</source>
-        <translation>blocca</translation>
-    </message>
-    <message>
-        <source>rename</source>
-        <translation>rinomina</translation>
-    </message>
-    <message>
-        <source>select</source>
-        <translation>seleziona</translation>
-    </message>
-    <message>
-        <source>edit node</source>
-        <translation>modifica nodo</translation>
-    </message>
-    <message>
-        <source>view</source>
-        <translation>vista</translation>
-    </message>
-    <message>
-        <source>transform</source>
-        <translation>trasforma</translation>
-    </message>
-    <message>
-        <source>convert</source>
-        <translation>converti</translation>
-    </message>
-    <message>
-        <source>Wall from</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../configwizard.cpp" line="137"/>
+        <source>Choose the directory for temporal files</source>
+        <translation type="unfinished">Seleziona una directory per l&apos;archivio temporaneo</translation>
     </message>
 </context>
 <context>
-    <name>SchemeTool</name>
+    <name>Configurator</name>
     <message>
-        <source>Scheme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>M</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SelectionTool</name>
-    <message>
-        <source>Selection</source>
-        <translation type="unfinished">Selezione</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation type="unfinished">Selezione di un oggetto</translation>
-    </message>
-    <message>
-        <source>O</source>
-        <translation type="unfinished">O</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>SVG objects can&apos;t be grouped/ungrouped yet</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Settings</name>
-    <message>
-        <source>Name</source>
-        <translation type="unfinished">Nome</translation>
-    </message>
-    <message>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="53"/>
         <source>Options</source>
         <translation type="unfinished">Opzioni</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="54"/>
+        <source>Create path</source>
+        <translation type="unfinished">Crea percorso</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="55"/>
         <source>Select object</source>
         <translation type="unfinished">Seleziona oggetto</translation>
     </message>
     <message>
-        <source>Set Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Starting at frame</source>
-        <translation type="unfinished">Inizia al fotogramma</translation>
-    </message>
-    <message>
-        <source>Frames Total</source>
-        <translation type="unfinished">Totale dei fotogrammi</translation>
-    </message>
-    <message>
-        <source>Save Tween</source>
-        <translation type="unfinished">Salva intercalazione</translation>
-    </message>
-    <message>
-        <source>Cancel Tween</source>
-        <translation type="unfinished">Rimuovi intercalazione</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select objects for Tweening first!</source>
-        <translation type="unfinished">Seleziona prima gli oggetti per l&apos;intercalazione!</translation>
-    </message>
-    <message>
-        <source>You must select at least one object!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You must define a path for this Tween!</source>
-        <translation type="unfinished">Devi definire un percorso per questa intercalazione!</translation>
-    </message>
-    <message>
-        <source>Update Tween</source>
-        <translation type="unfinished">Aggiorna intercalazione</translation>
-    </message>
-    <message>
-        <source>Close Tween properties</source>
-        <translation type="unfinished">Chiudi le proprietà delle intercalazioni</translation>
-    </message>
-    <message>
-        <source>Ending at frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Continuous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Partial</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Speed (Degrees/Frame)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Direction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clockwise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Counterclockwise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Degrees Range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start at</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Finish at</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loop</source>
-        <translation type="unfinished">Ripeti</translation>
-    </message>
-    <message>
-        <source>Loop with Reverse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You must set Tween properties first!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Width &amp; Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only Width</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scale in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scaling Factor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Iterations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shear in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Initial Opacity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ending Opacity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation type="unfinished">Bianco</translation>
-    </message>
-    <message>
-        <source>Initial Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ending Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Smoothness</source>
-        <translation type="unfinished">Smussamento</translation>
-    </message>
-    <message>
-        <source>Flips</source>
-        <translation type="unfinished">Trasformazioni</translation>
-    </message>
-    <message>
-        <source>Horizontal Flip</source>
-        <translation type="unfinished">Rifletti orizzontalmente</translation>
-    </message>
-    <message>
-        <source>Vertical Flip</source>
-        <translation type="unfinished">Rifletti verticalmente</translation>
-    </message>
-    <message>
-        <source>Crossed Flip</source>
-        <translation type="unfinished">Rifletti completamente</translation>
-    </message>
-    <message>
-        <source>Order</source>
-        <translation type="unfinished">Ordina</translation>
-    </message>
-    <message>
-        <source>Send object to back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send object to back one level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send object to front</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send object to front one level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation type="unfinished">Posizione</translation>
-    </message>
-    <message>
-        <source>Show Tips</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A little help for the Selection tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rotation mode</source>
-        <translation type="unfinished">Modalità di rotazione</translation>
-    </message>
-    <message>
-        <source>Double click on any node or shortcut Alt + R</source>
-        <translation type="unfinished">Doppio clic su un nodo o combinazione Alt + R</translation>
-    </message>
-    <message>
-        <source>Arrows</source>
-        <translation type="unfinished">Frecce</translation>
-    </message>
-    <message>
-        <source>Movement on selection</source>
-        <translation type="unfinished">Movimento della selezione</translation>
-    </message>
-    <message>
-        <source>Shift + Arrows</source>
-        <translation type="unfinished">Shift + Frecce</translation>
-    </message>
-    <message>
-        <source>Slow movement on selection</source>
-        <translation type="unfinished">Movimento lento della selezione</translation>
-    </message>
-    <message>
-        <source>Ctrl + Arrows</source>
-        <translation type="unfinished">Ctrl + Frecce</translation>
-    </message>
-    <message>
-        <source>Fast movement on selection</source>
-        <translation type="unfinished">Movimento rapido della selezione</translation>
-    </message>
-    <message>
-        <source>Shift + Left Mouse Button</source>
-        <translation type="unfinished">Shift + Pulsante sinistro del mouse</translation>
-    </message>
-    <message>
-        <source>Proportional scaling on selection</source>
-        <translation type="unfinished">Scalatura proporzionale della selezione</translation>
-    </message>
-    <message>
-        <source>Show Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Options panel for the Selection tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Editing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mouths</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lip-Sync FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>mouth</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Group Objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ungroup Objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ShiftTool</name>
-    <message>
-        <source>Shift</source>
-        <translation type="unfinished">Mano</translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation type="unfinished">H</translation>
-    </message>
-</context>
-<context>
-    <name>SpinControl</name>
-    <message>
-        <source>Radius</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Angle</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>StepsViewer</name>
-    <message>
-        <source>Interval</source>
-        <translation>Intervallo</translation>
-    </message>
-    <message>
-        <source>Frames</source>
-        <translation>Fotogrammi</translation>
-    </message>
-</context>
-<context>
-    <name>TButtonBar</name>
-    <message>
-        <source>Left button bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right button bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom button bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top button bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only icons</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Only texts</source>
-        <translation>Solo testo</translation>
-    </message>
-    <message>
-        <source>Exclusive space</source>
-        <translation type="unfinished">Spazio esclusivo</translation>
-    </message>
-    <message>
-        <source>Auto hide</source>
-        <translation>Nascondi automaticamente</translation>
-    </message>
-</context>
-<context>
-    <name>TCommandHistory</name>
-    <message>
-        <source>Undo</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>Ripeti</translation>
-    </message>
-</context>
-<context>
-    <name>TFontChooser</name>
-    <message>
-        <source>Family</source>
-        <translation>Famiglia</translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation>Stile</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Dimensione</translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation>Normale</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Corsivo</translation>
-    </message>
-    <message>
-        <source>Oblique</source>
-        <translation>Obliquo</translation>
-    </message>
-</context>
-<context>
-    <name>TOptionalDialog</name>
-    <message>
-        <source>Don&apos;t show again</source>
-        <translation>Non mostrare di nuovo</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Accetta</translation>
-    </message>
-</context>
-<context>
-    <name>TRulerBase</name>
-    <message>
-        <source>Change scale to 5...</source>
-        <translation type="unfinished">Usa il fattore di scala 5...</translation>
-    </message>
-    <message>
-        <source>Change scale to 10...</source>
-        <translation type="unfinished">Usa il fattore di scala 10...</translation>
-    </message>
-</context>
-<context>
-    <name>TViewButton</name>
-    <message>
-        <source>Menu</source>
-        <translation>Menù</translation>
-    </message>
-    <message>
-        <source>Only icon</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Only text</source>
-        <translation>Solo testo</translation>
-    </message>
-    <message>
-        <source>Mouse sensibility</source>
-        <translation>Sensibilità del mouse</translation>
-    </message>
-</context>
-<context>
-    <name>TWizard</name>
-    <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>&lt; &amp;Back</source>
-        <translation>&lt; &amp;Indietro</translation>
-    </message>
-    <message>
-        <source>Next &gt;</source>
-        <translation>Avanti &gt;</translation>
-    </message>
-    <message>
-        <source>&amp;Finish</source>
-        <translation>&amp;Finisci</translation>
-    </message>
-</context>
-<context>
-    <name>TabDialog</name>
-    <message>
-        <source>Help</source>
-        <translation>Aiuto</translation>
-    </message>
-    <message>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="58"/>
         <source>Apply</source>
-        <translation>Applica</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished">Applica</translation>
     </message>
 </context>
 <context>
-    <name>TextConfigurator</name>
+    <name>ContourSelection</name>
     <message>
-        <source>Html</source>
-        <translation>Html</translation>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="96"/>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="271"/>
+        <source>Contour Selection</source>
+        <translation type="unfinished">Selezione contorno</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="267"/>
+        <source>Nodes selection </source>
+        <translation type="unfinished">Selezione dei nodi</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="268"/>
+        <source>N</source>
+        <translation type="unfinished">N</translation>
     </message>
 </context>
 <context>
-    <name>TextTool</name>
+    <name>CrashWidget</name>
     <message>
-        <source>Text</source>
-        <translation>Testo</translation>
-    </message>
-    <message>
-        <source>T</source>
-        <translation>T</translation>
-    </message>
-</context>
-<context>
-    <name>TreeWidgetSearchLine</name>
-    <message>
-        <source>Search</source>
-        <translation>Cerca</translation>
-    </message>
-    <message>
-        <source>Search Columns</source>
-        <translation type="unfinished">Cerca per colonne</translation>
-    </message>
-    <message>
-        <source>All Visible Columns</source>
-        <translation type="unfinished">Mostra tutte le colonne</translation>
-    </message>
-</context>
-<context>
-    <name>TreeWidgetSearchLineWidget</name>
-    <message>
-        <source>Clear</source>
-        <translation type="unfinished">Pulisci</translation>
-    </message>
-</context>
-<context>
-    <name>TupAbout</name>
-    <message>
-        <source>About</source>
-        <translation>Riguardo a</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <translation>Riconoscimenti</translation>
-    </message>
-    <message>
-        <source>Thanks</source>
-        <translation>Ringraziamenti</translation>
-    </message>
-    <message>
-        <source>License Agreement</source>
-        <translation>Accordo di licenza</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Chiudi</translation>
-    </message>
-    <message>
-        <source>About Tupi</source>
-        <translation type="unfinished">Informazioni su Tupi</translation>
-    </message>
-</context>
-<context>
-    <name>TupBasicCameraInterface</name>
-    <message>
-        <source>Tupi Camera Manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current resolution:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cameras</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Take picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>Can&apos;t create pictures directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraBar</name>
-    <message>
-        <source>Rewind</source>
-        <translation>Riavvolgi</translation>
-    </message>
-    <message>
-        <source>Play in reverse</source>
-        <translation>Riproduci al contrario</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Riproduci</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation>Arresta</translation>
-    </message>
-    <message>
-        <source>Forward</source>
-        <translation>Avanza</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraDialog</name>
-    <message>
-        <source>Camera Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Available Camera Devices:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera Detected:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Available Camera Resolutions:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Resize my project to fit camera resolution</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use the basic camera interface (low resources)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Annulla</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraInterface</name>
-    <message>
-        <source>Tupi Camera Manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current resolution:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cameras</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Take picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show safe area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>+</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show grid</source>
-        <translation type="unfinished">Mostra la griglia</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation type="unfinished">#</translation>
-    </message>
-    <message>
-        <source>Grid spacing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Grid color</source>
-        <translation type="unfinished">Colore della griglia</translation>
-    </message>
-    <message>
-        <source>Show previous images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>P</source>
-        <translation type="unfinished">P</translation>
-    </message>
-    <message>
-        <source>Image opacity level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amount of images to show</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>Can&apos;t create pictures directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraStatus</name>
-    <message>
-        <source>Scene name</source>
-        <translation>Nome della scena</translation>
-    </message>
-    <message>
-        <source>Frames total</source>
-        <translation>Totale dei fotogrammi</translation>
-    </message>
-    <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Loop</source>
-        <translation>Ripeti</translation>
-    </message>
-    <message>
-        <source>Ctrl+L</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>Esporta</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation type="unfinished">Pubblica</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraWidget</name>
-    <message>
-        <source>Scene Preview</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation type="unfinished">Scala</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="unfinished">Dimensione</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraWindow</name>
-    <message>
-        <source>General Camera error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera invalid request error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera service missing error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera not supported error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCanvas</name>
-    <message>
-        <source>Sketch Tools</source>
-        <translation type="unfinished">Strumenti di disegno</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation>Immagini</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>Ripeti</translation>
-    </message>
-    <message>
-        <source>Delete Selection</source>
-        <translation type="unfinished">Elimina selezione</translation>
-    </message>
-    <message>
-        <source>Zoom In</source>
-        <translation>Ingrandisci</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>Riduci</translation>
-    </message>
-    <message>
-        <source>Shift</source>
-        <translation type="unfinished">Mano</translation>
-    </message>
-    <message>
-        <source>Pen Properties</source>
-        <translation type="unfinished">Proprietà del pennino</translation>
-    </message>
-    <message>
-        <source>Exposure Sheet</source>
-        <translation type="unfinished">Tavola delle esposizioni</translation>
-    </message>
-    <message>
-        <source>Import a SVG file...</source>
-        <translation type="unfinished">Importa un file SVG...</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished">Informazioni</translation>
-    </message>
-    <message>
-        <source>Image is bigger than workspace.</source>
-        <translation>L&apos;immagine è più grande dello spazio di lavoro.</translation>
-    </message>
-    <message>
-        <source>Do you want to resize it?</source>
-        <translation>Ridimensionare?</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Scena %1</translation>
-    </message>
-    <message>
-        <source>Layer 1</source>
-        <translation>Livello 1</translation>
-    </message>
-    <message>
-        <source>Frame 1</source>
-        <translation>Fotogramma 1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Tupi: 2D Magic</source>
-        <translation type="unfinished">Tupí: Magia 2D Open</translation>
-    </message>
-    <message>
-        <source>Selection Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vector</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pencil</source>
-        <translation type="unfinished">Matita</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation type="unfinished">Inchiostra</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation type="unfinished">Ellisse</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation type="unfinished">Rettangolo</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation type="unfinished">Selezione di un oggetto</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation type="unfinished">Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>Color Palette</source>
-        <translation type="unfinished">Tavolozza</translation>
-    </message>
-    <message>
-        <source>Pen Size</source>
-        <translation type="unfinished">Dimensione del pennino</translation>
-    </message>
-</context>
-<context>
-    <name>TupChat</name>
-    <message>
-        <source>Send</source>
-        <translation>Invia</translation>
-    </message>
-    <message>
-        <source>Error:</source>
-        <translation>Errore:</translation>
-    </message>
-    <message>
-        <source>Invalid Message. It won&apos;t be sent. Please, don&apos;t use HTML tags</source>
-        <translation type="unfinished">Messaggio non valido. Non sarà inviato. Non usare marcatura HTML</translation>
-    </message>
-</context>
-<context>
-    <name>TupColorPalette</name>
-    <message>
-        <source>Color Palette</source>
-        <translation>Tavolozza</translation>
-    </message>
-    <message>
-        <source>Contour</source>
-        <translation>Contorno</translation>
-    </message>
-    <message>
-        <source>Fill</source>
-        <translation>Riempimento</translation>
-    </message>
-    <message>
-        <source>Color Mixer</source>
-        <translation>Miscelatore di colori</translation>
-    </message>
-    <message>
-        <source>Gradients</source>
-        <translation>Gradienti</translation>
-    </message>
-    <message>
-        <source>HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupColorValue</name>
-    <message>
-        <source>Percent</source>
-        <translation>Percentuale</translation>
-    </message>
-</context>
-<context>
-    <name>TupConfigurationArea</name>
-    <message>
-        <source>Cursor here for expand</source>
-        <translation>Il cursore qui per espandere</translation>
-    </message>
-    <message>
-        <source>Properties</source>
-        <translation>Proprietà</translation>
-    </message>
-</context>
-<context>
-    <name>TupConnectDialog</name>
-    <message>
-        <source>Connection Dialog</source>
-        <translation>Finestra di connessione</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>Utente</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Password</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Server</translation>
-    </message>
-    <message>
-        <source>Port</source>
-        <translation>Porta</translation>
-    </message>
-    <message>
-        <source>Store password</source>
-        <translation>Ricorda la password</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Please, fill in your password</source>
-        <translation>Inserisci la password</translation>
-    </message>
-</context>
-<context>
-    <name>TupCrashWidget</name>
-    <message>
+        <location filename="../../ktcrashwidget.cpp" line="122"/>
         <source>What&apos;s happening?</source>
-        <translation>Che succede?</translation>
+        <translation>Cosa succede?</translation>
     </message>
     <message>
+        <location filename="../../ktcrashwidget.cpp" line="144"/>
         <source>Executable information</source>
-        <translation>Informazioni sull&apos;eseguibile</translation>
+        <translation type="unfinished">Informazioni sull-eseguibile</translation>
     </message>
     <message>
+        <location filename="../../ktcrashwidget.cpp" line="150"/>
+        <location filename="../../ktcrashwidget.cpp" line="157"/>
         <source>Backtrace</source>
         <translation>Backtrace</translation>
     </message>
 </context>
 <context>
-    <name>TupDebugWidget</name>
+    <name>EraserTool</name>
     <message>
-        <source>Debug Console</source>
-        <translation>Console di debug</translation>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="73"/>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="98"/>
+        <source>Eraser</source>
+        <translation type="unfinished">Gomma</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="98"/>
+        <source>E</source>
+        <translation type="unfinished">E</translation>
     </message>
 </context>
 <context>
-    <name>TupDocumentView</name>
+    <name>ExactnessConfigurator</name>
     <message>
-        <source>Object Selection</source>
-        <translation type="unfinished">Selezione di un oggetto</translation>
+        <location filename="../../../plugins/tools/brush/exactnessconfigurator.cpp" line="53"/>
+        <source>Smoothness</source>
+        <translation type="unfinished">Smoothness</translation>
     </message>
     <message>
-        <source>Copy</source>
-        <translation type="unfinished">Copia</translation>
-    </message>
-    <message>
-        <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation type="unfinished">Incolla</translation>
-    </message>
-    <message>
-        <source>Ctrl+V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cut</source>
-        <translation type="unfinished">Taglia</translation>
-    </message>
-    <message>
-        <source>Ctrl+X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
-    </message>
-    <message>
-        <source>Onion Skin</source>
-        <translation type="unfinished">Effetto carta da lucido</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+O</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Onion Skin Factor</source>
-        <translation type="unfinished">Trasparenza della carta da lucido</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>@</source>
-        <translation type="unfinished">@</translation>
-    </message>
-    <message>
-        <source>Draw tools</source>
-        <translation type="unfinished">Strumenti di disegno</translation>
-    </message>
-    <message>
-        <source>Brushes</source>
-        <translation type="unfinished">Pennini</translation>
-    </message>
-    <message>
-        <source>Tweening</source>
-        <translation type="unfinished">Intercalazione</translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation type="unfinished">Serie di immagini</translation>
-    </message>
-    <message>
-        <source>Pencil</source>
-        <translation type="unfinished">Matita</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation type="unfinished">Inchiostra</translation>
-    </message>
-    <message>
-        <source>PolyLine</source>
-        <translation type="unfinished">Polilinea</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation type="unfinished">Linea</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation type="unfinished">Rettangolo</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation type="unfinished">Ellisse</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation type="unfinished">Testo</translation>
-    </message>
-    <message>
-        <source>Position Tween</source>
-        <translation type="unfinished">Intercalazione di posizione</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation type="unfinished">Intercalazione di rotazione</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation type="unfinished">Intercalazione di scala</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation type="unfinished">Intercalazione di rottura</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation type="unfinished">Intercalazione di opacità</translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation type="unfinished">Intercalazione di colore</translation>
-    </message>
-    <message>
-        <source>Internal fill</source>
-        <translation type="unfinished">Applica riempimento</translation>
-    </message>
-    <message>
-        <source>%1</source>
-        <translation type="unfinished">%1</translation>
-    </message>
-    <message>
-        <source>Shift</source>
-        <translation type="unfinished">Mano</translation>
-    </message>
-    <message>
-        <source>Paint area actions</source>
-        <translation type="unfinished">Azioni dell&apos;area di disegno</translation>
-    </message>
-    <message>
-        <source>Dynamic Background Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frames Mode</source>
-        <translation type="unfinished">Modalità fotogrammi</translation>
-    </message>
-    <message>
-        <source>Static BG Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dynamic BG Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Previous Frames</source>
-        <translation type="unfinished">Fotogrammi precedenti</translation>
-    </message>
-    <message>
-        <source>Next Frames</source>
-        <translation type="unfinished">Fotogrammi successivi</translation>
-    </message>
-    <message>
-        <source>Direction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left to Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right to Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top to Bottom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom to Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export Frame As</source>
-        <translation type="unfinished">Esporta i fotogrammi come</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation type="unfinished">Immagini</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame has been exported successfully</source>
-        <translation type="unfinished">Il fotogramma è stato esportato con successo</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>Can&apos;t export frame as image</source>
-        <translation type="unfinished">Impossibile esportare il fotogramma come immagine</translation>
-    </message>
-    <message>
-        <source>Export Current Frame As Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export Current Frame To Gallery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Storyboard Settings</source>
-        <translation type="unfinished">Impostazioni dello storyboard</translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No cameras detected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation type="unfinished">Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation type="unfinished">Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo file has been imported successfully</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Line fill</source>
-        <translation type="unfinished">Applica contorno</translation>
-    </message>
-    <message>
-        <source>Papagayo project already exists!
-Please, rename the project&apos;s file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo file is invalid!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Images directory is empty!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo project is invalid!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../plugins/tools/brush/exactnessconfigurator.cpp" line="66"/>
+        <source>My Values:</source>
+        <translation type="unfinished">Valori:</translation>
     </message>
 </context>
 <context>
-    <name>TupExportModule</name>
+    <name>ExportTo</name>
     <message>
-        <source>Enable background transparency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="418"/>
         <source>Image name prefix: </source>
-        <translation type="unfinished">Prefisso dei nomi immagine:</translation>
+        <translation type="unfinished">Prefisso nome immagine:</translation>
     </message>
     <message>
-        <source>Directory: </source>
-        <translation type="unfinished">Cartella: </translation>
-    </message>
-    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="423"/>
         <source>File: </source>
         <translation type="unfinished">File: </translation>
     </message>
     <message>
-        <source>i.e. &lt;B&gt;%1&lt;/B&gt;01.png / jpeg / svg</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="425"/>
+        <source>Directory: </source>
+        <translation type="unfinished">Directory: </translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="456"/>
+        <source>i.e. &lt;B&gt;%1&lt;/B&gt;01.png / &lt;B&gt;%1&lt;/B&gt;01.jpg</source>
+        <translation type="unfinished">es. &lt;B&gt;%1&lt;/B&gt;01.png / &lt;B&gt;%1&lt;/B&gt;01.jpg</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="470"/>
         <source>Size</source>
         <translation type="unfinished">Dimensione</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="475"/>
         <source>Configuration</source>
         <translation type="unfinished">Configurazione</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="486"/>
         <source>FPS</source>
         <translation type="unfinished">FPS</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="556"/>
         <source>Choose a file name...</source>
         <translation type="unfinished">Scegli un nome...</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="569"/>
         <source>Choose a directory...</source>
-        <translation type="unfinished">Scegli una cartella...</translation>
+        <translation type="unfinished">scegli una directory...</translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>Images name prefix can&apos;t be empty! Please, type a prefix.</source>
-        <translation type="unfinished">Il prefisso dei nomi delle immagini non può essere omesso! Inserisci un prefisso.</translation>
-    </message>
-    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="613"/>
         <source>Warning!</source>
         <translation type="unfinished">Attenzione!</translation>
     </message>
     <message>
-        <source>Image array already exists. Overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory doesn&apos;t exist! Please, choose another path.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="614"/>
         <source>File exists. Overwrite it?</source>
-        <translation type="unfinished">Il file esiste già. Sovrascriverlo?</translation>
+        <translation type="unfinished">Il file e&apos; gia&apos;esistente. Sovrascrivo?</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="626"/>
+        <source>Images name prefix can&apos;t be empty! Please, type a prefix.</source>
+        <translation type="unfinished">Il prefisso del nome dell&apos;immagine non puo&apos; essere ommesso! Prego, digitare un prefisso.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="639"/>
+        <source>Directory &quot;</source>
+        <translation type="unfinished">Directory &quot;</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="646"/>
         <source>You have no permission to create this file. Please, choose another path.</source>
-        <translation type="unfinished">Non hai i permessi per creare il file . Per favore, scegli un altro percorso.</translation>
+        <translation type="unfinished">Non hai i permessi necessari per creare questo file. Scegliere un altro percorso.</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="669"/>
         <source>Format problem. Tupi Internal error.</source>
-        <translation type="unfinished">Problema di formato. Errore interno di Tupi.</translation>
+        <translation type="unfinished">Problema di formato. Errore Interno - Tupi.</translation>
     </message>
     <message>
-        <source>Video file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>was saved successful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Images array was saved successful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="678"/>
         <source>ERROR!</source>
         <translation type="unfinished">ERRORE!</translation>
     </message>
 </context>
 <context>
-    <name>TupExportWidget</name>
+    <name>FillTool</name>
     <message>
-        <source>Export to Video</source>
-        <translation>Esporta come video</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="189"/>
+        <source>Internal fill</source>
+        <translation type="unfinished">Riempimento interno</translation>
     </message>
     <message>
-        <source>Export to Video File</source>
-        <translation>Esporta come file video</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="90"/>
+        <source>I</source>
+        <translation>I</translation>
     </message>
     <message>
-        <source>Export to Images Array</source>
-        <translation>Esporta come serie di immagini</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="191"/>
+        <source>Contour fill</source>
+        <translation type="unfinished">Riempimento contorno</translation>
     </message>
     <message>
-        <source>Export to Animated Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post Animation in Tupitube</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Video Formats</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Video Format</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation type="unfinished">Serie di immagini</translation>
-    </message>
-    <message>
-        <source>Animated Image</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="90"/>
+        <source>B</source>
+        <translation>B</translation>
     </message>
 </context>
 <context>
-    <name>TupExportWizard</name>
+    <name>GeometricTool</name>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Annulla</translation>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="79"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="83"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="106"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="132"/>
+        <source>Rectangle</source>
+        <translation type="unfinished">Rettangolo</translation>
     </message>
     <message>
-        <source>Back</source>
-        <translation type="unfinished">Indietro</translation>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="85"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="89"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="111"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="156"/>
+        <source>Ellipse</source>
+        <translation type="unfinished">Ellisse</translation>
     </message>
     <message>
-        <source>Next</source>
-        <translation type="unfinished">Avanti</translation>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="91"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="95"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="115"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="178"/>
+        <source>Line</source>
+        <translation type="unfinished">Linea</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="80"/>
+        <source>R</source>
+        <translation>R</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="86"/>
+        <source>E</source>
+        <translation>E</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="92"/>
+        <source>L</source>
+        <translation>L</translation>
+    </message>
+</context>
+<context>
+    <name>KTAbout</name>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="59"/>
+        <source>About</source>
+        <translation type="unfinished">Informazioni</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="87"/>
+        <source>Credits</source>
+        <translation type="unfinished">Credits</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="104"/>
+        <source>Thanks</source>
+        <translation type="unfinished">Agradecimientos</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="143"/>
+        <source>License Agreement</source>
+        <translation type="unfinished">Licenza d&apos;uso</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="144"/>
+        <source>Close</source>
+        <translation type="unfinished">Chiudi</translation>
+    </message>
+</context>
+<context>
+    <name>KTAnimationArea</name>
+    <message>
+        <location filename="../../../components/cameras/ktanimationarea.cpp" line="335"/>
+        <source>Rendering...</source>
+        <translation type="unfinished">Rendering...</translation>
+    </message>
+</context>
+<context>
+    <name>KTApplication</name>
+    <message>
+        <location filename="../../ktapplication.cpp" line="97"/>
+        <source>Initializing repository %1</source>
+        <translation type="unfinished">Inizialinazzione repository %1</translation>
+    </message>
+    <message>
+        <location filename="../../ktapplication.cpp" line="102"/>
+        <source>Can not create the projects repository</source>
+        <translation type="unfinished">Non e&apos; possibile creare il repository del progetto</translation>
+    </message>
+</context>
+<context>
+    <name>KTBrushStatus</name>
+    <message>
+        <location filename="../../../components/paintarea/ktbrushstatus.cpp" line="53"/>
+        <source>Current Brush</source>
+        <translation type="unfinished">Pennello</translation>
+    </message>
+</context>
+<context>
+    <name>KTToolStatus</name>
+    <message>
+        <location filename="../../../components/paintarea/ktbrushstatus.cpp" line="53"/>
+        <source>Current Tool</source>
+        <translation type="unfinished">Strumento</translation>
+    </message>
+</context>
+<context>
+    <name>KTCameraBar</name>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="58"/>
+        <source>Rewind</source>
+        <translation type="unfinished">Indietro veloce</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="63"/>
+        <source>Play in reverse</source>
+        <translation type="unfinished">Riproduzione inversa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="68"/>
+        <source>Play</source>
+        <translation type="unfinished">Play</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="73"/>
+        <source>Stop</source>
+        <translation type="unfinished">Stop</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="78"/>
+        <source>Forward</source>
+        <translation type="unfinished">Avanti veloce</translation>
+    </message>
+</context>
+<context>
+    <name>KTCameraStatus</name>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="60"/>
+        <source>Scene name</source>
+        <translation type="unfinished">Nome della scena</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="68"/>
+        <source>Frames total</source>
+        <translation type="unfinished">Fotogrammi totali</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="79"/>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="95"/>
+        <source>Loop</source>
+        <translation type="unfinished">Ripetizione infinita</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="95"/>
+        <source>Ctrl+L</source>
+        <translation>Ctrl+L</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="95"/>
+        <source>Export</source>
+        <translation type="unfinished">Esporta</translation>
+    </message>
+</context>
+<context>
+    <name>KTChat</name>
+    <message>
+        <location filename="../../../net/ktchat.cpp" line="78"/>
+        <source>Send</source>
+        <translation type="unfinished">Invia</translation>
+    </message>
+</context>
+<context>
+    <name>KTColorPalette</name>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="93"/>
+        <source>Color Palette</source>
+        <translation type="unfinished">Tavolozza Colori</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="162"/>
+        <source>Color Mixer</source>
+        <translation type="unfinished">Mixer colori</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="169"/>
+        <source>Gradients</source>
+        <translation type="unfinished">Gradienti</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="189"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="264"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="275"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="343"/>
+        <source>Solid</source>
+        <translation>Solido</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="190"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="242"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="266"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="277"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="345"/>
+        <source>Gradient</source>
+        <translation>Gradiente</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="335"/>
+        <source>type brush</source>
+        <translation type="unfinished">Tipo di pennello</translation>
+    </message>
+</context>
+<context>
+    <name>KTColorValue</name>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorvalue.cpp" line="173"/>
+        <source>percent</source>
+        <translation type="unfinished">Percento</translation>
+    </message>
+</context>
+<context>
+    <name>KTCommandExecutor</name>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="97"/>
+        <source>Frame doesn&apos;t exists!</source>
+        <translation type="unfinished">Fotogramma inesistente!</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="105"/>
+        <source>Layer doesn&apos;t exists!</source>
+        <translation type="unfinished">Layer inesistente!</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="113"/>
+        <source>Scene doesn&apos;t exists!</source>
+        <translation type="unfinished">Scena inesistente!</translation>
+    </message>
+</context>
+<context>
+    <name>KTConfigurationArea</name>
+    <message>
+        <location filename="../../../components/paintarea/ktconfigurationarea.cpp" line="277"/>
+        <source>Cursor here for expand</source>
+        <translation type="unfinished">Cursore quí per espandere</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktconfigurationarea.cpp" line="320"/>
+        <source>Properties</source>
+        <translation type="unfinished">Propieta&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>KTConnectDialog</name>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="73"/>
+        <source>Connection Dialog</source>
+        <translation type="unfinished">Connessione</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Login</source>
+        <translation type="unfinished">Login</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Password</source>
+        <translation type="unfinished">Password</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Server</source>
+        <translation type="unfinished">Server</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Port</source>
+        <translation type="unfinished">Porta</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="85"/>
+        <source>Store password</source>
+        <translation>Guardar clave</translation>
+    </message>
+</context>
+<context>
+    <name>KTExportWidget</name>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="697"/>
         <source>Export</source>
         <translation type="unfinished">Esporta</translation>
     </message>
     <message>
-        <source>Post</source>
-        <translation type="unfinished">Pubblica</translation>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="707"/>
+        <source>Export to Video File</source>
+        <translation type="unfinished">Esporta file video</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="710"/>
+        <source>Export to Images Array</source>
+        <translation type="unfinished">Esporta sequenza di immagini</translation>
     </message>
 </context>
 <context>
-    <name>TupExposureDialog</name>
+    <name>KTExposureSheet</name>
     <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="65"/>
         <source>Exposure Sheet</source>
-        <translation>Tavola delle esposizioni</translation>
+        <translation type="unfinished">Exposure Sheet</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Scena</translation>
-    </message>
-    <message>
-        <source>Work Team</source>
-        <translation type="unfinished">Squadra di lavoro</translation>
-    </message>
-</context>
-<context>
-    <name>TupExposureScene</name>
-    <message>
-        <source>Layer</source>
-        <translation>Livello</translation>
-    </message>
-    <message>
-        <source>Frame</source>
-        <translation>Fotogramma</translation>
-    </message>
-</context>
-<context>
-    <name>TupExposureSheet</name>
-    <message>
-        <source>Exposure Sheet</source>
-        <translation>Tavola delle esposizioni</translation>
-    </message>
-    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="95"/>
         <source>actions</source>
-        <translation>azioni</translation>
+        <translation type="unfinished">azioni</translation>
     </message>
     <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="98"/>
         <source>Insert</source>
-        <translation>Inserisci</translation>
+        <translation type="unfinished">Inserisci</translation>
     </message>
     <message>
-        <source>1 frame</source>
-        <translation>1 fotogramma</translation>
-    </message>
-    <message>
-        <source>5 frames</source>
-        <translation>5 fotogrammi</translation>
-    </message>
-    <message>
-        <source>10 frames</source>
-        <translation>10 fotogrammi</translation>
-    </message>
-    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="99"/>
         <source>Remove frame</source>
-        <translation>Rimuovi fotogramma</translation>
+        <translation type="unfinished">Rimuovi fotogramma</translation>
     </message>
     <message>
-        <source>Clear frame</source>
-        <translation>Pulisci fotogramma</translation>
-    </message>
-    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="100"/>
         <source>Lock/Unlock frame</source>
-        <translation>Blocca/sblocca fotogramma</translation>
+        <translation type="unfinished">Blocca/Sblocca fotogramma</translation>
     </message>
     <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="102"/>
         <source>Copy frame</source>
-        <translation>Copia fotogramma</translation>
+        <translation type="unfinished">Copia fotogramma</translation>
     </message>
     <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="103"/>
         <source>Paste in frame</source>
-        <translation>Incolla nel fotogramma</translation>
+        <translation type="unfinished">Incolla nel fotogramma</translation>
     </message>
     <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="104"/>
+        <source>Expand</source>
+        <translation type="unfinished">Espandi</translation>
     </message>
     <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="104"/>
+        <source>1 frame</source>
+        <translation type="unfinished">1 frames</translation>
     </message>
     <message>
-        <source>20 frames</source>
-        <translation type="unfinished">10 fotogrammi {20 ?}</translation>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="104"/>
+        <source>5 frames</source>
+        <translation type="unfinished">5 frames</translation>
     </message>
     <message>
-        <source>50 frames</source>
-        <translation type="unfinished">10 fotogrammi {50 ?}</translation>
-    </message>
-    <message>
-        <source>100 frames</source>
-        <translation type="unfinished">10 fotogrammi {100 ?}</translation>
-    </message>
-    <message>
-        <source>Copy TL forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1 time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>2 times</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>3 times</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>4 times</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>5 times</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="104"/>
+        <source>10 frames</source>
+        <translation type="unfinished">10 frames</translation>
     </message>
 </context>
 <context>
-    <name>TupGradientCreator</name>
+    <name>KTGCTable</name>
     <message>
+        <location filename="../../../components/library/ktgctable.cpp" line="61"/>
+        <source>New folder %1</source>
+        <translation type="unfinished">Nuova cartella %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTGradientCreator</name>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
         <source>Linear</source>
-        <translation>Lineare</translation>
+        <translation type="unfinished">Lineare</translation>
     </message>
     <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
         <source>Radial</source>
-        <translation>Radiale</translation>
+        <translation type="unfinished">Radiale</translation>
     </message>
     <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
         <source>Conical</source>
-        <translation>Conico</translation>
+        <translation type="unfinished">Conico</translation>
     </message>
     <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
         <source>Pad</source>
         <translation>Uniforme</translation>
     </message>
     <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
         <source>Reflect</source>
-        <translation>Riflesso</translation>
+        <translation type="unfinished">Riflesso</translation>
     </message>
     <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
         <source>Repeat</source>
-        <translation>Ripetuto</translation>
+        <translation type="unfinished">Ripetizione</translation>
     </message>
 </context>
 <context>
-    <name>TupGraphicsScene</name>
+    <name>KTHelpBrowser</name>
     <message>
-        <source>PolyLine</source>
-        <translation>Polilinea</translation>
-    </message>
-    <message>
-        <source>/Step: 0</source>
-        <translation>/Passo: 0</translation>
-    </message>
-    <message>
-        <source>/Step: </source>
-        <translation>/Passo:</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Linea</translation>
-    </message>
-    <message>
-        <source>lipsync:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupHelpBrowser</name>
-    <message>
+        <location filename="../../../components/help/kthelpbrowser.cpp" line="45"/>
         <source>Help</source>
-        <translation>Aiuto</translation>
+        <translation type="unfinished">Aiuto</translation>
     </message>
 </context>
 <context>
-    <name>TupHelpWidget</name>
+    <name>KTHelpWidget</name>
     <message>
+        <location filename="../../../components/help/kthelpwidget.cpp" line="52"/>
         <source>Help</source>
-        <translation>Aiuto</translation>
+        <translation type="unfinished">Aiuto</translation>
     </message>
 </context>
 <context>
-    <name>TupImageDialog</name>
+    <name>KTLayer</name>
     <message>
-        <source>Image Properties</source>
-        <translation>Proprietà dell&apos;immagine</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Titolo</translation>
-    </message>
-    <message>
-        <source>My Picture</source>
-        <translation type="unfinished">La mia immagine</translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation type="unfinished">Argomenti</translation>
-    </message>
-    <message>
-        <source>#topic1 #topic2 #topic3</source>
-        <translation type="unfinished">#argomento1 #argomento2 #argomento3</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descrizione</translation>
-    </message>
-    <message>
-        <source>Just a little taste of my style :)</source>
-        <translation>Una piccola esibizione del mio stile :)</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Post Image</source>
-        <translation>Pubblica l&apos;immagine</translation>
-    </message>
-    <message>
-        <source>Set a title for the picture here!</source>
-        <translation>Metti qui il titolo dell&apos;immagine!</translation>
-    </message>
-    <message>
-        <source>Set some topic tags for the picture here!</source>
-        <translation type="unfinished">Aggiungi etichette all&apos;immagine!</translation>
-    </message>
-</context>
-<context>
-    <name>TupInfoWidget</name>
-    <message>
-        <source>Currency Converter</source>
-        <translation>Convertitore di valuta</translation>
-    </message>
-    <message>
-        <source>Currency</source>
-        <translation>Valuta</translation>
-    </message>
-    <message>
-        <source>%1</source>
-        <translation type="unfinished">%1</translation>
-    </message>
-    <message>
-        <source>Source</source>
-        <translation>Fonte</translation>
-    </message>
-    <message>
-        <source>Update data every</source>
-        <translation>Aggiorna i dati ogni</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
-    <message>
-        <source>minute</source>
-        <translation>minuto</translation>
-    </message>
-    <message>
-        <source>minutes</source>
-        <translation>minuti</translation>
-    </message>
-    <message>
-        <source>Link file to Object</source>
-        <translation type="unfinished">Collega il file all&apos;oggetto</translation>
-    </message>
-    <message>
-        <source>All files (*.*)</source>
-        <translation>Tutti i file (*.*)</translation>
-    </message>
-</context>
-<context>
-    <name>TupItemManager</name>
-    <message>
-        <source>New folder %1</source>
-        <translation type="unfinished">Nuova cartella %1</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation type="unfinished">Opzioni</translation>
-    </message>
-    <message>
-        <source>Edit with Inkscape</source>
-        <translation type="unfinished">Modifica con Inkscape</translation>
-    </message>
-    <message>
-        <source>Edit with Gimp</source>
-        <translation type="unfinished">Modifica con Gimp</translation>
-    </message>
-    <message>
-        <source>Edit with Krita</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit with MyPaint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation type="unfinished">Rinomina</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="unfinished">Elimina</translation>
-    </message>
-    <message>
-        <source>Create new raster item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new svg item</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupItemPreview</name>
-    <message>
-        <source>Library is empty :(</source>
-        <translation>La biblioteca è vuota :(</translation>
-    </message>
-</context>
-<context>
-    <name>TupItemTweener</name>
-    <message>
-        <source>Position Tween</source>
-        <translation>Intercalazione di posizione</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Intercalazione di rotazione</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Intercalazione di scala</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Intercalazione di rottura</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Intercalazione di opacità</translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Intercalazione di colore</translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupLayer</name>
-    <message>
+        <location filename="../../../store/ktlayer.cpp" line="54"/>
         <source>Layer</source>
-        <translation>Livello</translation>
+        <translation type="unfinished">Layer</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktlayer.cpp" line="122"/>
+        <source>Frame %1</source>
+        <translation>Marco %1</translation>
     </message>
 </context>
 <context>
-    <name>TupLayerIndex</name>
+    <name>KTLayerManager</name>
     <message>
-        <source>Layers</source>
-        <translation>Livelli</translation>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
+        <source>Layer</source>
+        <translation type="unfinished">Layer</translation>
+    </message>
+    <message>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
+        <source>L</source>
+        <translation>L</translation>
+    </message>
+    <message>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
+        <source>V</source>
+        <translation>V</translation>
     </message>
 </context>
 <context>
-    <name>TupLibraryDialog</name>
+    <name>KTLibraryDialog</name>
     <message>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="57"/>
         <source>Library Object</source>
-        <translation>Oggetto dalla biblioteca</translation>
+        <translation type="unfinished">Libreria Oggetti</translation>
     </message>
     <message>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="90"/>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="unfinished">Nome</translation>
     </message>
     <message>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="93"/>
         <source>Item %1</source>
         <translation>Elemento %1</translation>
     </message>
 </context>
 <context>
-    <name>TupLibraryWidget</name>
+    <name>KTLibraryWidget</name>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
         <source>Library</source>
-        <translation>Biblioteca</translation>
+        <translation type="unfinished">Libreria</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
         <source>Image</source>
-        <translation>Immagine</translation>
+        <translation type="unfinished">Immagine</translation>
     </message>
     <message>
-        <source>Image Sequence</source>
-        <translation>Serie di immagini</translation>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
+        <source>Image Array</source>
+        <translation type="unfinished">Sequenza Immagini</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
         <source>Svg File</source>
-        <translation>File Svg</translation>
+        <translation type="unfinished">File Svg</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
         <source>Svg Array</source>
-        <translation>Serie di Svg</translation>
+        <translation type="unfinished">Sequenza Svg</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="125"/>
         <source>Add an object to library</source>
-        <translation>Aggiungi un oggetto alla biblioteca</translation>
+        <translation type="unfinished">Aggiungi un oggetto alla libreria</translation>
     </message>
     <message>
-        <source>Adds a folder to the object&apos;s list</source>
-        <translation>Aggiungi una cartella alla lista degli oggetti</translation>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="132"/>
+        <source>Remove the selected object from library</source>
+        <translation type="unfinished">Rimuovi l&apos;oggetto selezionato dalla libreria</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="137"/>
         <source>Inserts the selected object into the drawing area</source>
-        <translation type="unfinished">Inserisce l&apos;oggetto selezionato nell&apos;area di disegno</translation>
+        <translation type="unfinished">Inserisci l&apos;oggetto selezionato nell&apos;area di disegno</translation>
     </message>
     <message>
-        <source>Directory</source>
-        <translation>Cartella</translation>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="143"/>
+        <source>Adds a folder to the object&apos;s list</source>
+        <translation type="unfinished">Aggiungi una cartella alla lista degli oggetti</translation>
     </message>
     <message>
-        <source>No preview available</source>
-        <translation>Anteprima non disponibile</translation>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="280"/>
+        <source>Import an image...</source>
+        <translation type="unfinished">Importa un&apos;immagine...</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="280"/>
+        <source>Image is bigger than workspace.</source>
+        <translation type="unfinished">L&apos;immagine e&apos; piu&apos; grande dell&apos;area di lavoro.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="280"/>
+        <source>Do you want to resize it?</source>
+        <translation type="unfinished">Vuoi ridimensionarle?</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="280"/>
+        <source>Import a SVG file...</source>
+        <translation type="unfinished">Importa un file SVG...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="281"/>
         <source>Images</source>
-        <translation>Immagini</translation>
+        <translation type="unfinished">Immagini</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="300"/>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="413"/>
+        <source>Cannot open file: %1</source>
+        <translation type="unfinished">Non e&apos; possibile aprire il file: %1</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="308"/>
+        <source>Choose the images directory...</source>
+        <translation type="unfinished">Scegli la directory contenente le immagini...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="308"/>
+        <source>Choose the SVG files directory...</source>
+        <translation type="unfinished">Scegli la directory contenente i file SVG...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="329"/>
         <source>Information</source>
         <translation type="unfinished">Informazioni</translation>
     </message>
     <message>
-        <source>Image is bigger than workspace.</source>
-        <translation>L&apos;immagine è più grande dello spazio di lavoro.</translation>
-    </message>
-    <message>
-        <source>Do you want to resize it?</source>
-        <translation>Ridimensionare?</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Cannot open file: %1</source>
-        <translation>Impossibile aprire il file: %1</translation>
-    </message>
-    <message>
-        <source>Choose the images directory...</source>
-        <translation type="unfinished">Scegli la cartella per le immagini...</translation>
-    </message>
-    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="324"/>
         <source>Image files found: %1.</source>
-        <translation>File delle immagini trovati: %1.</translation>
+        <translation type="unfinished">Immagini trovate: %1.</translation>
     </message>
     <message>
-        <source>Files are too big, so they will be resized.</source>
-        <translation>I file sono troppo grandi, saranno ridimensionati.</translation>
-    </message>
-    <message>
-        <source>Note: This task can take a while.</source>
-        <translation>Nota: questa operazione può richiedere del tempo.</translation>
-    </message>
-    <message>
-        <source>Do you want to continue?</source>
-        <translation>Vuoi continuare?</translation>
-    </message>
-    <message>
-        <source>Loading images...</source>
-        <translation>Caricamento delle immagini...</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Loading image #%1</source>
-        <translation>Caricamento dell&apos;immagine #%1</translation>
-    </message>
-    <message>
-        <source>ERROR!</source>
-        <translation>ERRORE!</translation>
-    </message>
-    <message>
-        <source>ERROR: Can&apos;t open file %1. Please, check file permissions and try again.</source>
-        <translation type="unfinished">ERRORE: impossibile aprire il file %1. Per favore, controlla i permessi del file e ritenta.</translation>
-    </message>
-    <message>
-        <source>No image files were found.&lt;br/&gt;Please, try another directory</source>
-        <translation>Nessun file immagine trovato.&lt;br/&gt;Per favore, tenta con un&apos;altra cartella</translation>
-    </message>
-    <message>
-        <source>Choose the SVG files directory...</source>
-        <translation type="unfinished">Scegli la cartella per i file SVG...</translation>
-    </message>
-    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="324"/>
         <source>%1 SVG files will be loaded.</source>
-        <translation>%1 file SVG saranno caricati.</translation>
+        <translation type="unfinished">%1 I file SVG saranno importati.</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="326"/>
+        <source>Files are too big, so they will be resized.</source>
+        <translation type="unfinished">I file sono troppo grandi, saranno ridimensionati.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="326"/>
+        <source>Note: This task can take a while.</source>
+        <translation type="unfinished">Nota: Questa operazione puo&apos; richiedere del tempo.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="332"/>
+        <source>Do you want to continue?</source>
+        <translation type="unfinished">Vuoi continuare?</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="341"/>
+        <source>Loading images...</source>
+        <translation type="unfinished">Importazione immagini in corso...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="341"/>
         <source>Loading SVG files...</source>
-        <translation>Caricamento dei file SVG...</translation>
+        <translation type="unfinished">Importazione file SVG in corso...</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="381"/>
+        <source>Loading image #%1</source>
+        <translation type="unfinished">Importazione immagini #%1</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="381"/>
         <source>Loading SVG file #%1</source>
-        <translation>Caricamento del file SVG #%1</translation>
+        <translation type="unfinished">Importazione SVG #%1</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="387"/>
+        <source>ERROR!</source>
+        <translation type="unfinished">ERRORE!</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="387"/>
+        <source>ERROR: Can&apos;t open file %1. Please, check file permissions and try again.</source>
+        <translation type="unfinished">ERRORE: Impossibile aprire il file %1. Verificare i permessi relativi ai file e riprovare.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="397"/>
+        <source>No image files were found.&lt;br/&gt;Please, try another directory</source>
+        <translation type="unfinished">Non e&apos; stata trovata nessuna immagine.&lt;br/&gt;Scegli un&apos;altra directory</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="397"/>
         <source>No SVG files were found.&lt;br/&gt;Please, try another directory</source>
-        <translation>Nessun file SVG trovato.&lt;br/&gt;Per favore, tenta con un&apos;altra cartella</translation>
+        <translation type="unfinished">Non e&apos; stato trovato nessun file SVG.&lt;br/&gt;Scegli un&apos;altra directory</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="403"/>
         <source>Import audio file...</source>
-        <translation>Importa file sonoro...</translation>
+        <translation type="unfinished">Importazione audio...</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="404"/>
         <source>Sound file</source>
-        <translation>File sonoro</translation>
-    </message>
-    <message>
-        <source>Export object...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Item exported successfully!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t create images directory!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t create vector directory!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tupi library item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vector</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import images...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import SVG files...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Library is empty!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There&apos;s no current selection!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It&apos;s a directory! Please, pick a graphic object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It&apos;s a sound file! Please, pick a graphic object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sounds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error while opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">File Suono</translation>
     </message>
 </context>
 <context>
-    <name>TupListProjectDialog</name>
+    <name>KTListProjectDialog</name>
     <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="56"/>
         <source>Projects List from Server</source>
-        <translation>Lista dei progetti sul server</translation>
+        <translation type="unfinished">Lista dei progetti dal Server</translation>
     </message>
     <message>
-        <source>My works:</source>
-        <translation>I miei lavori:</translation>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>name</source>
+        <translation type="unfinished">nome</translation>
     </message>
     <message>
-        <source>My contributions:</source>
-        <translation type="unfinished">I miei contributi:</translation>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>author</source>
+        <translation type="unfinished">autore</translation>
     </message>
     <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>description</source>
+        <translation type="unfinished">descrizione</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="82"/>
         <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nome</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descrizione</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autore</translation>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 <context>
-    <name>TupMainWindow</name>
+    <name>KTMainWindow</name>
     <message>
-        <source>Tupi: 2D Magic</source>
-        <translation>Tupí: Magia 2D</translation>
+        <location filename="../../ktmainwindow.cpp" line="115"/>
+        <source>Tupi: Magic 2D</source>
+        <translation type="unfinished">Tupi: Magia 2D</translation>
     </message>
     <message>
-        <source>[ by %1 | net mode ]</source>
-        <translation type="unfinished">[ di %1 | modalità di rete ]</translation>
+        <location filename="../../ktmainwindow.cpp" line="124"/>
+        <source>Setting up the project manager</source>
+        <translation type="unfinished">Configurazione project manager</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="127"/>
+        <source>Loading action manager...</source>
+        <translation type="unfinished">Caricamento action manager...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="131"/>
+        <source>Creating menu bar...</source>
+        <translation type="unfinished">Creazione barra menu&apos;...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="134"/>
+        <source>Creating GUI...</source>
+        <translation type="unfinished">Creazione GUI...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="134"/>
         <source>Information</source>
-        <translation>Informazioni</translation>
+        <translation type="unfinished">Informazioni</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="225"/>
         <source>Opening a new document...</source>
-        <translation>Apertura di un nuovo progetto...</translation>
+        <translation type="unfinished">Apertura di un nuovo documento...</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="231"/>
+        <source>Illustration</source>
+        <translation type="unfinished">Disegno</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="249"/>
+        <location filename="../../ktmainwindow.cpp" line="957"/>
+        <location filename="../../ktmainwindow_gui.cpp" line="315"/>
         <source>Animation</source>
-        <translation>Animazione</translation>
+        <translation type="unfinished">Animazione</translation>
     </message>
     <message>
-        <source>Player</source>
-        <translation>Riproduttore</translation>
-    </message>
-    <message>
-        <source>Project &lt;b&gt;%1&lt;/b&gt; opened!</source>
-        <translation>Progetto &lt;b&gt;%1&lt;/b&gt; aperto!</translation>
-    </message>
-    <message>
+        <location filename="../../ktmainwindow.cpp" line="322"/>
         <source>Question</source>
-        <translation>Domanda</translation>
+        <translation type="unfinished">Domande</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="324"/>
         <source>The document has been modified.</source>
-        <translation>Il progetto è stato modificato.</translation>
+        <translation type="unfinished">Il documento e&apos; stato modificato.</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="325"/>
         <source>Do you want to save the project?</source>
-        <translation>Vuoi salvare il progetto?</translation>
+        <translation type="unfinished">Vuoi salvare il progetto?</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="351"/>
         <source>Save</source>
-        <translation>Salva</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="352"/>
         <source>Discard</source>
-        <translation>Scarta</translation>
+        <translation type="unfinished">Abbandona</translation>
     </message>
     <message>
+        <location filename="../../ktmainwindow.cpp" line="353"/>
         <source>Cancel</source>
-        <translation>Annulla</translation>
+        <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <source>by</source>
-        <translation>di</translation>
-    </message>
-    <message>
-        <source>Open Tupi project</source>
-        <translation>Apri progetto di Tupi</translation>
-    </message>
-    <message>
-        <source>Tupi Project Package (*.tup)</source>
-        <translation>Progetto di Tupi (*.tup)</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Cannot open project!</source>
-        <translation>Impossibile aprire il progetto!</translation>
-    </message>
-    <message>
-        <source>Tip of the day</source>
-        <translation>Suggerimento del giorno</translation>
-    </message>
-    <message>
-        <source>Show on start</source>
-        <translation>Mostra all&apos;avvio</translation>
-    </message>
-    <message>
-        <source>Previous tip</source>
-        <translation>Precedente</translation>
-    </message>
-    <message>
-        <source>Next tip</source>
-        <translation>Successivo</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Chiudi</translation>
-    </message>
-    <message>
-        <source>Save Project As</source>
-        <translation>Salva progetto con nome</translation>
-    </message>
-    <message>
-        <source>You have no permission to create this file. Please, choose another path.</source>
-        <translation>Non hai i permessi per creare il file . Per favore, scegli un altro percorso.</translation>
-    </message>
-    <message>
-        <source>Project &lt;b&gt;%1&lt;/b&gt; saved</source>
-        <translation>Progetto &lt;b&gt;%1&lt;/b&gt; salvato</translation>
-    </message>
-    <message>
-        <source>Cannot save the project!</source>
-        <translation>Impossibile salvare il progetto!</translation>
-    </message>
-    <message>
-        <source>New camera</source>
-        <translation type="unfinished">Nuovo punto di vista</translation>
-    </message>
-    <message>
+        <location filename="../../ktmainwindow.cpp" line="518"/>
+        <location filename="../../ktmainwindow.cpp" line="644"/>
         <source>Import project package</source>
-        <translation>Importa il pacchetto del progetto</translation>
+        <translation type="unfinished">Importa archivio progetto</translation>
     </message>
     <message>
-        <source>Can&apos;t import project. File is empty!</source>
-        <translation>Impossibile importare il progetto. Il file è vuoto!</translation>
+        <location filename="../../ktmainwindow.cpp" line="519"/>
+        <source>Tupi Project Package (*.tup);;Tupi Net Project (*.ntup)</source>
+        <translation type="unfinished">Archivio Tupi (*.tup);Archivio Tupi Remoto (*.ntup)</translation>
     </message>
     <message>
-        <source>Can&apos;t save the project. File doesn&apos;t exist!</source>
-        <translation>Impossibile salvare il progetto. Il file non esiste!</translation>
+        <location filename="../../ktmainwindow.cpp" line="598"/>
+        <source>Project %1 opened!</source>
+        <translation type="unfinished">Progetto %1 aperto!</translation>
     </message>
     <message>
-        <source>Fatal Error</source>
-        <translation>Errore fatale</translation>
+        <location filename="../../ktmainwindow.cpp" line="601"/>
+        <source>Cannot open project!</source>
+        <translation type="unfinished">Impossibile aprire il progetto!</translation>
     </message>
     <message>
-        <source>The connection to the server has been lost.</source>
-        <translation>La connessione con il server è caduta.</translation>
+        <location filename="../../ktmainwindow.cpp" line="645"/>
+        <source>Tupi Project Package (*.tup)</source>
+        <translation type="unfinished">Archivio progetto Tupi (*.tup)</translation>
     </message>
     <message>
-        <source>Please, try to connect again in a while</source>
-        <translation>Ritenta la connessione in seguito</translation>
+        <location filename="../../ktmainwindow.cpp" line="680"/>
+        <source>Preferences Dialog Opened</source>
+        <translation type="unfinished">Finestra Preferenze aperto</translation>
     </message>
     <message>
-        <source>Shift+P</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../ktmainwindow.cpp" line="778"/>
+        <source>Tip of the day</source>
+        <translation type="unfinished">Consiglio del giorno</translation>
     </message>
     <message>
-        <source>Shift+B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+L</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bitmap</source>
-        <translation type="unfinished">Immagine</translation>
-    </message>
-    <message>
-        <source>Alt+B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bitmap Array</source>
-        <translation type="unfinished">Serie di Immagini</translation>
-    </message>
-    <message>
-        <source>Alt+Shift+B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SVG File</source>
-        <translation>File SVG</translation>
-    </message>
-    <message>
-        <source>Alt+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SVG Array</source>
-        <translation>Serie di file SVG</translation>
-    </message>
-    <message>
-        <source>Alt+Shift+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+E</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+T</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+D</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;File</translation>
-    </message>
-    <message>
-        <source>Recents</source>
-        <translation>Recenti</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Modifica</translation>
-    </message>
-    <message>
-        <source>&amp;Import</source>
-        <translation>&amp;Importa</translation>
-    </message>
-    <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Finestra</translation>
-    </message>
-    <message>
-        <source>Modules</source>
-        <translation>Moduli</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>Aiuto</translation>
-    </message>
-    <message>
-        <source>News</source>
-        <translation>Notizie</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation>&amp;Aiuto</translation>
-    </message>
-    <message>
-        <source>New project</source>
-        <translation>Nuovo progetto</translation>
-    </message>
-    <message>
-        <source>Ctrl+N</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open new project</source>
-        <translation>Apri un nuovo progetto</translation>
-    </message>
-    <message>
-        <source>Open project</source>
-        <translation>Apri progetto</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load existent project</source>
-        <translation>Carica progetto esistente</translation>
-    </message>
-    <message>
-        <source>Save project</source>
-        <translation>Salva il progetto</translation>
-    </message>
-    <message>
-        <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save current project in current location</source>
-        <translation type="unfinished">Salva il progetto corrente nel percorso attuale</translation>
-    </message>
-    <message>
-        <source>Save project &amp;As...</source>
-        <translation>Salva il progetto &amp;con nome...</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open dialog box to save current project in any location</source>
-        <translation>Apri la finestra per salvare il progetto in un percorso qualsiasi</translation>
-    </message>
-    <message>
-        <source>Cl&amp;ose project</source>
-        <translation>C&amp;hiudi il progetto</translation>
-    </message>
-    <message>
-        <source>Ctrl+W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close active project</source>
-        <translation>Chiudi il progetto attivo</translation>
-    </message>
-    <message>
-        <source>&amp;Import GIMP palettes</source>
-        <translation>&amp;Importa tavolozze di Gimp</translation>
-    </message>
-    <message>
-        <source>Import palettes</source>
-        <translation>Importa tavolozze</translation>
-    </message>
-    <message>
-        <source>&amp;Export Project</source>
-        <translation>&amp;Esporta il progetto</translation>
-    </message>
-    <message>
-        <source>Ctrl+R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export project to several video formats</source>
-        <translation>Esporta il progetto in vari formati video</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation>&amp;Esci</translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close application</source>
-        <translation>Chiudi l&apos;applicazione</translation>
-    </message>
-    <message>
-        <source>Pr&amp;eferences...</source>
-        <translation>Pr&amp;eferenze...</translation>
-    </message>
-    <message>
-        <source>Ctrl+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Opens the preferences dialog box</source>
-        <translation type="unfinished">Apre la finestra delle preferenze</translation>
-    </message>
-    <message>
-        <source>About Tupi</source>
-        <translation>Informazioni su Tupi</translation>
-    </message>
-    <message>
-        <source>Ctrl+K</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
         <source>Ctrl+T</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+T</translation>
     </message>
     <message>
-        <source>Undo</source>
-        <translation>Annulla</translation>
+        <location filename="../../ktmainwindow.cpp" line="778"/>
+        <source>Show on start</source>
+        <translation type="unfinished">Mostrare all&apos;inizio</translation>
     </message>
     <message>
-        <source>Ctrl+Z</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../ktmainwindow.cpp" line="778"/>
+        <source>Previous tip</source>
+        <translation type="unfinished">Precedente</translation>
     </message>
     <message>
-        <source>Redo</source>
-        <translation>Ripeti</translation>
+        <location filename="../../ktmainwindow.cpp" line="778"/>
+        <source>Next tip</source>
+        <translation type="unfinished">Seguente</translation>
     </message>
     <message>
-        <source>Ctrl+Y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Actions Bar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Directory does not exist! Please, choose another path.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Gimp palettes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp Palette (*.gpl *.txt *.css)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp palette import was successful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp palette import was unsuccessful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+G</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Import Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alt+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Papagayo lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupNetProjectManagerHandler</name>
-    <message>
-        <source>Communications</source>
-        <translation>Comunicazioni</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Chat</translation>
-    </message>
-    <message>
-        <source>Notices</source>
-        <translation>Notifiche</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Unable to connect to server</source>
-        <translation>Impossibile connettersi al server</translation>
-    </message>
-    <message>
-        <source>Fatal Error</source>
-        <translation>Errore fatale</translation>
-    </message>
-    <message>
-        <source>User &quot;%1&quot; is disabled.
-Please, contact the animation server admin to get access.</source>
-        <translation>L&apos;utente &quot;%1&quot; non è abilitato.
-Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation type="unfinished">Informazione</translation>
-    </message>
-    <message>
-        <source>User has no available projects in the server</source>
-        <translation>L&apos;utente non ha progetti disponibili sul server</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished">Avvertimento</translation>
-    </message>
-    <message>
-        <source>Notice</source>
-        <translation>Notifica</translation>
-    </message>
-</context>
-<context>
-    <name>TupNewItemDialog</name>
-    <message>
-        <source>Create new raster item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Transparent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation type="unfinished">Bianco</translation>
-    </message>
-    <message>
-        <source>Black</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new vector item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Extension:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Width:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Height:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Background:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Open it with:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupNewProject</name>
-    <message>
-        <source>Create a new project</source>
-        <translation>Crea un nuovo progetto</translation>
-    </message>
-    <message>
-        <source>Project Name</source>
-        <translation>Nome</translation>
-    </message>
-    <message>
-        <source>my_project</source>
-        <translation>mio_progetto</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autore</translation>
-    </message>
-    <message>
-        <source>Your name</source>
-        <translation>Il mio nome</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descrizione</translation>
-    </message>
-    <message>
-        <source>Just for fun!</source>
-        <translation>Per divertimento!</translation>
-    </message>
-    <message>
-        <source>Presets</source>
-        <translation>Formato</translation>
-    </message>
-    <message>
-        <source>Free format</source>
-        <translation>Dimensioni libere</translation>
-    </message>
-    <message>
-        <source>480p (PAL DV/DVD) - 25</source>
-        <translation>480p (PAL DV/DVD) - 25</translation>
-    </message>
-    <message>
-        <source>576p (PAL DV/DVD) - 25</source>
-        <translation>576p (PAL DV/DVD) - 25</translation>
-    </message>
-    <message>
-        <source>720p (HD) - 25</source>
-        <translation>720p (HD) - 25</translation>
-    </message>
-    <message>
-        <source>1280p (Full HD) - 25</source>
-        <translation>1280p (Full HD) - 25</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opzioni</translation>
-    </message>
-    <message>
-        <source>Background</source>
-        <translation>Sfondo</translation>
-    </message>
-    <message>
-        <source>Click here to change background color</source>
-        <translation>Clicca qui per cambiare il colore di sfondo</translation>
-    </message>
-    <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Dimension</source>
-        <translation>Dimensioni</translation>
-    </message>
-    <message>
-        <source>Tupitube project</source>
-        <translation>Progetto Tupitube</translation>
-    </message>
-    <message>
-        <source>Project info</source>
-        <translation>Proprietà</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Impostazioni di rete</translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation>Utente</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Password</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Server</translation>
-    </message>
-    <message>
-        <source>Port</source>
-        <translation>Porta</translation>
-    </message>
-    <message>
-        <source>Store password</source>
-        <translation>Ricorda la password</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Please, set a name for the project</source>
-        <translation>Assegna un nome al progetto</translation>
-    </message>
-    <message>
-        <source>Please, fill in your username</source>
-        <translation>Inserisci il nome utente</translation>
-    </message>
-    <message>
-        <source>Please, fill in your password</source>
-        <translation>Inserisci la password</translation>
-    </message>
-    <message>
-        <source>Please, fill in the server name or IP</source>
-        <translation>Inserisci il nome o l&apos;indirizzo IP del server</translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation>Bianco</translation>
-    </message>
-    <message>
-        <source>520x380 - 24</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>640x480 - 24</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupNotice</name>
-    <message>
-        <source>Notices</source>
-        <translation>Notifiche</translation>
-    </message>
-</context>
-<context>
-    <name>TupOnionOpacityDialog</name>
-    <message>
-        <source>Onion Paper</source>
-        <translation>Carta da lucido</translation>
-    </message>
-    <message>
-        <source>-0.05</source>
-        <translation>-0,05</translation>
-    </message>
-    <message>
-        <source>-0.01</source>
-        <translation>-0,01</translation>
-    </message>
-    <message>
-        <source>+0.01</source>
-        <translation>+0,01</translation>
-    </message>
-    <message>
-        <source>+0.05</source>
-        <translation>+0,05</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintArea</name>
-    <message>
-        <source>Pencil</source>
-        <translation>Matita</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation>Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selezione di un oggetto</translation>
-    </message>
-    <message>
-        <source>Drawing area</source>
-        <translation>Area di disegno</translation>
-    </message>
-    <message>
-        <source>Cut</source>
-        <translation>Taglia</translation>
-    </message>
-    <message>
-        <source>Ctrl+X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Copia</translation>
-    </message>
-    <message>
-        <source>Ctrl+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Incolla</translation>
-    </message>
-    <message>
-        <source>Ctrl+V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Elimina</translation>
-    </message>
-    <message>
-        <source>Add to library...</source>
-        <translation>Aggiungi alla biblioteca...</translation>
-    </message>
-    <message>
-        <source>PolyLine</source>
-        <translation>Polilinea</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>No items selected</source>
-        <translation>Nessun elemento selezionato</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rettangolo</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>Ellisse</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Linea</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Paste in...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>next 5 frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>next 10 frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>next 20 frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>next 50 frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>next 100 frames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished">Invia</translation>
-    </message>
-    <message>
-        <source>To back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To front</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One level to back</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>One level to front</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaBase</name>
-    <message>
-        <source>No Scene!</source>
-        <translation>Nessuna scena!</translation>
-    </message>
-    <message>
-        <source>Locked!</source>
-        <translation>Bloccato!</translation>
-    </message>
-    <message>
-        <source>No Frames!</source>
-        <translation>Nessun fotogramma!</translation>
-    </message>
-    <message>
-        <source>No Layers!</source>
-        <translation>Nessun livello!</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaConfig</name>
-    <message>
-        <source>Grid color</source>
-        <translation>Colore della griglia</translation>
-    </message>
-    <message>
-        <source>Grid separation</source>
-        <translation>Spaziatura della griglia</translation>
-    </message>
-    <message>
-        <source>Background color</source>
-        <translation>Colore di sfondo</translation>
-    </message>
-    <message>
-        <source>Onion skin color</source>
-        <translation>Colore della carta da lucido</translation>
-    </message>
-    <message>
-        <source>Onion skin background </source>
-        <translation>Sfondo della carta da lucido</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaStatus</name>
-    <message>
-        <source>Current Frame</source>
-        <translation>Fotogramma corrente</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
-    <message>
-        <source>Zoom</source>
-        <translation>Ingrandimento</translation>
-    </message>
-    <message>
-        <source>%</source>
-        <translation>%</translation>
-    </message>
-    <message>
-        <source>Rotate Workspace</source>
-        <translation>Ruota lo spazio di lavoro</translation>
-    </message>
-    <message>
-        <source>Antialiasing</source>
-        <translation>Antialiasing</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation>Colore di sfondo</translation>
-    </message>
-    <message>
-        <source>Click here to change background color</source>
-        <translation>Clicca qui per cambiare il colore di sfondo</translation>
-    </message>
-    <message>
-        <source>Brush Color</source>
-        <translation>Colore del pennino</translation>
-    </message>
-    <message>
-        <source>Click here to change brush color</source>
-        <translation>Clicca qui per cambiare il colore del pennino</translation>
-    </message>
-    <message>
-        <source>Action Safe Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>+</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show grid</source>
-        <translation type="unfinished">Mostra la griglia</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation type="unfinished">#</translation>
-    </message>
-    <message>
-        <source>Full screen</source>
-        <translation type="unfinished">A tutto schermo</translation>
-    </message>
-    <message>
-        <source>F11</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset WorkSpace</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupPapagayoDialog</name>
-    <message>
-        <source>Import Papagayo project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Load PGO File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load &amp;Images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load &amp;Sound</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load Papagayo project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo Project (*.pgo)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose the images directory...</source>
-        <translation type="unfinished">Scegli la cartella per le immagini...</translation>
-    </message>
-    <message>
-        <source>Load sound file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound file (*.ogg *.wav *.mp3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Errore</translation>
-    </message>
-    <message>
-        <source>PGO path is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Images directory is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound path is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupPenDialog</name>
-    <message>
-        <source>Pen Size</source>
-        <translation>Dimensione del pennino</translation>
-    </message>
-    <message>
-        <source>-5</source>
-        <translation>-5</translation>
-    </message>
-    <message>
-        <source>-1</source>
-        <translation>-1</translation>
-    </message>
-    <message>
-        <source>+1</source>
-        <translation>+1</translation>
-    </message>
-    <message>
-        <source>+5</source>
-        <translation>+5</translation>
-    </message>
-</context>
-<context>
-    <name>TupPenWidget</name>
-    <message>
-        <source>Pen Properties</source>
-        <translation>Proprietà del pennino</translation>
-    </message>
-    <message>
-        <source>Thickness</source>
-        <translation>Dimensione</translation>
-    </message>
-    <message>
-        <source>Dashes</source>
-        <translation>Tratto</translation>
-    </message>
-    <message>
-        <source>Solid</source>
-        <translation>Unito</translation>
-    </message>
-    <message>
-        <source>Dash</source>
-        <translation>Tratti</translation>
-    </message>
-    <message>
-        <source>Dot</source>
-        <translation>Punti</translation>
-    </message>
-    <message>
-        <source>Dash dot</source>
-        <translation>Tratti e punti</translation>
-    </message>
-    <message>
-        <source>Dash dot dot</source>
-        <translation>Tratto punto punto</translation>
-    </message>
-    <message>
-        <source>Cap</source>
-        <translation>Estremità</translation>
-    </message>
-    <message>
-        <source>Flat</source>
-        <translation>Piatta</translation>
-    </message>
-    <message>
-        <source>Square</source>
-        <translation>Squadrata</translation>
-    </message>
-    <message>
-        <source>Round</source>
-        <translation>Arrotondata</translation>
-    </message>
-    <message>
-        <source>Join</source>
-        <translation>Giuntura</translation>
-    </message>
-    <message>
-        <source>Miter</source>
-        <translation>Ad angolo acuto</translation>
-    </message>
-    <message>
-        <source>Bevel</source>
-        <translation>Ad angolo retto</translation>
-    </message>
-    <message>
-        <source>Brush</source>
-        <translation>Pennello</translation>
-    </message>
-</context>
-<context>
-    <name>TupPluginSelector</name>
-    <message>
-        <source>Select plugin</source>
-        <translation type="unfinished">Seleziona estensione</translation>
-    </message>
-    <message>
-        <source>Video Formats</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WEBM Video</source>
-        <translation type="unfinished">Video WEBM</translation>
-    </message>
-    <message>
-        <source>OGV Video</source>
-        <translation type="unfinished">Video OGV</translation>
-    </message>
-    <message>
-        <source>MPEG Video</source>
-        <translation type="unfinished">Video MPEG</translation>
-    </message>
-    <message>
-        <source>Macromedia flash</source>
-        <translation type="unfinished">Macromedia flash</translation>
-    </message>
-    <message>
-        <source>AVI Video</source>
-        <translation type="unfinished">Video AVI</translation>
-    </message>
-    <message>
-        <source>ASF Video</source>
-        <translation type="unfinished">Video ASF</translation>
-    </message>
-    <message>
-        <source>QuickTime Video</source>
-        <translation type="unfinished">Video QuickTime</translation>
-    </message>
-    <message>
-        <source>PNG Image Sequence</source>
-        <translation type="unfinished">Serie di immagini PNG</translation>
-    </message>
-    <message>
-        <source>JPEG Image Sequence</source>
-        <translation type="unfinished">Serie di immagini JPEG</translation>
-    </message>
-    <message>
-        <source>SVG Image Sequence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Animated PNG (APNG)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SMIL</source>
-        <translation type="unfinished">SMIL</translation>
-    </message>
-    <message>
-        <source>RealMedia Video</source>
-        <translation type="unfinished">Video RealMedia</translation>
-    </message>
-    <message>
-        <source>Gif Image</source>
-        <translation type="unfinished">Immagine Gif</translation>
-    </message>
-    <message>
-        <source>Animated Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation type="unfinished">Serie di immagini</translation>
-    </message>
-</context>
-<context>
-    <name>TupPreferences</name>
-    <message>
-        <source>Application TupPreferences</source>
-        <translation>Preferenze di Tupi</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation type="unfinished">Generale</translation>
-    </message>
-    <message>
-        <source>Theme</source>
-        <translation>Tema</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Carattere</translation>
-    </message>
-    <message>
-        <source>Workspace</source>
-        <translation>Spazio di lavoro</translation>
-    </message>
-</context>
-<context>
-    <name>TupPreferences::GeneralPage</name>
-    <message>
-        <source>Tupi Home</source>
-        <translation type="unfinished">Cartella iniziale di Tupi</translation>
-    </message>
-    <message>
-        <source>Cache</source>
-        <translation>Cache</translation>
-    </message>
-    <message>
-        <source>Browser</source>
-        <translation>Browser</translation>
-    </message>
-    <message>
-        <source>Open last project</source>
-        <translation>Apri l&apos;ultimo progetto</translation>
-    </message>
-    <message>
-        <source>Auto save (minutes)</source>
-        <translation>Salvataggi automatici (minuti)</translation>
-    </message>
-</context>
-<context>
-    <name>TupProjectActionBar</name>
-    <message>
-        <source>F5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>F6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move layer up</source>
-        <translation type="unfinished">Alza il livello</translation>
-    </message>
-    <message>
-        <source>F9</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move layer down</source>
-        <translation type="unfinished">Abbassa il livello</translation>
-    </message>
-    <message>
-        <source>F10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Insert frame</source>
-        <translation>Inserisci un fotogramma</translation>
-    </message>
-    <message>
-        <source>F8</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lock frame</source>
-        <translation type="unfinished">Blocca il fotogramma</translation>
-    </message>
-    <message>
-        <source>Lock layer</source>
-        <translation type="unfinished">Blocca il livello</translation>
-    </message>
-    <message>
-        <source>Move scene up</source>
-        <translation type="unfinished">Sposta la scena su</translation>
-    </message>
-    <message>
-        <source>Move scene down</source>
-        <translation type="unfinished">Sposta la scena giù</translation>
-    </message>
-    <message>
-        <source>Lock scene</source>
-        <translation type="unfinished">Blocca la scena</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this frame?</source>
-        <translation>Vuoi eliminare questo fotogramma?</translation>
-    </message>
-    <message>
-        <source>Remove?</source>
-        <translation>Eliminare?</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this layer?</source>
-        <translation>Vuoi eliminare questo livello?</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this scene?</source>
-        <translation>Vuoi eliminare questa scena?</translation>
-    </message>
-    <message>
-        <source>Insert layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove frame</source>
-        <translation type="unfinished">Rimuovi fotogramma</translation>
-    </message>
-    <message>
-        <source>Move frame backward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move frame forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Insert scene</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove scene</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupProjectManager</name>
-    <message>
-        <source>Scene %1</source>
-        <translation>Scena %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupScene</name>
-    <message>
-        <source>Sound layer %1</source>
-        <translation>Livello sonoro %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupSceneSelector</name>
-    <message>
-        <source>Select Scenes</source>
-        <translation type="unfinished">Seleziona le scene</translation>
-    </message>
-</context>
-<context>
-    <name>TupSceneTabWidget</name>
-    <message>
-        <source>Layers</source>
-        <translation>Livelli</translation>
-    </message>
-</context>
-<context>
-    <name>TupScenesWidget</name>
-    <message>
-        <source>Scenes Manager</source>
-        <translation>Gestore delle scene</translation>
-    </message>
-    <message>
-        <source>Filter here...</source>
-        <translation>Filtra qui...</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Scena %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupSoundPlayer</name>
-    <message>
-        <source>Play</source>
-        <translation type="unfinished">Riproduci</translation>
-    </message>
-</context>
-<context>
-    <name>TupSplash</name>
-    <message>
-        <source>Version </source>
-        <translation>Versione</translation>
-    </message>
-</context>
-<context>
-    <name>TupStoryBoardDialog</name>
-    <message>
-        <source>Storyboard Settings</source>
-        <translation type="unfinished">Impostazioni dello storyboard</translation>
-    </message>
-    <message>
-        <source>Storyboard General Information</source>
-        <translation type="unfinished">Informazioni generali dello storyboard</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Titolo</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autore</translation>
-    </message>
-    <message>
-        <source>Summary</source>
-        <translation>Sommario</translation>
-    </message>
-    <message>
-        <source>Scene Information</source>
-        <translation type="unfinished">Informazioni di scena</translation>
-    </message>
-    <message>
-        <source>Duration</source>
-        <translation>Durata</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descrizione</translation>
-    </message>
-    <message>
-        <source>Cover</source>
-        <translation type="unfinished">Copertina</translation>
-    </message>
-    <message>
-        <source>Storyboard</source>
-        <translation type="unfinished">Storyboard</translation>
-    </message>
-    <message>
-        <source>Scene No %1 - Information</source>
-        <translation type="unfinished">Scena n. %1 - Informazioni</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Info</translation>
-    </message>
-    <message>
-        <source>Storyboard exported successfully!</source>
-        <translation type="unfinished">Storyboard esportato con successo!</translation>
-    </message>
-    <message>
-        <source>&amp;Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation type="unfinished">Argomenti</translation>
-    </message>
-    <message>
-        <source>Choose a directory...</source>
-        <translation type="unfinished">Scegli una cartella...</translation>
-    </message>
-    <message>
-        <source>Scene</source>
-        <translation type="unfinished">Scena</translation>
-    </message>
-    <message>
-        <source>&amp;PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../../ktmainwindow.cpp" line="778"/>
         <source>Close</source>
         <translation type="unfinished">Chiudi</translation>
     </message>
     <message>
-        <source>Save PDF file</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../ktmainwindow.cpp" line="740"/>
+        <source>Import gimp palettes</source>
+        <translation type="unfinished">Importa tavolozza colori gimp</translation>
     </message>
     <message>
-        <source>PDF file (*.pdf)</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../ktmainwindow.cpp" line="741"/>
+        <source>Gimp Palette (*.gpl)</source>
+        <translation type="unfinished">Tavolozza colori Gimp (*.gpl)</translation>
     </message>
     <message>
-        <source>PDF</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../ktmainwindow.cpp" line="743"/>
+        <source>Importing palettes</source>
+        <translation type="unfinished">Importazione tavolozza colori</translation>
     </message>
     <message>
-        <source>Html</source>
-        <translation type="unfinished">Html</translation>
+        <location filename="../../ktmainwindow.cpp" line="867"/>
+        <source>Build project package</source>
+        <translation type="unfinished">Creazione archivio progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="883"/>
+        <source>Directory &quot;</source>
+        <translation type="unfinished">Directory &quot;</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="890"/>
+        <source>You have no permission to create this file. Please, choose another path.</source>
+        <translation type="unfinished">Non hai i permessi per creare questo file. Scegliere un&apos;altro percorso.</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="922"/>
+        <source>Project %1 saved</source>
+        <translation type="unfinished">Progetto %1 salvato</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="924"/>
+        <source>Cannot save the project!</source>
+        <translation type="unfinished">Impossibile salvare il progetto!</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="958"/>
+        <source>New camera</source>
+        <translation type="unfinished">Nuova camera</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Shift+P</source>
+        <translation>Shift+P</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Bitmap</source>
+        <translation type="unfinished">Immagine</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Alt+B</source>
+        <translation>Alt+B</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="96"/>
+        <source>Bitmap Array</source>
+        <translation type="unfinished">Sequenza di immagini</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Alt+Shift+B</source>
+        <translation>Alt+Shift+B</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="97"/>
+        <source>SVG File</source>
+        <translation type="unfinished">SVG File</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Alt+S</source>
+        <translation>Alt+S</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="100"/>
+        <source>SVG Array</source>
+        <translation type="unfinished">Sequenza di file SVG</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Alt+Shift+S</source>
+        <translation>Alt+Shift+S</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="210"/>
+        <source>&amp;File</source>
+        <translation type="unfinished">&amp;File</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="214"/>
+        <source>&amp;New</source>
+        <translation type="unfinished">&amp;Nuovo</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="229"/>
+        <source>Recents</source>
+        <translation type="unfinished">Progetti recenti</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="253"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">&amp;Edit</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="266"/>
+        <source>&amp;Insert</source>
+        <translation type="unfinished">&amp;Inserire</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="285"/>
+        <source>&amp;Window</source>
+        <translation type="unfinished">&amp;Finestra</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="303"/>
+        <source>Modules</source>
+        <translation type="unfinished">Moduli</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="308"/>
+        <source>Drawing</source>
+        <translation type="unfinished">Disegno</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="309"/>
+        <source>News</source>
+        <translation type="unfinished">Notizie</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="322"/>
+        <source>Help</source>
+        <translation type="unfinished">Aiuto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="334"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished">&amp;Aiuto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="381"/>
+        <source>New project</source>
+        <translation type="unfinished">Nuovo progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="386"/>
+        <source>Ctrl+N</source>
+        <translation>Ctrl+N</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="383"/>
+        <source>Open new project</source>
+        <translation type="unfinished">Creare nuovo progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="386"/>
+        <source>Open project</source>
+        <translation type="unfinished">Aprire progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="386"/>
+        <source>Ctrl+O</source>
+        <translation>Ctrl+O</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="389"/>
+        <source>Load existent project</source>
+        <translation type="unfinished">Caricare progetto esistente</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="391"/>
+        <source>Open project from server...</source>
+        <translation type="unfinished">Aprire progetto dal server...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="395"/>
+        <source>Import project to server...</source>
+        <translation type="unfinished">Importare progetto sul server...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="399"/>
+        <source>Save project</source>
+        <translation type="unfinished">Salvare Progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="400"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="402"/>
+        <source>Save current project in current location</source>
+        <translation type="unfinished">Salvare progetto nella locazione corrente</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="404"/>
+        <source>Save project &amp;As...</source>
+        <translation type="unfinished">Salva progetto &amp;Come...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="400"/>
+        <source>Ctrl+Shift+S</source>
+        <translation>Ctrl+Shift+S</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="406"/>
+        <source>Open dialog box to save current project in any location</source>
+        <translation type="unfinished">Finestra di salvataggio del progetto corrente</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="409"/>
+        <source>Cl&amp;ose project</source>
+        <translation type="unfinished">C&amp;hiudi progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="410"/>
+        <source>Ctrl+W</source>
+        <translation>Ctrl+W</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="412"/>
+        <source>Close active project</source>
+        <translation type="unfinished">Chiudi progetto attivo</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="417"/>
+        <source>&amp;Import GIMP palettes</source>
+        <translation type="unfinished">&amp;Importa tavolozza colori GIMP</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="410"/>
+        <source>Ctrl+G</source>
+        <translation>Ctrl+G</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="419"/>
+        <source>Import palettes</source>
+        <translation type="unfinished">Importazione tavolozza colori</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="423"/>
+        <source>&amp;Export Project</source>
+        <translation type="unfinished">&amp;Esporta Progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="410"/>
+        <source>Ctrl+R</source>
+        <translation>Ctrl+R</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="425"/>
+        <source>Export project to several video formats</source>
+        <translation type="unfinished">Esporta progetto in uno dei formati video</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>E&amp;xit</source>
+        <translation type="unfinished">&amp;Uscire</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="431"/>
+        <source>Close application</source>
+        <translation type="unfinished">Chiudi programma</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="449"/>
+        <source>Launch configuration wizard...</source>
+        <translation type="unfinished">Carica configurazione assistita...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="451"/>
+        <source>Launch first configuration wizard</source>
+        <translation type="unfinished">Configurazione assistita </translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="453"/>
+        <source>Pr&amp;eferences...</source>
+        <translation type="unfinished">Pr&amp;eferenze...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+P</source>
+        <translation>Ctrl+P</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="455"/>
+        <source>Opens the preferences dialog box</source>
+        <translation type="unfinished">Apre finestra delle preferenze</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="469"/>
+        <source>About Tupi</source>
+        <translation type="unfinished">Informazioni su Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+K</source>
+        <translation>Ctrl+K</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="527"/>
+        <source>Bar Actions</source>
+        <translation type="unfinished">Barra azioni</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="656"/>
+        <source>Undo</source>
+        <translation type="unfinished">Undo</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+Z</source>
+        <translation>Ctrl+Z</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="656"/>
+        <source>Redo</source>
+        <translation type="unfinished">Redo</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+Y</source>
+        <translation>Ctrl+Y</translation>
     </message>
 </context>
 <context>
-    <name>TupSymbolEditor</name>
+    <name>KTNetProjectManagerHandler</name>
     <message>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="106"/>
+        <source>Communications</source>
+        <translation type="unfinished">Comunicazioni</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="111"/>
+        <source>chat</source>
+        <translation>chat</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="116"/>
+        <source>notices</source>
+        <translation type="unfinished">notifiche</translation>
+    </message>
+</context>
+<context>
+    <name>KTNewProject</name>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="68"/>
+        <source>Create a new project</source>
+        <translation type="unfinished">Creare un nuovo progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="74"/>
+        <source>Project Name</source>
+        <translation type="unfinished">Nome progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="74"/>
+        <source>myproject</source>
+        <translation type="unfinished">mio_progetto</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="80"/>
+        <source>Author</source>
+        <translation type="unfinished">Autore</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="86"/>
+        <source>Dimension</source>
+        <translation type="unfinished">Dimensioni</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="95"/>
+        <source>Options</source>
+        <translation type="unfinished">Opzioni</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="102"/>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="114"/>
+        <source>Project info</source>
+        <translation type="unfinished">Propieta&apos;</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="123"/>
+        <source>Create a network project</source>
+        <translation type="unfinished">Crea un progetto remoto</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="144"/>
+        <source>Network</source>
+        <translation type="unfinished">Network</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Login</source>
+        <translation type="unfinished">Nome utente</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Password</source>
+        <translation type="unfinished">Password</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Server</source>
+        <translation type="unfinished">Server</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Port</source>
+        <translation type="unfinished">Porta</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="204"/>
+        <source>Please fill the project name field</source>
+        <translation type="unfinished">Specificare campo nome progetto</translation>
+    </message>
+</context>
+<context>
+    <name>KTNotice</name>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="77"/>
+        <source>Send</source>
+        <translation type="unfinished">Inviare</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="94"/>
+        <source>notice</source>
+        <translation type="unfinished">notifica</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="94"/>
+        <source> by </source>
+        <translation type="unfinished"> di </translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintArea</name>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="133"/>
+        <source>Drawing area</source>
+        <translation type="unfinished">Area disegno</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="138"/>
+        <source>Cut</source>
+        <translation type="unfinished">Taglia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="139"/>
+        <source>Copy</source>
+        <translation type="unfinished">Copia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="139"/>
+        <source>Ctrl+C</source>
+        <translation>Ctrl+C</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="140"/>
+        <source>Paste</source>
+        <translation type="unfinished">Incolla</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="140"/>
+        <source>Ctrl+V</source>
+        <translation>Ctrl+V</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="141"/>
+        <source>Delete</source>
+        <translation type="unfinished">Cancella</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="144"/>
+        <source>Order</source>
+        <translation type="unfinished">Ordina</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="147"/>
+        <source>Send to back</source>
+        <translation type="unfinished">Metti dietro</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="148"/>
+        <source>Bring to front</source>
+        <translation type="unfinished">Porta di fronte</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="149"/>
+        <source>Send backwards</source>
+        <translation type="unfinished">Metti in fondo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="150"/>
+        <source>Brind forwards</source>
+        <translation type="unfinished">Porta avanti</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="156"/>
+        <source>Add to library...</source>
+        <translation type="unfinished">Aggiungi alla libreria...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="314"/>
+        <source>Object Selection</source>
+        <translation type="unfinished">Selezione oggetto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="506"/>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="540"/>
+        <source>No items selected</source>
+        <translation type="unfinished">Nessun elemento selezionato</translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaBase</name>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="176"/>
+        <source>OpenGL isn&apos;t supported</source>
+        <translation type="unfinished">OpenGL non supportato</translation>
+    </message>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="334"/>
+        <source>Locked!</source>
+        <translation type="unfinished">Bloccato!</translation>
+    </message>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="361"/>
+        <source>No Layers!</source>
+        <translation type="unfinished">Nessun livello!</translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaConfig</name>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="68"/>
+        <source>Grid color</source>
+        <translation type="unfinished">Colore griglia</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="74"/>
+        <source>Grid separation</source>
+        <translation>Separación de Malla</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="83"/>
+        <source>Background color</source>
+        <translation type="unfinished">Colore di fondo</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="89"/>
+        <source>Onion skin color</source>
+        <translation type="unfinished">Colore trasparenza Onion skin</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="95"/>
+        <source>Onion skin background </source>
+        <translation type="unfinished">Sfondo Onion skin</translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaStatus</name>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintareastatus.cpp" line="73"/>
+        <source>Rotate</source>
+        <translation type="unfinished">Ruota</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintareastatus.cpp" line="92"/>
+        <source>Antialiasing</source>
+        <translation>Antialiasing</translation>
+    </message>
+</context>
+<context>
+    <name>KTPenWidget</name>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="52"/>
+        <source>Pen Properties</source>
+        <translation type="unfinished">Propieta&apos; della penna</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="62"/>
+        <source>Thickness</source>
+        <translation type="unfinished">Dimensione tratto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="62"/>
+        <source>Dashes</source>
+        <translation type="unfinished">Tratto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="73"/>
+        <source>Solid</source>
+        <translation type="unfinished">Continuo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="74"/>
+        <source>Dash</source>
+        <translation type="unfinished">Trattino</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="75"/>
+        <source>Dot</source>
+        <translation type="unfinished">Punto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="76"/>
+        <source>Dash dot</source>
+        <translation type="unfinished">Trattino punto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="77"/>
+        <source>Dash dot dot</source>
+        <translation type="unfinished">Trattino punto punto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="77"/>
+        <source>Cap</source>
+        <translation type="unfinished">Finale</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="85"/>
+        <source>Flat</source>
+        <translation type="unfinished">Uniforme</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="86"/>
+        <source>Square</source>
+        <translation type="unfinished">Squadrato</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="87"/>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="96"/>
+        <source>Round</source>
+        <translation type="unfinished">Arrotondato</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="94"/>
+        <source>Join</source>
+        <translation type="unfinished">Approssimazione</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="94"/>
+        <source>Miter</source>
+        <translation>Punta</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="95"/>
+        <source>Bevel</source>
+        <translation type="unfinished">Angolo retto</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="95"/>
+        <source>Brush</source>
+        <translation type="unfinished">Pennello</translation>
+    </message>
+</context>
+<context>
+    <name>KTPreferences</name>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="181"/>
+        <source>Application KTPreferences</source>
+        <translation type="unfinished">Preferenze Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="184"/>
+        <source>General</source>
+        <translation type="unfinished">Generali</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="187"/>
+        <source>Theme</source>
+        <translation>Tema</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="190"/>
+        <source>Font</source>
+        <translation type="unfinished">Carattere</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="193"/>
+        <source>Workspace</source>
+        <translation type="unfinished">Area di lavoro</translation>
+    </message>
+</context>
+<context>
+    <name>KTPreferences::GeneralPage</name>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Tupi Home</source>
+        <translation type="unfinished">Directory installazione</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Cache</source>
+        <translation>Cache</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Browser</source>
+        <translation type="unfinished">Browser</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="116"/>
+        <source>Open last project</source>
+        <translation type="unfinished">Apri l&apos;ultimo progetto</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="126"/>
+        <source>Auto save (minutes)</source>
+        <translation type="unfinished">Salvataggio automatico (minuti)</translation>
+    </message>
+</context>
+<context>
+    <name>KTProject</name>
+    <message>
+        <location filename="../../../store/ktproject.cpp" line="218"/>
+        <source>Scene %1</source>
+        <translation type="unfinished">Scena %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTItemPreview</name>
+    <message>
+        <location filename="../../../libtupi/ktitempreview.cpp" line="51"/>
+        <source>Library is empty :(</source>
+        <translation type="unfinished">Libreria vuota :(</translation>
+    </message>
+</context>
+<context>
+    <name>KTProjectActionBar</name>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="106"/>
+        <source>Insert frame</source>
+        <translation type="unfinished">Inserire fotogramma</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="118"/>
+        <source>Remove the frame</source>
+        <translation type="unfinished">Rimuovere fotogramma</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="131"/>
+        <source>Move frame up</source>
+        <translation type="unfinished">Sposta fotogramma in alto</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>F9</source>
+        <translation>F9</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="142"/>
+        <source>Move frame down</source>
+        <translation type="unfinished">Sposta fotogramma in basso</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>F10</source>
+        <translation>F10</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="153"/>
+        <source>Lock frame</source>
+        <translation type="unfinished">Blocca fotogramma</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>F11</source>
+        <translation>F11</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>Insert a layer</source>
+        <translation type="unfinished">Aggiungi livello</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>F5</source>
+        <translation>F5</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="174"/>
+        <source>Remove the layer</source>
+        <translation type="unfinished">Rimuovi livello</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>F6</source>
+        <translation>F6</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="186"/>
+        <source>Move layer up</source>
+        <translation type="unfinished">Sposta livello in su</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="197"/>
+        <source>Move layer down</source>
+        <translation type="unfinished">Sposta livello in giu&apos;</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="207"/>
+        <source>Lock layer</source>
+        <translation type="unfinished">Blocca livello</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="220"/>
+        <source>Insert a scene</source>
+        <translation type="unfinished">Inserisci scena</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="231"/>
+        <source>Remove the scene</source>
+        <translation type="unfinished">Rimuovi scena</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="317"/>
+        <source>Do you want to remove this frame?</source>
+        <translation type="unfinished">Sei sicuro di voler eliminare il fotogramma corrente?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="317"/>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="331"/>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="345"/>
+        <source>Remove?</source>
+        <translation type="unfinished">Elimino?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="331"/>
+        <source>Do you want to remove this layer?</source>
+        <translation type="unfinished">Sei sicuro di voler eliminare questo livello?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="345"/>
+        <source>Do you want to remove this scene?</source>
+        <translation type="unfinished">Sei sicuro di voler eliminare questa scena?</translation>
+    </message>
+</context>
+<context>
+    <name>KTSaveProject</name>
+    <message>
+        <location filename="../../../store/ktsaveproject.cpp" line="123"/>
+        <source>Project saved in %1!</source>
+        <translation type="unfinished">Progetto salvato in %1!</translation>
+    </message>
+</context>
+<context>
+    <name>KTScene</name>
+    <message>
+        <location filename="../../../store/ktscene.cpp" line="149"/>
+        <source>Layer %1</source>
+        <translation type="unfinished">Livello %1</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktscene.cpp" line="173"/>
+        <source>Sound layer %1</source>
+        <translation type="unfinished">Livello suono %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTSceneTabWidget</name>
+    <message>
+        <location filename="../../../components/exposure/ktscenetabwidget.cpp" line="78"/>
+        <source>Layers</source>
+        <translation type="unfinished">Livelli</translation>
+    </message>
+</context>
+<context>
+    <name>KTScenesWidget</name>
+    <message>
+        <location filename="../../../components/scenes/ktsceneswidget.cpp" line="66"/>
+        <source>Scenes Manager</source>
+        <translation type="unfinished">Scene Manager</translation>
+    </message>
+    <message>
+        <location filename="../../../components/scenes/ktsceneswidget.cpp" line="96"/>
+        <source>Filter here...</source>
+        <translation type="unfinished">Filtro...</translation>
+    </message>
+</context>
+<context>
+    <name>KTSplash</name>
+    <message>
+        <location filename="../../ktsplash.cpp" line="53"/>
+        <source>Version </source>
+        <translation type="unfinished">Versione </translation>
+    </message>
+</context>
+<context>
+    <name>KTSymbolEditor</name>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="85"/>
         <source>Symbol editor</source>
-        <translation type="unfinished">Modifica dei simboli</translation>
+        <translation type="unfinished">Editor oggetti</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="95"/>
         <source>Brushes</source>
-        <translation>Pennini</translation>
+        <translation type="unfinished">Pennelli</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="98"/>
         <source>Selection</source>
-        <translation>Selezione</translation>
+        <translation type="unfinished">Selezione</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="101"/>
         <source>Fill</source>
-        <translation>Riempimento</translation>
+        <translation type="unfinished">Riempimento</translation>
     </message>
     <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="104"/>
         <source>View</source>
-        <translation>Vista</translation>
+        <translation type="unfinished">Vista</translation>
     </message>
 </context>
 <context>
-    <name>TupThemeSelector</name>
+    <name>KTThemeSelector</name>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="77"/>
         <source>General</source>
         <translation type="unfinished">Generale</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
         <source>Text</source>
-        <translation>Testo</translation>
+        <translation type="unfinished">Testo</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
         <source>Base</source>
-        <translation type="unfinished">Base</translation>
+        <translation>Base</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
         <source>Foreground</source>
-        <translation>Primo piano</translation>
+        <translation type="unfinished">Primo piano</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
         <source>Background</source>
-        <translation>Sfondo</translation>
+        <translation type="unfinished">Sfondo</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="82"/>
         <source>Button</source>
-        <translation>Pulsante</translation>
+        <translation type="unfinished">Pulsante</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="82"/>
         <source>Button Text</source>
-        <translation>Testo del pulsante</translation>
+        <translation type="unfinished">Pulsante Testo</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="105"/>
         <source>Effects</source>
-        <translation>Effetti</translation>
+        <translation type="unfinished">Effetti</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
         <source>Light</source>
-        <translation type="unfinished">Luce</translation>
+        <translation type="unfinished">Illuminazione</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
         <source>Midlight</source>
-        <translation type="unfinished">Mezza luce</translation>
+        <translation type="unfinished">Illuminazione media</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
         <source>Dark</source>
-        <translation type="unfinished">Oscurità</translation>
+        <translation type="unfinished">Scuro</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
         <source>Mid</source>
-        <translation type="unfinished">Medio</translation>
+        <translation>Medio</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="131"/>
         <source>Selections</source>
-        <translation>Selezioni</translation>
+        <translation type="unfinished">Selezioni</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="135"/>
         <source>Highlight</source>
         <translation type="unfinished">Evidenziato</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="135"/>
         <source>Highlighted Text</source>
-        <translation type="unfinished">Testo evidenziato</translation>
+        <translation type="unfinished">Testo Evidenziato</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="152"/>
         <source>Text effects</source>
-        <translation type="unfinished">Effetti del testo</translation>
+        <translation type="unfinished">Effetti testo</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
         <source>Bright Text</source>
-        <translation type="unfinished">Testo brillante</translation>
+        <translation type="unfinished">Testo chiaro</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
         <source>Link</source>
-        <translation>Collegamento</translation>
+        <translation type="unfinished">Collegamento</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
         <source>Link Visited</source>
-        <translation>Collegamento visitato</translation>
+        <translation type="unfinished">collegamenti visitati</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="173"/>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
         <source>Schema</source>
-        <translation>Schema</translation>
+        <translation type="unfinished">Schema</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
         <source>Owner</source>
-        <translation>Proprietario</translation>
+        <translation>Propietario</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
         <source>Date</source>
-        <translation>Data</translation>
+        <translation type="unfinished">Data</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="185"/>
         <source>Save schema</source>
-        <translation>Salva schema</translation>
+        <translation type="unfinished">Salvare schema</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="192"/>
         <source>Style</source>
-        <translation>Stile</translation>
+        <translation type="unfinished">Stile</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="196"/>
         <source>Use this colors</source>
-        <translation>Usa questi colori</translation>
+        <translation type="unfinished">Utilizza questo colore</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="285"/>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="unfinished">Nome</translation>
     </message>
     <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="285"/>
         <source>Please choose a theme name</source>
-        <translation>Per favore, scegli un nome per il tema</translation>
+        <translation type="unfinished">Scegliere un nome per il tema</translation>
     </message>
 </context>
 <context>
-    <name>TupTimeLine</name>
+    <name>KTTimeLine</name>
     <message>
+        <location filename="../../../components/timeline/kttimeline.cpp" line="72"/>
         <source>Time Line</source>
-        <translation>Linea temporale</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Livello %1</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Scena %1</translation>
+        <translation type="unfinished">Linea temporale</translation>
     </message>
 </context>
 <context>
-    <name>TupToolStatus</name>
+    <name>KTViewCamera</name>
     <message>
-        <source>Current Tool</source>
-        <translation>Strumento in uso</translation>
+        <location filename="../../../components/cameras/ktviewcamera.cpp" line="56"/>
+        <location filename="../../../components/cameras/ktviewcamera.cpp" line="63"/>
+        <source>Render Camera Preview</source>
+        <translation type="unfinished">Vista preliminare della camera</translation>
     </message>
 </context>
 <context>
-    <name>TupToolsDialog</name>
+    <name>KTViewColorCells</name>
     <message>
-        <source>Pencil</source>
-        <translation>Matita</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation>Inchiostra</translation>
-    </message>
-    <message>
-        <source>Polyline</source>
-        <translation>Polilinea</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>Ellisse</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rettangolo</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selezione di un oggetto</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation>Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>Color Palette</source>
-        <translation>Tavolozza</translation>
-    </message>
-    <message>
-        <source>Pen Size</source>
-        <translation>Dimensione del pennino</translation>
-    </message>
-    <message>
-        <source>Opacity Value</source>
-        <translation type="unfinished">Opacità</translation>
-    </message>
-</context>
-<context>
-    <name>TupTwitter</name>
-    <message>
-        <source>Latest version</source>
-        <translation type="unfinished">Ultima versione</translation>
-    </message>
-    <message>
-        <source>Revision</source>
-        <translation type="unfinished">Revisione</translation>
-    </message>
-    <message>
-        <source>Code Name</source>
-        <translation type="unfinished">Nome in codice</translation>
-    </message>
-    <message>
-        <source>It&apos;s time to upgrade! Click here!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Want to help us to make a better project? Click here!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupTwitterWidget</name>
-    <message>
-        <source>News!</source>
-        <translation>Notizie!</translation>
-    </message>
-</context>
-<context>
-    <name>TupVideoProperties</name>
-    <message>
-        <source>Set Animation Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation type="unfinished">Titolo</translation>
-    </message>
-    <message>
-        <source>My Video</source>
-        <translation type="unfinished">Il mio film</translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation type="unfinished">Argomenti</translation>
-    </message>
-    <message>
-        <source>#topic1 #topic2 #topic3</source>
-        <translation type="unfinished">#argomento1 #argomento2 #argomento3</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation type="unfinished">Descrizione</translation>
-    </message>
-    <message>
-        <source>Just a little taste of my style :)</source>
-        <translation type="unfinished">Una piccola esibizione del mio stile :)</translation>
-    </message>
-    <message>
-        <source>Set a title for the picture here!</source>
-        <translation type="unfinished">Metti qui il titolo dell&apos;immagine!</translation>
-    </message>
-    <message>
-        <source>Set some topic tags for the picture here!</source>
-        <translation type="unfinished">Aggiungi etichette all&apos;immagine!</translation>
-    </message>
-</context>
-<context>
-    <name>TupViewColorCells</name>
-    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="107"/>
         <source>Default Palette</source>
-        <translation>Tavolozza predefinita</translation>
+        <translation type="unfinished">Tavolozza di default</translation>
     </message>
     <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="116"/>
         <source>Named Colors</source>
-        <translation>Colori con nome</translation>
+        <translation type="unfinished">Colori etichettati</translation>
     </message>
     <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="123"/>
         <source>Custom Color Palette</source>
-        <translation>Tavolozza dei colori personalizzata</translation>
+        <translation type="unfinished">Tavolozza colori personalizzata</translation>
     </message>
     <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="128"/>
         <source>Custom Gradient Palette</source>
-        <translation>Tavolozza dei gradienti personalizzata</translation>
+        <translation type="unfinished">Tavolozza sfumature personalizzata</translation>
     </message>
     <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="342"/>
         <source>Add Color</source>
-        <translation>Aggiungi colore</translation>
+        <translation type="unfinished">Aggiungi Colore</translation>
     </message>
     <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="349"/>
         <source>Remove Color</source>
-        <translation>Rimuovi colore</translation>
+        <translation type="unfinished">Rimuovi colore</translation>
     </message>
 </context>
 <context>
-    <name>TupWebHunter</name>
+    <name>KTViewDocument</name>
     <message>
-        <source>Information Temporarily Unavailable</source>
-        <translation>Informazione temporaneamente indisponibile</translation>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="222"/>
+        <source>Show grid</source>
+        <translation type="unfinished">Mostra griglia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="222"/>
+        <source>#</source>
+        <translation>#</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="227"/>
+        <source>Copy</source>
+        <translation type="unfinished">Copia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="227"/>
+        <source>Ctrl+C</source>
+        <translation>Ctrl+C</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="229"/>
+        <source>Copies the selection and puts it onto the clipboard</source>
+        <translation type="unfinished">Copia la selezione nella clipboard</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="232"/>
+        <source>Paste</source>
+        <translation type="unfinished">Incolla</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="232"/>
+        <source>Ctrl+V</source>
+        <translation>Ctrl+V</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="234"/>
+        <source>Pastes the clipboard into the current document</source>
+        <translation type="unfinished">Incolla la clipboard nel documento</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="237"/>
+        <source>&amp;Cut</source>
+        <translation type="unfinished">&amp;Taglia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="237"/>
+        <source>Ctrl+X</source>
+        <translation>Ctrl+X</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="239"/>
+        <source>Cuts the selected items</source>
+        <translation type="unfinished">Taglia l&apos;elemento selezionato</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="241"/>
+        <source>Delete</source>
+        <translation type="unfinished">Elimina</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="245"/>
+        <source>Deletes the selected object</source>
+        <translation type="unfinished">Elimina l&apos;oggetto elezionato</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="247"/>
+        <source>&amp;Group</source>
+        <translation type="unfinished">&amp;Gruppi</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="248"/>
+        <source>Ctrl+G</source>
+        <translation>Ctrl+G</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="251"/>
+        <source>Group the selected objects into a single one</source>
+        <translation type="unfinished">Raggruppa gli oggetti selezionati in uno solo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="253"/>
+        <source>&amp;Ungroup</source>
+        <translation type="unfinished">&amp;Separa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="254"/>
+        <source>Ctrl+Shift+G</source>
+        <translation>Ctrl+Shift+G</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="257"/>
+        <source>Ungroups the selected object</source>
+        <translation type="unfinished">Separa l&apos;oggetto selezionato</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="341"/>
+        <source>Draw tools</source>
+        <translation type="unfinished">Strumenti di disegno</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="348"/>
+        <source>Brushes</source>
+        <translation type="unfinished">Pennelli</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="356"/>
+        <source>Selection</source>
+        <translation type="unfinished">Selezione</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="363"/>
+        <source>Fill</source>
+        <translation type="unfinished">Riempimento</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="370"/>
+        <source>View</source>
+        <translation type="unfinished">Vista</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Pencil</source>
+        <translation type="unfinished">Matita</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>PolyLine</source>
+        <translation type="unfinished">Polilinea</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Line</source>
+        <translation type="unfinished">Linea</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Rectangle</source>
+        <translation type="unfinished">Rettangolo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Ellipse</source>
+        <translation type="unfinished">Ellisse</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Object Selection</source>
+        <translation type="unfinished">Selezione Oggetti</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Internal fill</source>
+        <translation type="unfinished">Riempimento interno</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="586"/>
+        <source>Paint area actions</source>
+        <translation>Paint area actions</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="611"/>
+        <source>Preview Frames</source>
+        <translation type="unfinished">Preview Fotogrammi</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="618"/>
+        <source>Onion Skin</source>
+        <translation type="unfinished">Onion Skin</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="624"/>
+        <source>Next Frames</source>
+        <translation type="unfinished">Fotogramma seguente</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="633"/>
+        <source>&amp;Tools</source>
+        <translation type="unfinished">s&amp;trumenti</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="643"/>
+        <source>&amp;Order</source>
+        <translation type="unfinished">&amp;Ordina</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="650"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">&amp;Edit</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="670"/>
+        <source>&amp;View</source>
+        <translation type="unfinished">&amp;Vista</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="323"/>
+        <source>Eraser</source>
+        <translation type="unfinished">Gomma</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="678"/>
+        <source>Filters</source>
+        <translation type="unfinished">Filtro</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="435"/>
+        <source>Zoom</source>
+        <translation type="unfinished">Ingrandimento</translation>
     </message>
 </context>
 <context>
-    <name>TweenManager</name>
+    <name>KinasWidget</name>
     <message>
-        <source>Create a new Tween</source>
-        <translation>Crea una nuova intercalazione</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Tween name already exists!</source>
-        <translation>Il nome dell&apos;intercalazione esiste già!</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Modifica</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Elimina</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opzioni</translation>
+        <location filename="../../../components/kinas/kinaswidget.cpp" line="41"/>
+        <source>Tupi Script</source>
+        <translation>Modo Script</translation>
     </message>
 </context>
 <context>
-    <name>Tweener</name>
+    <name>PolyLine</name>
     <message>
-        <source>Position Tween</source>
-        <translation>Intercalazione di posizione</translation>
+        <location filename="../../../plugins/tools/polyline/polyline.cpp" line="115"/>
+        <source>PolyLine</source>
+        <translation type="unfinished">Polilinea</translation>
     </message>
     <message>
-        <source>Shift+W</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Errore</translation>
-    </message>
-    <message>
-        <source>Tween name is missing!</source>
-        <translation>Manca il nome dell&apos;intercalazione!</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotogramma %1</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informazioni</translation>
-    </message>
-    <message>
-        <source>Tween %1 applied!</source>
-        <translation>Intercalazione %1 applicata!</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Intercalazione di rotazione</translation>
-    </message>
-    <message>
-        <source>Shift+R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Intercalazione di scala</translation>
-    </message>
-    <message>
-        <source>Shift+S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Intercalazione di rottura</translation>
-    </message>
-    <message>
-        <source>Shift+H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Intercalazione di opacità</translation>
-    </message>
-    <message>
-        <source>Shift+O</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Intercalazione di colore</translation>
-    </message>
-    <message>
-        <source>Coloring Tween can&apos;t be applied to raster images</source>
-        <translation>L&apos;intercalazione di colore non può essere applicata ad immagini raster</translation>
-    </message>
-    <message>
-        <source>Shift+C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Coloring Tween can&apos;t be applied to SVG files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../plugins/tools/polyline/polyline.cpp" line="341"/>
+        <source>S</source>
+        <translation>S</translation>
     </message>
 </context>
 <context>
-    <name>TweenerPanel</name>
+    <name>QObject</name>
     <message>
-        <source>Name</source>
-        <translation>Nome</translation>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="370"/>
+        <source>Notice From</source>
+        <translation type="unfinished">Notifica Da</translation>
     </message>
     <message>
-        <source>Options</source>
-        <translation>Opzioni</translation>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="381"/>
+        <source>Wall From</source>
+        <translation type="unfinished">Muro Da</translation>
     </message>
     <message>
-        <source>Select object</source>
-        <translation>Seleziona oggetto</translation>
+        <location filename="../../crashhandler.cpp" line="66"/>
+        <source>Fatal error</source>
+        <translation type="unfinished">Fatal error</translation>
     </message>
     <message>
-        <source>Set Tweeners</source>
-        <translation type="unfinished">Assegna gli intercalatori</translation>
+        <location filename="../../crashhandler.cpp" line="67"/>
+        <source>%1 is crashing...</source>
+        <translation type="unfinished">%1 si sta bloccando...</translation>
     </message>
     <message>
-        <source>Tweeners</source>
-        <translation type="unfinished">Intercalatori</translation>
+        <location filename="../../crashhandler.cpp" line="68"/>
+        <source>Close</source>
+        <translation type="unfinished">Chiudi</translation>
     </message>
     <message>
-        <source>Position</source>
-        <translation>Posizione</translation>
+        <location filename="../../crashhandler.cpp" line="69"/>
+        <source>This is a general failure</source>
+        <translation type="unfinished">This is a general failure</translation>
     </message>
     <message>
-        <source>Rotation</source>
-        <translation>Rotazione</translation>
+        <location filename="../../main.cpp" line="161"/>
+        <source>Missing...</source>
+        <translation>Algo falta...</translation>
     </message>
     <message>
-        <source>Scale</source>
-        <translation>Scala</translation>
+        <location filename="../../main.cpp" line="162"/>
+        <source>You need configure the application</source>
+        <translation>Necesita configurar la aplicación</translation>
     </message>
     <message>
-        <source>Shear</source>
-        <translation type="unfinished">Rottura</translation>
+        <location filename="../../main.cpp" line="200"/>
+        <source>Initializing...</source>
+        <translation>Inicializando...</translation>
     </message>
     <message>
-        <source>Opacity</source>
-        <translation>Opacità</translation>
+        <location filename="../../main.cpp" line="202"/>
+        <source>Loading modules...</source>
+        <translation>Cargando módulos</translation>
     </message>
     <message>
-        <source>Coloring</source>
-        <translation>Colorazione</translation>
+        <location filename="../../main.cpp" line="205"/>
+        <source>Loaded!</source>
+        <translation>Cargado!</translation>
     </message>
     <message>
-        <source>Save Tween</source>
-        <translation>Salva intercalazione</translation>
+        <location filename="../../main.cpp" line="242"/>
+        <source>Magic 2D</source>
+        <translation>Magia 2D</translation>
     </message>
     <message>
-        <source>Cancel Tween</source>
-        <translation>Rimuovi intercalazione</translation>
+        <location filename="../../main.cpp" line="243"/>
+        <location filename="../../main.cpp" line="250"/>
+        <source>Usage: %1 [option]</source>
+        <translation>Uso: %1 [opción]</translation>
     </message>
     <message>
-        <source>Info</source>
-        <translation>Informazioni</translation>
+        <location filename="../../main.cpp" line="244"/>
+        <location filename="../../main.cpp" line="251"/>
+        <source>Options: </source>
+        <translation>Opciones: </translation>
     </message>
     <message>
-        <source>Select objects for Tweening first!</source>
-        <translation type="unfinished">Seleziona prima gli oggetti per l&apos;intercalazione!</translation>
+        <location filename="../../main.cpp" line="246"/>
+        <location filename="../../main.cpp" line="253"/>
+        <source>		Reconfigure %1</source>
+        <translation>Reconfigurar %1</translation>
     </message>
     <message>
-        <source>Update Tween</source>
-        <translation type="unfinished">Aggiorna intercalazione</translation>
+        <location filename="../../../store/ktprojectcommand.cpp" line="126"/>
+        <source>add</source>
+        <translation>add</translation>
     </message>
     <message>
-        <source>Close Tween properties</source>
-        <translation>Chiudi le proprietà delle intercalazioni</translation>
+        <location filename="../../../store/ktprojectcommand.cpp" line="131"/>
+        <source>remove</source>
+        <translation>remove</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="136"/>
+        <source>move</source>
+        <translation>move</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="141"/>
+        <source>lock</source>
+        <translation>lock</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="146"/>
+        <source>rename</source>
+        <translation>rename</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="151"/>
+        <source>select</source>
+        <translation>select</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="156"/>
+        <source>edit node</source>
+        <translation>edit node</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="161"/>
+        <source>view</source>
+        <translation>view</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="166"/>
+        <source>transform</source>
+        <translation>transform</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="171"/>
+        <source>convert</source>
+        <translation>convert</translation>
     </message>
 </context>
 <context>
-    <name>TweenerTable</name>
+    <name>QuaZipFile</name>
     <message>
-        <source>Position</source>
-        <translation>Posizione</translation>
+        <location filename="../../../../3rdparty/quazip/quazipfile.cpp" line="128"/>
+        <source>ZIP/UNZIP API error %1</source>
+        <translation>ZIP/UNZIP API error %1</translation>
+    </message>
+</context>
+<context>
+    <name>Select</name>
+    <message>
+        <location filename="../../../plugins/tools/select/select.cpp" line="100"/>
+        <location filename="../../../plugins/tools/select/select.cpp" line="236"/>
+        <source>Select</source>
+        <translation type="unfinished">Seleziona</translation>
     </message>
     <message>
-        <source>Rotation</source>
-        <translation>Rotazione</translation>
+        <location filename="../../../plugins/tools/select/select.cpp" line="231"/>
+        <source>Object Selection</source>
+        <translation type="unfinished">Selezione Oggetti</translation>
     </message>
     <message>
-        <source>Scale</source>
-        <translation>Scala</translation>
+        <location filename="../../../plugins/tools/select/select.cpp" line="232"/>
+        <source>O</source>
+        <translation>O</translation>
+    </message>
+</context>
+<context>
+    <name>InfoPanel</name>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Rotation mode</source>
+        <translation type="unfinished">Modalità rotazione</translation>
     </message>
     <message>
-        <source>Shear</source>
-        <translation type="unfinished">Rottura</translation>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Double click on any node</source>
+        <translation type="unfinished">Doppio click su di un nodo qualsiasi</translation>
     </message>
     <message>
-        <source>Opacity</source>
-        <translation>Opacità</translation>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Arrows</source>
+        <translation type="unfinished">Freccie</translation>
     </message>
     <message>
-        <source>Coloring</source>
-        <translation>Colorazione</translation>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Movement on selection</source>
+        <translation type="unfinished">Spostamento della selezione</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Shift + Arrows</source>
+        <translation type="unfinished">Shift + Freccie</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Slow movement on selection</source>
+        <translation type="unfinished">Spostamento fine della selezione</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Ctrl + Arrows</source>
+        <translation type="unfinished">Ctrl + Freccie</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Fast movement on selection</source>
+        <translation type="unfinished">Spostamento veloce della selezione</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Close line</source>
+        <translation type="unfinished">Linea chiusa</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/infopanel.cpp" line="1"/>
+        <source>Esc key or Right mouse button</source>
+        <translation type="unfinished">Tasto Esc o tasto destro del mouse</translation>
+    </message>
+</context>
+<context>
+    <name>SelectPlugin</name>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="94"/>
+        <source>Select plugin</source>
+        <translation type="unfinished">Selezionare plugin</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="158"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="215"/>
+        <source>OGV Video</source>
+        <translation type="unfinished">Video OGV</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="163"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="218"/>
+        <source>MPEG Video</source>
+        <translation type="unfinished">Video MPEG</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="168"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="221"/>
+        <source>Macromedia flash</source>
+        <translation>Macromedia flash</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="173"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="224"/>
+        <source>AVI Video</source>
+        <translation type="unfinished">Video AVI</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="178"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="227"/>
+        <source>RealMedia Video</source>
+        <translation type="unfinished">Video RealMedia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="183"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="230"/>
+        <source>ASF Video</source>
+        <translation>Video ASF</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="188"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="233"/>
+        <source>QuickTime Video</source>
+        <translation type="unfinished">Video QuickTime</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="193"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="236"/>
+        <source>Gif Image</source>
+        <translation type="unfinished">Immagine Gif</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="198"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="239"/>
+        <source>PNG Image Array</source>
+        <translation type="unfinished">Sequenza di immagini PNG</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="203"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="242"/>
+        <source>JPEG Image Array</source>
+        <translation type="unfinished">Sequenza di immagini JPEG</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="208"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="245"/>
+        <source>SMIL</source>
+        <translation>SMIL</translation>
+    </message>
+</context>
+<context>
+    <name>SelectScenes</name>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="290"/>
+        <source>Select Scenes</source>
+        <translation type="unfinished">Seleziona scena</translation>
+    </message>
+</context>
+<context>
+    <name>SpinControl</name>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.h" line="211"/>
+        <source>radius</source>
+        <translation type="unfinished">raggio</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.h" line="220"/>
+        <source>angle</source>
+        <translation type="unfinished">angolo</translation>
+    </message>
+</context>
+<context>
+    <name>StepsViewer</name>
+    <message>
+        <location filename="../../../plugins/tools/tweener/stepsviewer.cpp" line="52"/>
+        <source>Interval</source>
+        <translation type="unfinished">Intervallo</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/tweener/stepsviewer.cpp" line="52"/>
+        <source>Frames</source>
+        <translation type="unfinished">Fotogrammi</translation>
+    </message>
+</context>
+<context>
+    <name>TextConfigurator</name>
+    <message>
+        <location filename="../../../plugins/tools/text/textconfigurator.cpp" line="55"/>
+        <source>html</source>
+        <translation>html</translation>
+    </message>
+</context>
+<context>
+    <name>TextTool</name>
+    <message>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="63"/>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="160"/>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="164"/>
+        <source>Text</source>
+        <translation type="unfinished">Testo</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="161"/>
+        <source>T</source>
+        <translation>T</translation>
+    </message>
+</context>
+<context>
+    <name>Motion Tween</name>
+    <message>
+        <location filename="../../../plugins/tools/tweener/tweener.cpp" line="186"/>
+        <source>Motion Tween</source>
+        <translation>Motion Tween</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/tweener/tweener.cpp" line="186"/>
+        <source>W</source>
+        <translation>W</translation>
+    </message>
+</context>
+<context>
+    <name>ViewTool</name>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="69"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="74"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="78"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="92"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="111"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="118"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="144"/>
+        <source>Zoom</source>
+        <translation type="unfinished">Ingrandimento</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="144"/>
+        <source>Z</source>
+        <translation>Z</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="69"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="80"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="81"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="113"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="134"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="190"/>
+        <source>Hand</source>
+        <translation type="unfinished">Spotamento</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="144"/>
+        <source>H</source>
+        <translation>H</translation>
     </message>
 </context>
 <context>
     <name>ZoomConfigurator</name>
     <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="53"/>
+        <source>Zoom Mode</source>
+        <translation type="unfinished">Ingrandimento interattivo</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="58"/>
+        <source>Zoom In</source>
+        <translation type="unfinished">Ingrandisci</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="60"/>
+        <source>Zoom Out</source>
+        <translation type="unfinished">Rimpicciolisci</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="68"/>
         <source>Scale Factor</source>
-        <translation>Fattore di scala</translation>
+        <translation type="unfinished">Fattore ingrandimento</translation>
+    </message>
+</context>
+<context>
+    <name>KTwitterWidget</name>
+    <message>
+        <location filename="../../../components/twitter/ktwitterwidget.cpp" line="48"/>
+        <source>News!</source>
+        <translation type="unfinished">Notizie!</translation>
+    </message>
+</context>
+<context>
+    <name>KTwitter</name>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="243"/>
+        <source>Latest version</source>
+        <translation type="unfinished">Ultima versione</translation>
     </message>
     <message>
-        <source>Tips</source>
-        <translation>Suggerimenti</translation>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="243"/>
+        <source>Revision</source>
+        <translation type="unfinished">Revisione</translation>
     </message>
     <message>
-        <source>Zoom Square mode</source>
-        <translation>Modalità area di ingrandimento</translation>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="243"/>
+        <source>Code Name</source>
+        <translation type="unfinished">Nome in codice</translation>
     </message>
     <message>
-        <source>Press Ctrl key + Mouse left button</source>
-        <translation>Premi Ctrl + tasto sinistro del mouse</translation>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="252"/>
+        <source>Update here!</source>
+        <translation type="unfinished">Aggiorna qui!</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="260"/>
+        <source>This is what&apos;s happening</source>
+        <translation type="unfinished">Questo e&apos; quello che sta succedendo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="223"/>
+        <source>Name</source>
+        <translation type="unfinished">Nome</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="224"/>
+        <source>Description</source>
+        <translation type="unfinished">Descrizione</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="225"/>
+        <source>Website</source>
+        <translation type="unfinished">Sito Web</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="226"/>
+        <source>Followers</source>
+        <translation type="unfinished">Lettori</translation>
+    </message>
+    <message>
+        <location filename="../../../components/twitter/ktwitter.cpp" line="292"/>
+        <source>ref.</source>
+        <translation>ref.</translation>
+    </message>
+</context>
+<context>
+    <name>KTGraphicsScene</name>
+    <message>
+        <location filename="../../../libbase/ktgraphicsscene.cpp" line="140"/>
+        <source>PolyLine</source>
+        <translation type="unfinished">Polilinea</translation>
     </message>
 </context>
 </TS>

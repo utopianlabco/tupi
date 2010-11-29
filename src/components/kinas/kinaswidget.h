@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,22 +36,19 @@
 #ifndef KINASWIDGET_H
 #define KINASWIDGET_H
 
-#include "tglobal.h"
-#include "tupmodulewidgetbase.h"
-#include "tupseditor.h"
-#include "tupsfunctionview.h"
-
+#include <ktmodulewidgetbase.h>
 #include <QSplitter>
 #include <QTabWidget>
 
-/**
- * @author David Cuadrado
-**/
+#include "ktseditor.h"
+#include "ktsfunctionview.h"
 
-class KinasWidget : public TupModuleWidgetBase
+/**
+ * @author David Cuadrado <krawek@toonka.com>
+*/
+class KinasWidget : public KTModuleWidgetBase
 {
     Q_OBJECT
-
     public:
         KinasWidget(QWidget *parent = 0);
         ~KinasWidget();
@@ -61,7 +58,7 @@ class KinasWidget : public TupModuleWidgetBase
 
     private:
         QSplitter *m_splitter;
-        TupSFunctionView *m_functionViewer;
+        KTSFunctionView *m_functionViewer;
         QTabWidget *m_editors;
 };
 

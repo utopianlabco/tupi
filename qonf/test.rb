@@ -1,44 +1,10 @@
-###########################################################################
-#   Project TUPI: Magia 2D                                                #
-#   Project Contact: info@maefloresta.com                                 #
-#   Project Website: http://www.maefloresta.com                           #
-#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
-#                                                                         #
-#   Developers:                                                           #
-#   2010:                                                                 #
-#    Gustavo Gonzalez / xtingray                                          #
-#                                                                         #
-#   KTooN's versions:                                                     #
-#                                                                         #
-#   2006:                                                                 #
-#    David Cuadrado                                                       #
-#    Jorge Cuadrado                                                       #
-#   2003:                                                                 #
-#    Fernado Roldan                                                       #
-#    Simena Dinas                                                         #
-#                                                                         #
-#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
-#   License:                                                              #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
-###########################################################################
 
-require_relative 'qmake'
-require_relative 'detectos'
+require 'qonf/qmake'
+require 'qonf/detectos'
 require 'rexml/parsers/sax2parser'
 require 'rexml/sax2listener'
 
-require_relative 'info'
+require 'qonf/info'
 
 module RQonf
 
@@ -55,98 +21,43 @@ class Test
         @optional = false
     end
     
-    def run(config, conf, debug)
-
+    def run(config, debug)
         parser = Parser.new
         parser.os = DetectOS::OS[DetectOS.whatOS].to_s.downcase
-
+        
         return false if not parser.parse(@rules) or parser.name.empty?
-
+        
         @optional = parser.optional
         
         Info.info << "Checking for " << parser.name << "... "
         
         dir = "#{File.dirname(@rules)}/#{parser.dir}"
-
+        
         if $DEBUG
             Info.warn << "Running in " << dir << $endl
         end
         
         cwd = Dir.getwd
-
         if File.exists?(dir)
             if File.stat(dir).directory?
                 Dir.chdir(dir)
 
-                extraLib = ""
-                extraInclude = ""
+                extralib = ""
                 if RUBY_PLATFORM == "x86_64-linux"
-                   extraLib = "-L/usr/lib64 "
+                   extralib = "-L/usr/lib64"
                 end
 
-                if File.dirname(@rules).end_with?("libav")  
-                   if conf.hasArgument?("with-libav")
-                      libavDir = conf.argumentValue("with-libav")
-                      libavLib = libavDir + "/lib"
-                      extraLib += "-L#{libavLib}"
-                      extraInclude = libavDir + "/include"
-                      qmakeLine = "'LIBS += #{extraLib}'";
-                      qmakeLine += " 'INCLUDEPATH += #{extraInclude}'";
-                   end
-                else
-                   if File.dirname(@rules).end_with?("quazip")
-                      if conf.hasArgument?("with-quazip")
-                         quazipDir = conf.argumentValue("with-quazip")
-                         quazipLib = quazipDir + "/lib"
-                         extraLib += "-L#{quazipLib} -lquazip"
-                         extraInclude = quazipDir + "/include"
-                         qmakeLine = "'LIBS += #{extraLib}'"
-                         qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
-                      else
-                         extraLib = "-lquazip-qt5"
-                         qmakeLine = "'LIBS += #{extraLib}'"
-                      end
-                   else
-                      if File.dirname(@rules).end_with?("theora")
-                         if conf.hasArgument?("with-theora")
-                            theoraDir = conf.argumentValue("with-theora")
-                            theoraLib = theoraDir + "/lib"
-                            extraLib += "-L#{theoraLib}"
-                            extraInclude = theoraDir + "/include"
-                            qmakeLine = "'LIBS += #{extraLib}'"
-                            qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
-                         end
-                      else
-                         qmakeLine = ""
-                         if extraLib.length > 0 
-                            qmakeLine = "'LIBS += #{extraLib} #{parser.libs.join(" ")}'"
-                         end
-                      end
-                   end
-                end
-
-                @qmake.run(qmakeLine, true)
-
+                @qmake.run( "'INCLUDEPATH += #{parser.includes.join(" ")}' 'LIBS += #{extralib} #{parser.libs.join(" ")}'" ,true)
                 if not @qmake.compile(debug)
                     Dir.chdir(cwd)
                     
-                    print "[ \033[91mFAILED\033[0m ]\n"
-
-                    priority = "\033[92moptional\033[0m"
-                    flag = "\033[92mCOULD\033[0m"
-                    if @optional == false
-                       priority = "\033[91mrequired\033[0m"
-                       flag = "\033[91mMUST\033[0m"
-                    end
-
-                    Info.info << "Priority: " << priority << "\n"
-
+                    print "[ FAIL ]\n"
                     
                     # Provide solution
                     solution = parser.solution
                     
-                    Info.warn << "Seems like you are running " << parser.os << "..." << $endl
-                    Info.warn << "You " << flag << " install these dependencies: " << solution[:package] << $endl
+                    Info.warn << "Seems like you are running " << parser.os << $endl
+                    Info.warn << "You will need to install " << solution[:package] << $endl
                     Info.warn << "URL: " << solution[:url] << $endl
                     Info.warn << solution[:comment] << $endl
                     
@@ -164,7 +75,7 @@ class Test
         end
         
         Dir.chdir(cwd)
-
+        
         parser.includes.each { |inc|
             config.addIncludePath(inc)
         }
@@ -172,14 +83,6 @@ class Test
         parser.libs.each { |lib|
             config.addLib(lib)
         }
-
-        if conf.hasArgument?("with-quazip")
-           config.addLib("-lquazip")
-        else
-           config.addLib("-lquazip-qt5")
-        end
-
-        # config.addLib("-lquazip-qt5")
         
         parser.defines.each { |define|
             config.addDefine(define)
@@ -190,13 +93,6 @@ class Test
         }
         
         print "[ \033[92mOK\033[0m ]\n"
-
-        priority = "\033[92moptional\033[0m"
-        if @optional == false 
-           priority = "\033[91mrequired\033[0m" 
-        end
-
-        Info.info << "Priority: " << priority << "\n"
         
         return true
     end
@@ -320,7 +216,7 @@ class Test
             @current_tag = qname
         end
         
-        def end_element(uri, localname, qname)
+        def end_element( uri, localname, qname)
             case qname
                 when ""
             end

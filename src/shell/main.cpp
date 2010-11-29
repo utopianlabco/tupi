@@ -8,7 +8,7 @@
  *   2010:                                                                 *
  *    Gustavo Gonzalez / xtingray                                          *
  *                                                                         *
- *   KTooN's versions:                                                     *
+ *   KTooN's versions:                                                     * 
  *                                                                         *
  *   2006:                                                                 *
  *    David Cuadrado                                                       *
@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,57 +33,89 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupapplication.h"
-#include "tupmainwindow.h"
-#include "tapplicationproperties.h"
-#include "tcollapsiblewidget.h"
-#include "talgorithm.h"
+#include <ktapplication.h>
+#include "ktsplash.h"
+#include "ktmainwindow.h"
+#include <ktwitter.h>
 
-#ifdef K_DEBUG
-#ifdef Q_OS_WIN
-#include <QDebug>
-#else
-#include "tdebug.h"
-#include "tupcrashhandler.h"
-#endif
-#endif
+#include <qfile.h>
+#include <qtextstream.h>
+#include <qtextcodec.h>
+#include <qmessagebox.h>
+#include <qdir.h>
 
-#ifdef ENABLE_TUPISTYLE
-#include "twaitstyle.h"
-#endif
-
-#include <QFile>
-#include <QTextStream>
-#include <QTextCodec>
-#include <QMessageBox>
-#include <QDir>
 #include <QLocale>
 #include <QTranslator>
 #include <QDesktopWidget>
 #include <QThread>
-#include <QStyleFactory>
+
+#include "kapplicationproperties.h"
+#include "kdebug.h"
+#include "kcollapsiblewidget.h"
+#include "kaudioplayer.h"
+
+#ifdef Q_OS_UNIX
+#include "ktcrashhandler.h"
+#endif
+
+#ifdef ENABLE_TUPISTYLE
+#include "kwaitstyle.h"
+#endif
+
+#include <QPlastiqueStyle>
+
+#ifndef CONFIG_H
+#define CONFIG_H
+#endif
+
+#ifndef HAVE_SOUND
+#define HAVE_SOUND
+#endif
+
+#ifndef HAVE_FFMPEG
+#define HAVE_FFMPEG
+#endif
+
+class SleeperThread : public QThread
+{
+    public:
+        static void msleep(unsigned long msecs)
+        {
+            QThread::msleep(msecs);
+        }
+};
 
 /**
- * Main class of the application.
+ * Main class of the application. 
  * This is the code where Tupi application starts.
- * @author David Cuadrado
+ * @author David Cuadrado <krawek@gmail.com>
 */
 
-/**
+/** 
+ * This method defines the console line options to run Tupi
+ */
+void usage();
+
+/** 
  * This method is the first one invoked when Tupi is launched
  */
 
 int main(int argc, char ** argv)
 {
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-    TupApplication application(argc, argv);
+    KTApplication application(argc, argv);
+
+    // If help es required as argument from command line, show the options console help
+    if (application.isArg("help") || application.isArg("h")) {
+        usage();
+        application.exit(0);
+        return 0;
+    }
+
+    // qsrand(::time(0));
 
 #ifdef Q_OS_UNIX
-#ifdef K_DEBUG
-    TDebug::setOutputChannel();
     // Initializing the crash handler, very useful to catch bugs
-    TupCrashHandler::init();
-#endif
+    KTCrashHandler::init();
 #endif
 
     // Setting the current version for Tupi
@@ -92,154 +124,154 @@ int main(int argc, char ** argv)
     kAppProp->setRevision(REVISION);
 
     // Time to define global variables for Tupi
-    QDir appDirPath(QApplication::applicationDirPath());
-    TCONFIG->beginGroup("General");
-    if (TCONFIG->firstTime()) {
-        TCONFIG->setValue("ClientID", TAlgorithm::randomString(20));
+    KCONFIG->beginGroup("General");
 
-        #if defined(Q_OS_MAC)
-            TCONFIG->setValue("Home", appDirPath.absolutePath());
-        #else
-            TCONFIG->setValue("Home", QString::fromLocal8Bit(::getenv("TUPI_HOME")));
-        #endif
-        
-        #ifdef Q_OS_WIN
-            if (QSysInfo::windowsVersion() == QSysInfo::WV_XP) {
-                QDir dir("C:\temp");
-                if (!dir.exists()) {
-                    if (!dir.mkdir("C:\temp")) {
-                        #ifdef K_DEBUG
-                            qDebug() << "main.cpp - Fatal error: WinXP issue!";
-                        #endif
-                        return 0;
-                    }
-                }
-                TCONFIG->setValue("Cache", QDir::tempPath());
-            } else {
-                TCONFIG->setValue("Cache", QDir::tempPath());
-            }
-        #else
-            TCONFIG->setValue("Cache", QDir::tempPath());    
-        #endif
+    if (! KCONFIG->isOk()) {
+#if defined(K_DEBUG)
+        KCONFIG->setValue("Debug", "true");
+#else
+        KCONFIG->setValue("Debug", "false");
+#endif
+        KCONFIG->setValue("Home", QString::fromLocal8Bit(::getenv("TUPI_HOME")));
+        KCONFIG->setValue("Cache", QDir::tempPath());
     }
 
-#ifdef K_DEBUG
-    QString debug = "main.cpp - CACHE path: " + TCONFIG->value("Cache").toString();
-    #ifdef Q_OS_WIN
-        qWarning() << debug;
-    #else
-        tWarning() << debug;
-    #endif
-#endif
-    
-#if defined(Q_OS_MAC)
-    kAppProp->setHomeDir(TCONFIG->value("Home").toString());
-    kAppProp->setBinDir(appDirPath.absolutePath());
-    kAppProp->setPluginDir(appDirPath.absolutePath() + "/plugins");
-    kAppProp->setShareDir(appDirPath.absolutePath() + "/share");
-#else
-    kAppProp->setHomeDir(TCONFIG->value("Home").toString());
-    kAppProp->setBinDir(QString::fromLocal8Bit(::getenv("TUPI_BIN")));
+    kAppProp->setHomeDir(KCONFIG->value("Home").toString());
     kAppProp->setPluginDir(QString::fromLocal8Bit(::getenv("TUPI_PLUGIN")));
     kAppProp->setShareDir(QString::fromLocal8Bit(::getenv("TUPI_SHARE")));
-#endif
 
     QString locale = QString(QLocale::system().name()).left(2);
+
     if (locale.length() < 2)
         locale = "en";
 
-#ifdef Q_OS_WIN
-    QString xmlDir = kAppProp->shareDir() + "xml/";
-#else
-    QString xmlDir = kAppProp->shareDir() + "data/xml/";
-#endif
-    QDir dir(xmlDir + locale + "/");
-    if (!dir.exists())
-        kAppProp->setDataDir(xmlDir + "en/");
+    QDir dir(SHARE_DIR + "data/" + locale + "/");
+    if (! dir.exists())
+        kAppProp->setDataDir(SHARE_DIR + "data/en/");
     else
-        kAppProp->setDataDir(xmlDir + locale + "/");
+        kAppProp->setDataDir(SHARE_DIR + "data/" + locale + "/");
 
-    QString themeName = TCONFIG->value("Theme").toString();
-    if (themeName.length() == 0) {
-        themeName = "Dark";
-        TCONFIG->setValue("Theme", themeName);
-    }
+    kAppProp->setThemeDir(SHARE_DIR + "themes/default" + "/");
 
-    if (themeName.compare("Light") == 0)
-        kAppProp->setThemeDir(kAppProp->shareDir() + "themes/default/");
-    else
-        kAppProp->setThemeDir(kAppProp->shareDir() + "themes/dark/");
+    /*
+    kDebug() << "HOME_DIR: " << HOME_DIR;
+    kDebug() << "SHARE_DIR: " << SHARE_DIR;
+    kDebug() << "DATA_DIR: " << DATA_DIR;
+    kDebug() << "THEME_DIR: " << THEME_DIR;
+    */
 
     // Setting the repository directory (where the projects are saved)
-    application.createCache(TCONFIG->value("Cache").toString());
+    application.createCache(KCONFIG->value("Cache").toString());
 
-    QStyle *style = QStyleFactory::create("fusion");
-    QApplication::setStyle(style);
+    // Downloading maefloresta Twitter status
+    KTwitter *ktwitter = new KTwitter();
+    ktwitter->start();
 
-    // SQA: Add support for at least two languages for the next release 
-    QList<QString> langSupport;
-    langSupport << "es" << "fr" << "pt";
-    if (locale.compare("en") != 0 && langSupport.contains(locale)) {
-        #ifdef Q_OS_WIN
-            QString langFile = kAppProp->shareDir() + "translations/tupi_" + locale + ".qm";
-        #else
-            QString langFile = kAppProp->shareDir() + "data/translations/tupi_" + locale + ".qm";
-        #endif
+    // SQA: KTooN gui styles must be re-factored 
+    // Setting the gui style for the interface
+#ifdef ENABLE_TUPISTYLE
+    QApplication::setStyle(new KWaitStyle());
+#elif defined(Q_OS_LINUX)
+    QApplication::setStyle(new QPlastiqueStyle());
+#endif
 
-        if (QFile::exists(langFile)) {
-            // Loading localization files...
-            QTranslator *translator = new QTranslator;
-            translator->load(langFile);
-            application.installTranslator(translator);
-        } else {
+    // If user asked for reconfigure Tupi or if this is the first time the application is launched
+    if (kAppProp->homeDir().isEmpty() || application.isArg("r") || application.isArg("reconfigure")) {
+        // Launching the basic configuration dialog
+        if (! application.firstRun()) {
+            // If dialog is canceled or Tupi can not be configured, kill the whole application
             #ifdef K_DEBUG
-                QString msg = "main.cpp - Error: Can't open file -> " + langFile;
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif    
+                  kFatal () << "********************* You need configure the application" << endl;
+           #endif
+
+           QMessageBox::critical(0, QObject::tr("Missing..."), 
+                                 QObject::tr("You need configure the application"));
+           application.exit(-1);
+           return -1;
         }
+
+        // Setting the new global variables for Tupi
+        kAppProp->setHomeDir(KCONFIG->value("Home").toString());
+        application.createCache(KCONFIG->value("Cache").toString());
     }
 
-    TupMainWindow mainWindow;
+    // Time to apply the theme for the application GUI
+    QString themefile = KCONFIG->value("ThemeFile").toString();
+
+    if (! themefile.isEmpty()) 
+        application.applyTheme(themefile);
+
+    // Loading localization files... now you got Tupi in your native language
+
+    QTranslator *translator = new QTranslator;
+    translator->load(SHARE_DIR + "data/translations/" + "tupi_" + locale + ".qm");
+    application.installTranslator(translator);
+
+    // Time to show the Tupi initial splash 
+    KTSplash *splash = new KTSplash;
+    splash->show();
+    QDesktopWidget desktop;
+    splash->move((int) (desktop.screenGeometry().width() - splash->width())/2, 
+                 (int) (desktop.screenGeometry().height() - splash->height())/2);
+
+    splash->setMessage(QObject::tr("Initializing..."));
+    SleeperThread::msleep(500);
+
+    splash->setMessage(QObject::tr("Loading modules..."));
+    SleeperThread::msleep(500);
+
+    KTMainWindow mainWindow(splash, argc);
+
+    splash->setMessage(QObject::tr("Loaded!"));
+    SleeperThread::msleep(500);
+
     mainWindow.showMaximized();
+
+    delete splash;
 
     // Looking for plugins for Tupi
     #ifdef K_DEBUG
-        QString msg = "main.cpp - Loading plugins from: " + kAppProp->pluginDir();
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
+           kWarning() << "Loading plugins from: " << SHARE_DIR << " + plugins";
     #endif
-    QApplication::addLibraryPath(kAppProp->pluginDir());
+    QApplication::addLibraryPath(SHARE_DIR + "plugins");
 
     // Loading visual components required for the Crash Handler
-    #if defined(Q_OS_UNIX) && defined(K_DEBUG)
-        CHANDLER->setConfig(DATA_DIR + "crashhandler.xml");
-        CHANDLER->setImagePath(THEME_DIR + "icons/");
+    #ifdef Q_OS_UNIX
+           CHANDLER->setConfig(DATA_DIR + "crashhandler.xml");
+           CHANDLER->setImagePath(THEME_DIR + "icons/");
     #endif
 
-    if (argc == 1) {
-        bool openLast = TCONFIG->value("OpenLastProject").toBool();
-        if (openLast) {
-            QString files = TCONFIG->value("Recents").toString();
-            QStringList recents = files.split(';');
-            if (!files.isEmpty())
-                mainWindow.openProject(recents.first());
-        }
-    } else {
-        // If there is a second argument, it means to open a project from the command line
-        if (argc == 2) {
-            QString project = QString(argv[1]);
-            if (project.endsWith(".tup") || project.endsWith(".TUP"))
-                mainWindow.openProject(project);
-        }
+    // If there is a second argument, it means to open a project from the command line
+    if (argc == 2) {
+        QString project = QString(argv[1]);
+        mainWindow.openProject(project);
     }
 
-    // It's time to play with Tupi!
+    // It's time to play with Tupi!	
     return application.exec();
 }
+
+/** 
+ * This method defines the console line options to run Tupi
+ */
+
+void usage()
+{
+#if defined(Q_OS_UNIX)
+    // Characters \033[1;33m and \033[1;34m are useful for colored messages
+    puts(QString("\033[1;33m"+QApplication::applicationName() + kAppProp->version()).toLocal8Bit());
+    puts(QString(QObject::tr("2D Animation Toolkit")+"\033[0;0m" ).toLocal8Bit());
+    puts(QString("\033[1;34m"+QObject::tr("Usage: %1 [option]").arg(kApp->argv()[0])+"\033[0;0m").toLocal8Bit());
+    puts(QString("\033[1;31m"+QObject::tr("Options: ")).toLocal8Bit());
+    puts("-r, --reconfigure");
+    puts(QObject::tr("\t\tReconfigure %1").arg(QApplication::applicationName()).toLocal8Bit());
+    puts("\033[0;0m");
+#else
+    puts(QString(QApplication::applicationName() + kApp->version()).toLocal8Bit());
+    puts(QObject::tr("Usage: %1 [option]").arg(kApp->argv()[0]).toLocal8Bit());
+    puts(QObject::tr("Options: ").toLocal8Bit());
+    puts("-r, --reconfigure");
+    puts(QObject::tr("\t\tReconfigure %1").arg(QApplication::applicationName()).toLocal8Bit()); 
+#endif
+}
+

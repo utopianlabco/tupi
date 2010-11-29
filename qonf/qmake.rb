@@ -1,40 +1,5 @@
-###########################################################################
-#   Project TUPI: Magia 2D                                                #
-#   Project Contact: info@maefloresta.com                                 #
-#   Project Website: http://www.maefloresta.com                           #
-#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
-#                                                                         #
-#   Developers:                                                           #
-#   2010:                                                                 #
-#    Gustavo Gonzalez / xtingray                                          #
-#                                                                         #
-#   KTooN's versions:                                                     #
-#                                                                         #
-#   2006:                                                                 #
-#    David Cuadrado                                                       #
-#    Jorge Cuadrado                                                       #
-#   2003:                                                                 #
-#    Fernado Roldan                                                       #
-#    Simena Dinas                                                         #
-#                                                                         #
-#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
-#   License:                                                              #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
-###########################################################################
-
-require_relative 'info'
-require_relative 'extensions'
+require 'qonf/info'
+require 'qonf/extensions'
 
 module RQonf
 
@@ -43,71 +8,84 @@ class QMake
     $found = ""
 
     def initialize
+        if not findQMake("4.0.0",false)
+            raise QonfException.new("Can't find valid qmake - qt4")
+        end
+        
         @make = "make"
     end
 
     # This method check if the current version of Qt is valid for Tupi compilation    
-    def findQMake(minqtversion, verbose, qtdir)
-        path = "qmake"
-        command = ""
-
-        Info.info << "Testing for #{path}... "
-
-        IO.popen("which #{path}") { |result|
-                 if qtdir.length > 0
-                    command = qtdir + "/bin/qmake"
-                 else
-                    pathVar = result.readlines.join("").split(":")
-                    if pathVar.length > 0
-                       command = pathVar[0].chop
-                    end
-                 end
-
-                 if command.length == 0
-                    return false
-                 end
-        }
-
+    def findQMake(minqtversion, verbose)
         qtversion = ""
-        version = []
-
-        IO.popen("#{command} -query QT_VERSION") { |prc|
-                 found = prc.readlines.join("")
-                 version = found.split(".")
-                 if (found.length != 0)
-                     qtversion = found.chop
-                 end
-        }
-
+        paths = [ "qmake", "qmake-qt4", "qmake4" ]
         minver = minqtversion.split(".")
+        valid = true
 
-        version.size.times { |i|
-                if i == 0
-                   if version[i] < minver[i]
-                      return false 
-                   end
-                end
+        paths.each { |path|
+            begin
+                version = []
+                sites = []
+                distance = 0
+                IO.popen("whereis #{path}") { |result|
+                          sites = result.readlines.join("").split(":")
+                          word = sites[1].chop
+                          distance = word.length
+                }
 
-                if i == 1
-                   if version[i] < minver[i]
-                      return false
-                   end
-                end
+                if distance > 0
+                    IO.popen("#{path} -query QT_VERSION") { |prc|
+                        found = prc.readlines.join("")
+                        version = found.split(".")
+                        if (found.length != 0)
+                            qtversion = found.chop
+                        end
+                    }
+                    next if $? != 0
 
-                if i == 2
-                   if version[i] < minver[i]
-                      return false
-                   end
-                end
-        }
+                    version.size.times { |i|
+                        if i = 0
+                           if version[i] < minver[i]
+                              valid = false 
+                              break
+                           end
+                        end
+
+                        if i = 1
+                           if version[i] < minver[i]
+                              valid = false
+                              break
+                           else
+                              if version[i] > minver[i]
+                                 break
+                              end
+                           end
+                        end
+
+                        if i = 2
+                           if version[i] < minver[i]
+                              valid = false
+                              break
+                           end
+                        end
+                    }
                 
-        @path = command
+                    if valid  
+                        @path = path
+                        break    
+                    end
+                else
+                    valid = false
+                    return valid
+                end
+            end
+        }
 
-        if verbose == 1
+        if verbose 
             print "(Found: #{qtversion}) "
         end
 
-        return true
+        return valid
     end
 
     def query(var)
@@ -118,10 +96,11 @@ class QMake
     def run(args = "", recur = false)
         options = ""
         if recur
-            options += "-recursive"
+            options += "-r"
         end
-        output = `#{@path} #{options} #{args}`
-
+        
+        output = `#{@path} #{args} #{options} `
+        
         if output.strip.empty?
             return true
         end

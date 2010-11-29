@@ -4,7 +4,7 @@ body {
 
 .sponsors {
      background-color:#ffffff;
-     background-image:url('file:thanks.png');
+     background-image:url('../images/thanks.png');
      background-repeat:no-repeat;
      background-position:center center;
 }
@@ -16,7 +16,7 @@ body {
      text-decoration:none;
      font-family:"Times New Roman", Times, serif;
      font-style:normal;
-     font-size:14px;
+     font-size:12px;
      font-weight:normal;
 }
 

@@ -1,4531 +1,2529 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ca" sourcelanguage="en_US">
+<TS version="2.0" language="ca" sourcelanguage="ca">
 <context>
-    <name>ButtonsPanel</name>
+    <name>Brush</name>
     <message>
-        <source>Edit Tween</source>
-        <translation>Edita la interpolació</translation>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="86"/>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="185"/>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="191"/>
+        <source>Pencil</source>
+        <translation type="unfinished">Llapis</translation>
     </message>
     <message>
-        <source>Remove Tween</source>
-        <translation>Suprimeix la interpolació</translation>
+        <location filename="../../../plugins/tools/brush/brush.cpp" line="186"/>
+        <source>Ctrl+B</source>
+        <translation>Ctrl+B</translation>
+    </message>
+</context>
+<context>
+    <name>CWFirstPage</name>
+    <message>
+        <location filename="../../configwizard.cpp" line="82"/>
+        <source>Welcome</source>
+        <translatorcomment>Podria possar-li (da) per fer-ho mes correcte politicament</translatorcomment>
+        <translation type="unfinished">Benvingut</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="88"/>
+        <source>&lt;h1&gt;Welcome to the Tupi Configuration wizard!&lt;/h1&gt;&lt;br&gt;&lt;br&gt;&lt;table border=0 align=right &gt;&lt;tr&gt;&lt;td&gt;- Tupi is a 2D Animation Toolkit designed by animators for animators.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi is free/open software and it is covered under the GNU GPL license terms.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi is Software Project developed by Toonka Films (http://www.toonka.com)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;br&gt;&lt;br&gt;This is an &quot;easy to use tool&quot; to allow you to configure your Tupi environment.&lt;br&gt;&lt;br&gt;Please, choose the &quot;Next&quot; button to setting up some parameters&lt;br&gt; required to use Tupi correctly or use the &quot;Cancel&quot; button&lt;br&gt; to close this dialog. Enjoy Tupi!&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;em&gt;--The Tupi Team&lt;/em&gt;&lt;br&gt;&lt;br&gt;</source>
+        <translatorcomment>No se que coi passa amb els accents!</translatorcomment>
+        <translation type="unfinished">&lt;h1&gt;Benvingut a l&apos;eina de configuració de Tupi!&lt;/h1&gt;&lt;br&gt;&lt;br&gt;&lt;table border=0 align=right &gt;&lt;tr&gt;&lt;td&gt;- Tupi és una eina d&apos;animació en 2D dissenyada per animadors i per animadors.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi és software lliure i obert i es troba llicenciat sota els termes de la llicència GNU GPL.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- Tupi és un projecte de software desenvolupat per LabToon (http://www.labtoon.org)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;br&gt;&lt;br&gt;Aquesta és una eina fàcil d&apos;utilitzar per configurar el seu ambient de feina amb Tupi.&lt;br&gt;&lt;br&gt;Si us plau, presioni el botó &quot;Següent&quot; per configurar alguns paràmetres&lt;br&gt; requerits per utilizar Tupi de forma adecuada o presioni el botó &quot;Cancel·la&quot;&lt;br&gt; per tancar aquest diàleg. Gaudeixi animant amb Tupi!&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;em&gt;--L&apos;equip de desenvolupament&lt;/em&gt;&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>CWSecondPage</name>
+    <message>
+        <location filename="../../configwizard.cpp" line="102"/>
+        <source>Configure Tupi</source>
+        <translation type="unfinished">Configura Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="109"/>
+        <source>&lt;h3&gt;Step 1&lt;h3&gt;</source>
+        <translation type="unfinished">Pas 1</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="110"/>
+        <source>Choose your Tupi installation directory</source>
+        <translatorcomment>Mirar les gemminades i si instal·lacio va amb apostrof</translatorcomment>
+        <translation type="unfinished">Selecciona el teu directori d&apos;instal·lació de Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="118"/>
+        <source>Choose the directory where Tupi is installed</source>
+        <translation type="unfinished">Selecciona el directori on Tupi es troba instal·lat</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="120"/>
+        <location filename="../../configwizard.cpp" line="145"/>
+        <source>Browse...</source>
+        <translation type="unfinished">Navega...</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="129"/>
+        <source>Choose a temporal directory</source>
+        <translation type="unfinished">Selecciona un directori temporal</translation>
+    </message>
+    <message>
+        <location filename="../../configwizard.cpp" line="137"/>
+        <source>Choose the directory for temporal files</source>
+        <translation type="unfinished">Selecciona un directori per arxius temporals</translation>
     </message>
 </context>
 <context>
     <name>Configurator</name>
     <message>
-        <source>Coloring Tween</source>
-        <translation>Remarca la interpolació</translation>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="53"/>
+        <source>Options</source>
+        <translation type="unfinished">Opcions</translation>
     </message>
     <message>
-        <source>Parameters</source>
-        <translation>Paràmetres</translation>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="54"/>
+        <source>Create path</source>
+        <translatorcomment>Ruta en castella com a camí</translatorcomment>
+        <translation type="unfinished">Crea camí</translation>
     </message>
     <message>
-        <source>Dot Spacing</source>
-        <translation>Espaiat entre punts</translation>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="55"/>
+        <source>Select object</source>
+        <translation type="unfinished">Tria objecte</translation>
     </message>
     <message>
-        <source>Size Tolerance</source>
-        <translation>Tolerància de la mida</translation>
+        <location filename="../../../plugins/tools/tweener/configurator.cpp" line="58"/>
+        <source>Apply</source>
+        <translation type="unfinished">Aplica</translation>
+    </message>
+</context>
+<context>
+    <name>ContourSelection</name>
+    <message>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="96"/>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="271"/>
+        <source>ContourSelection</source>
+        <translatorcomment>S&apos;hauria de traduir com a seleccio de contorn</translatorcomment>
+        <translation type="unfinished">Selecció de contorn</translation>
     </message>
     <message>
-        <source>Smoothness</source>
-        <translation>Suavitzat</translation>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="267"/>
+        <source>Nodes selection </source>
+        <translation type="unfinished">Selecció de nodes</translation>
     </message>
     <message>
-        <source>Opacity Tween</source>
-        <translation>Opacitat de la interpolació</translation>
+        <location filename="../../../plugins/tools/contourselection/contourselection.cpp" line="268"/>
+        <source>Ctrl+M</source>
+        <translation>Ctrl+M</translation>
+    </message>
+</context>
+<context>
+    <name>CrashWidget</name>
+    <message>
+        <location filename="../../crashwidget.cpp" line="122"/>
+        <source>What&apos;s happening?</source>
+        <translation type="unfinished">Què està succeint?</translation>
     </message>
     <message>
-        <source>Position Tween</source>
-        <translation>Posició de la interpolació</translation>
+        <location filename="../../crashwidget.cpp" line="144"/>
+        <source>Executable information</source>
+        <translatorcomment>Sobre traduit com en quant</translatorcomment>
+        <translation type="unfinished">Informació en quant a l&apos;executable</translation>
     </message>
     <message>
-        <source>Rotation Tween</source>
-        <translation>Rotació de la interpolació</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Escala de la interpolació</translation>
-    </message>
-    <message>
-        <source>This tool is just a &lt;b&gt;proof-of-concept&lt;/b&gt; of the basic algorithm for the Tupi&apos;s free-tracing vectorial brushes</source>
-        <translation>Aquesta eina només és una &lt;b&gt;prova de concepte&lt;/b&gt; de l&apos;algorisme bàsic per suportar les brotxes vectorials de Tupí</translation>
-    </message>
-    <message>
-        <source>Structure</source>
-        <translation>Estructura</translation>
-    </message>
-    <message>
-        <source>Basic</source>
-        <translation>Bàsic</translation>
-    </message>
-    <message>
-        <source>Axial</source>
-        <translation>Axial</translation>
-    </message>
-    <message>
-        <source>Organic</source>
-        <translation>Orgànic</translation>
-    </message>
-    <message>
-        <source>Run simulation</source>
-        <translation>Executa la simulació</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Tall de la interpolació</translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo LipSync Files</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../crashwidget.cpp" line="150"/>
+        <location filename="../../crashwidget.cpp" line="157"/>
+        <source>Backtrace</source>
+        <translatorcomment>Rastros com a rastres, o pistes aseguir</translatorcomment>
+        <translation type="unfinished">Rastres del problema</translation>
     </message>
 </context>
 <context>
     <name>EraserTool</name>
     <message>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="70"/>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="75"/>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="79"/>
+        <location filename="../../../plugins/tools/erasertool/erasertool.cpp" line="100"/>
         <source>Eraser</source>
-        <translation>Esborrador</translation>
+        <translatorcomment>Erease con netejar, idem al GIMP</translatorcomment>
+        <translation type="unfinished">Netejador</translation>
+    </message>
+</context>
+<context>
+    <name>ExactnessConfigurator</name>
+    <message>
+        <location filename="../../../plugins/tools/brush/exactnessconfigurator.cpp" line="53"/>
+        <source>Smoothness</source>
+        <translatorcomment>Hauria de mirar si es un verb o una definicio per triar el temps idoni</translatorcomment>
+        <translation type="unfinished">Suavitat</translation>
     </message>
     <message>
-        <source>E</source>
-        <translation>E</translation>
+        <location filename="../../../plugins/tools/brush/exactnessconfigurator.cpp" line="66"/>
+        <source>My Values:</source>
+        <translation type="unfinished">Els meus valors:</translation>
     </message>
 </context>
 <context>
     <name>ExportTo</name>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="418"/>
         <source>Image name prefix: </source>
-        <translation>Prefix del nom de l&apos;imatge: </translation>
+        <translation type="unfinished">Nom de prefix d&apos;imatges: </translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="423"/>
         <source>File: </source>
-        <translation>Arxiu</translation>
+        <translatorcomment>File com a fitxer i no com arxiu (idem GIMP)</translatorcomment>
+        <translation type="unfinished">Fitxer: </translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="425"/>
         <source>Directory: </source>
-        <translation>Directori: </translation>
+        <translation type="unfinished">Directori: </translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="456"/>
         <source>i.e. &lt;B&gt;%1&lt;/B&gt;01.png / &lt;B&gt;%1&lt;/B&gt;01.jpg</source>
-        <translation>ex. &lt;B&gt;%1&lt;/B&gt;01.png / &lt;B&gt;%1&lt;/B&gt;01.jpg</translation>
+        <translation type="unfinished">ex. &lt;B&gt;%1&lt;/B&gt;01.png / &lt;B&gt;%1&lt;/B&gt;01.jpg</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="470"/>
         <source>Size</source>
-        <translation>Mida</translation>
+        <translatorcomment>mida pensava en mesura pero aixi sera com al GIMP</translatorcomment>
+        <translation type="unfinished">Mida</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="475"/>
         <source>Configuration</source>
-        <translation>Configuració</translation>
+        <translation type="unfinished">Configuració</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="486"/>
         <source>FPS</source>
         <translation>FPS</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="556"/>
         <source>Choose a file name...</source>
-        <translation>Tria un nom de arxiu ...</translation>
+        <translation type="unfinished">Triï un nom de fitxer...</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="569"/>
         <source>Choose a directory...</source>
-        <translation>Tria un directori...</translation>
+        <translation type="unfinished">Triï un directori...</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="613"/>
         <source>Warning!</source>
-        <translation>Advertència!</translation>
+        <translation type="unfinished">Advertència!</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="614"/>
         <source>File exists. Overwrite it?</source>
-        <translation>L&apos;arxiu existeix. Sobreescriure&apos;l?</translation>
+        <translatorcomment>reemplaçar en comptes de sobreescriure</translatorcomment>
+        <translation type="unfinished">El fitxer existeix. Desitja reemplaçar-ho?</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="626"/>
         <source>Images name prefix can&apos;t be empty! Please, type a prefix.</source>
-        <translation>El prefix per les imatges no pot estar buit! Escriu un prefix.</translation>
+        <translation type="unfinished">El prefix per les imatges no pot estar buit! Si us plau, escrigui un prefix.</translation>
     </message>
     <message>
-        <source>Directory doesn&apos;t exist! Please, choose another path.</source>
-        <translation>El directori no existeix! Escull un altre destí.</translation>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="639"/>
+        <source>Directory &quot;</source>
+        <translation type="unfinished">Directori &quot;</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="646"/>
         <source>You have no permission to create this file. Please, choose another path.</source>
-        <translation>No tens permisos per crear aquest arxiu. Tria un destí diferent.</translation>
+        <translatorcomment>drecera en comptes de cami (en quant a directoris)</translatorcomment>
+        <translation type="unfinished">No té permisos per crear aquest fitxer. Si us plau, triï una drecera diferent.</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="669"/>
         <source>Format problem. Tupi Internal error.</source>
-        <translation>Problema de format. Error Intern de Tupi.</translation>
+        <translation type="unfinished">Problema de format. Error Intern de Tupi.</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="678"/>
         <source>ERROR!</source>
         <translation>ERROR!</translation>
-    </message>
-    <message>
-        <source>Enable background transparency</source>
-        <translation>Habilitar transparència de fons</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
     </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
-        <source>Internal fill</source>
-        <translation>Farcit intern</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="84"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="89"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="93"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="189"/>
+        <source>Fill</source>
+        <translatorcomment>seria terraple (mirar millor)</translatorcomment>
+        <translation>Fill</translation>
     </message>
     <message>
-        <source>Line fill</source>
-        <translation>Farcit de línia</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="84"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="95"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="99"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="113"/>
+        <source>Shape fill</source>
+        <translation>Shape fill</translation>
     </message>
     <message>
-        <source>I</source>
-        <translation>I</translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="84"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="101"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="105"/>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="191"/>
+        <source>Contour fill</source>
+        <translation>Contour fill</translation>
     </message>
     <message>
-        <source>B</source>
-        <translation>B</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Error</translation>
-    </message>
-    <message>
-        <source>Sorry, Groups can&apos;t be filled yet</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../plugins/tools/filltool/filltool.cpp" line="90"/>
+        <source>Ctrl+F</source>
+        <translation>Ctrl+F</translation>
     </message>
 </context>
 <context>
     <name>GeometricTool</name>
     <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="79"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="83"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="106"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="132"/>
         <source>Rectangle</source>
-        <translation>Rectangle</translation>
+        <translation type="unfinished">Rectangle</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="85"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="89"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="111"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="156"/>
         <source>Ellipse</source>
-        <translation>El·lipse</translation>
+        <translatorcomment>literalment aixi, podria canviar-ho per oval</translatorcomment>
+        <translation type="unfinished">El·lipse</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="68"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="91"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="95"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="115"/>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="178"/>
         <source>Line</source>
-        <translation>Línia</translation>
+        <translation type="unfinished">Línia</translation>
     </message>
     <message>
-        <source>R</source>
-        <translation>R</translation>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="80"/>
+        <source>Ctrl+R</source>
+        <translation>Ctrl+R</translation>
     </message>
     <message>
-        <source>C</source>
-        <translation>C</translation>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="86"/>
+        <source>Ctrl+E</source>
+        <translation>Ctrl+E</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/geometrictool/geometrictool.cpp" line="92"/>
+        <source>Ctrl+L</source>
+        <translation>Ctrl+L</translation>
+    </message>
+</context>
+<context>
+    <name>KTAbout</name>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="59"/>
+        <source>About</source>
+        <translation type="unfinished">En quant a</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="87"/>
+        <source>Credits</source>
+        <translation type="unfinished">Crèdits</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="104"/>
+        <source>Thanks</source>
+        <translation type="unfinished">Agradecimientos</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="143"/>
+        <source>License Agreement</source>
+        <translation type="unfinished">Acord de llicència</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktabout.cpp" line="144"/>
+        <source>Close</source>
+        <translatorcomment>No confondre tancat (close) i sortir (exit)</translatorcomment>
+        <translation type="unfinished">Tanca</translation>
+    </message>
+</context>
+<context>
+    <name>KTAnimationArea</name>
+    <message>
+        <location filename="../../../components/cameras/ktanimationarea.cpp" line="335"/>
+        <source>Rendering...</source>
+        <translation type="unfinished">Renderitzant...</translation>
+    </message>
+</context>
+<context>
+    <name>KTApplication</name>
+    <message>
+        <location filename="../../ktapplication.cpp" line="97"/>
+        <source>Initializing repository %1</source>
+        <translatorcomment>repositori es correcte!</translatorcomment>
+        <translation type="unfinished">Inicialitzant repositori %1</translation>
+    </message>
+    <message>
+        <location filename="../../ktapplication.cpp" line="102"/>
+        <source>Can not create the projects repository</source>
+        <translation type="unfinished">No és posible crear el repositori de projectes</translation>
+    </message>
+</context>
+<context>
+    <name>KTBrushStatus</name>
+    <message>
+        <location filename="../../../components/paintarea/ktbrushstatus.cpp" line="53"/>
+        <source>Current Color</source>
+        <translation type="unfinished">Color actual</translation>
+    </message>
+</context>
+<context>
+    <name>KTCameraBar</name>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="58"/>
+        <source>Rewind</source>
+        <translation type="unfinished">Retrocedeix</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="63"/>
+        <source>Play in reverse</source>
+        <translatorcomment>reves o inversa?</translatorcomment>
+        <translation type="unfinished">Reprodueix al revés</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="68"/>
+        <source>Play</source>
+        <translation type="unfinished">Reprodueix</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="73"/>
+        <source>Stop</source>
+        <translation type="unfinished">Atura</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerabar.cpp" line="78"/>
+        <source>Forward</source>
+        <translation type="unfinished">Avança</translation>
+    </message>
+</context>
+<context>
+    <name>KTCameraStatus</name>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="60"/>
+        <source>Scene name</source>
+        <translation type="unfinished">Nom de l&apos;escena</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="68"/>
+        <source>Frames total</source>
+        <translation type="unfinished">Total de marcs</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="79"/>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <location filename="../../../components/cameras/ktcamerastatus.cpp" line="95"/>
+        <source>Loop</source>
+        <translation type="unfinished">Repeteix</translation>
+    </message>
+</context>
+<context>
+    <name>KTChat</name>
+    <message>
+        <location filename="../../../net/ktchat.cpp" line="78"/>
+        <source>Send</source>
+        <translation type="unfinished">Envia</translation>
+    </message>
+</context>
+<context>
+    <name>KTColorPalette</name>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="93"/>
+        <source>Color Palette</source>
+        <translation type="unfinished">Paleta de colors</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="162"/>
+        <source>Color Mixer</source>
+        <translatorcomment>mesclar o barrejar o combinar</translatorcomment>
+        <translation type="unfinished">Mesclador de colors</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="169"/>
+        <source>Gradients</source>
+        <translation type="unfinished">Gradients</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="189"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="264"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="275"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="343"/>
+        <source>Solid</source>
+        <translation type="unfinished">Sòlid</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="190"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="242"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="266"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="277"/>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="345"/>
+        <source>Gradient</source>
+        <translation type="unfinished">Gradient</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorpalette.cpp" line="335"/>
+        <source>type brush</source>
+        <translatorcomment>pinzell (brush) i no brocha i raspall</translatorcomment>
+        <translation type="unfinished">Tipus de pinzell</translation>
+    </message>
+</context>
+<context>
+    <name>KTColorValue</name>
+    <message>
+        <location filename="../../../components/colorpalette/ktcolorvalue.cpp" line="173"/>
+        <source>percent</source>
+        <translatorcomment>en angles esta en minuscula (preguntar)</translatorcomment>
+        <translation type="unfinished">Percentge</translation>
+    </message>
+</context>
+<context>
+    <name>KTCommandExecutor</name>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="97"/>
+        <source>Frame doesn&apos;t exists!</source>
+        <translatorcomment>frame com a marc o fotograma? Millor inexistent per evitar negatius i articles</translatorcomment>
+        <translation type="unfinished">Frame inexistent!</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="105"/>
+        <source>Layer doesn&apos;t exists!</source>
+        <translation type="unfinished">Capa inexistent!</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktcommandexecutor_items.cpp" line="113"/>
+        <source>Scene doesn&apos;t exists!</source>
+        <translation type="unfinished">Escena inexistent!</translation>
+    </message>
+</context>
+<context>
+    <name>KTConfigurationArea</name>
+    <message>
+        <location filename="../../../components/paintarea/ktconfigurationarea.cpp" line="277"/>
+        <source>Cursor here for expand</source>
+        <translatorcomment>escalar en comptes d&apos;expandir (idem GIMP)</translatorcomment>
+        <translation type="unfinished">Cursor aquí per escalar</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktconfigurationarea.cpp" line="320"/>
+        <source>Properties</source>
+        <translation type="unfinished">Propietats</translation>
+    </message>
+</context>
+<context>
+    <name>KTConnectDialog</name>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="73"/>
+        <source>Connection Dialog</source>
+        <translation type="unfinished">Diàleg de connexió</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Login</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Password</source>
+        <translatorcomment>de fet login es clau... Pero millor aixi per costum</translatorcomment>
+        <translation type="unfinished">Clau</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Server</source>
+        <translation>Servidor</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="83"/>
+        <source>Port</source>
+        <translation type="unfinished">Port</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktconnectdialog.cpp" line="85"/>
+        <source>Store password</source>
+        <translatorcomment>Desa o recorda (literalment enmagatzema)</translatorcomment>
+        <translation type="unfinished">Desa la clau</translation>
+    </message>
+</context>
+<context>
+    <name>KTExportWidget</name>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="697"/>
+        <source>Export</source>
+        <translation type="unfinished">Exporta</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="707"/>
+        <source>Export to Video File</source>
+        <translatorcomment>O anomena i desa com o desa com arxiu de video</translatorcomment>
+        <translation type="unfinished">Exporta com a fitxer de vídeo</translation>
+    </message>
+    <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="710"/>
+        <source>Export to Images Array</source>
+        <translatorcomment>array com a contenidor (dificil traduccio, idem a la programacio) o grup</translatorcomment>
+        <translation type="unfinished">Exporta com a contenidor d&apos;imatges</translation>
+    </message>
+</context>
+<context>
+    <name>KTExposureSheet</name>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="65"/>
+        <source>Exposure Sheet</source>
+        <translatorcomment>Sheet es full, no taula</translatorcomment>
+        <translation type="unfinished">Fulla d&apos;exposició</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="95"/>
+        <source>actions</source>
+        <translation type="unfinished">accions</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="98"/>
+        <source>Insert frame</source>
+        <translation type="unfinished">Inserta marc</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="99"/>
+        <source>Remove frame</source>
+        <translatorcomment>Suprimir (idem GIMP).</translatorcomment>
+        <translation type="unfinished">Suprimeix marc</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="100"/>
+        <source>Lock frame</source>
+        <translation type="unfinished">Bloqueja marc</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="102"/>
+        <source>Copy frame</source>
+        <translation type="unfinished">Copia marc</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="103"/>
+        <source>Paste in frame</source>
+        <translation type="unfinished">Enganxa al marc</translation>
+    </message>
+    <message>
+        <location filename="../../../components/exposure/ktexposuresheet.cpp" line="104"/>
+        <source>Expand frame</source>
+        <translatorcomment>Escala en comptes d&apos;expandeix (com el Gimp?)</translatorcomment>
+        <translation type="unfinished">Escala marc</translation>
+    </message>
+</context>
+<context>
+    <name>KTGCTable</name>
+    <message>
+        <location filename="../../../components/library/ktgctable.cpp" line="61"/>
+        <source>New folder %1</source>
+        <translation type="unfinished">Nova carpeta %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTGradientCreator</name>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
+        <source>Linear</source>
+        <translation type="unfinished">Linial</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
+        <source>Radial</source>
+        <translation>Radial</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="71"/>
+        <source>Conical</source>
+        <translation type="unfinished">Cònic</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
+        <source>Pad</source>
+        <translatorcomment>no se si es correcte...</translatorcomment>
+        <translation>Uniforme</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
+        <source>Reflect</source>
+        <translation type="unfinished">Reflexa</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktgradientcreator.cpp" line="78"/>
+        <source>Repeat</source>
+        <translation type="unfinished">Repeteix</translation>
+    </message>
+</context>
+<context>
+    <name>KTHelpBrowser</name>
+    <message>
+        <location filename="../../../components/help/kthelpbrowser.cpp" line="45"/>
+        <source>Help</source>
+        <translation type="unfinished">Ajuda</translation>
+    </message>
+</context>
+<context>
+    <name>KTHelpWidget</name>
+    <message>
+        <location filename="../../../components/help/kthelpwidget.cpp" line="52"/>
+        <source>Help</source>
+        <translation type="unfinished">Ajuda</translation>
+    </message>
+</context>
+<context>
+    <name>KTLayer</name>
+    <message>
+        <location filename="../../../store/ktlayer.cpp" line="54"/>
+        <source>Layer</source>
+        <translation>Capa</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktlayer.cpp" line="122"/>
+        <source>Frame %1</source>
+        <translation type="unfinished">Marc %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTLayerManager</name>
+    <message>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
+        <source>Layer</source>
+        <translation>Capa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
         <source>L</source>
         <translation>L</translation>
     </message>
+    <message>
+        <location filename="../../../components/timeline/ktlayermanager.cpp" line="214"/>
+        <source>V</source>
+        <translation>V</translation>
+    </message>
 </context>
 <context>
-    <name>ImagePlugin</name>
+    <name>KTLibraryDialog</name>
     <message>
-        <source>Image Sequence</source>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="57"/>
+        <source>Library Object</source>
+        <translation type="unfinished">Objecte de biblioteca</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="90"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktlibrarydialog.cpp" line="93"/>
+        <source>Item %1</source>
+        <translation type="unfinished">Element %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTLibraryWidget</name>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="104"/>
+        <source>Library</source>
+        <translation>Biblioteca</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="125"/>
+        <source>Add the current graphic to library</source>
+        <translation type="unfinished">Afegeix el gràfic actual a biblioteca</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="132"/>
+        <source>Remove the selected symbol from library</source>
+        <translation type="unfinished">Suprimeix el símbol seleccionat de la biblioteca</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="137"/>
+        <source>Inserts the selected symbol into the drawing area</source>
+        <translation type="unfinished">Insereix el símbol seleccionat en l&apos;àrea de dibuix</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="143"/>
+        <source>Adds a folder to the symbol list</source>
+        <translatorcomment>o a la llista de simbols?</translatorcomment>
+        <translation type="unfinished">Afegeix una carpeta a la llista d&apos;objectes</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="280"/>
+        <source>Import an image...</source>
+        <translation type="unfinished">Importa una imatge...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="281"/>
+        <source>Images</source>
+        <translation type="unfinished">Imatges</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="300"/>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="413"/>
+        <source>Cannot open file: %1</source>
+        <translation type="unfinished">No es pot obrir el fitxer: %1</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="308"/>
+        <source>Choose the images directory...</source>
+        <translation type="unfinished">Tria el directori d&apos;imatges...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="329"/>
+        <source>Information</source>
+        <translation type="unfinished">Informació</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="324"/>
+        <source>%1 images will be loaded.</source>
+        <translation type="unfinished">%1 imatges seran carregades.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="326"/>
+        <source>Files are too big, so they will be resized.</source>
+        <translation type="unfinished">Els fitxers són massa grans, seran redimensionats.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="326"/>
+        <source>Note: This task can take a while.</source>
+        <translatorcomment>Si es vol modificar la frase, millor traduir de l&apos;angles. Del castella costa mes...</translatorcomment>
+        <translation type="unfinished">Nota: Aquesta tasca pot trigar molta estona.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="332"/>
+        <source>Do you want to continue?</source>
+        <translation type="unfinished">Desitja continuar?</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="341"/>
+        <source>Loading images...</source>
+        <translation type="unfinished">Carregant imatges...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="381"/>
+        <source>Loading image #%1</source>
+        <translation type="unfinished">Carregant imatge #%1</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="387"/>
+        <source>ERROR!</source>
+        <translation>ERROR!</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="387"/>
+        <source>ERROR: Can&apos;t open file %1. Please, check file permissions and try again.</source>
+        <translation type="unfinished">ERROR: No es pot obrir el fitxer %1. Si us plau, revisi els permisos del fitxer i intenti-ho un altre cop.</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="397"/>
+        <source>No image files were found.&lt;br/&gt;Please, try another directory</source>
+        <translatorcomment>Millor la traduccio castellana. La que he utilitzat</translatorcomment>
+        <translation type="unfinished">No s&apos;han trobat arxius d&apos;imatge.&lt;br/&gt;Si us  plau, provi en un altre directori</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="403"/>
+        <source>Import an audio file...</source>
+        <translatorcomment>millor so que audio</translatorcomment>
+        <translation type="unfinished">Importa un fitxer de so...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktlibrarywidget.cpp" line="404"/>
+        <source>Sound file</source>
+        <translation type="unfinished">Fitxer de so</translation>
+    </message>
+</context>
+<context>
+    <name>KTListProjectDialog</name>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="56"/>
+        <source>Projects List from Server</source>
+        <translation type="unfinished">Llista de projectes des del servidor</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>name</source>
+        <translation type="unfinished">nom</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>author</source>
+        <translation type="unfinished">autor</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="69"/>
+        <source>description</source>
+        <translation type="unfinished">descripció</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktlistprojectdialog.cpp" line="82"/>
+        <source>OK</source>
+        <translatorcomment>Potser millor ok...</translatorcomment>
+        <translation type="unfinished">Accepta</translation>
+    </message>
+</context>
+<context>
+    <name>KTMainWindow</name>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="115"/>
+        <source>Tupi: Magic 2D</source>
+        <translatorcomment>millor d&apos;animacio que per a la animacio</translatorcomment>
+        <translation type="unfinished">Tupi: Magia 2D</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="124"/>
+        <source>Setting up the project manager</source>
+        <translation type="unfinished">Configurant l&apos;administrador de projectes</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="127"/>
+        <source>Loading action manager...</source>
+        <translation type="unfinished">Carregant l&apos;administrador d&apos;accions...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="131"/>
+        <source>Creating menu bar...</source>
+        <translation type="unfinished">Creant la barra de menús...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="134"/>
+        <source>Creating GUI...</source>
+        <translation type="unfinished">Creant GUI...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="225"/>
+        <source>Opening a new document...</source>
+        <translatorcomment>en castella posava projecte</translatorcomment>
+        <translation type="unfinished">Obrint un nou document...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="231"/>
+        <source>Illustration</source>
+        <translation type="unfinished">Il·lustració</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="249"/>
+        <location filename="../../ktmainwindow.cpp" line="957"/>
+        <location filename="../../ktmainwindow_gui.cpp" line="315"/>
+        <source>Animation</source>
+        <translation type="unfinished">Animació</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="322"/>
+        <source>Question</source>
+        <translation>Pregunta</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="324"/>
+        <source>The document has been modified.</source>
+        <translation type="unfinished">El projecte ha estat modificat.</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="325"/>
+        <source>Do you want to save the project?</source>
+        <translation type="unfinished">Desitja desar el projecte?</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="518"/>
+        <location filename="../../ktmainwindow.cpp" line="644"/>
+        <source>Import project package</source>
+        <translation type="unfinished">Importa fitxer de projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="519"/>
+        <source>Tupi Project Package (*.tup);;Tupi Net Project (*.ntup)</source>
+        <translation type="unfinished">Fitxer de Tupi (*.tup);;Fitxer de Tupi en xarxa (*.ntup)</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="598"/>
+        <source>Project %1 opened!</source>
+        <translation type="unfinished">Projecte %1 obert!</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="601"/>
+        <source>Cannot open project!</source>
+        <translation type="unfinished">No es pot obrir projecte!</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="645"/>
+        <source>Tupi Project Package (*.tup)</source>
+        <translation type="unfinished">Fitxer de projecte (*.tup)</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="680"/>
+        <source>Preferences Dialog Opened</source>
+        <translation type="unfinished">Diàleg de preferències obert</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="740"/>
+        <source>Import gimp palettes</source>
+        <translation type="unfinished">Importa paletes del gimp</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="741"/>
+        <source>Gimp Palette (*.gpl)</source>
+        <translation type="unfinished">Paleta del Gimp (*.gpl)</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="743"/>
+        <source>Importing palettes</source>
+        <translation type="unfinished">Important paletes</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="867"/>
+        <source>Build project package</source>
+        <translatorcomment>lit. construint</translatorcomment>
+        <translation type="unfinished">Creant fitxer de projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="883"/>
+        <source>Directory &quot;</source>
+        <translation type="unfinished">Directori &quot;</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="890"/>
+        <source>You have no permission to create this file. Please, choose another path.</source>
+        <translation type="unfinished">No té permisos per crear aquest fitxer. Si us plau, triï una altra drecera.</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="922"/>
+        <source>Project %1 saved</source>
+        <translation type="unfinished">Projecte %1 desat</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="924"/>
+        <source>Cannot save the project!</source>
+        <translation type="unfinished">No es pot desar el projecte!</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow.cpp" line="958"/>
+        <source>New camera</source>
+        <translation type="unfinished">Nova càmera</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="93"/>
+        <source>Bitmap</source>
+        <translation type="unfinished">Imatge</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="96"/>
+        <source>Bitmap Array</source>
+        <translatorcomment>contenidor, no contenedor</translatorcomment>
         <translation type="unfinished">Contenidor d&apos;imatges</translation>
     </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="210"/>
+        <source>&amp;File</source>
+        <translation type="unfinished">&amp;Fitxer</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="214"/>
+        <source>&amp;New</source>
+        <translation type="unfinished">&amp;Nou</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="229"/>
+        <source>Recents</source>
+        <translation type="unfinished">Recents</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="253"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">&amp;Edita</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="266"/>
+        <source>&amp;Insert</source>
+        <translation type="unfinished">&amp;Inserta</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="285"/>
+        <source>&amp;Window</source>
+        <translation type="unfinished">&amp;Finestra</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="303"/>
+        <source>Modules</source>
+        <translation type="unfinished">Mòduls</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="308"/>
+        <source>Drawing</source>
+        <translation type="unfinished">Il·lustració</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="322"/>
+        <source>Help</source>
+        <translation type="unfinished">Ajuda</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="334"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished">&amp;Ajuda</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="381"/>
+        <source>New project</source>
+        <translation type="unfinished">Nou projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="383"/>
+        <source>Open new project</source>
+        <translation type="unfinished">Obre nou projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="386"/>
+        <source>Open project</source>
+        <translation type="unfinished">Obre projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="386"/>
+        <source>Ctrl+O</source>
+        <translation>Ctrl+O</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="389"/>
+        <source>Load existent project</source>
+        <translation type="unfinished">Carrega projecte existent</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="391"/>
+        <source>Open project from server...</source>
+        <translation type="unfinished">Obre projecte des de servidor...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="395"/>
+        <source>Import project to server...</source>
+        <translation type="unfinished">Importa projecte al servidor...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="399"/>
+        <source>Save project</source>
+        <translation type="unfinished">Desa projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="400"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="402"/>
+        <source>Save current project in current location</source>
+        <translation type="unfinished">Desa projecte actual en la drecera actual</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="404"/>
+        <source>Save project &amp;As...</source>
+        <translatorcomment>traduit aixi per similitud amb el GIMP fer una revisio...</translatorcomment>
+        <translation type="unfinished">Anomena i desa projecte &amp;com...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="406"/>
+        <source>Open dialog box to save current project in any location</source>
+        <translation type="unfinished">Obre diàleg per desar projecte actual en qualsevol drecera</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="409"/>
+        <source>Cl&amp;ose project</source>
+        <translatorcomment>Estrany......</translatorcomment>
+        <translation type="unfinished">T&amp;anca projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="410"/>
+        <source>Ctrl+W</source>
+        <translation>Ctrl+W</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="412"/>
+        <source>Close active project</source>
+        <translation type="unfinished">Tanca projecte actiu</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="417"/>
+        <source>&amp;Import GIMP palettes</source>
+        <translation type="unfinished">&amp;Importa paletes del GIMP</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="419"/>
+        <source>Import palettes</source>
+        <translation type="unfinished">Importa paletes</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="423"/>
+        <source>&amp;Export Project</source>
+        <translation type="unfinished">&amp;Exporta projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="425"/>
+        <source>Export project to several video formats</source>
+        <translation type="unfinished">Exporta projecte a varis formats de vídeo</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>E&amp;xit</source>
+        <translation type="unfinished">S&amp;urt</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="429"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="431"/>
+        <source>Close application</source>
+        <translation type="unfinished">Tanca aplicació</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="449"/>
+        <source>Launch configuration wizard...</source>
+        <translatorcomment>Launc com arrenca o arranca, literalment llançar</translatorcomment>
+        <translation type="unfinished">Arrenca assistent de configuració...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="451"/>
+        <source>Launch first configuration wizard</source>
+        <translation type="unfinished">Arrenca primer assistent de configuració</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="453"/>
+        <source>Pr&amp;eferences...</source>
+        <translation type="unfinished">Pr&amp;eferències...</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="455"/>
+        <source>Opens the preferences dialog box</source>
+        <translation type="unfinished">Obre el diàleg de preferències</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="469"/>
+        <source>About Tupi</source>
+        <translation type="unfinished">En quant a Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="470"/>
+        <source>Tip of day</source>
+        <translation type="unfinished">Consell del dia</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="527"/>
+        <source>Bar Actions</source>
+        <translatorcomment>no se com traduir-ho correctament. mirar per mes endavant</translatorcomment>
+        <translation>Bar Actions</translation>
+    </message>
+    <message>
+        <location filename="../../ktmainwindow_gui.cpp" line="656"/>
+        <source>Undo</source>
+        <translation type="unfinished">Desfés</translation>
+    </message>
 </context>
 <context>
-    <name>InfoPanel</name>
+    <name>KTNetProjectManagerHandler</name>
     <message>
-        <source>Tips</source>
-        <translation>Consells</translation>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="106"/>
+        <source>Communications</source>
+        <translation type="unfinished">Comunicacions</translation>
     </message>
     <message>
-        <source>Close the line path</source>
-        <translation>Tanca la trajectòria de línia</translation>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="111"/>
+        <source>chat</source>
+        <translation type="unfinished">xat</translation>
     </message>
     <message>
-        <source>Shift</source>
-        <translation>Decalatge</translation>
-    </message>
-    <message>
-        <source>Align line to horizontal/vertical axis</source>
-        <translation>Alineació horitzontal/vertical</translation>
-    </message>
-    <message>
-        <source>Shift + Left Mouse Button</source>
-        <translation>Maj + botó esquerre del ratolí</translation>
-    </message>
-    <message>
-        <source>Set width/height proportional dimensions</source>
-        <translation>Proporcionar amplada i alçada</translation>
-    </message>
-    <message>
-        <source>Close line</source>
-        <translation>Tancament de línia</translation>
-    </message>
-    <message>
-        <source>X key or Right mouse button</source>
-        <translation>Tecla X o botó dret del ratolí</translation>
-    </message>
-    <message>
-        <source>Mouse Right Click</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="116"/>
+        <source>notices</source>
+        <translation type="unfinished">notícies</translation>
     </message>
 </context>
 <context>
-    <name>InkTool</name>
+    <name>KTNewProject</name>
     <message>
-        <source>Ink</source>
-        <translation>Tinta</translation>
+        <location filename="../../ktnewproject.cpp" line="68"/>
+        <source>Create a new project</source>
+        <translation type="unfinished">Crea un nou projecte</translation>
     </message>
     <message>
-        <source>K</source>
-        <translation>K</translation>
+        <location filename="../../ktnewproject.cpp" line="74"/>
+        <source>Project Name</source>
+        <translation type="unfinished">Nom del projecte</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="80"/>
+        <source>Author</source>
+        <translation>Autor</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="86"/>
+        <source>Dimension</source>
+        <translation type="unfinished">Dimensió</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="95"/>
+        <source>Options</source>
+        <translation type="unfinished">Opcions</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="102"/>
+        <source>FPS</source>
+        <translation>FPS</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="114"/>
+        <source>Project info</source>
+        <translation type="unfinished">Propietats</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="123"/>
+        <source>Create a network project</source>
+        <translation type="unfinished">Crea un projecte en xarxa</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="144"/>
+        <source>Network</source>
+        <translation type="unfinished">Xarxa</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Login</source>
+        <translation type="unfinished">Usuari</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Password</source>
+        <translation type="unfinished">Clau</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Server</source>
+        <translation>Servidor</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="165"/>
+        <source>Port</source>
+        <translation type="unfinished">Port</translation>
+    </message>
+    <message>
+        <location filename="../../ktnewproject.cpp" line="204"/>
+        <source>Please fill the project name field</source>
+        <translatorcomment>traduir aquesta paraula</translatorcomment>
+        <translation type="unfinished">Si us plau, escrigui el nom del projecte</translation>
+    </message>
+</context>
+<context>
+    <name>KTNotice</name>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="77"/>
+        <source>Send</source>
+        <translation type="unfinished">Envia</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="94"/>
+        <source>notice</source>
+        <translation type="unfinished">notifica</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnotice.cpp" line="94"/>
+        <source> by </source>
+        <translation type="unfinished"> per </translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintArea</name>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="133"/>
+        <source>Drawing area</source>
+        <translatorcomment>canviar-ho per dibuix?</translatorcomment>
+        <translation type="unfinished">Àrea d&apos;il·lustració</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="138"/>
+        <source>Cut</source>
+        <translatorcomment>retalla com al GIMP en comptes de talla</translatorcomment>
+        <translation type="unfinished">Retalla</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="139"/>
+        <source>Copy</source>
+        <translation type="unfinished">Copia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="140"/>
+        <source>Paste</source>
+        <translation type="unfinished">Enganxa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="141"/>
+        <source>Delete</source>
+        <translatorcomment>o neteja (al gimp es neteja una area, no s&apos;elimina) Elimina, suprimeix</translatorcomment>
+        <translation type="unfinished">Neteja</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="144"/>
+        <source>Order</source>
+        <translatorcomment>(ordena en el cas de donar una ordre) o alinia</translatorcomment>
+        <translation type="unfinished">Endreça</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="147"/>
+        <source>Send to back</source>
+        <translatorcomment>Idem que al GIMP en comptes de envia al fons o al darrera</translatorcomment>
+        <translation type="unfinished">Mou al capdavall</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="148"/>
+        <source>Bring to front</source>
+        <translatorcomment>fixar-me si no es confonen amb les dues seguents</translatorcomment>
+        <translation type="unfinished">Mou al capdamunt</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="149"/>
+        <source>Send backwards</source>
+        <translation type="unfinished">Mou avall</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="150"/>
+        <source>Brind forwards</source>
+        <translation type="unfinished">Mou amunt</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="156"/>
+        <source>Add to library...</source>
+        <translation type="unfinished">Afegeix a la biblioteca...</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="314"/>
+        <source>Object Selection</source>
+        <translation type="unfinished">Selecció d&apos;objectes</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="506"/>
+        <location filename="../../../components/paintarea/ktpaintarea.cpp" line="540"/>
+        <source>No items selected</source>
+        <translation type="unfinished">No hi ha ítems seleccionats</translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaBase</name>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="176"/>
+        <source>OpenGL isn&apos;t supported</source>
+        <translation type="unfinished">Sense suport d&apos;OpenGL</translation>
+    </message>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="334"/>
+        <source>Locked!</source>
+        <translation type="unfinished">Bloquejat!</translation>
+    </message>
+    <message>
+        <location filename="../../../libbase/ktpaintareabase.cpp" line="361"/>
+        <source>No Layers!</source>
+        <translation type="unfinished">No hi ha capes!</translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaConfig</name>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="68"/>
+        <source>Grid color</source>
+        <translation type="unfinished">Color de graella</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="74"/>
+        <source>Grid separation</source>
+        <translation type="unfinished">Separació de graella</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="83"/>
+        <source>Background color</source>
+        <translation type="unfinished">Color de fons</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="89"/>
+        <source>Onion skin color</source>
+        <translatorcomment>preguntar que es aixo...</translatorcomment>
+        <translation type="unfinished">Onion skin color</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpaintareaconfig.cpp" line="95"/>
+        <source>Onion skin background </source>
+        <translation type="unfinished">Onion skin background </translation>
+    </message>
+</context>
+<context>
+    <name>KTPaintAreaStatus</name>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintareastatus.cpp" line="73"/>
+        <source>Rotate</source>
+        <translation type="unfinished">Rota</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktpaintareastatus.cpp" line="92"/>
+        <source>Antialiasing</source>
+        <translatorcomment>aixo es un difuminat per les lletres crec, o suavitzat</translatorcomment>
+        <translation>Antialiasing</translation>
+    </message>
+</context>
+<context>
+    <name>KTPenWidget</name>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="52"/>
+        <source>Pen</source>
+        <translation type="unfinished">Ploma</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="62"/>
+        <source>Thickness</source>
+        <translatorcomment>potser depenent de com GRUIX, Amplada per similitud al GIMP</translatorcomment>
+        <translation type="unfinished">Amplada</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="72"/>
+        <source>No pen</source>
+        <translation type="unfinished">Sense ploma</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="73"/>
+        <source>Solid</source>
+        <translation type="unfinished">Sòlid</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="74"/>
+        <source>Dash</source>
+        <translation type="unfinished">Guió</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="75"/>
+        <source>Dot</source>
+        <translation type="unfinished">Punts</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="76"/>
+        <source>Dash dot</source>
+        <translation type="unfinished">Guions i punts</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="77"/>
+        <source>Dash dot dot</source>
+        <translation type="unfinished">Guió punt punt</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="85"/>
+        <source>Flat</source>
+        <translatorcomment>o pla</translatorcomment>
+        <translation type="unfinished">Aplanat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="86"/>
+        <source>Square</source>
+        <translation type="unfinished">Quadrat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="87"/>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="96"/>
+        <source>Round</source>
+        <translatorcomment>o cercle</translatorcomment>
+        <translation type="unfinished">Rodó</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="94"/>
+        <source>Miter</source>
+        <translation>Punta</translation>
+    </message>
+    <message>
+        <location filename="../../../components/pen/ktpenwidget.cpp" line="95"/>
+        <source>Bevel</source>
+        <translatorcomment>o bisell (biselat)</translatorcomment>
+        <translation type="unfinished">Angle recte</translation>
+    </message>
+</context>
+<context>
+    <name>KTPreferences</name>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="181"/>
+        <source>Application KTPreferences</source>
+        <translation type="unfinished">Preferències del Tupi</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="184"/>
+        <source>General</source>
+        <translation>General</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="187"/>
+        <source>Theme</source>
+        <translation>Tema</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="190"/>
+        <source>Font</source>
+        <translation type="unfinished">Font</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="193"/>
+        <source>Workspace</source>
+        <translation type="unfinished">Àrea de treball</translation>
+    </message>
+</context>
+<context>
+    <name>KTPreferences::GeneralPage</name>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Tupi Home</source>
+        <translatorcomment>en castella traduit con de instalacio</translatorcomment>
+        <translation type="unfinished">Directori principal</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Cache</source>
+        <translatorcomment>NO SE COM TRADUIR-HO</translatorcomment>
+        <translation>Cache</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="115"/>
+        <source>Browser</source>
+        <translation>Navegador</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="116"/>
+        <source>Open last project</source>
+        <translation type="unfinished">Obre l&apos;últim projecte</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktpreferences.cpp" line="126"/>
+        <source>Auto save (minutes)</source>
+        <translation type="unfinished">Desa freqüentment (minuts)</translation>
+    </message>
+</context>
+<context>
+    <name>KTProject</name>
+    <message>
+        <location filename="../../../store/ktproject.cpp" line="218"/>
+        <source>Scene %1</source>
+        <translation>Escena %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTProjectActionBar</name>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="106"/>
+        <source>Insert frame</source>
+        <translation type="unfinished">Inserta marc</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="118"/>
+        <source>Remove the frame</source>
+        <translation type="unfinished">Suprimeix el marc</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="131"/>
+        <source>Move frame up</source>
+        <translation type="unfinished">Mou marc cap amunt</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="142"/>
+        <source>Move frame down</source>
+        <translation type="unfinished">Mou marc cap avall</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="153"/>
+        <source>Lock frame</source>
+        <translation type="unfinished">Bloqueja marc</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="163"/>
+        <source>Insert a layer</source>
+        <translation type="unfinished">Inserta una capa</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="174"/>
+        <source>Remove the layer</source>
+        <translation type="unfinished">Suprimeix una capa</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="186"/>
+        <source>Move layer up</source>
+        <translation type="unfinished">Mou una capa cap amunt</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="197"/>
+        <source>Move layer down</source>
+        <translation type="unfinished">Mou una capa cap avall</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="207"/>
+        <source>Lock layer</source>
+        <translation type="unfinished">Bloqueja capa</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="220"/>
+        <source>Insert a scene</source>
+        <translation type="unfinished">Inserta una escena</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="231"/>
+        <source>Remove the scene</source>
+        <translation type="unfinished">Suprimeix una escena</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="317"/>
+        <source>Do you want to remove this frame?</source>
+        <translation type="unfinished">Desitja suprimir aquest marc?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="317"/>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="331"/>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="345"/>
+        <source>Remove?</source>
+        <translation type="unfinished">Suprimir?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="331"/>
+        <source>Do you want to remove this layer?</source>
+        <translation type="unfinished">Desitja suprimir aquesta capa?</translation>
+    </message>
+    <message>
+        <location filename="../../../libtupi/ktprojectactionbar.cpp" line="345"/>
+        <source>Do you want to remove this scene?</source>
+        <translation type="unfinished">Desitja suprimir aquesta escena?</translation>
+    </message>
+</context>
+<context>
+    <name>KTSaveProject</name>
+    <message>
+        <location filename="../../../store/ktsaveproject.cpp" line="123"/>
+        <source>Project saved in %1!</source>
+        <translation type="unfinished">Projecte desat en %1!</translation>
+    </message>
+</context>
+<context>
+    <name>KTScene</name>
+    <message>
+        <location filename="../../../store/ktscene.cpp" line="149"/>
+        <source>Layer %1</source>
+        <translation>Capa %1</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktscene.cpp" line="173"/>
+        <source>Sound layer %1</source>
+        <translation type="unfinished">Capa de so %1</translation>
+    </message>
+</context>
+<context>
+    <name>KTSceneTabWidget</name>
+    <message>
+        <location filename="../../../components/exposure/ktscenetabwidget.cpp" line="78"/>
+        <source>Layers</source>
+        <translation type="unfinished">Capes</translation>
+    </message>
+</context>
+<context>
+    <name>KTScenesWidget</name>
+    <message>
+        <location filename="../../../components/scenes/ktsceneswidget.cpp" line="66"/>
+        <source>Scenes Manager</source>
+        <translation type="unfinished">Administrador d&apos;escenes</translation>
+    </message>
+    <message>
+        <location filename="../../../components/scenes/ktsceneswidget.cpp" line="96"/>
+        <source>Filter here...</source>
+        <translation type="unfinished">Filtri aquí...</translation>
+    </message>
+</context>
+<context>
+    <name>KTSplash</name>
+    <message>
+        <location filename="../../ktsplash.cpp" line="53"/>
+        <source>Version </source>
+        <translation type="unfinished">Versió </translation>
+    </message>
+</context>
+<context>
+    <name>KTSymbolEditor</name>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="85"/>
+        <source>Symbol editor</source>
+        <translation type="unfinished">Editor d&apos;objectes</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="95"/>
+        <source>Brushes</source>
+        <translation type="unfinished">Pincells</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="98"/>
+        <source>Selection</source>
+        <translation type="unfinished">Selecció</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="101"/>
+        <source>Fill</source>
+        <translation type="unfinished">Emplenat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/library/ktsymboleditor.cpp" line="104"/>
+        <source>View</source>
+        <translation type="unfinished">Visualització</translation>
+    </message>
+</context>
+<context>
+    <name>KTThemeSelector</name>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="77"/>
+        <source>General</source>
+        <translation>General</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
+        <source>Text</source>
+        <translation type="unfinished">Text</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
+        <source>Base</source>
+        <translation>Base</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
+        <source>Foreground</source>
+        <translatorcomment>jo o posaria fom fons FOREGROUND. Lit Primer pla</translatorcomment>
+        <translation type="unfinished">Primer pla</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="81"/>
+        <source>Background</source>
+        <translatorcomment>lit. Fons.  BACKGROUND</translatorcomment>
+        <translation type="unfinished">Fons</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="82"/>
+        <source>Button</source>
+        <translation type="unfinished">Botó</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="82"/>
+        <source>Button Text</source>
+        <translation type="unfinished">Text de Botó</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="105"/>
+        <source>Effects</source>
+        <translation type="unfinished">Efectes</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
+        <source>Light</source>
+        <translatorcomment>o iluminacio com posava en castella. Potser lluminositat</translatorcomment>
+        <translation type="unfinished">Llum</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
+        <source>Midlight</source>
+        <translatorcomment>Lluminositat mitja</translatorcomment>
+        <translation type="unfinished">Lluminositat mitja</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
+        <source>Dark</source>
+        <translation type="unfinished">Foscor</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="109"/>
+        <source>Mid</source>
+        <translation type="unfinished">Mitg</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="131"/>
+        <source>Selections</source>
+        <translation type="unfinished">Seleccions</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="135"/>
+        <source>Highlight</source>
+        <translatorcomment>o llum enlluernador (GIMP) potser. O alta lluminositat</translatorcomment>
+        <translation type="unfinished">Llum alta</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="135"/>
+        <source>Highlighted Text</source>
+        <translatorcomment>CAST- texto resaltado</translatorcomment>
+        <translation type="unfinished">Text enlluernador</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="152"/>
+        <source>Text effects</source>
+        <translation type="unfinished">Efectes de text</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
+        <source>Bright Text</source>
+        <translation type="unfinished">Text brillant</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
+        <source>Link</source>
+        <translation type="unfinished">Enllaç</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="155"/>
+        <source>Link Visited</source>
+        <translation type="unfinished">Enllaç visitat</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="173"/>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
+        <source>Schema</source>
+        <translation>Esquema</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
+        <source>Owner</source>
+        <translation type="unfinished">Propietari</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="177"/>
+        <source>Date</source>
+        <translation type="unfinished">Data</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="185"/>
+        <source>Save schema</source>
+        <translation type="unfinished">Desa esquema</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="192"/>
+        <source>Style</source>
+        <translation type="unfinished">Estil</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="196"/>
+        <source>Use this colors</source>
+        <translation type="unfinished">Utilitza aquests colors</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="285"/>
+        <source>Name</source>
+        <translation type="unfinished">Nom</translation>
+    </message>
+    <message>
+        <location filename="../../../libktui/ktthemeselector.cpp" line="285"/>
+        <source>Please choose a theme name</source>
+        <translation type="unfinished">Si us plau triï un nom per el tema</translation>
+    </message>
+</context>
+<context>
+    <name>KTTimeLine</name>
+    <message>
+        <location filename="../../../components/timeline/kttimeline.cpp" line="72"/>
+        <source>Time Line</source>
+        <translation type="unfinished">Línia de temps</translation>
+    </message>
+</context>
+<context>
+    <name>KTViewCamera</name>
+    <message>
+        <location filename="../../../components/cameras/ktviewcamera.cpp" line="56"/>
+        <location filename="../../../components/cameras/ktviewcamera.cpp" line="63"/>
+        <source>Render Camera Preview</source>
+        <translation type="unfinished">Vista prèvia de càmera</translation>
+    </message>
+</context>
+<context>
+    <name>KTViewColorCells</name>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="107"/>
+        <source>Default Palette</source>
+        <translation type="unfinished">Paleta per omisió</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="116"/>
+        <source>Named Colors</source>
+        <translation type="unfinished">Colors etiquetats</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="123"/>
+        <source>Custom Color Palette</source>
+        <translatorcomment>si els colors son personalitzats esta be. Si es la paleta hauria d&apos;estar en femeni</translatorcomment>
+        <translation type="unfinished">Paleta de colors personalitzats</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="128"/>
+        <source>Custom Gradient Palette</source>
+        <translation type="unfinished">Paleta de gradients personalitzats</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="342"/>
+        <source>Add Color</source>
+        <translation type="unfinished">Afegeix color</translation>
+    </message>
+    <message>
+        <location filename="../../../components/colorpalette/ktviewcolorcells.cpp" line="349"/>
+        <source>Remove Color</source>
+        <translation type="unfinished">Suprimeix color</translation>
+    </message>
+</context>
+<context>
+    <name>KTViewDocument</name>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="222"/>
+        <source>Show grid</source>
+        <translatorcomment>graella o malla</translatorcomment>
+        <translation type="unfinished">Mostra graella</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="222"/>
+        <source>Ctrl+L</source>
+        <translation>Ctrl+L</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="227"/>
+        <source>C&amp;opy</source>
+        <translation type="unfinished">C&amp;opia</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="227"/>
+        <source>Ctrl+C</source>
+        <translation>Ctrl+C</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="229"/>
+        <source>Copies the selection and puts it onto the clipboard</source>
+        <translation type="unfinished">Copia la selecció al porta-retalls</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="232"/>
+        <source>&amp;Paste</source>
+        <translation type="unfinished">&amp;Enganxa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="232"/>
+        <source>Ctrl+V</source>
+        <translation>Ctrl-V</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="234"/>
+        <source>Pastes the clipboard into the current document</source>
+        <translation type="unfinished">Enganxa al document des del porta-retalls</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="237"/>
+        <source>&amp;Cut</source>
+        <translation type="unfinished">&amp;Retalla</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="237"/>
+        <source>Ctrl+X</source>
+        <translation>Ctrl+X</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="239"/>
+        <source>Cuts the selected items</source>
+        <translation type="unfinished">Retalla els objetes seleccionats</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="241"/>
+        <source>Delete</source>
+        <translation type="unfinished">Suprimeix</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="245"/>
+        <source>Deletes the selected object</source>
+        <translation type="unfinished">Suprimeix l&apos;objete seleccionat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="247"/>
+        <source>&amp;Group</source>
+        <translation type="unfinished">&amp;Grup</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="248"/>
+        <source>Ctrl+G</source>
+        <translation>Ctrl+G</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="251"/>
+        <source>Group the selected objects into a single one</source>
+        <translation type="unfinished">Agrupa els objectes seleccionats en només un</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="253"/>
+        <source>&amp;Ungroup</source>
+        <translation type="unfinished">&amp;Desagrupa</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="254"/>
+        <source>Ctrl+Shift+G</source>
+        <translation>Ctrl+Shift+G</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="257"/>
+        <source>Ungroups the selected object</source>
+        <translation type="unfinished">Desagrupa l&apos;objete seleccionat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="341"/>
+        <source>Draw tools</source>
+        <translation type="unfinished">Eines de dibuix</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="348"/>
+        <source>Brushes</source>
+        <translation type="unfinished">Pinzells</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="356"/>
+        <source>Selection</source>
+        <translation type="unfinished">Selecció</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="363"/>
+        <source>Fill</source>
+        <translation type="unfinished">Emplenat</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="370"/>
+        <source>View</source>
+        <translation type="unfinished">Visualització</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="405"/>
+        <source>Pencil</source>
+        <translation type="unfinished">Llapis</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="586"/>
+        <source>Paint area actions</source>
+        <translatorcomment>aria d&apos;accions de pintura potser?</translatorcomment>
+        <translation>Paint area actions</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="611"/>
+        <source>Preview Frames</source>
+        <translation type="unfinished">Marcs previs</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="618"/>
+        <source>Onion Skin</source>
+        <translatorcomment>No </translatorcomment>
+        <translation type="unfinished">Onion Skin</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="624"/>
+        <source>Next Frames</source>
+        <translation type="unfinished">Marcs següents</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="633"/>
+        <source>&amp;Tools</source>
+        <translatorcomment>dificil respectar...</translatorcomment>
+        <translation type="unfinished">&amp;Tools (eines)</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="643"/>
+        <source>&amp;Order</source>
+        <translatorcomment>o endreça o alinia</translatorcomment>
+        <translation type="unfinished">&amp;Ordena</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="650"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">&amp;Edita</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="670"/>
+        <source>&amp;View</source>
+        <translation type="unfinished">&amp;Visualització</translation>
+    </message>
+    <message>
+        <location filename="../../../components/paintarea/ktviewdocument.cpp" line="678"/>
+        <source>Filters</source>
+        <translation type="unfinished">Filtres</translation>
     </message>
 </context>
 <context>
     <name>KinasWidget</name>
     <message>
+        <location filename="../../../components/kinas/kinaswidget.cpp" line="41"/>
         <source>Tupi Script</source>
-        <translation>Tupi Script</translation>
+        <translation type="unfinished">Tupi Script</translation>
     </message>
 </context>
 <context>
-    <name>LibavPlugin</name>
+    <name>PolyLine</name>
     <message>
-        <source>Video Formats</source>
-        <translation type="unfinished">Formats de vídeo</translation>
-    </message>
-</context>
-<context>
-    <name>LipSyncManager</name>
-    <message>
-        <source>Import LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove LipSync</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>NodesTool</name>
-    <message>
-        <source>Nodes Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>N</source>
-        <translation type="unfinished">N</translation>
-    </message>
-</context>
-<context>
-    <name>PapagayoTool</name>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation type="unfinished">Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>lipsync:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>PencilTool</name>
-    <message>
-        <source>Pencil</source>
-        <translation>Llapis</translation>
-    </message>
-    <message>
-        <source>P</source>
-        <translation>P</translation>
-    </message>
-</context>
-<context>
-    <name>PolyLineTool</name>
-    <message>
+        <location filename="../../../plugins/tools/polyline/polyline.cpp" line="115"/>
+        <location filename="../../../plugins/tools/polyline/polyline.cpp" line="345"/>
         <source>PolyLine</source>
         <translation type="unfinished">Polilínia</translation>
     </message>
     <message>
-        <source>S</source>
-        <translation type="unfinished">S</translation>
-    </message>
-</context>
-<context>
-    <name>PositionSettings</name>
-    <message>
-        <source>Component</source>
-        <translation>Component</translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation>Posició</translation>
-    </message>
-    <message>
-        <source>Starting at frame</source>
-        <translation>A partir del fotograma</translation>
-    </message>
-    <message>
-        <source>Frames Total</source>
-        <translation>Total de fotogrames</translation>
-    </message>
-    <message>
-        <source>Cancel Tween</source>
-        <translation>Cancel·lar la interpolació</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>You must define a path for this Tween!</source>
-        <translation>Defineix una trajectòria per a la interpolació!</translation>
-    </message>
-    <message>
-        <source>Position Tween is set!</source>
-        <translation>Posició de la interpolació fixada!</translation>
-    </message>
-    <message>
-        <source>Close Tween properties</source>
-        <translation>Tancar propietats de la interpolació</translation>
+        <location filename="../../../plugins/tools/polyline/polyline.cpp" line="341"/>
+        <source>Polyline</source>
+        <translation type="unfinished">Polilínia</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="370"/>
+        <source>Notice From</source>
+        <translation type="unfinished">Notificació des de</translation>
+    </message>
+    <message>
+        <location filename="../../../net/ktnetprojectmanagerhandler.cpp" line="381"/>
+        <source>Wall From</source>
+        <translation type="unfinished">Mur des de</translation>
+    </message>
+    <message>
+        <location filename="../../crashhandler.cpp" line="66"/>
+        <source>Fatal error</source>
+        <translation type="unfinished">Error fatal</translation>
+    </message>
+    <message>
+        <location filename="../../crashhandler.cpp" line="67"/>
+        <source>%1 is crashing...</source>
+        <translatorcomment>o trencat o estavellat</translatorcomment>
+        <translation type="unfinished">%1 s&apos;ha trencat...</translation>
+    </message>
+    <message>
+        <location filename="../../crashhandler.cpp" line="68"/>
         <source>Close</source>
-        <translation>Tanca</translation>
+        <translation type="unfinished">Tanca</translation>
     </message>
     <message>
+        <location filename="../../crashhandler.cpp" line="69"/>
         <source>This is a general failure</source>
-        <translation>Fallada general</translation>
+        <translation type="unfinished">Aquesta és una fallida general</translation>
     </message>
     <message>
+        <location filename="../../main.cpp" line="161"/>
+        <source>Missing...</source>
+        <translation type="unfinished">Quelcom perdut...</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="162"/>
+        <source>You need configure the application</source>
+        <translation type="unfinished">Necessita configurar l&apos;aplicació</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="200"/>
+        <source>Initializing...</source>
+        <translation type="unfinished">Inicialitzant...</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="202"/>
+        <source>Loading Modules</source>
+        <translation type="unfinished">Carregant mòduls</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="205"/>
+        <source>Loaded!</source>
+        <translation type="unfinished">Carregat!</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="242"/>
+        <source>Magic 2D</source>
+        <translation type="unfinished">Magia 2D</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="243"/>
+        <location filename="../../main.cpp" line="250"/>
+        <source>Usage: %1 [option]</source>
+        <translation type="unfinished">Utilització: %1 [opció]</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="244"/>
+        <location filename="../../main.cpp" line="251"/>
+        <source>Options: </source>
+        <translation type="unfinished">Opcions: </translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="246"/>
+        <location filename="../../main.cpp" line="253"/>
+        <source>		Reconfigure %1</source>
+        <translation type="unfinished">Reconfigura %1</translation>
+    </message>
+    <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="126"/>
         <source>add</source>
-        <translation>afegeix</translation>
+        <translatorcomment>a partir d&apos;aqui sense traduir fins al seguent avis</translatorcomment>
+        <translation type="unfinished">afegeix</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="131"/>
         <source>remove</source>
-        <translation>suprimeix</translation>
+        <translation type="unfinished">suprimeix</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="136"/>
         <source>move</source>
-        <translation>mou</translation>
+        <translation type="unfinished">mou</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="141"/>
         <source>lock</source>
-        <translation>bloqueja</translation>
+        <translation type="unfinished">bloqueja</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="146"/>
         <source>rename</source>
-        <translation>torna a anomenar</translation>
+        <translation type="unfinished">torna a anomenar</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="151"/>
         <source>select</source>
-        <translation>selecciona</translation>
+        <translation type="unfinished">selecciona</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="156"/>
         <source>edit node</source>
-        <translation>edita node</translation>
+        <translation type="unfinished">edita node</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="161"/>
         <source>view</source>
-        <translation>visualització</translation>
+        <translation type="unfinished">visualització</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="166"/>
         <source>transform</source>
-        <translation>transforma</translation>
+        <translation type="unfinished">transforma</translation>
     </message>
     <message>
+        <location filename="../../../store/ktprojectcommand.cpp" line="171"/>
         <source>convert</source>
-        <translation>converteix</translation>
-    </message>
-    <message>
-        <source>Fatal Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Well, Tupi has crashed...</source>
-        <translation>Bé, Tupi es va col·lapsar</translation>
-    </message>
-    <message>
-        <source>Re-launch Tupi</source>
-        <translation>Reinicia Tupi</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Advertència</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Critical</source>
-        <translation>Crític</translation>
-    </message>
-    <message>
-        <source>Wall from</source>
-        <translation>Mur de</translation>
+        <translation type="unfinished">converteix</translation>
     </message>
 </context>
 <context>
-    <name>SchemeTool</name>
+    <name>QuaZipFile</name>
     <message>
-        <source>Scheme</source>
-        <translation>Esquema</translation>
+        <location filename="../../../../3rdparty/quazip/quazipfile.cpp" line="128"/>
+        <source>ZIP/UNZIP API error %1</source>
+        <translation>ZIP/UNZIP API error %1</translation>
+    </message>
+</context>
+<context>
+    <name>Select</name>
+    <message>
+        <location filename="../../../plugins/tools/select/select.cpp" line="100"/>
+        <location filename="../../../plugins/tools/select/select.cpp" line="236"/>
+        <source>Select</source>
+        <translation type="unfinished">Selecciona</translation>
     </message>
     <message>
-        <source>M</source>
-        <translation>M</translation>
+        <location filename="../../../plugins/tools/select/select.cpp" line="231"/>
+        <source>Object Selection</source>
+        <translation type="unfinished">Selecció d&apos;objectes</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/select/select.cpp" line="232"/>
+        <source>Ctrl+N</source>
+        <translation>Ctrl+N</translation>
     </message>
 </context>
 <context>
     <name>SelectPlugin</name>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="94"/>
         <source>Select plugin</source>
-        <translation>Selecciona plugin</translation>
+        <translation type="unfinished">Selecciona plugin</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="158"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="215"/>
         <source>OGV Video</source>
         <translation>Vídeo OGV</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="163"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="218"/>
         <source>MPEG Video</source>
         <translation>Vídeo MPEG</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="168"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="221"/>
         <source>Macromedia flash</source>
         <translation>Macromedia flash</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="173"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="224"/>
         <source>AVI Video</source>
         <translation>Vídeo AVI</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="178"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="227"/>
         <source>RealMedia Video</source>
         <translation>Vídeo RealMedia</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="183"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="230"/>
         <source>ASF Video</source>
-        <translation>Vídeo ASF</translation>
+        <translation>Video ASF</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="188"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="233"/>
         <source>QuickTime Video</source>
         <translation>Vídeo QuickTime</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="193"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="236"/>
         <source>Gif Image</source>
-        <translation>Imatge Gif</translation>
+        <translation type="unfinished">Imatge Gif</translation>
     </message>
     <message>
-        <source>PNG Image Sequence</source>
-        <translation>Contenidor d&apos;imatges PNG</translation>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="198"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="239"/>
+        <source>PNG Image Array</source>
+        <translatorcomment>contenidor o potser conjunt</translatorcomment>
+        <translation type="unfinished">Contenidor d&apos;imatges PNG</translation>
     </message>
     <message>
-        <source>JPEG Image Sequence</source>
-        <translation>Contenidor d&apos;imatges JPEG</translation>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="203"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="242"/>
+        <source>JPEG Image Array</source>
+        <translation type="unfinished">Contenidor d&apos;imatges JPEG</translation>
     </message>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="208"/>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="245"/>
         <source>SMIL</source>
         <translation>SMIL</translation>
-    </message>
-    <message>
-        <source>WEBM Video</source>
-        <translation>Vídeo WebM</translation>
-    </message>
-    <message>
-        <source>Animated PNG (APNG)</source>
-        <translation>Animació PNG (APNG)</translation>
-    </message>
-    <message>
-        <source>Animated Image</source>
-        <translation>Imatge animada</translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation>Contenidor d&apos;imatges</translation>
-    </message>
-    <message>
-        <source>Video Formats</source>
-        <translation type="unfinished">Formats de vídeo</translation>
     </message>
 </context>
 <context>
     <name>SelectScenes</name>
     <message>
+        <location filename="../../../components/export/ktexportwidget.cpp" line="290"/>
         <source>Select Scenes</source>
-        <translation>Selecciona escenes</translation>
-    </message>
-</context>
-<context>
-    <name>SelectionTool</name>
-    <message>
-        <source>Selection</source>
-        <translation type="unfinished">Selecció</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>O</source>
-        <translation type="unfinished">O</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Error</translation>
-    </message>
-    <message>
-        <source>SVG objects can&apos;t be grouped/ungrouped yet</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Settings</name>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opcions</translation>
-    </message>
-    <message>
-        <source>Select object</source>
-        <translation>Tria objecte</translation>
-    </message>
-    <message>
-        <source>Set Properties</source>
-        <translation>Establir propietats</translation>
-    </message>
-    <message>
-        <source>Starting at frame</source>
-        <translation>A partir del fotograma</translation>
-    </message>
-    <message>
-        <source>Ending at frame</source>
-        <translation>Finalitzar al fotograma</translation>
-    </message>
-    <message>
-        <source>Frames Total</source>
-        <translation>Total de fotogrames</translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation>Blanc</translation>
-    </message>
-    <message>
-        <source>Initial Color</source>
-        <translation>Color Inicial</translation>
-    </message>
-    <message>
-        <source>Ending Color</source>
-        <translation>Color definitiu</translation>
-    </message>
-    <message>
-        <source>Iterations</source>
-        <translation>Iteracions</translation>
-    </message>
-    <message>
-        <source>Loop</source>
-        <translation>Bucle</translation>
-    </message>
-    <message>
-        <source>Loop with Reverse</source>
-        <translation>Bucle amb revers</translation>
-    </message>
-    <message>
-        <source>Save Tween</source>
-        <translation>Guardar interpolació</translation>
-    </message>
-    <message>
-        <source>Cancel Tween</source>
-        <translation>Cancel·lar interpolació</translation>
-    </message>
-    <message>
-        <source>Update Tween</source>
-        <translation>Actualitza interpolació</translation>
-    </message>
-    <message>
-        <source>Close Tween properties</source>
-        <translation>Tancar propietats de la interpolació</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>You must select at least one object!</source>
-        <translation>Selecciona almenys un objecte!</translation>
-    </message>
-    <message>
-        <source>You must set Tween properties first!</source>
-        <translation>Primer estableix les propietats de la interpolació!</translation>
-    </message>
-    <message>
-        <source>Select objects for Tweening first!</source>
-        <translation>Primer selecciona objectes per interpolar!</translation>
-    </message>
-    <message>
-        <source>Initial Opacity</source>
-        <translation>Opacitat Inicial</translation>
-    </message>
-    <message>
-        <source>Ending Opacity</source>
-        <translation>Opacitat final</translation>
-    </message>
-    <message>
-        <source>You must define a path for this Tween!</source>
-        <translation>Defineix una trajectòria per la interpolació</translation>
-    </message>
-    <message>
-        <source>Continuous</source>
-        <translation>Continu</translation>
-    </message>
-    <message>
-        <source>Partial</source>
-        <translation>Parcial</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tipus</translation>
-    </message>
-    <message>
-        <source>Speed (Degrees/Frame)</source>
-        <translation>Velocitat (Graus/Fotograma)</translation>
-    </message>
-    <message>
-        <source>Direction</source>
-        <translation>Direcció</translation>
-    </message>
-    <message>
-        <source>Clockwise</source>
-        <translation>Sentit horari</translation>
-    </message>
-    <message>
-        <source>Counterclockwise</source>
-        <translation>Sentit antihorari</translation>
-    </message>
-    <message>
-        <source>Degrees Range</source>
-        <translation>Rang de graus</translation>
-    </message>
-    <message>
-        <source>Start at</source>
-        <translation>Comença a</translation>
-    </message>
-    <message>
-        <source>Finish at</source>
-        <translation>Finalitzat a</translation>
-    </message>
-    <message>
-        <source>Width &amp; Height</source>
-        <translation>Amplada i alçada</translation>
-    </message>
-    <message>
-        <source>Only Width</source>
-        <translation>Només amplada</translation>
-    </message>
-    <message>
-        <source>Only Height</source>
-        <translation>Només alçada</translation>
-    </message>
-    <message>
-        <source>Scale in</source>
-        <translation>Escalat</translation>
-    </message>
-    <message>
-        <source>Scaling Factor</source>
-        <translation>Factor d&apos;escalat</translation>
-    </message>
-    <message>
-        <source>Shear in</source>
-        <translation>Retalla en</translation>
-    </message>
-    <message>
-        <source>Smoothness</source>
-        <translation>Suavitzat</translation>
-    </message>
-    <message>
-        <source>Flips</source>
-        <translation>Capgira</translation>
-    </message>
-    <message>
-        <source>Horizontal Flip</source>
-        <translation>Inversió horitzontal</translation>
-    </message>
-    <message>
-        <source>Vertical Flip</source>
-        <translation>Inversió vertical</translation>
-    </message>
-    <message>
-        <source>Crossed Flip</source>
-        <translation>Inversió creuada</translation>
-    </message>
-    <message>
-        <source>Order</source>
-        <translation>Ordre</translation>
-    </message>
-    <message>
-        <source>Send object to back</source>
-        <translation>Tornar un objecte</translation>
-    </message>
-    <message>
-        <source>Send object to back one level</source>
-        <translation>Tornar un objecte al nivell anterior</translation>
-    </message>
-    <message>
-        <source>Send object to front</source>
-        <translation>Avançar un objecte</translation>
-    </message>
-    <message>
-        <source>Send object to front one level</source>
-        <translation>Avançar un objete al nivell superior</translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation>Posició</translation>
-    </message>
-    <message>
-        <source>Show Tips</source>
-        <translation>Mostra consells</translation>
-    </message>
-    <message>
-        <source>A little help for the Selection tool</source>
-        <translation>Una mica d&apos;ajuda de l&apos;eina Selecció</translation>
-    </message>
-    <message>
-        <source>Rotation mode</source>
-        <translation>Mode rotació</translation>
-    </message>
-    <message>
-        <source>Double click on any node or shortcut Alt + R</source>
-        <translation>Doble clic a qualsevol node o una drecera Alt + R</translation>
-    </message>
-    <message>
-        <source>Arrows</source>
-        <translation>Fletxes</translation>
-    </message>
-    <message>
-        <source>Movement on selection</source>
-        <translation>Moviment en selecció</translation>
-    </message>
-    <message>
-        <source>Shift + Arrows</source>
-        <translation>Maj + Fletxes</translation>
-    </message>
-    <message>
-        <source>Slow movement on selection</source>
-        <translation>Moviment lent en selecció</translation>
-    </message>
-    <message>
-        <source>Ctrl + Arrows</source>
-        <translation>Ctrl + fletxes</translation>
-    </message>
-    <message>
-        <source>Fast movement on selection</source>
-        <translation>Moviment ràpid en selecció</translation>
-    </message>
-    <message>
-        <source>Shift + Left Mouse Button</source>
-        <translation>Maj + botó esquerre del ratolí</translation>
-    </message>
-    <message>
-        <source>Proportional scaling on selection</source>
-        <translation>Escalament proporcional a la selecció</translation>
-    </message>
-    <message>
-        <source>Show Tools</source>
-        <translation>Mostra eines</translation>
-    </message>
-    <message>
-        <source>Options panel for the Selection tool</source>
-        <translation>Panell d&apos;opcions per a selecció d&apos;eines</translation>
-    </message>
-    <message>
-        <source>Editing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mouths</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lip-Sync FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>mouth</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Group Objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ungroup Objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ShiftTool</name>
-    <message>
-        <source>Shift</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>H</source>
-        <translation type="unfinished">H</translation>
+        <translation type="unfinished">Selecciona les escenes</translation>
     </message>
 </context>
 <context>
     <name>SpinControl</name>
     <message>
-        <source>Radius</source>
-        <translation>Radi</translation>
+        <location filename="../../../libtupi/ktgradientcreator.h" line="211"/>
+        <source>radius</source>
+        <translation type="unfinished">radi</translation>
     </message>
     <message>
-        <source>Angle</source>
-        <translation>Angle</translation>
+        <location filename="../../../libtupi/ktgradientcreator.h" line="220"/>
+        <source>angle</source>
+        <translation>angle</translation>
     </message>
 </context>
 <context>
     <name>StepsViewer</name>
     <message>
+        <location filename="../../../plugins/tools/tweener/stepsviewer.cpp" line="52"/>
         <source>Interval</source>
-        <translation>Interval</translation>
+        <translation type="unfinished">Interval</translation>
     </message>
     <message>
+        <location filename="../../../plugins/tools/tweener/stepsviewer.cpp" line="52"/>
         <source>Frames</source>
-        <translation>Fotogrames</translation>
-    </message>
-</context>
-<context>
-    <name>TButtonBar</name>
-    <message>
-        <source>Left button bar</source>
-        <translation>Barra de botons esquerra</translation>
-    </message>
-    <message>
-        <source>Right button bar</source>
-        <translation>Barra de botons dreta</translation>
-    </message>
-    <message>
-        <source>Bottom button bar</source>
-        <translation>Barra de botons inferior</translation>
-    </message>
-    <message>
-        <source>Top button bar</source>
-        <translation>Barra de botons superior</translation>
-    </message>
-    <message>
-        <source>Only icons</source>
-        <translation>Només icones</translation>
-    </message>
-    <message>
-        <source>Only texts</source>
-        <translation>Només text</translation>
-    </message>
-    <message>
-        <source>Exclusive space</source>
-        <translation>Espai exclusiu</translation>
-    </message>
-    <message>
-        <source>Auto hide</source>
-        <translation>Ocultació automàtica</translation>
-    </message>
-</context>
-<context>
-    <name>TCommandHistory</name>
-    <message>
-        <source>Undo</source>
-        <translation>Desfés</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>Refés</translation>
-    </message>
-</context>
-<context>
-    <name>TFontChooser</name>
-    <message>
-        <source>Family</source>
-        <translation>Família</translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation>Estil</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Mida</translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation>Normal</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Itàlica</translation>
-    </message>
-    <message>
-        <source>Oblique</source>
-        <translation>Obliqua</translation>
-    </message>
-</context>
-<context>
-    <name>TOptionalDialog</name>
-    <message>
-        <source>Don&apos;t show again</source>
-        <translation>No tornar a mostrar</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·lar</translation>
-    </message>
-    <message>
-        <source>Accept</source>
-        <translation>Accepta</translation>
-    </message>
-</context>
-<context>
-    <name>TRulerBase</name>
-    <message>
-        <source>Change scale to 5...</source>
-        <translation>Canviar l&apos;escala a 5 ...</translation>
-    </message>
-    <message>
-        <source>Change scale to 10...</source>
-        <translation>Canviar l&apos;escala a 10 ...</translation>
-    </message>
-</context>
-<context>
-    <name>TViewButton</name>
-    <message>
-        <source>Menu</source>
-        <translation>Menú</translation>
-    </message>
-    <message>
-        <source>Only icon</source>
-        <translation>Només icones</translation>
-    </message>
-    <message>
-        <source>Only text</source>
-        <translation>Només text</translation>
-    </message>
-    <message>
-        <source>Mouse sensibility</source>
-        <translation>Sensibilitat del ratolí</translation>
-    </message>
-</context>
-<context>
-    <name>TWizard</name>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·lar</translation>
-    </message>
-    <message>
-        <source>&lt; &amp;Back</source>
-        <translation>&lt; &amp;Enrere</translation>
-    </message>
-    <message>
-        <source>Next &gt;</source>
-        <translation>Següent &gt;</translation>
-    </message>
-    <message>
-        <source>&amp;Finish</source>
-        <translation>&amp;Acaba</translation>
-    </message>
-</context>
-<context>
-    <name>TabDialog</name>
-    <message>
-        <source>Help</source>
-        <translation>Ajuda</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation>Aplica</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·lar</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Acceptar</translation>
+        <translation type="unfinished">Marcs</translation>
     </message>
 </context>
 <context>
     <name>TextConfigurator</name>
     <message>
-        <source>Html</source>
-        <translation>Html</translation>
+        <location filename="../../../plugins/tools/text/textconfigurator.cpp" line="55"/>
+        <source>html</source>
+        <translation>html</translation>
     </message>
 </context>
 <context>
     <name>TextTool</name>
     <message>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="63"/>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="160"/>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="164"/>
         <source>Text</source>
         <translation>Text</translation>
     </message>
     <message>
-        <source>T</source>
-        <translation>T</translation>
-    </message>
-</context>
-<context>
-    <name>TreeWidgetSearchLine</name>
-    <message>
-        <source>Search</source>
-        <translation>Cerca</translation>
-    </message>
-    <message>
-        <source>Search Columns</source>
-        <translation>Cerca columnes</translation>
-    </message>
-    <message>
-        <source>All Visible Columns</source>
-        <translation>Totes les columnes visibles</translation>
-    </message>
-</context>
-<context>
-    <name>TreeWidgetSearchLineWidget</name>
-    <message>
-        <source>Clear</source>
-        <translation>Neteja</translation>
-    </message>
-</context>
-<context>
-    <name>TupAbout</name>
-    <message>
-        <source>About</source>
-        <translation>En quant a</translation>
-    </message>
-    <message>
-        <source>Credits</source>
-        <translation>Crèdits</translation>
-    </message>
-    <message>
-        <source>Thanks</source>
-        <translation>Agraïments</translation>
-    </message>
-    <message>
-        <source>License Agreement</source>
-        <translation>Acord de llicència</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Tanca</translation>
-    </message>
-    <message>
-        <source>About Tupi</source>
-        <translation>En quant a Tupi</translation>
-    </message>
-</context>
-<context>
-    <name>TupBasicCameraInterface</name>
-    <message>
-        <source>Tupi Camera Manager</source>
-        <translation>Gestor de càmera de Tupi</translation>
-    </message>
-    <message>
-        <source>Current resolution:</source>
-        <translation>Resolució actual:</translation>
-    </message>
-    <message>
-        <source>Cameras</source>
-        <translation>Càmeres</translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation>Càmera</translation>
-    </message>
-    <message>
-        <source>Take picture</source>
-        <translation>Fes una captura</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Can&apos;t create pictures directory</source>
-        <translation>No s&apos;ha pogut crear el directori imatges</translation>
-    </message>
-    <message>
-        <source>Close manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraBar</name>
-    <message>
-        <source>Rewind</source>
-        <translation>Retrocedeix</translation>
-    </message>
-    <message>
-        <source>Play in reverse</source>
-        <translation>Reprodueix al revés</translation>
-    </message>
-    <message>
-        <source>Play</source>
-        <translation>Reprodueix</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation>Atura</translation>
-    </message>
-    <message>
-        <source>Forward</source>
-        <translation>Avança</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraDialog</name>
-    <message>
-        <source>Camera Settings</source>
-        <translation>Configuració de la càmera</translation>
-    </message>
-    <message>
-        <source>Available Camera Devices:</source>
-        <translation>Càmeres disponibles</translation>
-    </message>
-    <message>
-        <source>Camera Detected:</source>
-        <translation>Càmara detectada</translation>
-    </message>
-    <message>
-        <source>Available Camera Resolutions:</source>
-        <translation>Resolucions de la càmera disponibles:</translation>
-    </message>
-    <message>
-        <source>Resize my project to fit camera resolution</source>
-        <translation>Canviar la mida del meu projecte per ajustar-ho a la resolució de la càmera</translation>
-    </message>
-    <message>
-        <source>Use the basic camera interface (low resources)</source>
-        <translation>Fer servir la interfície bàsica de la càmera (pocs recursos)</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>Ok</source>
-        <translation>Accepta</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraInterface</name>
-    <message>
-        <source>Tupi Camera Manager</source>
-        <translation>Gestor de càmera de Tupi</translation>
-    </message>
-    <message>
-        <source>Current resolution:</source>
-        <translation>Resolució actual:</translation>
-    </message>
-    <message>
-        <source>Cameras</source>
-        <translation>Càmeres</translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation>Càmera</translation>
-    </message>
-    <message>
-        <source>Take picture</source>
-        <translation>Fes una captura</translation>
-    </message>
-    <message>
-        <source>Show safe area</source>
-        <translation>Mostra zona segura</translation>
-    </message>
-    <message>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message>
-        <source>Show grid</source>
-        <translation>Mostra la graella</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Grid spacing</source>
-        <translation>Espaiat de la graella</translation>
-    </message>
-    <message>
-        <source>Grid color</source>
-        <translation>Color de la graella</translation>
-    </message>
-    <message>
-        <source>Show previous images</source>
-        <translation>Mostra imatges prèvies</translation>
-    </message>
-    <message>
-        <source>P</source>
-        <translation>P</translation>
-    </message>
-    <message>
-        <source>Image opacity level</source>
-        <translation>Nivell d&apos;opacitat de la imatge</translation>
-    </message>
-    <message>
-        <source>Amount of images to show</source>
-        <translation>Quantitat d&apos;imatges a mostrar</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Can&apos;t create pictures directory</source>
-        <translation>No s&apos;ha pogut crear el directori imatges</translation>
-    </message>
-    <message>
-        <source>Close manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraStatus</name>
-    <message>
-        <source>Scene name</source>
-        <translation>Nom de l&apos;escena</translation>
-    </message>
-    <message>
-        <source>Frames total</source>
-        <translation>Total de fotogrames</translation>
-    </message>
-    <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Loop</source>
-        <translation>Bucle</translation>
-    </message>
-    <message>
-        <source>Ctrl+L</source>
-        <translation>Ctrl+L</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>Exporta</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation>Publica</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraWidget</name>
-    <message>
-        <source>Scene Preview</source>
-        <translation>Previsualiza l&apos;escena</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Escala</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Mida</translation>
-    </message>
-</context>
-<context>
-    <name>TupCameraWindow</name>
-    <message>
-        <source>General Camera error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera invalid request error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera service missing error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera not supported error</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupCanvas</name>
-    <message>
-        <source>Tupi: 2D Magic</source>
-        <translation>Tupi: Magia 2D Lliure</translation>
-    </message>
-    <message>
-        <source>Sketch Tools</source>
-        <translation>Eines de dibuix</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation>Imatges</translation>
-    </message>
-    <message>
-        <source>Selection Tools</source>
-        <translation>Eines de selecció</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Desfa</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>Refa</translation>
-    </message>
-    <message>
-        <source>Delete Selection</source>
-        <translation>Esborra selecció</translation>
-    </message>
-    <message>
-        <source>Zoom In</source>
-        <translation>Amplia</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>Redueix</translation>
-    </message>
-    <message>
-        <source>Shift</source>
-        <translation>Mà</translation>
-    </message>
-    <message>
-        <source>Pen Properties</source>
-        <translation>Propietats del llapis</translation>
-    </message>
-    <message>
-        <source>Exposure Sheet</source>
-        <translation>Full d&apos;exposició</translation>
-    </message>
-    <message>
-        <source>Import a SVG file...</source>
-        <translation>Importa un arxiu SVG ...</translation>
-    </message>
-    <message>
-        <source>Vector</source>
-        <translation>Vector</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Image is bigger than workspace.</source>
-        <translation>La imatge és més gran que l&apos;àrea de treball.</translation>
-    </message>
-    <message>
-        <source>Do you want to resize it?</source>
-        <translation>Vols redimensionar-ho?</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Escena %1</translation>
-    </message>
-    <message>
-        <source>Layer 1</source>
-        <translation>Capa 1</translation>
-    </message>
-    <message>
-        <source>Frame 1</source>
-        <translation>Fotograma 1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Pencil</source>
-        <translation>Llapis</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation>Tinta</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>El·lipse</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rectangle</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selecció d&apos;objectes</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation>Selecció de línies</translation>
-    </message>
-    <message>
-        <source>Color Palette</source>
-        <translation>Paleta de colors</translation>
-    </message>
-    <message>
-        <source>Pen Size</source>
-        <translation>Mida del llapis</translation>
-    </message>
-</context>
-<context>
-    <name>TupChat</name>
-    <message>
-        <source>Send</source>
-        <translation>Envia</translation>
-    </message>
-    <message>
-        <source>Error:</source>
-        <translation>Error:</translation>
-    </message>
-    <message>
-        <source>Invalid Message. It won&apos;t be sent. Please, don&apos;t use HTML tags</source>
-        <translation>Missatge no vàlid. No serà enviat. No utilitzis etiquetes HTML</translation>
-    </message>
-</context>
-<context>
-    <name>TupColorPalette</name>
-    <message>
-        <source>Color Palette</source>
-        <translation>Paleta de colors</translation>
-    </message>
-    <message>
-        <source>Color Mixer</source>
-        <translation>Mesclador de colors</translation>
-    </message>
-    <message>
-        <source>Gradients</source>
-        <translation>Gradients</translation>
-    </message>
-    <message>
-        <source>Contour</source>
-        <translation>Contorn</translation>
-    </message>
-    <message>
-        <source>Fill</source>
-        <translation>Emplenat</translation>
-    </message>
-    <message>
-        <source>HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupColorValue</name>
-    <message>
-        <source>Percent</source>
-        <translation>Percentatge</translation>
-    </message>
-</context>
-<context>
-    <name>TupConfigurationArea</name>
-    <message>
-        <source>Cursor here for expand</source>
-        <translation>Cursor aquí per escalar</translation>
-    </message>
-    <message>
-        <source>Properties</source>
-        <translation>Propietats</translation>
-    </message>
-</context>
-<context>
-    <name>TupConnectDialog</name>
-    <message>
-        <source>Connection Dialog</source>
-        <translation>Diàleg de connexió</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation>Usuari</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Clau</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Servidor</translation>
-    </message>
-    <message>
-        <source>Port</source>
-        <translation>Port</translation>
-    </message>
-    <message>
-        <source>Store password</source>
-        <translation>Desa la clau</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Please, fill in your password</source>
-        <translation>Introdueix la teva contrasenya</translation>
-    </message>
-</context>
-<context>
-    <name>TupCrashWidget</name>
-    <message>
-        <source>What&apos;s happening?</source>
-        <translation>Què està passant?</translation>
-    </message>
-    <message>
-        <source>Executable information</source>
-        <translation>Informació sobre l&apos;executable</translation>
-    </message>
-    <message>
-        <source>Backtrace</source>
-        <translation>Rastreig</translation>
-    </message>
-</context>
-<context>
-    <name>TupDebugWidget</name>
-    <message>
-        <source>Debug Console</source>
-        <translation>Consola de depuració</translation>
-    </message>
-</context>
-<context>
-    <name>TupDocumentView</name>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selecció de l&apos;objecte</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Còpia</translation>
-    </message>
-    <message>
-        <source>Ctrl+C</source>
-        <translation>Ctrl+C</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Enganxa</translation>
-    </message>
-    <message>
-        <source>Ctrl+V</source>
-        <translation>Ctrl+V</translation>
-    </message>
-    <message>
-        <source>Cut</source>
-        <translation>Retalla</translation>
-    </message>
-    <message>
-        <source>Ctrl+X</source>
-        <translation>Ctrl+X</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Neteja</translation>
-    </message>
-    <message>
-        <source>Onion Skin</source>
-        <translation>Paper ceba</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+O</source>
-        <translation>Ctrl+Maj+O</translation>
-    </message>
-    <message>
-        <source>Onion Skin Factor</source>
-        <translation>Factor de transparència</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation>Ctrl+Maj+S</translation>
-    </message>
-    <message>
-        <source>@</source>
-        <translation>@</translation>
-    </message>
-    <message>
-        <source>Draw tools</source>
-        <translation>Eines de dibuix</translation>
-    </message>
-    <message>
-        <source>Brushes</source>
-        <translation>Pinzells</translation>
-    </message>
-    <message>
-        <source>Tweening</source>
-        <translation>Interpola</translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation>Contenidor d&apos;imatges</translation>
-    </message>
-    <message>
-        <source>Pencil</source>
-        <translation>Llapis</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation>Tinta</translation>
-    </message>
-    <message>
-        <source>PolyLine</source>
-        <translation>Polilínia</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Línia</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rectangle</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>El·lipse</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation>Text</translation>
-    </message>
-    <message>
-        <source>Position Tween</source>
-        <translation>Posició de la interpolació</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Rotació de la interpolació</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Escala de la interpolació</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Retalla la interpolació</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Opacitat de la interpolació</translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Acoloreix la interpolació</translation>
-    </message>
-    <message>
-        <source>Internal fill</source>
-        <translation>Farcit intern</translation>
-    </message>
-    <message>
-        <source>%1</source>
-        <translation>%1</translation>
-    </message>
-    <message>
-        <source>Shift</source>
-        <translation>Mà</translation>
-    </message>
-    <message>
-        <source>Paint area actions</source>
-        <translation>Accions de la zona de dibuix</translation>
-    </message>
-    <message>
-        <source>Dynamic Background Properties</source>
-        <translation>Propietats dinàmiques del fons</translation>
-    </message>
-    <message>
-        <source>Frames Mode</source>
-        <translation>Mode dels fotogrames</translation>
-    </message>
-    <message>
-        <source>Static BG Mode</source>
-        <translation>Fons estàtic</translation>
-    </message>
-    <message>
-        <source>Dynamic BG Mode</source>
-        <translation>Fons dinàmic</translation>
-    </message>
-    <message>
-        <source>Previous Frames</source>
-        <translation>Fotogrames anteriors</translation>
-    </message>
-    <message>
-        <source>Next Frames</source>
-        <translation>Fotogrames següents</translation>
-    </message>
-    <message>
-        <source>Direction</source>
-        <translation>Direcció</translation>
-    </message>
-    <message>
-        <source>Left to Right</source>
-        <translation>D&apos;esquerra a dreta</translation>
-    </message>
-    <message>
-        <source>Right to Left</source>
-        <translation>De dreta a esquerra</translation>
-    </message>
-    <message>
-        <source>Top to Bottom</source>
-        <translation>De dalt a baix</translation>
-    </message>
-    <message>
-        <source>Bottom to Top</source>
-        <translation>De baix a dalt</translation>
-    </message>
-    <message>
-        <source>Shift Length</source>
-        <translation>Desplaça al llarg</translation>
-    </message>
-    <message>
-        <source>Export Frame As</source>
-        <translation>Exportar el fotograma com a</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation>Imatges</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Frame has been exported successfully</source>
-        <translation>S&apos;ha exportat el fotograma amb èxit</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Can&apos;t export frame as image</source>
-        <translation>No es pot exportar el fotograma com a imatge</translation>
-    </message>
-    <message>
-        <source>Export Current Frame As Image</source>
-        <translation>Exporta el fotograma com a imatge</translation>
-    </message>
-    <message>
-        <source>Export Current Frame To Gallery</source>
-        <translation>Exporta el fotograma com a la galeria</translation>
-    </message>
-    <message>
-        <source>Storyboard Settings</source>
-        <translation>Paràmetres del guió gràfic</translation>
-    </message>
-    <message>
-        <source>Camera</source>
-        <translation>Càmera</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+C</source>
-        <translation>Ctrl+Maj+C</translation>
-    </message>
-    <message>
-        <source>No cameras detected</source>
-        <translation>No s&apos;ha detectat cap càmera</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo file has been imported successfully</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Line fill</source>
-        <translation type="unfinished">Farcit de línia</translation>
-    </message>
-    <message>
-        <source>Papagayo project already exists!
-Please, rename the project&apos;s file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo file is invalid!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Images directory is empty!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo project is invalid!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupExportWidget</name>
-    <message>
-        <source>Export to Video File</source>
-        <translation>Exporta com a arxiu de vídeo</translation>
-    </message>
-    <message>
-        <source>Export to Images Array</source>
-        <translation>Exporta com a contenidor d&apos;imatges</translation>
-    </message>
-    <message>
-        <source>Export to Video</source>
-        <translation>Exporta com a vídeo</translation>
-    </message>
-    <message>
-        <source>Export to Animated Image</source>
-        <translation>Exporta com a imatge animada</translation>
-    </message>
-    <message>
-        <source>Post Animation in Tupitube</source>
-        <translation>Publica una animació en Tupitube</translation>
-    </message>
-    <message>
-        <source>Video Formats</source>
-        <translation>Formats de vídeo</translation>
-    </message>
-    <message>
-        <source>Open Video Format</source>
-        <translation>Format de vídeo lliure</translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation>Contenidor d&apos;imatges</translation>
-    </message>
-    <message>
-        <source>Animated Image</source>
-        <translation>Imatge animada</translation>
-    </message>
-</context>
-<context>
-    <name>TupExportWizard</name>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>Back</source>
-        <translation>Enrere</translation>
-    </message>
-    <message>
-        <source>Next</source>
-        <translation>Següent</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>Exporta</translation>
-    </message>
-    <message>
-        <source>Post</source>
-        <translation>Publica</translation>
-    </message>
-</context>
-<context>
-    <name>TupExposureDialog</name>
-    <message>
-        <source>Exposure Sheet</source>
-        <translation>Full d&apos;exposició</translation>
-    </message>
-    <message>
-        <source>Scene</source>
-        <translation>Escena</translation>
-    </message>
-    <message>
-        <source>Work Team</source>
-        <translation>Equip de treball</translation>
-    </message>
-</context>
-<context>
-    <name>TupExposureScene</name>
-    <message>
-        <source>Layer</source>
-        <translation>Capa</translation>
-    </message>
-    <message>
-        <source>Frame</source>
-        <translation>Fotograma</translation>
-    </message>
-</context>
-<context>
-    <name>TupExposureSheet</name>
-    <message>
-        <source>Exposure Sheet</source>
-        <translation>Full d&apos;exposició</translation>
-    </message>
-    <message>
-        <source>actions</source>
-        <translation>accions</translation>
-    </message>
-    <message>
-        <source>Remove frame</source>
-        <translation>Suprimeix el fotograma</translation>
-    </message>
-    <message>
-        <source>Copy frame</source>
-        <translation>Copia fotograma</translation>
-    </message>
-    <message>
-        <source>Paste in frame</source>
-        <translation>Enganxa al fotograma</translation>
-    </message>
-    <message>
-        <source>Insert</source>
-        <translation>Insereix</translation>
-    </message>
-    <message>
-        <source>1 frame</source>
-        <translation>1 fotograma</translation>
-    </message>
-    <message>
-        <source>5 frames</source>
-        <translation>5 fotogrames</translation>
-    </message>
-    <message>
-        <source>10 frames</source>
-        <translation>10 fotogrames</translation>
-    </message>
-    <message>
-        <source>20 frames</source>
-        <translation>20 fotogrames</translation>
-    </message>
-    <message>
-        <source>50 frames</source>
-        <translation>50 fotogrames</translation>
-    </message>
-    <message>
-        <source>100 frames</source>
-        <translation>100 fotogrames</translation>
-    </message>
-    <message>
-        <source>Clear frame</source>
-        <translation>Neteja el fotograma</translation>
-    </message>
-    <message>
-        <source>Lock/Unlock frame</source>
-        <translation>Bloca/desbloca el fotograma</translation>
-    </message>
-    <message>
-        <source>Copy TL forward</source>
-        <translation>Copia TL endavant</translation>
-    </message>
-    <message>
-        <source>1 time</source>
-        <translation>1 cop</translation>
-    </message>
-    <message>
-        <source>2 times</source>
-        <translation>2 cops</translation>
-    </message>
-    <message>
-        <source>3 times</source>
-        <translation>3 cops</translation>
-    </message>
-    <message>
-        <source>4 times</source>
-        <translation>4 cops</translation>
-    </message>
-    <message>
-        <source>5 times</source>
-        <translation>5 cops</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupGradientCreator</name>
-    <message>
-        <source>Linear</source>
-        <translation>Linial</translation>
-    </message>
-    <message>
-        <source>Radial</source>
-        <translation>Radial</translation>
-    </message>
-    <message>
-        <source>Conical</source>
-        <translation>Cònic</translation>
-    </message>
-    <message>
-        <source>Pad</source>
-        <translation>Almohadilla</translation>
-    </message>
-    <message>
-        <source>Reflect</source>
-        <translation>Reflexa</translation>
-    </message>
-    <message>
-        <source>Repeat</source>
-        <translation>Repeteix</translation>
-    </message>
-</context>
-<context>
-    <name>TupGraphicsScene</name>
-    <message>
-        <source>PolyLine</source>
-        <translation>Polilínia</translation>
-    </message>
-    <message>
-        <source>/Step: 0</source>
-        <translation>/Pas: 0</translation>
-    </message>
-    <message>
-        <source>/Step: </source>
-        <translation>/Pas:</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Línia</translation>
-    </message>
-    <message>
-        <source>lipsync:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupHelpBrowser</name>
-    <message>
-        <source>Help</source>
-        <translation>Ajuda</translation>
-    </message>
-</context>
-<context>
-    <name>TupHelpWidget</name>
-    <message>
-        <source>Help</source>
-        <translation>Ajuda</translation>
-    </message>
-</context>
-<context>
-    <name>TupImageDialog</name>
-    <message>
-        <source>Image Properties</source>
-        <translation>Propietats de la imatge</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Títol</translation>
-    </message>
-    <message>
-        <source>My Picture</source>
-        <translation>La meva imatge</translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation>Temes</translation>
-    </message>
-    <message>
-        <source>#topic1 #topic2 #topic3</source>
-        <translation>#tema1 #tema2 #tema3</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Just a little taste of my style :)</source>
-        <translation>Una petita mostra del meu estil :)</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source>Post Image</source>
-        <translation>Publica imatge</translation>
-    </message>
-    <message>
-        <source>Set a title for the picture here!</source>
-        <translation>Estableix aquí un títol per a la imatge!</translation>
-    </message>
-    <message>
-        <source>Set some topic tags for the picture here!</source>
-        <translation>Estableix aquí algunes etiquetes temàtiques de la imatge!</translation>
-    </message>
-</context>
-<context>
-    <name>TupInfoWidget</name>
-    <message>
-        <source>Currency Converter</source>
-        <translation>Convertidor de moneda</translation>
-    </message>
-    <message>
-        <source>Currency</source>
-        <translation>Moneda</translation>
-    </message>
-    <message>
-        <source>%1</source>
-        <translation>%1</translation>
-    </message>
-    <message>
-        <source>Source</source>
-        <translation>Font</translation>
-    </message>
-    <message>
-        <source>Update data every</source>
-        <translation>Actualitza les dades cada</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
-    <message>
-        <source>minute</source>
-        <translation>minut</translation>
-    </message>
-    <message>
-        <source>minutes</source>
-        <translation>minuts</translation>
-    </message>
-    <message>
-        <source>Link file to Object</source>
-        <translation>Enllaç d&apos;arxius per a objectes</translation>
-    </message>
-    <message>
-        <source>All files (*.*)</source>
-        <translation>Tots els arxius (*.*)</translation>
-    </message>
-</context>
-<context>
-    <name>TupItemManager</name>
-    <message>
-        <source>New folder %1</source>
-        <translation>Nova carpeta %1</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opcions</translation>
-    </message>
-    <message>
-        <source>Edit with Inkscape</source>
-        <translation>Edita amb Inkscape</translation>
-    </message>
-    <message>
-        <source>Edit with Gimp</source>
-        <translation>Edita amb Gimp</translation>
-    </message>
-    <message>
-        <source>Edit with Krita</source>
-        <translation>Edita amb Krita</translation>
-    </message>
-    <message>
-        <source>Edit with MyPaint</source>
-        <translation>Edita amb MyPaint</translation>
-    </message>
-    <message>
-        <source>Clone</source>
-        <translation>Clona</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>Exporta</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation>Reanomena</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Suprimeix</translation>
-    </message>
-    <message>
-        <source>Create new raster item</source>
-        <translation>Crea un nou element ràster</translation>
-    </message>
-    <message>
-        <source>Create new svg item</source>
-        <translation>Crea un nou element svg</translation>
-    </message>
-</context>
-<context>
-    <name>TupItemPreview</name>
-    <message>
-        <source>Library is empty :(</source>
-        <translation>La biblioteca està buida :(</translation>
-    </message>
-</context>
-<context>
-    <name>TupItemTweener</name>
-    <message>
-        <source>Position Tween</source>
-        <translation>Posició de la interpolació</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Rotació de la interpolació</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Escala la interpolació</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Retalla la interpolació</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Opacitat de la interpolació</translation>
-    </message>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Colorejat de la interpolació</translation>
-    </message>
-    <message>
-        <source>Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupLayer</name>
-    <message>
-        <source>Layer</source>
-        <translation>Capa</translation>
-    </message>
-</context>
-<context>
-    <name>TupLayerIndex</name>
-    <message>
-        <source>Layers</source>
-        <translation>Capes</translation>
-    </message>
-</context>
-<context>
-    <name>TupLibraryDialog</name>
-    <message>
-        <source>Library Object</source>
-        <translation>Objecte de biblioteca</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Item %1</source>
-        <translation>Element %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupLibraryWidget</name>
-    <message>
-        <source>Library</source>
-        <translation>Biblioteca</translation>
-    </message>
-    <message>
-        <source>Images</source>
-        <translation>Imatges</translation>
-    </message>
-    <message>
-        <source>Cannot open file: %1</source>
-        <translation>No es pot obrir l&apos;arxiu: %1</translation>
-    </message>
-    <message>
-        <source>Choose the images directory...</source>
-        <translation>Tria el directori d&apos;imatges...</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Files are too big, so they will be resized.</source>
-        <translation>Els arxius són massa grans, seran redimensionats.</translation>
-    </message>
-    <message>
-        <source>Note: This task can take a while.</source>
-        <translation>Nota: Aquesta tasca pot trigar molta estona.</translation>
-    </message>
-    <message>
-        <source>Do you want to continue?</source>
-        <translation>Vols continuar?</translation>
-    </message>
-    <message>
-        <source>Loading images...</source>
-        <translation>Carregant imatges...</translation>
-    </message>
-    <message>
-        <source>Loading image #%1</source>
-        <translation>Carregant imatge #%1</translation>
-    </message>
-    <message>
-        <source>ERROR!</source>
-        <translation>ERROR!</translation>
-    </message>
-    <message>
-        <source>ERROR: Can&apos;t open file %1. Please, check file permissions and try again.</source>
-        <translation>ERROR: No es pot obrir l&apos;arxiu %1. Revisa els permisos de l&apos;arxiu i intenta-ho un altre cop.</translation>
-    </message>
-    <message>
-        <source>No image files were found.&lt;br/&gt;Please, try another directory</source>
-        <translation>No s&apos;han trobat arxius d&apos;imatge.&lt;br/&gt;Prova en un altre directori</translation>
-    </message>
-    <message>
-        <source>Sound file</source>
-        <translation>Arxiu de so</translation>
-    </message>
-    <message>
-        <source>Image</source>
-        <translation>Imatge</translation>
-    </message>
-    <message>
-        <source>Svg File</source>
-        <translation>Arxiu svg</translation>
-    </message>
-    <message>
-        <source>Image Sequence</source>
-        <translation>Contenidor d&apos;imatges</translation>
-    </message>
-    <message>
-        <source>Svg Array</source>
-        <translation>Contenidor svg</translation>
-    </message>
-    <message>
-        <source>Add an object to library</source>
-        <translation>Afegeix un objecte a la biblioteca</translation>
-    </message>
-    <message>
-        <source>Adds a folder to the object&apos;s list</source>
-        <translation>Afegeix una carpeta a la llista de l&apos;objecte</translation>
-    </message>
-    <message>
-        <source>Inserts the selected object into the drawing area</source>
-        <translation>Insereix l&apos;objecte seleccionat en l&apos;àrea de dibuix</translation>
-    </message>
-    <message>
-        <source>No preview available</source>
-        <translation>Sense vista prèvia disponible</translation>
-    </message>
-    <message>
-        <source>Export object...</source>
-        <translation>Exporta l&apos;objete</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Item exported successfully!</source>
-        <translation>Element exportat correctament!</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t create images directory!</source>
-        <translation>No s&apos;ha pogut crear el directori d&apos;imatges!</translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t create vector directory!</source>
-        <translation>No s&apos;ha pogut crear el directori de vectors!</translation>
-    </message>
-    <message>
-        <source>Tupi library item</source>
-        <translation>Element de biblioteca de Tupi</translation>
-    </message>
-    <message>
-        <source>Image is bigger than workspace.</source>
-        <translation>La imatge és més gran que l&apos;àrea de treball.</translation>
-    </message>
-    <message>
-        <source>Do you want to resize it?</source>
-        <translation>Vols redimensionar-ho?</translation>
-    </message>
-    <message>
-        <source>Vector</source>
-        <translation>Vector</translation>
-    </message>
-    <message>
-        <source>Image files found: %1.</source>
-        <translation>Arxius d&apos;imatge trobats: %1.</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Choose the SVG files directory...</source>
-        <translation>Tria el directori d&apos;arxius SVG ...</translation>
-    </message>
-    <message>
-        <source>%1 SVG files will be loaded.</source>
-        <translation>%1 Arxius SVG es carregaran.</translation>
-    </message>
-    <message>
-        <source>Loading SVG files...</source>
-        <translation>Carregant arxius SVG ...</translation>
-    </message>
-    <message>
-        <source>Loading SVG file #%1</source>
-        <translation>Carregant arxius SVG #%1</translation>
-    </message>
-    <message>
-        <source>No SVG files were found.&lt;br/&gt;Please, try another directory</source>
-        <translation>No s&apos;han trobat arxius SVG.&lt;br/&gt;Prova en un altre directori</translation>
-    </message>
-    <message>
-        <source>Import audio file...</source>
-        <translation>Importa arxiu d&apos;àudio ...</translation>
-    </message>
-    <message>
-        <source>Directory</source>
-        <translation>Directori</translation>
-    </message>
-    <message>
-        <source>Import images...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import SVG files...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Library is empty!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>There&apos;s no current selection!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It&apos;s a directory! Please, pick a graphic object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>It&apos;s a sound file! Please, pick a graphic object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sounds</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error while opening file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupListProjectDialog</name>
-    <message>
-        <source>Projects List from Server</source>
-        <translation>Llista de projectes des del servidor</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>Accepta</translation>
-    </message>
-    <message>
-        <source>My works:</source>
-        <translation>Els meus treballs</translation>
-    </message>
-    <message>
-        <source>My contributions:</source>
-        <translation>Les meves col·laboracions:</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autor</translation>
-    </message>
-</context>
-<context>
-    <name>TupMainWindow</name>
-    <message>
-        <source>Tupi: 2D Magic</source>
-        <translation>Tupi: Magia 2D</translation>
-    </message>
-    <message>
-        <source>Opening a new document...</source>
-        <translation>Obrint un nou document...</translation>
-    </message>
-    <message>
-        <source>Animation</source>
-        <translation>Animació</translation>
-    </message>
-    <message>
-        <source>Player</source>
-        <translation>Jugador</translation>
-    </message>
-    <message>
-        <source>Question</source>
-        <translation>Pregunta</translation>
-    </message>
-    <message>
-        <source>The document has been modified.</source>
-        <translation>El document ha estat modificat.</translation>
-    </message>
-    <message>
-        <source>Do you want to save the project?</source>
-        <translation>Vols desar el projecte?</translation>
-    </message>
-    <message>
-        <source>Import project package</source>
-        <translation>Importa el paquet del projecte</translation>
-    </message>
-    <message>
-        <source>Cannot open project!</source>
-        <translation>No s&apos;ha pogut obrir el projecte!</translation>
-    </message>
-    <message>
-        <source>Tupi Project Package (*.tup)</source>
-        <translation>Paquet del projecte (*.tup)</translation>
-    </message>
-    <message>
-        <source>You have no permission to create this file. Please, choose another path.</source>
-        <translation>No téns permisos per crear aquest arxiu. Tria una altra drecera.</translation>
-    </message>
-    <message>
-        <source>Cannot save the project!</source>
-        <translation>No s&apos;ha pogut desar el projecte!</translation>
-    </message>
-    <message>
-        <source>New camera</source>
-        <translation>Càmera nova</translation>
-    </message>
-    <message>
-        <source>Bitmap</source>
-        <translation>Mapa de bits</translation>
-    </message>
-    <message>
-        <source>Bitmap Array</source>
-        <translation>Contenidor de mapes de bits</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation>&amp;Arxiu</translation>
-    </message>
-    <message>
-        <source>Recents</source>
-        <translation>Recents</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Edita</translation>
-    </message>
-    <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Finestra</translation>
-    </message>
-    <message>
-        <source>Modules</source>
-        <translation>Mòduls</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation>Ajuda</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation>&amp;Ajuda</translation>
-    </message>
-    <message>
-        <source>New project</source>
-        <translation>Nou projecte</translation>
-    </message>
-    <message>
-        <source>Open new project</source>
-        <translation>Obre un projecte nou</translation>
-    </message>
-    <message>
-        <source>Open project</source>
-        <translation>Obre projecte</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation>Ctrl+O</translation>
-    </message>
-    <message>
-        <source>Load existent project</source>
-        <translation>Carrega projecte existent</translation>
-    </message>
-    <message>
-        <source>Save project</source>
-        <translation>Desa projecte</translation>
-    </message>
-    <message>
-        <source>Ctrl+S</source>
-        <translation>Ctrl+S</translation>
-    </message>
-    <message>
-        <source>Save current project in current location</source>
-        <translation>Desa aquest projecte en aquesta drecera actual</translation>
-    </message>
-    <message>
-        <source>Save project &amp;As...</source>
-        <translation>Anomena i desa el projecte &amp;com...</translation>
-    </message>
-    <message>
-        <source>Open dialog box to save current project in any location</source>
-        <translation>Obre diàleg per desar aquest projecte en qualsevol drecera</translation>
-    </message>
-    <message>
-        <source>Cl&amp;ose project</source>
-        <translation>T&amp;anca projecte</translation>
-    </message>
-    <message>
-        <source>Ctrl+W</source>
-        <translation>Ctrl+W</translation>
-    </message>
-    <message>
-        <source>Close active project</source>
-        <translation>Tanca projecte actiu</translation>
-    </message>
-    <message>
-        <source>&amp;Import GIMP palettes</source>
-        <translation>&amp;Importa paletes de GIMP</translation>
-    </message>
-    <message>
-        <source>Import palettes</source>
-        <translation>Importa paletes</translation>
-    </message>
-    <message>
-        <source>&amp;Export Project</source>
-        <translation>&amp;Exporta projecte</translation>
-    </message>
-    <message>
-        <source>Export project to several video formats</source>
-        <translation>Exporta projecte a varis formats de vídeo</translation>
-    </message>
-    <message>
-        <source>E&amp;xit</source>
-        <translation>S&amp;urt</translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
-        <translation>Ctrl+Q</translation>
-    </message>
-    <message>
-        <source>Close application</source>
-        <translation>Tanca aplicació</translation>
-    </message>
-    <message>
-        <source>Pr&amp;eferences...</source>
-        <translation>Pr&amp;eferències...</translation>
-    </message>
-    <message>
-        <source>Opens the preferences dialog box</source>
-        <translation>Obre el diàleg de preferències</translation>
-    </message>
-    <message>
-        <source>About Tupi</source>
-        <translation>Sobre Tupi</translation>
-    </message>
-    <message>
-        <source>Undo</source>
-        <translation>Desfa</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Project &lt;b&gt;%1&lt;/b&gt; opened!</source>
-        <translation>Projecte &lt;b&gt;%1&lt;/b&gt; obert!</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation>Desa</translation>
-    </message>
-    <message>
-        <source>Discard</source>
-        <translation>Descarta</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancel·la</translation>
-    </message>
-    <message>
-        <source></source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Open Tupi project</source>
-        <translation>Obre un projecte Tupi</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Tip of the day</source>
-        <translation>Suggerència del dia</translation>
-    </message>
-    <message>
-        <source>Show on start</source>
-        <translation>Mostra al&apos;inici</translation>
-    </message>
-    <message>
-        <source>Previous tip</source>
-        <translation>Suggerència prèvia </translation>
-    </message>
-    <message>
-        <source>Next tip</source>
-        <translation>Suggerència següent</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Tanca</translation>
-    </message>
-    <message>
-        <source>Save Project As</source>
-        <translation>Desa el projecte com a</translation>
-    </message>
-    <message>
-        <source>Project &lt;b&gt;%1&lt;/b&gt; saved</source>
-        <translation>Projecte &lt;b&gt;%1&lt;/b&gt; desat</translation>
-    </message>
-    <message>
-        <source>Fatal Error</source>
-        <translation>Error greu</translation>
-    </message>
-    <message>
-        <source>The connection to the server has been lost.</source>
-        <translation>S&apos;ha perdut la connexió amb el servidor.</translation>
-    </message>
-    <message>
-        <source>Please, try to connect again in a while</source>
-        <translation>Prova de connectar de nou durant un temps</translation>
-    </message>
-    <message>
-        <source>Shift+P</source>
-        <translation>Maj+P</translation>
-    </message>
-    <message>
-        <source>Shift+B</source>
-        <translation>Maj+B</translation>
-    </message>
-    <message>
-        <source>Shift+L</source>
-        <translation>Maj+L</translation>
-    </message>
-    <message>
-        <source>Alt+B</source>
-        <translation>Alt+B</translation>
-    </message>
-    <message>
-        <source>Alt+Shift+B</source>
-        <translation>Alt+Maj+B</translation>
-    </message>
-    <message>
-        <source>SVG File</source>
-        <translation>Arxiu SVG</translation>
-    </message>
-    <message>
-        <source>Alt+S</source>
-        <translation>Alt+S</translation>
-    </message>
-    <message>
-        <source>SVG Array</source>
-        <translation>Contenidor svg</translation>
-    </message>
-    <message>
-        <source>Alt+Shift+S</source>
-        <translation>Alt+Maj+S</translation>
-    </message>
-    <message>
-        <source>Shift+C</source>
-        <translation>Maj+C</translation>
-    </message>
-    <message>
-        <source>Shift+E</source>
-        <translation>Maj+E</translation>
-    </message>
-    <message>
-        <source>Shift+H</source>
-        <translation>Maj+H</translation>
-    </message>
-    <message>
-        <source>Shift+T</source>
-        <translation>Maj+T</translation>
-    </message>
-    <message>
-        <source>Shift+D</source>
-        <translation>Maj+D</translation>
-    </message>
-    <message>
-        <source>News</source>
-        <translation>Notícies</translation>
-    </message>
-    <message>
-        <source>Ctrl+N</source>
-        <translation>Ctrl+N</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+S</source>
-        <translation>Ctrl+Maj+S</translation>
-    </message>
-    <message>
-        <source>Ctrl+R</source>
-        <translation>Ctrl+R</translation>
-    </message>
-    <message>
-        <source>Ctrl+P</source>
-        <translation>Ctrl+P</translation>
-    </message>
-    <message>
-        <source>Ctrl+K</source>
-        <translation>Ctrl+K</translation>
-    </message>
-    <message>
+        <location filename="../../../plugins/tools/text/texttool.cpp" line="161"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
+</context>
+<context>
+    <name>Motion Tween</name>
     <message>
-        <source>Ctrl+Z</source>
-        <translation>Ctrl+Z</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation>Refa</translation>
-    </message>
-    <message>
-        <source>Ctrl+Y</source>
-        <translation>Ctrl+Y</translation>
-    </message>
-    <message>
-        <source>[ by %1 | net mode ]</source>
-        <translation>[ by %1 | mode net ]</translation>
-    </message>
-    <message>
-        <source>by</source>
-        <translation>per</translation>
-    </message>
-    <message>
-        <source>Can&apos;t import project. File is empty!</source>
-        <translation>No s&apos;ha pogut importar el projecte. L&apos;arxiu està buit!</translation>
-    </message>
-    <message>
-        <source>Can&apos;t save the project. File doesn&apos;t exist!</source>
-        <translation>No es pot desar el projecte. L&apos;arxiu no existeix!</translation>
-    </message>
-    <message>
-        <source>&amp;Import</source>
-        <translation>&amp;Importa</translation>
-    </message>
-    <message>
-        <source>Actions Bar</source>
-        <translation>Barra d&apos;accions</translation>
-    </message>
-    <message>
-        <source>Directory does not exist! Please, choose another path.</source>
-        <translation>El directori no existeix! Escull un altre destí.</translation>
-    </message>
-    <message>
-        <source>Import Gimp palettes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp Palette (*.gpl *.txt *.css)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp palette import was successful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gimp palette import was unsuccessful</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shift+G</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Import Papagayo Lip-sync</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alt+P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import Papagayo lip-sync</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../../plugins/tools/tweener/tweener.cpp" line="186"/>
+        <source>Motion Tween</source>
+        <translation>Motion Tween</translation>
     </message>
 </context>
 <context>
-    <name>TupNetProjectManagerHandler</name>
-    <message>
-        <source>Communications</source>
-        <translation>Comunicacions</translation>
-    </message>
-    <message>
-        <source>Chat</source>
-        <translation>Xat</translation>
-    </message>
-    <message>
-        <source>Notices</source>
-        <translation>Notícies</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Unable to connect to server</source>
-        <translation>No s&apos;ha pogut connectar al servidor</translation>
-    </message>
-    <message>
-        <source>Fatal Error</source>
-        <translation>Error greu</translation>
-    </message>
-    <message>
-        <source>User &quot;%1&quot; is disabled.
-Please, contact the animation server admin to get access.</source>
-        <translation>L&apos;usuari &quot;% 1&quot; està desactivat.
-Contacta amb l&apos;administrador del servidor d&apos;animació per obtenir accés.</translation>
-    </message>
-    <message>
-        <source>Information</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>User has no available projects in the server</source>
-        <translation>Aquest usuari no té projectes disponibles al servidor</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Atenció</translation>
-    </message>
-    <message>
-        <source>Notice</source>
-        <translation>Avís</translation>
-    </message>
-</context>
-<context>
-    <name>TupNewItemDialog</name>
-    <message>
-        <source>Create new raster item</source>
-        <translation>Crea un nou element ràster</translation>
-    </message>
-    <message>
-        <source>Transparent</source>
-        <translation>Transparent</translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation>Blanc</translation>
-    </message>
-    <message>
-        <source>Black</source>
-        <translation>Negre</translation>
-    </message>
-    <message>
-        <source>Create new vector item</source>
-        <translation>Crea nou tema del vector</translation>
-    </message>
-    <message>
-        <source>&amp;Name:</source>
-        <translation>&amp;Nom:</translation>
-    </message>
-    <message>
-        <source>&amp;Extension:</source>
-        <translation>&amp;Extension:</translation>
-    </message>
-    <message>
-        <source>&amp;Width:</source>
-        <translation>&amp;Amplada:</translation>
-    </message>
-    <message>
-        <source>&amp;Height:</source>
-        <translation>A&amp;lçada:</translation>
-    </message>
-    <message>
-        <source>&amp;Background:</source>
-        <translation>&amp;Fons:</translation>
-    </message>
-    <message>
-        <source>&amp;Open it with:</source>
-        <translation>&amp;Obre amb:</translation>
-    </message>
-</context>
-<context>
-    <name>TupNewProject</name>
-    <message>
-        <source>Create a new project</source>
-        <translation>Crea un nou projecte</translation>
-    </message>
-    <message>
-        <source>Project Name</source>
-        <translation>Nom del projecte</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autor</translation>
-    </message>
-    <message>
-        <source>Dimension</source>
-        <translation>Dimensió</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opcions</translation>
-    </message>
-    <message>
-        <source>FPS</source>
-        <translation>FPS</translation>
-    </message>
-    <message>
-        <source>Project info</source>
-        <translation>Informació del projecte</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Clau</translation>
-    </message>
-    <message>
-        <source>Server</source>
-        <translation>Servidor</translation>
-    </message>
-    <message>
-        <source>Port</source>
-        <translation>Port</translation>
-    </message>
-    <message>
-        <source>my_project</source>
-        <translation>el meu projecte</translation>
-    </message>
-    <message>
-        <source>Your name</source>
-        <translation>El teu nom</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Just for fun!</source>
-        <translation>Només per diversió!</translation>
-    </message>
-    <message>
-        <source>Presets</source>
-        <translation>Preconfiguracions</translation>
-    </message>
-    <message>
-        <source>Free format</source>
-        <translation>Format lliure</translation>
-    </message>
-    <message>
-        <source>480p (PAL DV/DVD) - 25</source>
-        <translation>480p (PAL DV/DVD) - 25</translation>
-    </message>
-    <message>
-        <source>576p (PAL DV/DVD) - 25</source>
-        <translation>576p (PAL DV/DVD) - 25</translation>
-    </message>
-    <message>
-        <source>720p (HD) - 25</source>
-        <translation>720p (HD) - 25</translation>
-    </message>
-    <message>
-        <source>1280p (Full HD) - 25</source>
-        <translation>1280p (Full HD) - 25</translation>
-    </message>
-    <message>
-        <source>Background</source>
-        <translation>Fons</translation>
-    </message>
-    <message>
-        <source>Click here to change background color</source>
-        <translation>Clica aquí per canviar el color de fons</translation>
-    </message>
-    <message>
-        <source>Tupitube project</source>
-        <translation>Projecte Tupitube</translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation>Configuració</translation>
-    </message>
-    <message>
-        <source>Username</source>
-        <translation>Nom d&apos;usuari</translation>
-    </message>
-    <message>
-        <source>Store password</source>
-        <translation>Desa la clau</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Please, set a name for the project</source>
-        <translation>Anomena el projecte</translation>
-    </message>
-    <message>
-        <source>Please, fill in your username</source>
-        <translation>Introdueix el teu nom d&apos;usuari</translation>
-    </message>
-    <message>
-        <source>Please, fill in your password</source>
-        <translation>Introdueix la teva contrasenya</translation>
-    </message>
-    <message>
-        <source>Please, fill in the server name or IP</source>
-        <translation>Introdueix el nom del servidor o la IP</translation>
-    </message>
-    <message>
-        <source>White</source>
-        <translation>Blanc</translation>
-    </message>
-    <message>
-        <source>520x380 - 24</source>
-        <translation>520x380 - 24</translation>
-    </message>
-    <message>
-        <source>640x480 - 24</source>
-        <translation>640x480 - 24</translation>
-    </message>
-</context>
-<context>
-    <name>TupNotice</name>
-    <message>
-        <source>Notices</source>
-        <translation>Notícies</translation>
-    </message>
-</context>
-<context>
-    <name>TupOnionOpacityDialog</name>
-    <message>
-        <source>Onion Paper</source>
-        <translation>Paper ceba</translation>
-    </message>
-    <message>
-        <source>-0.05</source>
-        <translation>-0.05</translation>
-    </message>
-    <message>
-        <source>-0.01</source>
-        <translation>-0.01</translation>
-    </message>
-    <message>
-        <source>+0.01</source>
-        <translation>+0.01</translation>
-    </message>
-    <message>
-        <source>+0.05</source>
-        <translation>+0.05</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintArea</name>
-    <message>
-        <source>Drawing area</source>
-        <translation>Àrea de dibuix</translation>
-    </message>
-    <message>
-        <source>Cut</source>
-        <translation>Retalla</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Copia</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Enganxa</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation>Neteja</translation>
-    </message>
-    <message>
-        <source>Add to library...</source>
-        <translation>Afegeix a la biblioteca...</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selecció d&apos;objectes</translation>
-    </message>
-    <message>
-        <source>No items selected</source>
-        <translation>No hi ha ítems seleccionats</translation>
-    </message>
-    <message>
-        <source>Pencil</source>
-        <translation>Llapis</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation>Selecció de línia</translation>
-    </message>
-    <message>
-        <source>PolyLine</source>
-        <translation>Polilínia</translation>
-    </message>
-    <message>
-        <source>Ctrl+X</source>
-        <translation>Ctrl+X</translation>
-    </message>
-    <message>
-        <source>Ctrl+C</source>
-        <translation>Ctrl+C</translation>
-    </message>
-    <message>
-        <source>Ctrl+V</source>
-        <translation>Ctrl+V</translation>
-    </message>
-    <message>
-        <source>Paste in...</source>
-        <translation>Enganxa en ...</translation>
-    </message>
-    <message>
-        <source>next 5 frames</source>
-        <translation>propers 5 fotogrames</translation>
-    </message>
-    <message>
-        <source>next 10 frames</source>
-        <translation>propers 10 fotogrames</translation>
-    </message>
-    <message>
-        <source>next 20 frames</source>
-        <translation>propers 20 fotogrames</translation>
-    </message>
-    <message>
-        <source>next 50 frames</source>
-        <translation>propers 50 fotogrames</translation>
-    </message>
-    <message>
-        <source>next 100 frames</source>
-        <translation>propers 100 fotogrames</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>Envia</translation>
-    </message>
-    <message>
-        <source>To back</source>
-        <translation>Enrere</translation>
-    </message>
-    <message>
-        <source>To front</source>
-        <translation>Endavant</translation>
-    </message>
-    <message>
-        <source>One level to back</source>
-        <translation>Un pas enrere</translation>
-    </message>
-    <message>
-        <source>One level to front</source>
-        <translation>Un pas endavant</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rectangle</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>El·lipse</translation>
-    </message>
-    <message>
-        <source>Line</source>
-        <translation>Línia</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaBase</name>
-    <message>
-        <source>Locked!</source>
-        <translation>Bloquejat!</translation>
-    </message>
-    <message>
-        <source>No Layers!</source>
-        <translation>No hi ha capes!</translation>
-    </message>
-    <message>
-        <source>No Scene!</source>
-        <translation>Sense escenes!</translation>
-    </message>
-    <message>
-        <source>No Frames!</source>
-        <translation>Sense fotogrames!</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaConfig</name>
-    <message>
-        <source>Grid color</source>
-        <translation>Color de graella</translation>
-    </message>
-    <message>
-        <source>Grid separation</source>
-        <translation>Separació de graella</translation>
-    </message>
-    <message>
-        <source>Background color</source>
-        <translation>Color de fons</translation>
-    </message>
-    <message>
-        <source>Onion skin color</source>
-        <translation>Color pell de ceba</translation>
-    </message>
-    <message>
-        <source>Onion skin background </source>
-        <translation>Fons pell de ceba</translation>
-    </message>
-</context>
-<context>
-    <name>TupPaintAreaStatus</name>
-    <message>
-        <source>Antialiasing</source>
-        <translation>Suavitzat</translation>
-    </message>
-    <message>
-        <source>Current Frame</source>
-        <translation>Aquest Fotograma</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation>1</translation>
-    </message>
-    <message>
+    <name>ViewTool</name>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="69"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="74"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="78"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="92"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="111"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="118"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="144"/>
         <source>Zoom</source>
-        <translation>Zoom</translation>
-    </message>
-    <message>
-        <source>%</source>
-        <translation>%</translation>
-    </message>
-    <message>
-        <source>Rotate Workspace</source>
-        <translation>Gira l&apos;espai de treball</translation>
-    </message>
-    <message>
-        <source>Background Color</source>
-        <translation>Color del fons</translation>
-    </message>
-    <message>
-        <source>Click here to change background color</source>
-        <translation>Clica aquí per canviar el color de fons</translation>
-    </message>
-    <message>
-        <source>Brush Color</source>
-        <translation>Color del pinzell</translation>
-    </message>
-    <message>
-        <source>Click here to change brush color</source>
-        <translation>Clica aquí per canviar el color del pinzell</translation>
-    </message>
-    <message>
-        <source>Action Safe Area</source>
-        <translation>Àrea d&apos;acció segura</translation>
-    </message>
-    <message>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message>
-        <source>Show grid</source>
-        <translation>Mostra graella</translation>
-    </message>
-    <message>
-        <source>#</source>
-        <translation>#</translation>
-    </message>
-    <message>
-        <source>Full screen</source>
-        <translation>Pantalla completa</translation>
-    </message>
-    <message>
-        <source>F11</source>
-        <translation>F11</translation>
-    </message>
-    <message>
-        <source>Reset WorkSpace</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupPapagayoDialog</name>
-    <message>
-        <source>Import Papagayo project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Load PGO File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load &amp;Images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load &amp;Sound</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load Papagayo project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Papagayo Project (*.pgo)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Choose the images directory...</source>
-        <translation type="unfinished">Tria el directori d&apos;imatges...</translation>
-    </message>
-    <message>
-        <source>Load sound file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound file (*.ogg *.wav *.mp3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished">Error</translation>
-    </message>
-    <message>
-        <source>PGO path is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Images directory is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sound path is unset!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupPenDialog</name>
-    <message>
-        <source>Pen Size</source>
-        <translation>Mida del llapis</translation>
-    </message>
-    <message>
-        <source>-5</source>
-        <translation>-5</translation>
-    </message>
-    <message>
-        <source>-1</source>
-        <translation>-1</translation>
-    </message>
-    <message>
-        <source>+1</source>
-        <translation>+1</translation>
-    </message>
-    <message>
-        <source>+5</source>
-        <translation>+5</translation>
-    </message>
-</context>
-<context>
-    <name>TupPenWidget</name>
-    <message>
-        <source>Thickness</source>
-        <translation>Gruix</translation>
-    </message>
-    <message>
-        <source>Solid</source>
-        <translation>Sòlid</translation>
-    </message>
-    <message>
-        <source>Dash</source>
-        <translation>Guió</translation>
-    </message>
-    <message>
-        <source>Dot</source>
-        <translation>Punt</translation>
-    </message>
-    <message>
-        <source>Dash dot</source>
-        <translation>Guions i punts</translation>
-    </message>
-    <message>
-        <source>Dash dot dot</source>
-        <translation>Guió punt punt</translation>
-    </message>
-    <message>
-        <source>Flat</source>
-        <translation>Pla</translation>
-    </message>
-    <message>
-        <source>Square</source>
-        <translation>Quadrat</translation>
-    </message>
-    <message>
-        <source>Round</source>
-        <translation>Rodó</translation>
-    </message>
-    <message>
-        <source>Miter</source>
-        <translation>Punta</translation>
-    </message>
-    <message>
-        <source>Bevel</source>
-        <translation>Bisell</translation>
-    </message>
-    <message>
-        <source>Pen Properties</source>
-        <translation>Propietats del llapis</translation>
-    </message>
-    <message>
-        <source>Dashes</source>
-        <translation>Guions</translation>
-    </message>
-    <message>
-        <source>Cap</source>
-        <translation>Maj</translation>
-    </message>
-    <message>
-        <source>Join</source>
-        <translation>Uneix</translation>
-    </message>
-    <message>
-        <source>Brush</source>
-        <translation>Pinzell</translation>
-    </message>
-</context>
-<context>
-    <name>TupPreferences</name>
-    <message>
-        <source>Application TupPreferences</source>
-        <translation>Preferències de Tupi</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Theme</source>
-        <translation>Tema</translation>
-    </message>
-    <message>
-        <source>Font</source>
-        <translation>Font</translation>
-    </message>
-    <message>
-        <source>Workspace</source>
-        <translation>Espai de treball</translation>
-    </message>
-</context>
-<context>
-    <name>TupPreferences::GeneralPage</name>
-    <message>
-        <source>Tupi Home</source>
-        <translation>Directori principal</translation>
-    </message>
-    <message>
-        <source>Cache</source>
-        <translation>Cache</translation>
-    </message>
-    <message>
-        <source>Browser</source>
-        <translation>Navegador</translation>
-    </message>
-    <message>
-        <source>Open last project</source>
-        <translation>Obre l&apos;últim projecte</translation>
-    </message>
-    <message>
-        <source>Auto save (minutes)</source>
-        <translation>Desat automàtic (minuts)</translation>
-    </message>
-</context>
-<context>
-    <name>TupProjectActionBar</name>
-    <message>
-        <source>Insert frame</source>
-        <translation>Inserta fotograma</translation>
-    </message>
-    <message>
-        <source>Lock frame</source>
-        <translation>Bloqueja el fotograma</translation>
-    </message>
-    <message>
-        <source>Move layer up</source>
-        <translation>Mou una capa cap amunt</translation>
-    </message>
-    <message>
-        <source>Move layer down</source>
-        <translation>Mou una capa cap avall</translation>
-    </message>
-    <message>
-        <source>Lock layer</source>
-        <translation>Bloqueja capa</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this frame?</source>
-        <translation>Vols suprimir aquest fotograma?</translation>
-    </message>
-    <message>
-        <source>Remove?</source>
-        <translation>Suprimir?</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this layer?</source>
-        <translation>Vols suprimir aquesta capa?</translation>
-    </message>
-    <message>
-        <source>Do you want to remove this scene?</source>
-        <translation>Vols suprimir aquesta escena?</translation>
-    </message>
-    <message>
-        <source>F5</source>
-        <translation>F5</translation>
-    </message>
-    <message>
-        <source>F6</source>
-        <translation>F6</translation>
-    </message>
-    <message>
-        <source>F9</source>
-        <translation>F9</translation>
-    </message>
-    <message>
-        <source>F10</source>
-        <translation>F10</translation>
-    </message>
-    <message>
-        <source>F8</source>
-        <translation>F8</translation>
-    </message>
-    <message>
-        <source>Move scene up</source>
-        <translation>Mou amunt l&apos;escena</translation>
-    </message>
-    <message>
-        <source>Move scene down</source>
-        <translation>Mou avall l&apos;escena</translation>
-    </message>
-    <message>
-        <source>Lock scene</source>
-        <translation>Bloca l&apos;escena</translation>
-    </message>
-    <message>
-        <source>Insert layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove frame</source>
-        <translation type="unfinished">Suprimeix el fotograma</translation>
-    </message>
-    <message>
-        <source>Move frame backward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move frame forward</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Insert scene</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove scene</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupProjectManager</name>
-    <message>
-        <source>Scene %1</source>
-        <translation>Escena %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupScene</name>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Sound layer %1</source>
-        <translation>Capa de so %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupSceneTabWidget</name>
-    <message>
-        <source>Layers</source>
-        <translation>Capes</translation>
-    </message>
-</context>
-<context>
-    <name>TupScenesWidget</name>
-    <message>
-        <source>Scenes Manager</source>
-        <translation>Administrador d&apos;escenes</translation>
-    </message>
-    <message>
-        <source>Filter here...</source>
-        <translation>Filtra aquí...</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Escena %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupSoundPlayer</name>
-    <message>
-        <source>Play</source>
-        <translation type="unfinished">Reprodueix</translation>
-    </message>
-</context>
-<context>
-    <name>TupSplash</name>
-    <message>
-        <source>Version </source>
-        <translation>Versió </translation>
-    </message>
-</context>
-<context>
-    <name>TupStoryBoardDialog</name>
-    <message>
-        <source>Storyboard Settings</source>
-        <translation>Arranjaments del guió gràfic</translation>
-    </message>
-    <message>
-        <source>&amp;Post</source>
-        <translation>&amp;Publica</translation>
-    </message>
-    <message>
-        <source>Storyboard General Information</source>
-        <translation>Informació general del guió gràfic</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Títol</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation>Autor</translation>
-    </message>
-    <message>
-        <source>Summary</source>
-        <translation>Resum</translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation>Temes</translation>
-    </message>
-    <message>
-        <source>Scene Information</source>
-        <translation>Informació d&apos;escena</translation>
-    </message>
-    <message>
-        <source>Duration</source>
-        <translation>Durada</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Cover</source>
-        <translation>Caràtula</translation>
-    </message>
-    <message>
-        <source>Storyboard</source>
-        <translation>Guió gràfic</translation>
-    </message>
-    <message>
-        <source>Scene No %1 - Information</source>
-        <translation>Escena No% 1 - Informació</translation>
-    </message>
-    <message>
-        <source>Choose a directory...</source>
-        <translation>Tria directori...</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Storyboard exported successfully!</source>
-        <translation>Guió gràfic exportat correctament!</translation>
-    </message>
-    <message>
-        <source>Scene</source>
-        <translation>Escena</translation>
-    </message>
-    <message>
-        <source>&amp;PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export as HTML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished">Tanca</translation>
-    </message>
-    <message>
-        <source>Save PDF file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PDF file (*.pdf)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Html</source>
-        <translation type="unfinished">Html</translation>
-    </message>
-</context>
-<context>
-    <name>TupSymbolEditor</name>
-    <message>
-        <source>Symbol editor</source>
-        <translation>Editor d&apos;objectes</translation>
-    </message>
-    <message>
-        <source>Brushes</source>
-        <translation>Pincells</translation>
-    </message>
-    <message>
-        <source>Selection</source>
-        <translation>Selecció</translation>
-    </message>
-    <message>
-        <source>Fill</source>
-        <translation>Emplenat</translation>
-    </message>
-    <message>
-        <source>View</source>
-        <translation>Visualització</translation>
-    </message>
-</context>
-<context>
-    <name>TupThemeSelector</name>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation>Text</translation>
-    </message>
-    <message>
-        <source>Base</source>
-        <translation>Base</translation>
-    </message>
-    <message>
-        <source>Foreground</source>
-        <translation>Primer pla</translation>
-    </message>
-    <message>
-        <source>Background</source>
-        <translation>Fons</translation>
-    </message>
-    <message>
-        <source>Button</source>
-        <translation>Botó</translation>
-    </message>
-    <message>
-        <source>Button Text</source>
-        <translation>Text del botó</translation>
-    </message>
-    <message>
-        <source>Effects</source>
-        <translation>Efectes</translation>
-    </message>
-    <message>
-        <source>Light</source>
-        <translation>Llum</translation>
-    </message>
-    <message>
-        <source>Midlight</source>
-        <translation>Lluminositat mitja</translation>
-    </message>
-    <message>
-        <source>Dark</source>
-        <translation>Foscor</translation>
-    </message>
-    <message>
-        <source>Mid</source>
-        <translation>Mig</translation>
-    </message>
-    <message>
-        <source>Selections</source>
-        <translation>Seleccions</translation>
-    </message>
-    <message>
-        <source>Highlight</source>
-        <translation>Llum alta</translation>
-    </message>
-    <message>
-        <source>Highlighted Text</source>
-        <translation>Text enlluernador</translation>
-    </message>
-    <message>
-        <source>Text effects</source>
-        <translation>Efectes de text</translation>
-    </message>
-    <message>
-        <source>Bright Text</source>
-        <translation>Text brillant</translation>
-    </message>
-    <message>
-        <source>Link</source>
-        <translation>Enllaç</translation>
-    </message>
-    <message>
-        <source>Link Visited</source>
-        <translation>Enllaç visitat</translation>
-    </message>
-    <message>
-        <source>Schema</source>
-        <translation>Esquema</translation>
-    </message>
-    <message>
-        <source>Owner</source>
-        <translation>Propietari</translation>
-    </message>
-    <message>
-        <source>Date</source>
-        <translation>Data</translation>
-    </message>
-    <message>
-        <source>Save schema</source>
-        <translation>Desa esquema</translation>
-    </message>
-    <message>
-        <source>Style</source>
-        <translation>Estil</translation>
-    </message>
-    <message>
-        <source>Use this colors</source>
-        <translation>Utilitza aquests colors</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Please choose a theme name</source>
-        <translation>Tria un nom pel tema</translation>
-    </message>
-</context>
-<context>
-    <name>TupTimeLine</name>
-    <message>
-        <source>Time Line</source>
-        <translation>Línia de temps</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Layer %1</source>
-        <translation>Capa %1</translation>
-    </message>
-    <message>
-        <source>Scene %1</source>
-        <translation>Escena %1</translation>
-    </message>
-</context>
-<context>
-    <name>TupToolStatus</name>
-    <message>
-        <source>Current Tool</source>
-        <translation>Aquesta eina</translation>
-    </message>
-</context>
-<context>
-    <name>TupToolsDialog</name>
-    <message>
-        <source>Pencil</source>
-        <translation>Llapis</translation>
-    </message>
-    <message>
-        <source>Ink</source>
-        <translation>Tinta</translation>
-    </message>
-    <message>
-        <source>Polyline</source>
-        <translation>Polilínia</translation>
-    </message>
-    <message>
-        <source>Ellipse</source>
-        <translation>El·lipse</translation>
-    </message>
-    <message>
-        <source>Rectangle</source>
-        <translation>Rectangle</translation>
-    </message>
-    <message>
-        <source>Object Selection</source>
-        <translation>Selecció d&apos;objectes</translation>
-    </message>
-    <message>
-        <source>Nodes Selection</source>
-        <translation>Selecció de línia</translation>
-    </message>
-    <message>
-        <source>Color Palette</source>
-        <translation>Paleta de colors</translation>
-    </message>
-    <message>
-        <source>Pen Size</source>
-        <translation>Mida del llapis</translation>
-    </message>
-    <message>
-        <source>Opacity Value</source>
-        <translation>Valor d&apos;opacitat</translation>
-    </message>
-</context>
-<context>
-    <name>TupTwitter</name>
-    <message>
-        <source>Latest version</source>
-        <translation type="unfinished">Última versió</translation>
-    </message>
-    <message>
-        <source>Revision</source>
-        <translation type="unfinished">Revisió</translation>
-    </message>
-    <message>
-        <source>Code Name</source>
-        <translation type="unfinished">Nom en clau</translation>
-    </message>
-    <message>
-        <source>It&apos;s time to upgrade! Click here!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Want to help us to make a better project? Click here!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TupTwitterWidget</name>
-    <message>
-        <source>News!</source>
-        <translation>Notícies!</translation>
-    </message>
-</context>
-<context>
-    <name>TupViewColorCells</name>
-    <message>
-        <source>Default Palette</source>
-        <translation>Paleta per omisió</translation>
-    </message>
-    <message>
-        <source>Named Colors</source>
-        <translation>Colors etiquetats</translation>
-    </message>
-    <message>
-        <source>Custom Color Palette</source>
-        <translation>Paleta de colors personalitzats</translation>
-    </message>
-    <message>
-        <source>Custom Gradient Palette</source>
-        <translation>Paleta de gradients personalitzats</translation>
-    </message>
-    <message>
-        <source>Add Color</source>
-        <translation>Afegeix color</translation>
-    </message>
-    <message>
-        <source>Remove Color</source>
-        <translation>Suprimeix color</translation>
-    </message>
-</context>
-<context>
-    <name>TupWebHunter</name>
-    <message>
-        <source>Information Temporarily Unavailable</source>
-        <translation>Informació no disponible temporalment</translation>
-    </message>
-</context>
-<context>
-    <name>TweenManager</name>
-    <message>
-        <source>Create a new Tween</source>
-        <translation>Crea una nova interpolació</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Tween name already exists!</source>
-        <translation>El nom de la interpolació ja existeix</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Edita</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Suprimeix</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opcions</translation>
-    </message>
-</context>
-<context>
-    <name>Tweener</name>
-    <message>
-        <source>Coloring Tween</source>
-        <translation>Colorejat la interpolació</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation>Error</translation>
-    </message>
-    <message>
-        <source>Coloring Tween can&apos;t be applied to raster images</source>
-        <translation>El colorejat de la interpolació no es pot aplicar a imatges ràster</translation>
-    </message>
-    <message>
-        <source>Shift+C</source>
-        <translation>Maj+C</translation>
-    </message>
-    <message>
-        <source>Tween name is missing!</source>
-        <translation>No es troba aquest nom d&apos;interpolació!</translation>
-    </message>
-    <message>
-        <source>Frame %1</source>
-        <translation>Fotograma %1</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Tween %1 applied!</source>
-        <translation>Interpolació %1 aplicada!</translation>
-    </message>
-    <message>
-        <source>Shift+X</source>
-        <translation>Maj+X</translation>
-    </message>
-    <message>
-        <source>Opacity Tween</source>
-        <translation>Opacitat de la interpolació</translation>
-    </message>
-    <message>
-        <source>Shift+O</source>
-        <translation>Maj+O</translation>
-    </message>
-    <message>
-        <source>Position Tween</source>
-        <translation>Posició de la interpolació</translation>
-    </message>
-    <message>
-        <source>Shift+W</source>
-        <translation>Maj+W</translation>
-    </message>
-    <message>
-        <source>Rotation Tween</source>
-        <translation>Rotació de la interpolació</translation>
-    </message>
-    <message>
-        <source>Shift+R</source>
-        <translation>Maj+R</translation>
-    </message>
-    <message>
-        <source>Scale Tween</source>
-        <translation>Escala de la interpolació</translation>
-    </message>
-    <message>
-        <source>Shift+S</source>
-        <translation>Maj+S</translation>
-    </message>
-    <message>
-        <source>Shear Tween</source>
-        <translation>Retalla la interpolació</translation>
-    </message>
-    <message>
-        <source>Shift+H</source>
-        <translation>Maj+H</translation>
-    </message>
-    <message>
-        <source>Coloring Tween can&apos;t be applied to SVG files</source>
-        <translation>El colorejat de la interpolació no es pot aplicar a arxius SVG</translation>
-    </message>
-    <message>
-        <source>Composed Tween</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TweenerPanel</name>
-    <message>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <source>Options</source>
-        <translation>Opcions</translation>
-    </message>
-    <message>
-        <source>Select object</source>
-        <translation>Tria objecte</translation>
-    </message>
-    <message>
-        <source>Set Tweeners</source>
-        <translation>Estableix interpoladors</translation>
-    </message>
-    <message>
-        <source>Tweeners</source>
-        <translation>Interpoladors</translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation>Posició</translation>
-    </message>
-    <message>
-        <source>Rotation</source>
-        <translation>Rotació</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Escala</translation>
-    </message>
-    <message>
-        <source>Shear</source>
-        <translation>Retalla</translation>
-    </message>
-    <message>
-        <source>Opacity</source>
-        <translation>Opacitat</translation>
-    </message>
-    <message>
-        <source>Coloring</source>
-        <translation>Colorejat</translation>
-    </message>
-    <message>
-        <source>Save Tween</source>
-        <translation>Desa la interpolació</translation>
-    </message>
-    <message>
-        <source>Cancel Tween</source>
-        <translation>Cancel·la la interpolació</translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation>Informació</translation>
-    </message>
-    <message>
-        <source>Select objects for Tweening first!</source>
-        <translation>Primer selecciona els elements a interpolar!</translation>
-    </message>
-    <message>
-        <source>Update Tween</source>
-        <translation>Actualitza la interpolació</translation>
-    </message>
-    <message>
-        <source>Close Tween properties</source>
-        <translation>Tanca propietats de la interpolació</translation>
-    </message>
-</context>
-<context>
-    <name>TweenerTable</name>
-    <message>
-        <source>Position</source>
-        <translation>Posició</translation>
-    </message>
-    <message>
-        <source>Rotation</source>
-        <translation>Rotació</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Escala</translation>
-    </message>
-    <message>
-        <source>Shear</source>
-        <translation>Retalla</translation>
-    </message>
-    <message>
-        <source>Opacity</source>
-        <translation>Opacitat</translation>
-    </message>
-    <message>
-        <source>Coloring</source>
-        <translation>Colorejat</translation>
-    </message>
-</context>
-<context>
-    <name>VideoProperties</name>
-    <message>
-        <source>Set Animation Properties</source>
-        <translation>Estableix les propietats d&apos;animació</translation>
-    </message>
-    <message>
-        <source>Title</source>
-        <translation>Títol</translation>
-    </message>
-    <message>
-        <source>My Video</source>
-        <translation>El meu vídeo</translation>
-    </message>
-    <message>
-        <source>Topics</source>
-        <translation>Temes</translation>
-    </message>
-    <message>
-        <source>#topic1 #topic2 #topic3</source>
-        <translation>#tema1 #tema2 #tema3</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descripció</translation>
-    </message>
-    <message>
-        <source>Just a little taste of my style :)</source>
-        <translation>Una petita mostra de la meva estil :)</translation>
-    </message>
-    <message>
-        <source>Set a title for the picture here!</source>
-        <translation>Tria un títol per a la imatge!</translation>
-    </message>
-    <message>
-        <source>Set some topic tags for the picture here!</source>
-        <translation>Tria algunes etiquetes temàtiques per a la imatge!</translation>
+        <translation type="unfinished">Zoom</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="69"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="80"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="81"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="113"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="134"/>
+        <location filename="../../../plugins/tools/viewtool/viewtool.cpp" line="190"/>
+        <source>Hand</source>
+        <translation type="unfinished">Mà</translation>
     </message>
 </context>
 <context>
     <name>ZoomConfigurator</name>
     <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="53"/>
+        <source>Zoom Mode</source>
+        <translation type="unfinished">Mode de Zoom</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="58"/>
+        <source>Zoom In</source>
+        <translation type="unfinished">Apropa</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="60"/>
+        <source>Zoom Out</source>
+        <translation type="unfinished">Allunya</translation>
+    </message>
+    <message>
+        <location filename="../../../plugins/tools/viewtool/zoomconfigurator.cpp" line="68"/>
         <source>Scale Factor</source>
-        <translation>Factor d&apos;escala</translation>
-    </message>
-    <message>
-        <source>Tips</source>
-        <translation>Consells</translation>
-    </message>
-    <message>
-        <source>Zoom Square mode</source>
-        <translation>Zoom de àrea</translation>
-    </message>
-    <message>
-        <source>Press Ctrl key + Mouse left button</source>
-        <translation>Prem la tecla Ctrl + botó esquerre del ratolí</translation>
+        <translation type="unfinished">Factor d&apos;escala</translation>
     </message>
 </context>
 </TS>

@@ -1,76 +1,52 @@
 #!/bin/sh
+# Author: krawek [at] toonka.com
+# Version: 0.1
+# This help to generate the ts file
 
-###########################################################################
-#   Project TUPI: Magia 2D                                                #
-#   Project Contact: info@maefloresta.com                                 #
-#   Project Website: http://www.maefloresta.com                           #
-#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
-#                                                                         #
-#   Developers:                                                           #
-#   2010:                                                                 #
-#    Gustavo Gonzalez / xtingray                                          #
-#                                                                         #
-#   KTooN's versions:                                                     #
-#                                                                         #
-#   2006:                                                                 #
-#    David Cuadrado                                                       #
-#    Jorge Cuadrado                                                       #
-#   2003:                                                                 #
-#    Fernado Roldan                                                       #
-#    Simena Dinas                                                         #
-#                                                                         #
-#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
-#   License:                                                              #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
-###########################################################################
+#if [ ! "$0" == "translate.sh" ]
+#then
+#	echo "Use: sh translate.sh [output.ts]"
+#	exit 0
+#fi
 
-TUPI_DIR="`dirname $0`/.."
-TS_FILE=/tmp/tupi_untranslated.ts
-PRO_FILE="lang.pro"
+KTDIR="`dirname $0`/.."
+KTTS=/tmp/tupi_untranslated.ts
+TRPRO=trans.pro
 
 if [ $# -gt 0 ]
 then
-     TS_FILE=$1
+	KTTS=$1
 fi
 
-echo "The .ts file will be generated in " $TS_FILE
+echo "Your translate file will be generated in " $KTTS
+echo "KTDIR: " $KTDIR
+echo "TRPRO: " $TRPRO
 
-echo "PREFIX =" > $PRO_FILE
-echo "ROOT =" >> $PRO_FILE
-echo "" >> $PRO_FILE
+echo "PREFIX =" > $TRPRO
+echo "ROOT =" >> $TRPRO
+echo "" >> $TRPRO
 
-HEADERS=$(find $TUPI_DIR -name "*.h" -printf "%p ")
-SOURCES=$(find $TUPI_DIR -name "*.cpp" -printf "%p ")
+HEADERS=$(find $KTDIR -name "*.h" -printf "%p ")
+SOURCES=$(find $KTDIR -name "*.cpp" -printf "%p ")
 
-echo "HEADERS = $HEADERS" >> $PRO_FILE
-echo "SOURCES = $SOURCES" >> $PRO_FILE
+echo "HEADERS = $HEADERS" >> $TRPRO
+echo "SOURCES = $SOURCES" >> $TRPRO
 
-echo "TRANSLATIONS = $TS_FILE" >> $PRO_FILE
+echo "TRANSLATIONS = $KTTS" >> $TRPRO
 
-lupdate -noobsolete $PRO_FILE
-rm -fR $PRO_FILE
+lupdate -noobsolete $TRPRO
+rm -fR $TRPRO
 
 LING=`which linguist`
 
 if [ -x $LING -a $LING ]
 then
-	linguist $TS_FILE &
+	linguist $KTTS &
 else
 	echo "* Please install linguist"
 fi
 
-cd $TUPI_DIR
+cd $KTDIR
 
-echo "Done. File generated!"
+echo "File generated!"
 

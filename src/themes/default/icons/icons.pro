@@ -1,9 +1,20 @@
+# Subdir relative project main directory: ./src/themes/default/icons
+# Target is a library:  
+
 INSTALLS = icons 
 
 icons.target = .
 icons.commands = cp *.png $(INSTALL_ROOT)/themes/default/icons
 icons.path = /themes/default/icons
 
-CONFIG += warn_on
+CONFIG += release \
+          warn_on \
+          staticlib 
 
-TEMPLATE = subdirs
+TEMPLATE = lib
+
+# little hack
+macx{
+    TEMPLATE = subdirs
+}
+

@@ -1,13 +1,9 @@
+
 INCLUDEPATH += $$EXPORT_DIR
 
-unix {
-    LIBS += -L$$EXPORT_DIR -ltupiexport
-}
+LIBS += -L$$EXPORT_DIR -lexport
 
-win32 {
-    LIBS += -L$$EXPORT_DIR/release/ -ltupiexport
-}
 
 linux-g++ {
-    PRE_TARGETDEPS += $$EXPORT_DIR/libtupiexport.so
+PRE_TARGETDEPS += $$EXPORT_DIR/libexport.a
 }

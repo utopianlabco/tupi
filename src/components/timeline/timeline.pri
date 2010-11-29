@@ -1,13 +1,8 @@
+
 INCLUDEPATH += $$TIMELINE_DIR
 
-unix {
-    LIBS += -L$$TIMELINE_DIR -ltupitimeline
-}
-
-win32 {
-    LIBS += -L$$TIMELINE_DIR\release -ltupitimeline
-}
+LIBS += -L$$TIMELINE_DIR -ltimeline
 
 linux-g++ {
-    PRE_TARGETDEPS += $$TIMELINE_DIR/libtupitimeline.so
+	PRE_TARGETDEPS += $$TIMELINE_DIR/libtimeline.a
 }

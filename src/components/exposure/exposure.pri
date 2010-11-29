@@ -1,13 +1,9 @@
+
 INCLUDEPATH += $$EXPOSURE_DIR
 
-unix {
-    LIBS += -L$$EXPOSURE_DIR -ltupiexposure
-}
-
-win32 {
-    LIBS += -L$$EXPOSURE_DIR/release/ -ltupiexposure
-}
+LIBS += -L$$EXPOSURE_DIR -lexposure
 
 linux-g++ {
-    PRE_TARGETDEPS += $$EXPOSURE_DIR/libtupiexposure.so
+PRE_TARGETDEPS += $$EXPOSURE_DIR/libexposure.a
 }
+

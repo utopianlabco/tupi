@@ -1,15 +1,9 @@
-INCLUDEPATH += /usr/include/qt5/QtMultimedia /usr/include/qt5/QtMultimediaWidgets
-INCLUDEPATH += $$PAINTAREA_DIR 
 
-unix {
-    LIBS += -L$$PAINTAREA_DIR -ltupipaintarea
-}
+INCLUDEPATH += $$PAINTAREA_DIR
 
-win32 {
-    LIBS += -L$$PAINTAREA_DIR/release/ -ltupipaintarea
-}
+LIBS += -L$$PAINTAREA_DIR -lpaintarea
 
 linux-g++ {
-PRE_TARGETDEPS += $$PAINTAREA_DIR/libtupipaintarea.so
+PRE_TARGETDEPS += $$PAINTAREA_DIR/libpaintarea.a
 }
 

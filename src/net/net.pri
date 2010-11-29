@@ -1,12 +1,11 @@
-# QT += network
+
 INCLUDEPATH += $$NET_DIR
 
-unix {
-    LIBS += -L$$NET_DIR -ltupinet
-}
+LIBS += -L$$NET_DIR -lntup
 
-win32 {
-    LIBS += -L$$NET_DIR/release/ -ltupinet
-}
+QT += network
 
+linux-g++{
+  PRE_TARGETDEPS += $$NET_DIR/libntup.a
+}
 

@@ -3,6 +3,8 @@
 # Subdirectorio relativo al directorio principal del proyecto: ./src/themes
 # Destiono es un subdirectorio de proyecto 
 
-CONFIG += warn_on 
+QT += qt3support
+CONFIG += release \
+          warn_on 
 TEMPLATE = subdirs 
-SUBDIRS = default dark
+SUBDIRS = default

@@ -1,60 +1,81 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file is public domain software, originally written by Joey Hess. 
+#
+# This version is for packages that are architecture dependent.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
-export QT_SELECT=5
-QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
+build: build-stamp
+build-stamp:
+	dh_testdir
 
-%:
-	dh $@
+	# Add here commands to compile the package.
+	./configure --prefix=`pwd`/debian/tupi/usr --sharedir=`pwd`/debian/tupi/usr/share/tupi --debian-build
+	$(MAKE)	
 
-override_dh_auto_clean:
-	$(RM) -v configure.tests/*/Makefile configure.tests/*/.qmake.stash $(QM_FILES)
-	dh_auto_clean
+	touch build-stamp
 
-override_dh_auto_configure:
-	# override qonf/defaults.rb
-	ruby configure.rb \
-            --without-debug \
-            --prefix=/usr \
-            --bindir=/usr/lib/tupi/bin \
-            --libdir=/usr/lib/tupi \
-            --sharedir=/usr/share/tupi \
-            --includedir=/usr/include/tupi
-	# force qmake-generated Makefiles to respect dpkg-provided flags and don't strip
-	perl -0pi -e 's[(CXXFLAGS\s*=)][$$1 $$ENV{CFLAGS} $$ENV{CPPFLAGS}]; \
-                      s[(LFLAGS\s*=)][$$1 $$ENV{LDFLAGS}]; \
-                      s[(CFLAGS\s*=)][$$1 $$ENV{CFLAGS}]; \
-                      s[(STRIP\s*=)\s*\w+][$$1 true];' \
-                     $$(find . -name Makefile)
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
 
-$(QM_FILES):
-	# rebuild translations
-	lupdate tupi.pro -locations none -silent -ts $(@:.qm=.ts)
-	lrelease $(@:.qm=.ts)
+	# Add here commands to clean up after the build process.
+	#$(MAKE) clean
+	#$(MAKE) distclean
 
-override_dh_auto_build: $(QM_FILES)
-	cd src/components/help/man && gzip -9 -c tupi.man > tupi.1.gz
-	dh_auto_build
+	dh_clean
 
-override_dh_fixperms:
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	# Add here commands to install the package into debian/<packagename>
+	$(MAKE) install
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+#	dh_installdocs
+#	dh_installexamples
+#	dh_install
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installcatalogs
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+#	dh_installwm
+#	dh_installudev
+#	dh_lintian
+#	dh_bugfiles
+#	dh_undocumented
+#	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
 	dh_fixperms
-	if [ -d "$(CURDIR)/debian/tupi-data" ]; then \
-            find $(CURDIR)/debian/tupi-data/usr/share/tupi/data/xml/ \
-                -type f -executable -exec chmod -c a-x '{}' \;\
-        ;fi
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
 
-override_dh_install:
-	dh_install
-	# De-duplication (http://wiki.debian.org/dedup.debian.net):
-	rdfind -outputname /dev/null -makesymlinks true debian/tupi-data
-	symlinks -rsc debian/tupi-data
-
-PDIR     := $(CURDIR)/debian/tupi
-override_dh_shlibdeps:
-	LD_LIBRARY_PATH="$(PDIR)/usr/lib/tupi:$(PDIR)/usr/lib/tupi/plugins:$(LD_LIBRARY_PATH)" dh_shlibdeps
-
-override_dh_makeshlibs:
-	dh_makeshlibs --noscripts
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

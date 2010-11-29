@@ -1,3 +1,9 @@
-
-DEFINES += HAVE_LIBAV HAVE_QUAZIP HAVE_ZLIB HAVE_MULTIMEDIA HAVE_THEORA K_NODEBUG VERSION=\\\"0.2\\\" CODE_NAME=\\\"Beraba\\\" REVISION=\\\"git08\\\" CONFIG_VERSION=\\\"2\\\"
-CONFIG += release
+# Generated automatically at Thu Nov 25 15:22:31 -0500 2010! PLEASE DO NOT EDIT!
+LIBS += -laspell -lavcodec -lavformat -lavutil
+QT += opengl core gui svg xml network
+DEFINES += HAVE_ASPELL HAVE_FFMPEG K_DEBUG KLIB_PREFIX='\\"'/usr'\\"'
+unix {
+    OBJECTS_DIR = .obj
+    UI_DIR = .ui
+    MOC_DIR = .moc
+}

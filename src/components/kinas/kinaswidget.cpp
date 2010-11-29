@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,10 +34,11 @@
  ***************************************************************************/
 
 #include "kinaswidget.h"
+#include "kdebug.h"
 
-KinasWidget::KinasWidget(QWidget *parent) : TupModuleWidgetBase(parent)
+KinasWidget::KinasWidget(QWidget *parent) : KTModuleWidgetBase(parent)
 {
-    TINIT;
+    KINIT;
 
     setWindowTitle(tr("Tupi Script"));
     setWindowIcon(QPixmap(THEME_DIR + "icons/color_palette.png"));
@@ -45,7 +46,7 @@ KinasWidget::KinasWidget(QWidget *parent) : TupModuleWidgetBase(parent)
     m_splitter = new QSplitter(this);
     addChild(m_splitter);
 
-    m_functionViewer = new TupSFunctionView(m_splitter);
+    m_functionViewer = new KTSFunctionView(m_splitter);
     m_splitter->addWidget(m_functionViewer);
 
     m_editors = new QTabWidget(this);
@@ -53,17 +54,17 @@ KinasWidget::KinasWidget(QWidget *parent) : TupModuleWidgetBase(parent)
 
     m_splitter->setSizes(QList<int>()<<160 << 400);
 
-    addEditor("Example.tups");
+    addEditor("Example.kts");
 }
 
 
 KinasWidget::~KinasWidget()
 {
-    TEND;
+    KEND;
 }
 
 void KinasWidget::addEditor(const QString &title)
 {
-    TupSEditor *m_editor = new TupSEditor;
+    KTSEditor *m_editor = new KTSEditor;
     m_editors->addTab(m_editor, title);
 }

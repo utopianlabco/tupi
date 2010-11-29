@@ -1,82 +1,17 @@
 Source: tupi
-Section: graphics
-Maintainer: Debian QA Group <packages@qa.debian.org>
-Build-Depends: debhelper-compat (= 13),
-               libaspell-dev (>= 0.60.7~),
-               libavformat-dev,
-               libavutil-dev,
-               libogg-dev,
-               libqt5opengl5-dev,
-               libqt5svg5-dev,
-               libquazip5-dev,
-               libtheora-dev,
-               perl,
-               qt5-qmake,
-               qtmultimedia5-dev,
-               qttools5-dev-tools,
-               rdfind,
-               ruby (>= 4.9),
-               symlinks,
-               zlib1g-dev,
-Standards-Version: 4.7.2
-Homepage: http://www.maefloresta.com/portal
-Vcs-Browser: https://salsa.debian.org/debian/tupi
-Vcs-Git: https://salsa.debian.org/debian/tupi.git
+Priority: extra
+Maintainer: Gustav Gonzalez [xtingray] <info@maefloresta.com>
+Build-Depends: debhelper (>= 7), autotools-dev, ruby, libaspell-dev, 
+ libavformat-dev, libavcodec-dev, mesa-common-dev, qt4-dev-tools (>= 4:4.6.2-0ubuntu5),
+ imagemagick, zlib1g-dev
+Standards-Version: 3.9.1
+Section: graphics 
+Homepage: http://www.maefloresta.com 
 
-Package: tupi
+Package: tupi 
+Section: graphics 
 Architecture: any
-Depends: tupi-data (= ${source:Version}),
-         ${misc:Depends},
-         ${shlibs:Depends},
-Replaces: ktoon,
-Description: 2D Animation design and authoring tool
- Tupi: 2D Magic is a design and authoring tool for digital artists interested
- in 2D Animation, offering an interface experience focused on 8-100 years old
- kids. It's source code is based on the KTooN project.
- .
- Some of its main features are: basic illustration tools (shapes, fill, text),
- gradient tools, onion skin, brushes editor, pencil with smoothness support,
- basic object library (for svg files and raster images) and many others.
- .
- Using its modules of Animation and Reproduction you can export 2D projects
- to several formats as OGG, MPEG, AVI, MOV and SWF. Additionally, the
- option of exporting Image arrays as output is available.
-
-Package: tupi-data
-Architecture: all
-Depends: ${misc:Depends},
-Replaces: tupi (<< 0.2+git02-1),
-Breaks: tupi (<< 0.2+git02-1),
-Description: Data files for tupi (2D Animation design and authoring tool)
- Tupi: 2D Magic is a design and authoring tool for digital artists interested
- in 2D Animation, offering an interface experience focused on 8-100 years old
- kids. It's source code is based on the KTooN project.
- .
- Some of its main features are: basic illustration tools (shapes, fill, text),
- gradient tools, onion skin, brushes editor, pencil with smoothness support,
- basic object library (for svg files and raster images) and many others.
- .
- Using its modules of Animation and Reproduction you can export 2D projects
- to several formats as OGG, MPEG, AVI, MOV and SWF. Additionally, the
- option of exporting Image arrays as output is available.
- .
- This package contains tupi's arch-independent files.
-
-#Package: tupi-dev
-#Section: devel
-#Architecture: all
-#Depends: ${misc:Depends}
-#Description: Development files for tupi (2D Animation design and authoring tool)
-# Tupi: 2D Magic is a design and authoring tool for digital artists interested
-# in 2D Animation, offering an interface experience focused on 8-100 years old
-# kids. It's source code is based on the KTooN project.
-# .
-# Some of its main features are: basic illustration tools (shapes, fill, text),
-# gradient tools, onion skin, brushes editor, pencil with smoothness support,
-# basic object library (for svg files and raster images) and many others.
-# .
-# Using its modules of Animation and Reproduction you can export 2D projects
-# to several formats as OGG, MPEG, AVI, MOV and SWF. Additionally, the
-# option of exporting Image arrays as output is available.
-# .
-# This package contains development files
+Depends: ${shlibs:Depends}, ${misc:Depends} 
+Description: Magic 2D 
+ Tupi is a design and authoring tool for 2D Animation for digital artists 
+ from 8 to 100 years old.

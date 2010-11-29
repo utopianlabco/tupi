@@ -1,14 +1,9 @@
+
 INCLUDEPATH += $$ANIMATION_DIR
 
-unix {
-    LIBS += -L$$ANIMATION_DIR -ltupianimation
-}
-
-win32 {
-    LIBS += -L$$ANIMATION_DIR/release/ -ltupianimation
-}
+LIBS += -L$$ANIMATION_DIR -lanimation
 
 linux-g++ {
-    PRE_TARGETDEPS += $$ANIMATION_DIR/libtupianimation.so
+PRE_TARGETDEPS += $$ANIMATION_DIR/libanimation.a
 }
 

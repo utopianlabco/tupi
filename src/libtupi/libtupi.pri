@@ -1,9 +1,4 @@
-unix {
-    INCLUDEPATH += $$LIBTUPI_DIR
-    LIBS += -L$$LIBTUPI_DIR -ltupi 
-}
+INCLUDEPATH += $$LIBTUPI_DIR
 
-win32 {
-    INCLUDEPATH += $$LIBTUPI_DIR
-    LIBS += -L$$LIBTUPI_DIR/release/ -ltupi 
-}
+LIBS += -L$$LIBTUPI_DIR -ltupi 
+
