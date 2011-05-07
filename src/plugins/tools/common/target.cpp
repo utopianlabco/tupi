@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,17 @@
  ***************************************************************************/
 
 #include "target.h"
+#include "kdebug.h"
+#include "ktgraphicalgorithm.h"
+#include "ktgraphicobject.h"
+
+#include <QCursor>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
+#include <QStyleOptionButton>
+#include <QApplication>
 
 /**
  * This class defines the data structure for a node, and all the methods required to manipulate it.
@@ -41,8 +52,7 @@
  * @author Gustav Gonzalez 
 */
 
-// Target::Target(const QPointF & pos, int zLevel, QGraphicsScene *scene) : QGraphicsItem(0, scene)
-Target::Target(const QPointF & pos, int zLevel) : QGraphicsItem(0)
+Target::Target(const QPointF & pos, int zLevel, QGraphicsScene *scene) : QGraphicsItem(0, scene)
 {
     QGraphicsItem::setCursor(QCursor(Qt::PointingHandCursor));
     setFlag(ItemIsSelectable, false);
@@ -100,11 +110,7 @@ void Target::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Target::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[Target::mouseReleaseEvent()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           K_FUNCINFO;
     #endif
 
     emit positionUpdated(event->scenePos()); 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,27 +36,24 @@
 #ifndef SPINBOXDELEGATE_H
 #define SPINBOXDELEGATE_H
 
-#include "tglobal.h"
-
 #include <QItemDelegate>
 #include <QSpinBox>
-#include <QModelIndex>
 
-class TUPI_EXPORT SpinBoxDelegate : public QItemDelegate
+class SpinBoxDelegate : public QItemDelegate
 {
     Q_OBJECT
-
     public:
         SpinBoxDelegate(QObject *parent = 0);
         QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,  const QModelIndex &index) const;
 
         void setEditorData(QWidget *editor, const QModelIndex &index) const;
-        virtual void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+        void setModelData(QWidget *editor, QAbstractItemModel *model,
+                  const QModelIndex &index);
 
         void updateEditorGeometry(QWidget *editor,
                       const QStyleOptionViewItem &option, const QModelIndex &index) const;
     signals:
-        void dataUpdated() const;
+        void dataUpdated();
 };
 
 #endif

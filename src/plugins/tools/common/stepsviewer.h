@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,57 +36,36 @@
 #ifndef STEPSVIEWER_H
 #define STEPSVIEWER_H
 
-#include "tglobal.h"
-#include "tuptweenerstep.h"
-#include "tpushbutton.h"
-
 #include <QTableWidget>
-#include <cmath>
-#include <QGraphicsPathItem>
-#include <QDebug>
-#include <QBoxLayout>
-#include <QHeaderView>
-#include <QPainter>
 
-typedef QList<QPointF> Segment;
+class QGraphicsPathItem;
+class KTTweenerStep;
 
 /**
  * @author Jorge Cuadrado 
 */
 
-class TUPI_EXPORT StepsViewer : public QTableWidget
+class StepsViewer : public QTableWidget
 {
     Q_OBJECT
+
+    // friend class KTExposureVerticalHeader;
 
     public:
         StepsViewer(QWidget *parent = 0);
         ~StepsViewer();
-        void setPath(const QGraphicsPathItem *pathItem);
+        void setPath(const QGraphicsPathItem *path);
         
-        QVector<TupTweenerStep *> steps();
+        QVector<KTTweenerStep *> steps();
         int totalSteps();
-        void clearInterface();
-        QString intervals();
-        void loadPath(const QGraphicsPathItem *pathItem, QList<int> intervals);
-        QList<QPointF> tweenPoints();
-
+        void cleanRows();
         virtual QSize sizeHint() const;
 
-    signals:
-        void totalHasChanged(int total);
-
     private slots:
-        void updatePathSection(int column, int row);
-
-    protected slots:
-        void commitData(QWidget *editor);
+        void updatePath(int column, int row);
         
     private:
-        void calculateKeys();
-        void calculateGroups();
-        QList<QPointF> calculateSegmentPoints(QPointF begin, QPointF end, int total);
-        void addTableRow(int row, int frames);
-        void loadTweenPoints();
+        QList<QPointF> calculateDots(QPointF dot1, QPointF dot2, int total);
         struct Private;
         Private *const k;
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,30 +36,20 @@
 #ifndef TWEENMANAGER_H
 #define TWEENMANAGER_H
 
-#include "tglobal.h"
-#include "timagebutton.h"
-#include "tosd.h"
-
 #include <QWidget>
-#include <QHBoxLayout>
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QListWidget>
-#include <QListWidgetItem>
-#include <QMenu>
-#include <QDir>
 
 /**
  * @author Gustav Gonzalez 
 */
 
-// class QListWidgetItem;
+class QListWidgetItem;
 
-class TUPI_EXPORT TweenManager: public QWidget 
+class TweenManager: public QWidget 
 {
     Q_OBJECT
 
     public:
+
         TweenManager(QWidget *parent = 0);
         ~TweenManager();
         void loadTweenList(QList<QString> tweenList);

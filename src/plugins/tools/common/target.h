@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,36 +33,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TARGET_H
-#define TARGET_H
-
-#include "tglobal.h"
-#include "tupgraphicalgorithm.h"
-#include "tupgraphicobject.h"
+#ifndef NODE_H
+#define NODE_H
 
 #include <QGraphicsItem>
 #include <QObject>
 #include <QPointF>
-#include <QCursor>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QStyleOptionButton>
-#include <QApplication>
 
 /**
  * @author Gustav Gonzalez 
 */
 
-class TUPI_EXPORT Target : public QObject, public QGraphicsItem
+class Target : public QObject, public QGraphicsItem
 {
     Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
     
     public:
         
-        Target(const QPointF & pos = QPoint(0,0), int zLevel = 0);
+        Target(const QPointF & pos = QPoint(0,0), int zLevel = 0, QGraphicsScene * scene = 0);
         ~Target();
         
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *);

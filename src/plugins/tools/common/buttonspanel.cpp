@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,14 +34,19 @@
  ***************************************************************************/
 
 #include "buttonspanel.h"
+#include "kimagebutton.h"
+#include "kdebug.h"
+
+#include <QHBoxLayout>
+#include <QBoxLayout>
 
 ButtonsPanel::ButtonsPanel(QWidget *parent) : QWidget(parent)
 {
-    TImageButton *editButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/tweening.png"), 22);
+    KImageButton *editButton = new KImageButton(QPixmap(THEME_DIR + "icons/tweening.png"), 22);
     editButton->setToolTip(tr("Edit Tween"));
     connect(editButton, SIGNAL(clicked()), this, SIGNAL(clickedEditTween()));
 
-    TImageButton *removeButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/minus_sign.png"), 22);
+    KImageButton *removeButton = new KImageButton(QPixmap(THEME_DIR + "icons/minus_sign.png"), 22);
     removeButton->setToolTip(tr("Remove Tween"));
     connect(removeButton, SIGNAL(clicked()), this, SIGNAL(clickedRemoveTween()));
 

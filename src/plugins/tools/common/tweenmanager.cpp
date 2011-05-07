@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,12 +34,21 @@
  ***************************************************************************/
 
 #include "tweenmanager.h"
+#include "kimagebutton.h"
+#include "kosd.h"
+#include "kdebug.h"
+
+#include <QHBoxLayout>
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QMenu>
 
 struct TweenManager::Private
 {
     QLineEdit *input;
     QListWidget *tweensList;
-    TImageButton *addButton;
+    KImageButton *addButton;
 
     QString target;
 };
@@ -49,8 +58,10 @@ TweenManager::TweenManager(QWidget *parent) : QWidget(parent), k(new Private)
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
+    setFont(QFont("Arial", 8, QFont::Normal, false));
+
     k->input = new QLineEdit;
-    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/plus_sign.png"), 22);
+    k->addButton = new KImageButton(QPixmap(THEME_DIR + "icons/plus_sign.png"), 22);
     k->addButton->setToolTip(tr("Create a new Tween"));
     connect(k->input, SIGNAL(returnPressed()), this, SLOT(addTween()));
     connect(k->addButton, SIGNAL(clicked()), this, SLOT(addTween()));
@@ -92,6 +103,7 @@ void TweenManager::loadTweenList(QList<QString> tweenList)
 
     for (int i=0; i < tweenList.size(); i++) {
         QListWidgetItem *tweenerItem = new QListWidgetItem(k->tweensList);
+        tweenerItem->setFont(QFont("verdana", 8));
         tweenerItem->setText(tweenList.at(i));
         tweenerItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
@@ -117,6 +129,7 @@ void TweenManager::addTween()
     if (name.length() > 0) {
         if (!itemExists(name)) {
             QListWidgetItem *tweenerItem = new QListWidgetItem(k->tweensList);
+            tweenerItem->setFont(QFont("verdana", 8));
             tweenerItem->setText(name);
             tweenerItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             k->input->clear();
@@ -124,22 +137,7 @@ void TweenManager::addTween()
 
             emit addNewTween(name);
         } else {
-            TOsd::self()->display(tr("Error"), tr("Tween name already exists!"), TOsd::Error);
-        }
-    } else {
-        int i = 0;
-        while (true) {
-               QString num = QString::number(i); 
-               if (i < 10)
-                   num = "0" + QString::number(i);
-
-               QString name = "tween" + num; 
-               QList<QListWidgetItem *> items = k->tweensList->findItems(name, Qt::MatchExactly);
-               if (items.count() == 0) {
-                   k->input->setText(name);
-                   break;
-               }
-               i++;
+            KOsd::self()->display(tr("Error"), tr("Tween name already exists!"), KOsd::Error);
         }
     }
 }
