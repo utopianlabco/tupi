@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,11 +36,10 @@
 #ifndef TACTION_H
 #define TACTION_H
 
-#include "tglobal.h"
-#include "tactionmanager.h"
-
 #include <QAction>
 #include <QKeySequence>
+
+#include "tglobal.h"
 
 class TActionManager;
 
@@ -48,7 +47,7 @@ class TActionManager;
  * @brief la clase TAction hereda de QAction, para facilitar la creaccion de acciones, y dando un parametro para identificar las acciones.
  * @author David Cuadrado
 */
-class T_GUI_EXPORT TAction : public QAction
+class K_GUI_EXPORT TAction : public QAction
 {
     Q_OBJECT
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,17 +36,17 @@
 #ifndef TMAINWINDOWABSTRACTSETTINGS_H
 #define TMAINWINDOWABSTRACTSETTINGS_H
 
-#include "tglobal.h"
 #include <QObject>
+#include "kideality.h"
 
-class ToolView;
+class KToolView;
 class TMainWindow;
 
 /**
- * @author David Cuadrado
+ * @author David Cuadrado <krawek@gmail.com>
 */
 
-class T_GUI_EXPORT TMainWindowAbstractSettings : public QObject
+class K_IDEAL_EXPORT TMainWindowAbstractSettings : public QObject
 {
     public:
         TMainWindowAbstractSettings(QObject *parent = 0) : QObject(parent) {}
@@ -54,6 +54,7 @@ class T_GUI_EXPORT TMainWindowAbstractSettings : public QObject
         
         virtual void save(TMainWindow *w) = 0;
         virtual void restore(TMainWindow *w) = 0;
+        
 };
 
 #endif

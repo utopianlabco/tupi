@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,44 +36,6 @@
 #ifndef TDEBUG_H
 #define TDEBUG_H
 
-// #include "tglobal.h"
-
-#ifndef T_CORE_EXPORT
-  #if defined(QT_SHARED) || defined(QT_PLUGIN)
-    #define T_CORE_EXPORT Q_DECL_EXPORT
-  #else
-    #define T_CORE_EXPORT
-  #endif
-#endif
-
-#include <QFile>
-#include <QString>
-#include <QDateTime>
-#include <QPoint>
-#include <QPointF>
-#include <QRect>
-#include <QVariant>
-#include <QSize>
-#include <QEvent>
-
-#ifdef QT_GUI_LIB
-
-#include <QRegion>
-#include <QPen>
-#include <QBrush>
-#include <QImage>
-#include <QIcon>
-#include <QPixmap>
-#include <QWidget>
-#include <QMessageBox>
-#include <QSyntaxHighlighter>
-#include <QMatrix>
-#include <QDesktopWidget>
-#include <QScrollBar>
-#include <QDebug>
-
-#endif
-
 #include <QTextStream>
 #include <QStringList>
 #include <QTextEdit>
@@ -82,8 +44,10 @@
 #include <QColor>
 #endif
 
+#include "tglobal.h"
+
 /**
- * @author David Cuadrado
+ * @author David Cuadrado <krawek@gmail.com>
 */
 
 #ifdef __GNUC__
@@ -153,14 +117,12 @@ enum DebugOutput
 };
 
 #if !defined(K_NODEBUG)
-class T_CORE_EXPORT TDebug
+class K_CORE_EXPORT TDebug
 {
     public:
-
         class Streamer : public QObject
             {
                 public:
-
                     Streamer() : space(true) {}
                     ~Streamer() {};
                     QString buffer;
@@ -266,7 +228,7 @@ class T_CORE_EXPORT TDebug
         TDebug(const TDebug &);
         ~TDebug();
         
-        static void setOutputChannel();
+        static void setForceDisableGUI();
         
         inline TDebug &operator << (QTextStreamManipulator /*m*/)
         { 
@@ -381,7 +343,7 @@ class T_CORE_EXPORT TDebug
         
         // static QTextBrowser *browser(QWidget *parent, int width);
         static QTextEdit *browser(QWidget *parent, int width);
-        static void setProjectStatus(bool status);
+
 #endif
   
         template <class T> TDebug& operator << ( const QList<T> &list );

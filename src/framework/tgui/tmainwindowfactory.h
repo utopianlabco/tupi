@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,24 +36,16 @@
 #ifndef TMAINWINDOWFACTORY_H
 #define TMAINWINDOWFACTORY_H
 
-#include "tglobal.h"
-
-#include <QDockWidget>
-#include <QToolBar>
-#include <QTabWidget>
-#include <QEvent>
-#include <QApplication>
-#include <QShowEvent>
+#include "kideality.h"
 
 class TMainWindow;
 class QMainWindow;
 
 /**
  * This class creates a TMainWindow from other QMainWindow
- * @author David Cuadrado
+ * @author David Cuadrado <krawek@gmail.com>
 */
-
-class T_GUI_EXPORT TMainWindowFactory
+class K_IDEAL_EXPORT TMainWindowFactory
 {
     public:
         TMainWindowFactory();

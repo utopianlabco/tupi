@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,56 +36,25 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
-/**
- * This class defines enumerations used in the whole code of the project.
- *
- * @author David Cuadrado
-*/
-
 #if defined(QT_SHARED) || defined(QT_PLUGIN)
-#define T_GUI_EXPORT Q_GUI_EXPORT
-#define T_CORE_EXPORT Q_DECL_EXPORT
-#define T_SOUND_EXPORT Q_DECL_EXPORT
-#define TUPI_EXPORT Q_GUI_EXPORT
-#define TUPI_PLUGIN Q_DECL_EXPORT
+# define K_GUI_EXPORT Q_GUI_EXPORT
+# define K_CORE_EXPORT Q_DECL_EXPORT
+# define K_SOUND_EXPORT Q_DECL_EXPORT
 #else
-#define T_GUI_EXPORT
-#define T_CORE_EXPORT
-#define T_SOUND_EXPORT
-#define TUPI_EXPORT
-#define TUPI_PLUGIN
+# define K_GUI_EXPORT
+# define K_CORE_EXPORT
+# define K_SOUND_EXPORT
 #endif
 
-#ifdef K_DEBUG
+#include "kapplicationproperties.h"
 
-#ifdef Q_OS_WIN
-#include <QDebug>
-#else
-#include "tdebug.h"
-#endif
+#define SHARE_DIR kAppProp->shareDir()
+#define DATA_DIR kAppProp->dataDir()
+#define THEME_DIR kAppProp->themeDir()
+#define HOME_DIR kAppProp->homeDir()
+#define CONFIG_DIR kAppProp->configDir()
+#define PLUGINS_DIR kAppProp->pluginDir()
 
-#endif
-
-#define LIBRARY_DIR CONFIG_DIR+"/libraries"
-
-namespace Tupi 
-{
-    enum RenderType
-      {
-       Image = 0,
-       OpenGL,
-       Native
-      };
-
-    enum MessageType
-      {
-       Information = 0,
-       Warning,
-       Error,
-       Critical
-      };
-};
+#define CACHE_DIR kAppProp->cacheDir()
 
 #endif
-
-#define ZLAYER_LIMIT 10000

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,11 +34,22 @@
  ***************************************************************************/
 
 #include "tmainwindowfactory.h"
-#include "tabbedmainwindow.h"
-#include "tstackedmainwindow.h"
-#include "tworkspacemainwindow.h"
 
-class T_GUI_EXPORT EventFilter : public QObject
+#include <ktabbedmainwindow.h>
+#include <kstackedmainwindow.h>
+#include <kworkspacemainwindow.h>
+
+#include <QDockWidget>
+#include <QToolBar>
+#include <QTabWidget>
+#include <QEvent>
+#include <QApplication>
+#include <QShowEvent>
+
+#include <QtDebug>
+
+
+class EventFilter : public QObject
 {
     public:
         EventFilter(TMainWindow *mw, QObject *parent = 0);
@@ -94,7 +105,7 @@ TMainWindowFactory::~TMainWindowFactory()
 }
 
 /**
- * if centralWidget() is a QTabWidget an instance of TabbedMainWindow will be created
+ * if centralWidget() is a QTabWidget an instance of KTabbedMainWindow will be created
  * @param other 
  * @return 
  */
@@ -106,22 +117,14 @@ TMainWindow *TMainWindowFactory::create(QMainWindow *other)
         other->hide();
 
     if (other->inherits("TMainWindow")) {
-        #ifdef K_DEBUG
-            QString msg = "TMainWindowFactory::create() - Fatal Error: Can't create a TMainWindow!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-
+        qWarning() << QObject::tr("Can't create a TMainWindow from TMainWindow");
         return static_cast<TMainWindow *>(other);
     }
 
     if (QWidget *central = other->centralWidget()) {
         if (QTabWidget *tabWidget = dynamic_cast<QTabWidget *>(central)) {
-            mainWindow = new TabbedMainWindow;
-            static_cast<TabbedMainWindow *>(mainWindow)->setTabWidget(tabWidget);
+            mainWindow = new KTabbedMainWindow;
+            static_cast<KTabbedMainWindow *>(mainWindow)->setTabWidget(tabWidget);
         } else {
             mainWindow = new TMainWindow;
             central->setParent(mainWindow);

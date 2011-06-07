@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,14 +34,32 @@
  ***************************************************************************/
 
 #include "tmainwindow.h"
+#include "kbuttonbar.h"
+#include "ktoolview.h"
+#include "kviewbutton.h"
+#include "tmainwindowabstractsettings.h"
 
-class T_GUI_EXPORT DefaultSettings : public TMainWindowAbstractSettings
+#include "tdebug.h"
+
+#include <QTimer>
+#include <QMenu>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QSettings>
+#include <QApplication>
+#include <QtDebug>
+#include <QHashIterator>
+#include <QMenuBar>
+
+#include <QCloseEvent>
+
+class DefaultSettings : public TMainWindowAbstractSettings
 {
     public:
         DefaultSettings(QObject *parent);
         ~DefaultSettings();
-        void save(TMainWindow *window);
-        void restore(TMainWindow *window);
+        void save(TMainWindow *w);
+        void restore(TMainWindow *w);
 };
 
 DefaultSettings::DefaultSettings(QObject *parent) : TMainWindowAbstractSettings(parent)
@@ -52,40 +70,28 @@ DefaultSettings::~DefaultSettings()
 {
 }
 
-void DefaultSettings::save(TMainWindow *window)
+void DefaultSettings::save(TMainWindow *w)
 {
-    #ifdef K_DEBUG
-            QString msg = "TMainWindow::DefaultSettings::save() - Saving UI settings...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
-
     QSettings settings(qApp->applicationName(), "ideality", this);
 
-    QHash<Qt::ToolBarArea, TButtonBar *> buttonBars = window->buttonBars();
-    QHash<TButtonBar *, QList<ToolView*> > toolViews = window->toolViews();
+    QHash<Qt::ToolBarArea, KButtonBar *> buttonBars = w->buttonBars();
+    QHash<KButtonBar *, QList<KToolView*> > toolViews = w->toolViews();
 
-    foreach (TButtonBar *bar, buttonBars.values()) {
+    foreach (KButtonBar *bar, buttonBars.values()) {
              settings.beginGroup(bar->windowTitle());
              settings.setValue("exclusive", bar->isExclusive());
              settings.endGroup();
              settings.beginGroup(bar->windowTitle());
              settings.setValue("autohide", bar->autohide());
              settings.endGroup();
-             settings.beginGroup(bar->windowTitle());
-             settings.setValue("visible", bar->isVisible());
-             settings.endGroup();
 
-             foreach (ToolView *view, toolViews[bar]) {
+             foreach (KToolView *view, toolViews[bar]) {
                       settings.beginGroup(view->objectName());
                       settings.setValue("area", int(view->button()->area()));
                       settings.setValue("size", view->fixedSize());
                       settings.setValue("style", view->button()->toolButtonStyle());
                       settings.setValue("sensibility", view->button()->isSensible());
-                      settings.setValue("visible", view->isVisible());
+                      settings.setValue("visible", view->isVisible() );
                       settings.setValue("floating", view->isFloating());
                       settings.setValue("position", view->pos());
                       settings.endGroup();
@@ -93,41 +99,33 @@ void DefaultSettings::save(TMainWindow *window)
     }
 
     settings.beginGroup("MainWindow");
-    settings.setValue("size", window->size());
-    settings.setValue("maximized", window->isMaximized());
-    settings.setValue("position", window->pos());
+    settings.setValue("size", w->size());
+    settings.setValue("maximized", w->isMaximized());
+    settings.setValue("position", w->pos());
     settings.endGroup();
 }
 
-void DefaultSettings::restore(TMainWindow *window)
+void DefaultSettings::restore(TMainWindow *w)
 {
-    #ifdef K_DEBUG
-	    QString msg = "TMainWindow::DefaultSettings::restore() - Restoring UI settings...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
+    tFatal() << "*** Restoring Interface...";
 
     QSettings settings(qApp->applicationName(), "ideality", this);
 
-    QHash<Qt::ToolBarArea, TButtonBar *> buttonBars = window->buttonBars();
-    QHash<TButtonBar *, QList<ToolView*> > toolViews = window->toolViews();
+    QHash<Qt::ToolBarArea, KButtonBar *> buttonBars = w->buttonBars();
+    QHash<KButtonBar *, QList<KToolView*> > toolViews = w->toolViews();
 
-    QList<ToolView *> toHide;
+    QList<KToolView *> toHide;
 
-    foreach (TButtonBar *bar, buttonBars.values()) {
+    foreach (KButtonBar *bar, buttonBars.values()) {
              bar->setExclusive(false);
 
-             foreach (ToolView *view, toolViews[bar]) {
+             foreach (KToolView *view, toolViews[bar]) {
                       settings.beginGroup(view->objectName());
 
                       // Restore position
                       Qt::DockWidgetArea area = Qt::DockWidgetArea(settings.value("area", 0).toInt());
-                      window->moveToolView(view, area);
+                      w->moveToolView(view, area);
                       view->setFixedSize(settings.value("size").toInt());
-
                       view->button()->setToolButtonStyle(Qt::ToolButtonStyle(settings.value("style", 
                                                          int(view->button()->toolButtonStyle())).toInt()));
                       view->button()->setSensible(settings.value("sensibility", view->button()->isSensible()).toBool());
@@ -156,26 +154,22 @@ void DefaultSettings::restore(TMainWindow *window)
              settings.beginGroup(bar->windowTitle());
              bar->setAutoHide(settings.value("autohide", false).toBool());
              settings.endGroup();
-
-             settings.beginGroup(bar->windowTitle());
-             bar->setShouldBeVisible(settings.value("visible", true).toBool());
-             settings.endGroup();
     }
 	
-    foreach (ToolView *view, toHide) {
-             view->button()->setChecked(false);
-             view->setVisible(false);
-             view->close();
+    foreach (KToolView *v, toHide) {
+             v->button()->setChecked(false);
+             v->setVisible(false);
+             v->close();
     }
 
     settings.beginGroup("MainWindow");
-    window->resize(settings.value("size").toSize());
+    w->resize(settings.value("size").toSize());
     bool maximized = settings.value("maximized", false).toBool();
 
     if (maximized)
-        window->showMaximized();
+        w->showMaximized();
 
-    window->move(settings.value("position").toPoint());
+    w->move(settings.value("position").toPoint());
 
     settings.endGroup();
 }
@@ -195,10 +189,6 @@ TMainWindow::TMainWindow(QWidget *parent)
 
     m_settings = new DefaultSettings(this);
 
-    specialToolBar = new QToolBar(tr("Show Top Panel"), this);
-    specialToolBar->setIconSize(QSize(9, 5));
-    addToolBar(Qt::LeftToolBarArea, specialToolBar);
-
     addButtonBar(Qt::LeftToolBarArea);
     addButtonBar(Qt::RightToolBarArea);
     addButtonBar(Qt::TopToolBarArea);
@@ -217,21 +207,11 @@ TMainWindow::~TMainWindow()
 
 void TMainWindow::addButtonBar(Qt::ToolBarArea area)
 {
-    TButtonBar *bar = new TButtonBar(area, this);
+    KButtonBar *bar = new KButtonBar(area, this);
     addToolBar(area, bar);
     m_buttonBars.insert(area, bar);
 
     bar->hide();
-}
-
-void TMainWindow::enableSpecialBar(bool flag)
-{
-    specialToolBar->setVisible(flag);
-}
-
-void TMainWindow::addSpecialButton(TAction *action)
-{
-    specialToolBar->addAction(action);
 }
 
 /**
@@ -242,19 +222,9 @@ void TMainWindow::addSpecialButton(TAction *action)
  * @param perspective 
  * @return 
  */
-ToolView *TMainWindow::addToolView(QWidget *widget, Qt::DockWidgetArea area, int perspective, const QString &code, QKeySequence shortcut)
+KToolView *TMainWindow::addToolView(QWidget *widget, Qt::DockWidgetArea area, int perspective, const QString &code, QKeySequence shortcut)
 {
-    /*
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::addToolView()]";
-        #else
-            T_FUNCINFO << "- component: " << code;
-        #endif
-    #endif
-    */
-
-    ToolView *toolView = new ToolView(widget->windowTitle(), widget->windowIcon(), code);
+    KToolView *toolView = new KToolView(widget->windowTitle(), widget->windowIcon(), code);
     toolView->setShortcut(shortcut);
     toolView->setWidget(widget);
     toolView->setPerspective(perspective);
@@ -280,25 +250,17 @@ ToolView *TMainWindow::addToolView(QWidget *widget, Qt::DockWidgetArea area, int
     return toolView;
 }
 
-void TMainWindow::removeToolView(ToolView *view)
+void TMainWindow::removeToolView(KToolView *view)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::removeToolView()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     bool findIt = false;
 
-    foreach (TButtonBar *bar, m_buttonBars.values()) {
-             QList<ToolView *> views = m_toolViews[bar];
-             QList<ToolView *>::iterator it = views.begin();
+    foreach (KButtonBar *bar, m_buttonBars.values()) {
+             QList<KToolView *> views = m_toolViews[bar];
+             QList<KToolView *>::iterator it = views.begin();
 
              while (it != views.end()) {
-                    ToolView *toolView = *it;
-                    if (toolView == view) {
+                    KToolView *v = *it;
+                    if (v == view) {
                         views.erase(it);
                         bar->removeButton(view->button());
                         findIt = true;
@@ -317,21 +279,19 @@ void TMainWindow::removeToolView(ToolView *view)
 
 void TMainWindow::enableToolViews(bool flag)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::enableToolViews()]";
-        #else
-            T_FUNCINFO << "- flag value: " << flag;
-        #endif
-    #endif
-
-    foreach (TButtonBar *bar, m_buttonBars.values()) {
-             QList<ToolView *> views = m_toolViews[bar];
-             QList<ToolView *>::iterator it = views.begin();
+    foreach (KButtonBar *bar, m_buttonBars.values()) {
+             QList<KToolView *> views = m_toolViews[bar];
+             QList<KToolView *>::iterator it = views.begin();
 
              while (it != views.end()) {
-                    ToolView *view = *it;
-                    view->enableButton(flag);
+                    KToolView *v = *it;
+
+                    // SQA: Temporary code while Time Line components are fixed
+                    if (v->getObjectID().compare("KToolView-Time Line")==0)
+                        v->enableButton(false);
+                    else
+                        v->enableButton(flag);
+
                     ++it;
              }
     }
@@ -342,18 +302,8 @@ void TMainWindow::enableToolViews(bool flag)
  * @param view 
  * @param newPlace 
  */
-void TMainWindow::moveToolView(ToolView *view, Qt::DockWidgetArea newPlace)
+void TMainWindow::moveToolView(KToolView *view, Qt::DockWidgetArea newPlace)
 {
-    /*
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::moveToolView()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-    */
-
     if (toDockWidgetArea(view->button()->area()) == newPlace || newPlace == Qt::AllDockWidgetAreas || newPlace == 0)
         return;
 
@@ -369,20 +319,12 @@ void TMainWindow::moveToolView(ToolView *view, Qt::DockWidgetArea newPlace)
  */
 void TMainWindow::addToPerspective(QWidget *widget, int perspective)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::addToPerspective()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     if (QToolBar *bar = dynamic_cast<QToolBar*>(widget)) {
         if (toolBarArea(bar) == 0)
             addToolBar(bar);
     }
 
-    if (!m_managedWidgets.contains(widget)) {
+    if (! m_managedWidgets.contains(widget)) {
         m_managedWidgets.insert(widget, perspective);
 
         if (!(perspective & m_currentPerspective)) 
@@ -396,14 +338,6 @@ void TMainWindow::addToPerspective(QWidget *widget, int perspective)
  */
 void TMainWindow::removeFromPerspective(QWidget *widget)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::removeFromPerspective()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     m_managedWidgets.remove(widget);
 }
 
@@ -414,8 +348,8 @@ void TMainWindow::removeFromPerspective(QWidget *widget)
  */
 void TMainWindow::addToPerspective(const QList<QAction *> &actions, int perspective)
 {
-    foreach (QAction *action, actions)
-             addToPerspective(action, perspective);
+    foreach (QAction *a, actions)
+             addToPerspective(a, perspective);
 }
 
 /**
@@ -425,7 +359,7 @@ void TMainWindow::addToPerspective(const QList<QAction *> &actions, int perspect
  */
 void TMainWindow::addToPerspective(QAction *action, int perspective)
 {
-    if (!m_managedActions.contains(action)) {
+    if (! m_managedActions.contains(action)) {
         m_managedActions.insert(action, perspective);
 
         if (!(perspective & m_currentPerspective))
@@ -466,17 +400,8 @@ Qt::DockWidgetArea TMainWindow::toDockWidgetArea(Qt::ToolBarArea area)
                }
                break;
             default: 
-               {
-                   #ifdef K_DEBUG
-                       QString msg = "TMainWindow::toDockWidgetArea() - Floating -> " + QString::number(area);
-                       #ifdef Q_OS_WIN
-                           qWarning() << msg;
-                       #else
-                           tWarning() << msg;
-                       #endif
-                   #endif
-               }
-               break;
+                 qWarning("toDockWidgetArea: Floating... %d", area); 
+                 break;
     }
 
     return Qt::LeftDockWidgetArea;
@@ -506,21 +431,13 @@ Qt::ToolBarArea TMainWindow::toToolBarArea(Qt::DockWidgetArea area)
                }
                break;
             default: 
-               {
-                 #ifdef K_DEBUG
-                     QString msg = "TMainWindow::toToolBarArea() - Floating -> " + QString::number(area);
-                     #ifdef Q_OS_WIN
-                         qWarning() << msg;
-                     #else
-                         tWarning() << msg;
-                     #endif
-                 #endif
-               }
-               break;
+                 qWarning("toToolBarArea: Floating... %d", area); 
+                 break;
     }
 
     return Qt::LeftToolBarArea;
 }
+
 
 /**
  * Enable/disable button blending.
@@ -528,55 +445,38 @@ Qt::ToolBarArea TMainWindow::toToolBarArea(Qt::DockWidgetArea area)
  */
 void TMainWindow::setEnableButtonBlending(bool enable)
 {
-    foreach (TButtonBar *bar, m_buttonBars.values())
+    foreach (KButtonBar *bar, m_buttonBars.values())
              bar->setEnableButtonBlending(enable);
 }
 
 void TMainWindow::relayoutViewButton(bool topLevel)
 {
-    /*
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::relayoutViewButton()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-    */
-
     if (!topLevel) {
-        if (ToolView *toolView = dynamic_cast<ToolView *>(sender())) {
+        if (KToolView *toolView = dynamic_cast<KToolView *>(sender())) {
             m_forRelayout = toolView;
+
             QTimer::singleShot(0, this, SLOT(relayoutToolView()));
 
             // if a tool view is floating the button bar isn't exclusive
-            TButtonBar *bar = m_buttonBars[m_forRelayout->button()->area()];
+            KButtonBar *bar = m_buttonBars[m_forRelayout->button()->area()];
+
             bool exclusive = true;
-            foreach (ToolView *view, m_toolViews[bar])
-                     exclusive = exclusive && !view->isFloating();
+
+            foreach (KToolView *v, m_toolViews[bar])
+                     exclusive = exclusive && !v->isFloating();
 
             bar->setExclusive(exclusive);
             bar->onlyShow(m_forRelayout, true);
         }
     } else {
             // Floating tool views aren't exclusive
-            if (ToolView *view = dynamic_cast<ToolView *>(sender()))
-                m_buttonBars[view->button()->area()]->setExclusive(false);
+            if (KToolView *toolView = dynamic_cast<KToolView *>(sender()))
+                m_buttonBars[toolView->button()->area()]->setExclusive(false);
     }
 }
 
 void TMainWindow::relayoutToolView()
 {
-    /*
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::relayoutToolView()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-    */
-
     if (!m_forRelayout) 
         return;
 
@@ -585,7 +485,7 @@ void TMainWindow::relayoutToolView()
     if (!isVisible) 
         m_forRelayout->show();
 
-    TViewButton *button = m_forRelayout->button();
+    KViewButton *button = m_forRelayout->button();
 
     Qt::ToolBarArea area = toToolBarArea(QMainWindow::dockWidgetArea(m_forRelayout));
 
@@ -622,23 +522,11 @@ void TMainWindow::relayoutToolView()
  */
 void TMainWindow::setCurrentPerspective(int workspace)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TMainWindow::setCurrentPerspective()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    if (workspace != 1)
-        specialToolBar->setVisible(false);
-    else
-        specialToolBar->setVisible(true);
-
     if (m_currentPerspective == workspace)
         return;
 
-    typedef QList<ToolView *> Views;
+    typedef QList<KToolView *> Views;
+
     QList<Views > viewsList = m_toolViews.values();
 
     setUpdatesEnabled(false);
@@ -646,21 +534,32 @@ void TMainWindow::setCurrentPerspective(int workspace)
     if (centralWidget())
         centralWidget()->setUpdatesEnabled(false);
 
-    QHash<TButtonBar *, int> hideButtonCount;
+    QHash<KButtonBar *, int> hideButtonCount;
 
     foreach (Views views, viewsList) {
-             foreach (ToolView *view, views) {
-                      TButtonBar *bar = m_buttonBars[view->button()->area()];
+             foreach (KToolView *view, views) {
+                      KButtonBar *bar = m_buttonBars[view->button()->area()];
                       bar->setUpdatesEnabled(false);
                       view->setUpdatesEnabled(false);
 
                       if (view->perspective() & workspace) {
-                          bar->enable(view->button());
-                          if (view->isChecked())
-                              view->show(); 
+
+                          // SQA: Temporary code while Library and Time Line components are fixed
+                          if (view->getObjectID().compare("KToolView-Time Line")==0) {
+                              bar->enable(view->button());
+                              view->enableButton(false);
+                          } else {
+                              bar->enable(view->button());
+                          } 
+
+                          // bar->enable(view->button());
+ 
+                          if (view->button()->isChecked() && (workspace != 4) && view->getObjectID().compare("KToolView-Help")!=0) {
+                              view->show();
+                          }
                       } else {
                               bar->disable(view->button());
-                              if (view->isChecked() || view->isVisible())
+                              if (view->button()->isChecked() || view->isVisible())
                                   view->close();
                               hideButtonCount[bar]++;
                       }
@@ -668,7 +567,7 @@ void TMainWindow::setCurrentPerspective(int workspace)
                       if (bar->isEmpty() && bar->isVisible()) {
                           bar->hide();
                       } else {
-                          if (!bar->isVisible() && bar->shouldBeVisible())
+                          if (!bar->isVisible())
                               bar->show();
                       }
 
@@ -677,7 +576,7 @@ void TMainWindow::setCurrentPerspective(int workspace)
              }
     }
 
-    QHashIterator<TButtonBar *, int> barIt(hideButtonCount);
+    QHashIterator<KButtonBar *, int> barIt(hideButtonCount);
 
     // This loop hides the bars with no buttons
     while (barIt.hasNext()) {
@@ -692,13 +591,14 @@ void TMainWindow::setCurrentPerspective(int workspace)
     while (widgetIt.hasNext()) {
            widgetIt.next();
 
-           if (widgetIt.value() & workspace)
+           if (widgetIt.value() & workspace) 
                widgetIt.key()->show();
            else
                widgetIt.key()->hide();
     }
 
     QHashIterator<QAction *, int> actionIt(m_managedActions);
+
     while (actionIt.hasNext()) {
            actionIt.next();
 
@@ -784,19 +684,29 @@ bool TMainWindow::event(QEvent *e)
     if (e->type() == QEvent::HoverMove) {
         // Show bar if autohide is enabled
         QPoint pos = mapFromGlobal(QCursor::pos());
-        TButtonBar *bar = 0;
+        KButtonBar *bar = 0;
 
         if (pos.x() <= m_buttonBars[Qt::LeftToolBarArea]->pos().x() + 3 ) { // Left
+
             bar = m_buttonBars[Qt::LeftToolBarArea];
-        } else if (pos.y() <= m_buttonBars[Qt::TopToolBarArea]->pos().y() + 3 && m_buttonBars[Qt::TopToolBarArea]->pos().y() <= pos.y()) {
-                   bar = m_buttonBars[Qt::TopToolBarArea];
-        } else if (pos.x() >= m_buttonBars[Qt::RightToolBarArea]->pos().x() + m_buttonBars[Qt::RightToolBarArea]->width() - 3 ) {
-                   bar = m_buttonBars[Qt::RightToolBarArea];
+
+        } else if (pos.y() <= m_buttonBars[Qt::TopToolBarArea]->pos().y() + 3 
+                   && m_buttonBars[Qt::TopToolBarArea]->pos().y() <= pos.y()) {
+
+            bar = m_buttonBars[Qt::TopToolBarArea];
+
+        } else if (pos.x() >= m_buttonBars[Qt::RightToolBarArea]->pos().x() + 
+                   m_buttonBars[Qt::RightToolBarArea]->width() - 3 ) {
+
+            bar = m_buttonBars[Qt::RightToolBarArea];
+
         } else if (pos.y() >= m_buttonBars[Qt::BottomToolBarArea]->pos().y() +  
                    m_buttonBars[Qt::BottomToolBarArea]->height() - 3 
                    && m_buttonBars[Qt::BottomToolBarArea]->pos().y() + 
                    m_buttonBars[Qt::BottomToolBarArea]->height() > pos.y()) {
-                   bar = m_buttonBars[Qt::BottomToolBarArea];
+
+            bar = m_buttonBars[Qt::BottomToolBarArea];
+
         }
 
         if (bar) {
@@ -824,7 +734,7 @@ void TMainWindow::restoreGUI()
  * Returns the button bars
  * @return 
  */
-QHash<Qt::ToolBarArea, TButtonBar *> TMainWindow::buttonBars() const
+QHash<Qt::ToolBarArea, KButtonBar *> TMainWindow::buttonBars() const
 {
     return m_buttonBars;
 }
@@ -833,7 +743,7 @@ QHash<Qt::ToolBarArea, TButtonBar *> TMainWindow::buttonBars() const
  * Returs the tool views.
  * @return 
  */
-QHash<TButtonBar *, QList<ToolView*> > TMainWindow::toolViews() const
+QHash<KButtonBar *, QList<KToolView*> > TMainWindow::toolViews() const
 {
     return m_toolViews;
 }

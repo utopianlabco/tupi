@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,13 @@
  ***************************************************************************/
 
 #include "tconfig.h"
+#include <qdir.h>
+
+#include <QCoreApplication>
+#include <QTextDocument>
+#include <QDomDocument>
+
+#include "tdebug.h"
 
 class TConfig::Private
 {
@@ -54,69 +61,47 @@ TConfig* TConfig::m_instance = 0;
 
 TConfig::TConfig() : QObject(), k(new Private)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TConfig()]";
-        #else
-            TINIT;
-        #endif
-    #endif
-
-    QString base = QDir::homePath() + "/";
-    k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
+    TINIT;
+	
+#ifdef Q_WS_X11
+    k->configDirectory.setPath(QDir::homePath() + "/." + QCoreApplication::applicationName());
+#elif defined(Q_WS_WIN)
+    k->configDirectory.setPath(QDir::homePath() + "/" + QCoreApplication::applicationName());
+#elif defined(Q_WS_MAC)
+    k->configDirectory.setPath(QDir::homePath() + "/." + QCoreApplication::applicationName());
+#endif
 
     if (!k->configDirectory.exists()) {
         k->firstTime = true;
-        #ifdef K_DEBUG
-            QString msg = "TConfig::TConfig() - Config file doesn't exist. Creating path: " + k->configDirectory.path();
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
-        #endif
+        tDebug() << tr("%1 doesn't exist. Creating...").arg(k->configDirectory.path()) << endl;
 
-        if (!k->configDirectory.mkdir(k->configDirectory.path())) {
-            #ifdef K_DEBUG
-                QString msg = "TConfig::TConfig() - Fatal Error: Can't create path -> " + k->configDirectory.path();
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
-        }
+        if (!k->configDirectory.mkdir(k->configDirectory.path()))
+            tError() << tr("I can't create %1").arg(k->configDirectory.path()) << endl;
     } else {
         k->firstTime = false;
     }
 
     k->path = k->configDirectory.path() + "/" + QCoreApplication::applicationName().toLower() + ".cfg";
-    checkConfigFile();
+
+    init();
 }
 
 TConfig::~TConfig()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TConfig()]";
-        #else
-            TEND;
-        #endif
-    #endif
-
+    TEND;
     if (m_instance) 
         delete m_instance;
 }
 
 TConfig *TConfig::instance()
 {
-    if (!m_instance)
+    if (! m_instance)
         m_instance = new TConfig;
 
     return m_instance;
 }
 
-void TConfig::checkConfigFile()
+void TConfig::init()
 {
     QFile config(k->path);
     k->isOk = false;
@@ -127,50 +112,20 @@ void TConfig::checkConfigFile()
         int errorColumn = 0;
 
         k->isOk = k->document.setContent(&config, &errorMsg, &errorLine, &errorColumn);
-        if (!k->isOk) {
-            #ifdef K_DEBUG
-                QString msg1 = "TConfig::checkConfigFile() - Fatal Error: Configuration file is corrupted - Line: " + QString::number(errorLine) + " - Column: " + QString::number(errorColumn);
-                QString msg2 = "TConfig::checkConfigFile() - Message: " + errorMsg;
-                #ifdef Q_OS_WIN
-                    qDebug() << msg1;
-                    qDebug() << msg2;
-                #else
-                    tError() << msg1;
-                    tError() << msg2;
-                #endif
-            #endif
-        } else {
-            if (configVersion() < QString(CONFIG_VERSION).toInt())
-                k->isOk = false;
-        }
+
+        if (!k->isOk)
+            tDebug() << QObject::tr("Configuration file is corrupted %1:%2: %3").arg(errorLine).arg(errorColumn).arg(errorMsg);
 
         config.close();
-    }
+   }
 
-    if (!k->isOk)
-        initConfigFile();
-}
+   if (!k->isOk) {
+       QDomProcessingInstruction header = k->document.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\"");
+       k->document.appendChild(header);
 
-void TConfig::initConfigFile()
-{
-    k->document.clear();
-    QDomProcessingInstruction header = k->document.createProcessingInstruction("xml","version=\"1.0\" encoding=\"UTF-8\"");
-    k->document.appendChild(header);
-
-    QDomElement root = k->document.createElement("Config");
-    root.setAttribute("version", CONFIG_VERSION);
-    k->document.appendChild(root);
-
-    k->firstTime = true;
-    k->isOk = true;
-}
-
-int TConfig::configVersion()
-{
-   QDomElement root = k->document.documentElement();
-   int version = root.attribute("version", 0).toInt();
-
-   return version;
+       QDomElement root = k->document.createElement("Config");
+       k->document.appendChild(root);
+   }
 }
 
 bool TConfig::firstTime()
@@ -190,23 +145,24 @@ QDomDocument TConfig::document()
 
 void TConfig::sync()
 {
-    QFile file(k->path);
+    QFile f(k->path);
 
-    if (file.open(QIODevice::WriteOnly)) {
-        QTextStream st(&file);
+    if (f.open(QIODevice::WriteOnly)) {
+        QTextStream st(&f);
         st << k->document.toString() << endl;
         k->isOk = true;
-        file.close();
+        f.close();
     } else {
         k->isOk = false;
     }
 
-    checkConfigFile();
+    init();
 }
 
 void TConfig::beginGroup(const QString & prefix)
 {
-    QString stripped = QString(prefix).toHtmlEscaped();
+    QString stripped = Qt::escape(prefix);
+
     stripped.replace(' ', "_");
     stripped.replace('\n', "");
 
@@ -262,15 +218,15 @@ QVariant TConfig::value(const QString & key, const QVariant & defaultValue) cons
    if (element.isNull())
        return defaultValue;
 
-   QVariant content = element.attribute("value");
+   QVariant v = element.attribute("value");
 
-   if (content.toString() == "false") {
+   if (v.toString() == "false") {
        return false;
-   } else if (content.toString() == "true") {
+   } else if (v.toString() == "true") {
               return true;
    }
 
-   return content;
+   return v;
 }
 
 QDomElement TConfig::find(const QDomElement &element, const QString &key) const 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,30 +36,27 @@
 #ifndef TACTIONMANAGER_H
 #define TACTIONMANAGER_H
 
-#include "tglobal.h"
-#include "taction.h"
-
-#include <QMenu>
 #include <QObject>
 #include <QWidget>
 #include <QList>
 #include <QHash>
-#include <QMenuBar>
-#include <QToolBar>
 
-typedef QList<QAction *> TActionList;
-typedef QHash<QString, QAction *> TActionDict;
-typedef QHash<QString, TActionDict> TActionContainer;
+#include "taction.h"
+#include "tglobal.h"
+
+typedef QList<QAction *> KActionList;
+typedef QHash<QString, QAction *> KActionDict;
+typedef QHash<QString, KActionDict> KActionContainer;
 
 class QToolBar;
 class QMenuBar;
 
 /**
  * @short class TActionManager provides an action manager, this handler makes easier the access and sort of any action of the app.
- * @author David Cuadrado
+ * @author David Cuadrado \<krawek@gmail.com\>
 */
 
-class T_GUI_EXPORT TActionManager : public QObject
+class K_GUI_EXPORT TActionManager : public QObject
 {
     Q_OBJECT
 
@@ -81,7 +78,7 @@ class T_GUI_EXPORT TActionManager : public QObject
         QToolBar *setupToolBar(QToolBar *toolBar, const QString &container, bool clear = true);
 
     private:
-        TActionContainer m_actionContainer;
+        KActionContainer m_actionContainer;
 };
 
 #endif

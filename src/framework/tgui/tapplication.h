@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,33 +36,28 @@
 #ifndef TAPPLICATION_H
 #define TAPPLICATION_H
 
-#include "tglobal.h"
-#include "themedocument.h"
-#include "thememanager.h"
-#include "tvhbox.h"
-#include "twizard.h"
-#include "tconfig.h"
-#include "tactionmanager.h"
-
 #include <QApplication>
 #include <QMap>
+#include <QColorGroup>
+
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
 #include <QFileDialog>
 #include <QDialog>
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QObject>
-#include <QLocale>
+
+#include "kthememanager.h"
+#include "kvhbox.h"
+#include "kwizard.h"
+#include "tconfig.h"
+#include "tglobal.h"
 
 class QApplication;
 class QString;
+class KThemeDocument;
 class QPalette;
-// class TActionManager;
-// class TAction;
+class TActionManager;
+class KAction;
 
 typedef QMap<QString, QString> ParseArgs;
 
@@ -78,7 +73,7 @@ typedef QMap<QString, QString> ParseArgs;
  * @TODO
  * @li We need have a cache directory (like /tmp in un*x)
 */
-class T_GUI_EXPORT TApplication : public QApplication
+class K_GUI_EXPORT TApplication : public QApplication
 {
     Q_OBJECT
     public:
@@ -156,9 +151,9 @@ class T_GUI_EXPORT TApplication : public QApplication
          * @if spanish
          * Aplica un tema a toda la aplicacion desde un documento XML
          * @endif
-         * @param kd ThemeDocument variable
+         * @param kd KThemeDocument variable
          */
-        void applyTheme(const ThemeDocument &kd);
+        void applyTheme(const KThemeDocument &kd);
         
         /**
          * @if english
@@ -239,7 +234,7 @@ class T_GUI_EXPORT TApplication : public QApplication
         
     private:
         ParseArgs m_parseArgs;
-        ThemeManager m_themeManager;
+        KThemeManager m_themeManager;
         TActionManager *m_actionManager;
 };
 

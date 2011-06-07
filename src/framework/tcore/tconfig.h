@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,16 +36,13 @@
 #ifndef TCONFIG_H
 #define TCONFIG_H
 
-#include "tglobal.h"
-
-#include <QDir>
-#include <QCoreApplication>
-#include <QTextStream>
-#include <QTextDocument>
-#include <QDomDocument>
 #include <QObject>
+#include <QDir>
 #include <QHash>
+#include <QDomDocument>
 #include <QVariant>
+
+#include "tglobal.h"
 
 class TConfig;
 
@@ -54,28 +51,25 @@ class TConfig;
  * this is a dom config handler
 */
 
-class T_CORE_EXPORT TConfig : public QObject
+class K_CORE_EXPORT TConfig : public QObject
 {
-    Q_OBJECT
-
     public:
         ~TConfig();
 
     protected:
         explicit TConfig();
+        void init();
 
     public:
-        void checkConfigFile();
-        void initConfigFile();
         void beginGroup(const QString & prefix);
         void endGroup();
 
         void setValue(const QString & key, const QVariant & value);
+
         QVariant value(const QString & key, const QVariant & defaultValue = QVariant()) const;
 
         static TConfig *instance();
 
-        int configVersion();
         bool firstTime();
         bool isOk();
         QDomDocument document();

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,7 +33,41 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
+#if !defined(K_NODEBUG)
 #include "tdebug.h"
+
+#include <QFile>
+#include <QString>
+#include <QDateTime>
+#include <QPoint>
+#include <QPointF>
+#include <QRect>
+#include <QStringList>
+#include <QVariant>
+#include <QSize>
+#include <QEvent>
+#include <QTimer>
+
+#ifdef QT_GUI_LIB
+
+#include <QRegion>
+#include <QPen>
+#include <QBrush>
+#include <QImage>
+#include <QIcon>
+#include <QPixmap>
+#include <QWidget>
+#include <QMessageBox>
+// #include <QTextBrowser>
+#include <QSyntaxHighlighter>
+#include <QMatrix>
+#include <QDesktopWidget>
+#include <QScrollBar>
+#include <QDebug>
+
+#endif
+
+#include <QSettings>
 
 #if defined(Q_OS_UNIX)
 # define SHOW_ERROR "*** \033[0;31m%s\033[0;0m ***\n"
@@ -45,10 +79,10 @@
 # define SHOW_FATAL "***** %s *****\n"
 #endif
 
-// #ifdef QT_GUI_LIB
-static QTextEdit *debugBrowser = 0;
-static bool projectIsOpen = false;
-// #endif
+#ifdef QT_GUI_LIB
+       static QTextEdit *debugBrowser = 0;
+#endif
+
 
 #ifdef Q_OS_UNIX
 
@@ -86,21 +120,30 @@ static class ConfigReader
         ~ConfigReader();
 
         QStringList areas;
+
         bool colorize;
         bool showArea;
         bool showAll;
-        DebugOutput outputType;
+        bool forceDisableGUI;
+        DebugOutput defaultOutput;
 } configReader;
+
+// SQA: This class needs refactoring, debugging values must be taken 
+//      from the tupi.cfg file 
 
 ConfigReader::ConfigReader()
 {
-    areas = QStringList();
-    showArea = false;
-    showAll = true;
+    QSettings settings("tdebug");
+    settings.beginGroup("Iface");
 
-    outputType = TShellOutput;
+    areas = settings.value("areas", QStringList()).toStringList();
+    showArea = settings.value("show_area", false).toBool();
+    showAll = settings.value("show_all", true).toBool();
+
+    defaultOutput= DebugOutput(settings.value("default", TShellOutput).toInt());
+    forceDisableGUI = false;
     colorize = false;
- 
+    
 #ifdef Q_OS_UNIX
     QString terminal = QString::fromLocal8Bit(::getenv("TERM"));
     if (terminal == "linux" || terminal == "xterm")
@@ -110,14 +153,31 @@ ConfigReader::ConfigReader()
 
 ConfigReader::~ConfigReader()
 {
+    /*
+    QSettings settings("tdebug");
+    settings.beginGroup("Iface");
+
+    if (areas.isEmpty())
+        settings.setValue("areas", "");
+    else
+        settings.setValue("areas", areas);
+
+    settings.setValue("show_area", showArea);
+    settings.setValue("show_all", showAll);
+    settings.setValue("default", defaultOutput);
+
+    if (debugBrowser) {
+        if (debugBrowser->parentWidget() == 0)
+            delete debugBrowser;
+    }
+    */
 }
 
-// #ifdef QT_GUI_LIB
+#ifdef QT_GUI_LIB
 
 class DebugBrowserHighlighter : public QSyntaxHighlighter
 {
-    Q_OBJECT
-
+    Q_OBJECT;
     public:
         DebugBrowserHighlighter(QTextDocument *doc);
         ~DebugBrowserHighlighter() {};
@@ -158,6 +218,10 @@ void DebugBrowserHighlighter::highlightBlock(const QString &text)
     if (sepIndex != last)
         sepIndex -= 1;
 
+    //QString area = text.left(sepIndex);
+    //if (!m_colors.contains(area)) 
+    //    return;
+
     QTextCharFormat format;
     format.setFontWeight(QFont::Bold);
     format.setForeground(QColor(26, 100, 26));
@@ -168,10 +232,15 @@ void DebugBrowserHighlighter::highlightBlock(const QString &text)
         setFormat(0, sepIndex, format);
 }
 
-// #endif // QT_GUI_LIB
+#endif // QT_GUI_LIB
 
 static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
 {
+    if ((o == TBoxOutput) || (o == TBrowserOutput && configReader.forceDisableGUI)) {
+        o = TShellOutput;
+        configReader.defaultOutput = TShellOutput;
+    }
+
     char const *output = "%s\n";
 
     if (configReader.colorize) {
@@ -181,19 +250,16 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
                       // output = "%s\n";
                     }
                break;
-
                case TWarningMsg:
                     {
                       output = SHOW_WARNING;
                     }
                break;
-
                case TErrorMsg:
                     {
                       output = SHOW_ERROR;
                     }
                break;
-
                case TFatalMsg:
                     {
                       output = SHOW_FATAL;
@@ -202,16 +268,17 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
         }
     }
 
+    // o = TBrowserOutput;
+
     switch (o) {
             case TShellOutput:
                {
                  fprintf(stderr, output, data);
                }
                break;
-
             case TFileOutput:
                {
-                 QFile outFile("tupi.log");
+                 QFile outFile("tdebug.log");
 
                  if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
                      outFile.write(data, strlen(data));
@@ -219,8 +286,7 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
                  }
                }
             break;
-
-            // #ifdef QT_GUI_LIB
+            #ifdef QT_GUI_LIB
             case TBoxOutput:
                {
                     switch (t) {
@@ -229,19 +295,16 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
                                    QMessageBox::information(0, QObject::tr("Information"), data, QMessageBox::Ok);
                                }
                             break;
-
                             case TWarningMsg:
                                {
                                    QMessageBox::warning(0, QObject::tr("Warning"), data);
                                }
                             break;
-
                             case TErrorMsg:
                                {
                                    QMessageBox::critical(0, QObject::tr("Error"), data);
                                }
                             break;
-
                             case TFatalMsg:
                                {
                                    QMessageBox::critical(0, QObject::tr("Critical"), data);
@@ -252,20 +315,17 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
             break;
             case TBrowserOutput:
                {
-                   if (projectIsOpen) {
-                       if (debugBrowser) {
-                           if (data) {
+                    if (debugBrowser) {
+                        if (data) {
                             debugBrowser->append(QString(data));
                             QScrollBar *bar = debugBrowser->verticalScrollBar();
                             bar->setValue(bar->maximum());
-                           }
-                       } 
-                   }
-                   fprintf(stderr, output, data);
+                            fprintf(stderr, output, data);
+                        }
+                    } 
                }
             break;
-            // #endif
-
+            #endif
             default: 
             break;
     }
@@ -278,20 +338,16 @@ TDebug::TDebug(DebugType t, const QString &area, DebugOutput o) : m_type(t), m_o
     if (configReader.showArea && !m_area.isEmpty()) {
         QString init = "";
 
-#ifdef Q_OS_UNIX
         if (configReader.colorize)
             init = colors.colorize(m_area);
         else
             init = m_area;
-#else
-        init = m_area;
-#endif
 
         *streamer << init << ": ";
     }
 
     if (m_output == TDefault)
-        m_output = configReader.outputType;
+        m_output = configReader.defaultOutput;
 };
 
 TDebug::TDebug(const TDebug & k) : streamer(k.streamer), m_type(k.m_type), m_output(k.m_output), m_area(k.m_area)
@@ -300,13 +356,17 @@ TDebug::TDebug(const TDebug & k) : streamer(k.streamer), m_type(k.m_type), m_out
 
 TDebug::~TDebug()
 {
-    ::tDebugOutput(m_type, configReader.outputType, streamer->buffer.toLocal8Bit().data());
+    // if ((m_area.isEmpty() && configReader.showAll) || configReader.areas.contains(m_area))
+    // ::tDebugOutput(m_type, m_output, streamer->buffer.toLocal8Bit().data());
+
+    ::tDebugOutput(m_type, TBrowserOutput, streamer->buffer.toLocal8Bit().data());
+
     delete streamer;
 }
 
-void TDebug::setOutputChannel()
+void TDebug::setForceDisableGUI()
 {
-    configReader.outputType = TBrowserOutput;
+    configReader.forceDisableGUI = true;
 }
 
 TDebug& TDebug::operator << (const QDateTime& time) 
@@ -367,6 +427,7 @@ TDebug& TDebug::operator << (const QStringList & l)
     return *this;
 }
 
+
 TDebug& TDebug::operator << (const QVariant & v) 
 {
     *this << "[variant: ";
@@ -385,6 +446,7 @@ TDebug& TDebug::operator << (const QEvent* e)
     return *this;
 }
 
+#ifdef QT_GUI_LIB
 TDebug& TDebug::operator<<( const QPixmap& p ) 
 {
     *this << "(" << p.width() << ", " << p.height() << ")";
@@ -565,10 +627,7 @@ QTextEdit *TDebug::browser(QWidget *parent, int width)
     if (!debugBrowser) {
         debugBrowser = new QTextEdit(parent);
         debugBrowser->setReadOnly(true);
-        QFont font;
-        font.setPointSize(8);
-        debugBrowser->setFont(font);
-        // debugBrowser->setFont(QFont("Arial", 8, QFont::Normal, false));
+        debugBrowser->setFont(QFont("Arial", 8, QFont::Normal, false));
         debugBrowser->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
         debugBrowser->setMaximumWidth(width - 100);
         debugBrowser->setMinimumWidth(width/2);
@@ -580,8 +639,6 @@ QTextEdit *TDebug::browser(QWidget *parent, int width)
     return debugBrowser;
 }
 
-void TDebug::setProjectStatus(bool status)
-{
-    projectIsOpen = status;
-}
+#endif // QT_GUI_LIB
 
+#endif // K_NODEBUG

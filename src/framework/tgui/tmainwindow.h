@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,39 +36,27 @@
 #ifndef TMAINWINDOW_H
 #define TMAINWINDOW_H
 
-#include "tglobal.h"
-#include "tbuttonbar.h"
-#include "toolview.h"
-#include "tviewbutton.h"
-#include "tmainwindowabstractsettings.h"
-#include "taction.h"
+#include "kideality.h"
+
+// Project begin: Aug 4 2006
 
 #include <QMainWindow>
 #include <QHash>
 #include <QMap>
 #include <QKeySequence>
-#include <QTimer>
-#include <QMenu>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QSettings>
-#include <QHashIterator>
-#include <QMenuBar>
-#include <QCloseEvent>
 
-class TButtonBar;
-class ToolView;
+class KButtonBar;
+class KToolView;
 class TMainWindowAbstractSettings;
 
 /**
  * iDeality Main Window
- * @author David Cuadrado
+ * @author David Cuadrado <krawek@gmail.com>
 */
 
-class T_GUI_EXPORT TMainWindow : public QMainWindow
+class K_IDEAL_EXPORT TMainWindow : public QMainWindow
 {
-    Q_OBJECT
-
+    Q_OBJECT;
     public:
         enum
          {
@@ -78,12 +66,12 @@ class T_GUI_EXPORT TMainWindow : public QMainWindow
         TMainWindow(QWidget *parent = 0);
         ~TMainWindow();
 
-        ToolView *addToolView(QWidget *widget, Qt::DockWidgetArea area, int perspective = DefaultPerspective, const QString &code = QString(), QKeySequence shortcut = QKeySequence(""));
+        KToolView *addToolView(QWidget *widget, Qt::DockWidgetArea area, int perspective = DefaultPerspective, const QString &code = QString(), QKeySequence shortcut = QKeySequence(""));
 
-        void removeToolView(ToolView *view);
+        void removeToolView(KToolView *view);
 
         // FIXME: remove tool view
-        void moveToolView(ToolView *view, Qt::DockWidgetArea newPlace);
+        void moveToolView(KToolView *view, Qt::DockWidgetArea newPlace);
 
         void addToPerspective(QWidget *widget, int perspective = DefaultPerspective);
         void removeFromPerspective(QWidget *widget);
@@ -104,11 +92,8 @@ class T_GUI_EXPORT TMainWindow : public QMainWindow
         void restoreGUI();
         void saveGUI();
 
-        QHash<Qt::ToolBarArea, TButtonBar *> buttonBars() const;
-        QHash<TButtonBar *, QList<ToolView*> > toolViews() const;
-
-        void enableSpecialBar(bool flag);
-        void addSpecialButton(TAction *action);
+        QHash<Qt::ToolBarArea, KButtonBar *> buttonBars() const;
+        QHash<KButtonBar *, QList<KToolView*> > toolViews() const;
 
     private:
         Qt::DockWidgetArea toDockWidgetArea(Qt::ToolBarArea area);
@@ -133,14 +118,13 @@ class T_GUI_EXPORT TMainWindow : public QMainWindow
         virtual bool event(QEvent *e);
 
     private:
-        ToolView *m_forRelayout;
+        KToolView *m_forRelayout;
 
     private:
-        QHash<Qt::ToolBarArea, TButtonBar *> m_buttonBars;
-        QHash<TButtonBar *, QList<ToolView*> > m_toolViews;
+        QHash<Qt::ToolBarArea, KButtonBar *> m_buttonBars;
+        QHash<KButtonBar *, QList<KToolView*> > m_toolViews;
         QHash<QWidget *, int> m_managedWidgets;
         QHash<QAction *, int> m_managedActions;
-        QToolBar *specialToolBar;
 
         int m_currentPerspective;
 
