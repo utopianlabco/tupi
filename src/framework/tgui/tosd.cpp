@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,15 +34,19 @@
  ***************************************************************************/
 
 #include "tosd.h"
-#include "tconfig.h"
+#include "tdebug.h"
+
+#include <QApplication>
+#include <QBitmap>
+#include <QTimer>
+#include <QPainter>
+#include <QDesktopWidget>
+#include <QLinearGradient>
 
 TOsd *TOsd::s_osd = 0;
 
 TOsd::TOsd(QWidget * parent) : QWidget(parent), m_timer(0)
 {
-    TCONFIG->beginGroup("General");
-    themeName = TCONFIG->value("Theme", "Light").toString();
-
     setFocusPolicy(Qt::NoFocus);
     m_palette = palette();
 
@@ -54,7 +58,7 @@ TOsd::TOsd(QWidget * parent) : QWidget(parent), m_timer(0)
     connect(&m_animator->timer, SIGNAL(timeout()), this, SLOT(animate()));
 
     m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), SLOT(hide()));
+    connect(m_timer, SIGNAL(timeout()), SLOT( hide()));
 
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::ToolTip);
 
@@ -63,8 +67,6 @@ TOsd::TOsd(QWidget * parent) : QWidget(parent), m_timer(0)
 
 TOsd::~TOsd()
 {
-    m_timer->stop();
-
     delete m_animator;
     delete m_timer;
 }
@@ -78,6 +80,8 @@ void TOsd::display(const QString &title, const QString &message, Level level, in
     htmlMessage.replace('\n', "<br/>");
     QString tail = title + "</b></font><br><font style=\"font-size:11px\">" + htmlMessage + "</font>";
 
+    //htmlMessage.replace('\n', "<br/>");
+
     QBrush background = palette().background();
     QBrush foreground = palette().foreground();
 
@@ -87,10 +91,7 @@ void TOsd::display(const QString &title, const QString &message, Level level, in
                 case Info:
                    {
                      QString logo = THEME_DIR + "icons/info_message.png";
-                     if (themeName.compare("Dark") == 0)
-                         background = QColor(0, 80, 0);
-                     else
-                         background = QColor(0xc1e2fb);
+                     background = QColor(0xc1e2fb);
                      m_document->setHtml("<img src=\"" + logo + "\"><font style=\"font-size:12px;\"><b>&nbsp;&nbsp;" \
                                          + tail);
                    }
@@ -152,14 +153,15 @@ void TOsd::display(const QString &title, const QString &message, Level level, in
     resize(geometry.size());
 
     // create and set transparency mask
-    /*
     QPainter maskPainter(&mask);
     maskPainter.setRenderHint(QPainter::Antialiasing);
     mask.fill(Qt::white);
+
     maskPainter.drawRoundedRect(0, 0, width + 9, height + 7, 1, 1, Qt::AbsoluteSize);
+
     setMask(mask);
+
     maskPainter.end();
-    */
    
     drawPixmap(background, foreground);
 
@@ -190,10 +192,8 @@ void TOsd::paintEvent(QPaintEvent *e)
     p.drawPixmap(e->rect().topLeft(), m_pixmap, e->rect());
 }
 
-void TOsd::mousePressEvent(QMouseEvent *event)
+void TOsd::mousePressEvent(QMouseEvent *e)
 {
-    Q_UNUSED(event);
-
     if (m_timer)
         m_timer->stop();
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,26 +36,18 @@
 #ifndef TOSD_H
 #define TOSD_H
 
-#include "tglobal.h"
-#include "tapplicationproperties.h"
-
 #include <QWidget>
 #include <QPixmap>
 #include <QPaintEvent>
 #include <QTimer>
 #include <QTextDocument>
-#include <QApplication>
-#include <QBitmap>
-#include <QTimer>
-#include <QPainter>
-#include <QDesktopWidget>
-#include <QLinearGradient>
+#include "tglobal.h"
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TOsd : public QWidget
+class K_GUI_EXPORT TOsd : public QWidget
 {
     Q_OBJECT
 
@@ -81,8 +73,8 @@ class T_GUI_EXPORT TOsd : public QWidget
         void animate();
 
     protected:
-        void paintEvent(QPaintEvent *event);
-        void mousePressEvent(QMouseEvent *event);
+        void paintEvent(QPaintEvent * e);
+        void mousePressEvent(QMouseEvent * e);
 
     private:
         void drawPixmap(const QBrush &background, const QBrush &foreground);
@@ -101,7 +93,6 @@ class T_GUI_EXPORT TOsd : public QWidget
         } *m_animator;
 
         QTextDocument *m_document;
-        QString themeName;
 };
 
 #endif

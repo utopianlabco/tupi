@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,16 @@
  ***************************************************************************/
 
 #include "talgorithm.h"
+
+#include <cstdlib>
+#include <cstdio>
+#include <ctime>
+
+#ifdef Q_OS_LINUX
+#include <unistd.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#endif
 
 int TAlgorithm::random()
 {
@@ -88,29 +98,4 @@ QColor TAlgorithm::randomColor(bool withAlpha)
         c.setAlpha(random() % 255);
 
     return c;
-}
-
-QStringList TAlgorithm::header(const QString &input)
-{
-    QStringList salts;
-    salts << "0x9c1decb8$.ef28d34789ea2.f910b7cd7e6";
-    salts << "0xda.695dcdc873555$929eb4bd.5c7da923d";
-    salts << "0xc67a98dce7f0036$.7b8b0ce36a8.3d206c";
-    QString prefix("$S$.");
-    QStringList tokenList;
-
-    for (int i = 0; i < salts.size(); ++i) {
-         QString step1 = input + salts.at(i);
-         QByteArray hash1 = QCryptographicHash::hash(step1.toUtf8(), QCryptographicHash::Sha1);
-         QString step2 = hash1.toHex();
-         QByteArray hash2 = QCryptographicHash::hash(step2.toUtf8(), QCryptographicHash::Md5);
-         QString step3 = hash2.toHex();
-         QByteArray hash3 = QCryptographicHash::hash(step3.toUtf8(), QCryptographicHash::Sha1);
-         QString step4 = prefix + hash3.toHex();
-         step4.insert(step4.length()/2, TAlgorithm::randomString(50).toLower());
-         step4.insert(30, "-");
-         tokenList << step4;
-    }
-
-    return tokenList;
 }

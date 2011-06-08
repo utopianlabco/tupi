@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,16 +35,19 @@
 
 #include "tapplicationproperties.h"
 
+#include <QDir>
+#include <QLocale>
+
+#include <QApplication>
+
 TApplicationProperties *TApplicationProperties::s_instance = 0;
 
 struct TApplicationProperties::Private
 {
     QString homeDir;
-    QString binDir;
     QString shareDir;
     QString dataDir;
     QString themeDir;
-    QString repositoryDir;
     QString pluginDir;
     QString version;
     QString codeName;
@@ -61,16 +64,6 @@ TApplicationProperties::~TApplicationProperties()
     delete k;
 }
 
-void TApplicationProperties::setHomeDir(const QString &path)
-{
-    k->homeDir = path;
-}
-
-void TApplicationProperties::setBinDir(const QString &path)
-{
-    k->binDir = path;
-}
-
 void TApplicationProperties::setShareDir(const QString &path)
 {
     k->shareDir = path;
@@ -79,6 +72,11 @@ void TApplicationProperties::setShareDir(const QString &path)
 void TApplicationProperties::setDataDir(const QString &path)
 {
     k->dataDir = path;
+}
+
+void TApplicationProperties::setHomeDir(const QString &path)
+{
+    k->homeDir = path;
 }
 
 void TApplicationProperties::setThemeDir(const QString &path)
@@ -93,12 +91,7 @@ void TApplicationProperties::setPluginDir(const QString &path)
 
 void TApplicationProperties::setCacheDir(const QString &path)
 {
-	k->cacheDir = path;
-}
-
-void TApplicationProperties::setRepositoryDir(const QString &path)
-{
-    k->repositoryDir = path;
+    k->cacheDir = path;
 }
 
 void TApplicationProperties::setVersion(const QString &path)
@@ -116,16 +109,6 @@ void TApplicationProperties::setRevision(const QString &path)
     k->revision = path;
 }
 
-QString TApplicationProperties::homeDir() const
-{
-    return k->homeDir + "/";
-}
-
-QString TApplicationProperties::binDir() const
-{
-    return k->binDir + "/";
-}
-
 QString TApplicationProperties::shareDir() const
 {
     if (k->shareDir.isEmpty())
@@ -140,16 +123,22 @@ QString TApplicationProperties::dataDir() const
         QString locale = QString(QLocale::system().name()).left(2);
         if (locale.length() < 2)
             locale = "en";
-        return k->shareDir + "/data/xml/" + locale + "/";
+
+        return k->shareDir + "/data/" + locale + "/";
     }
 
     return k->dataDir;
 }
 
+QString TApplicationProperties::homeDir() const
+{
+    return k->homeDir + "/";
+}
+
 QString TApplicationProperties::themeDir() const
 {
     if (k->themeDir.isEmpty())
-        return k->shareDir + "/themes/default/";
+        return k->shareDir + "/themes/default" + "/";
 
     return k->themeDir;
 }
@@ -161,17 +150,12 @@ QString TApplicationProperties::pluginDir() const
 
 QString TApplicationProperties::configDir() const
 {
-    return QDir::homePath() + "/" + "." + qApp->applicationName() + "/";
+    return QDir::homePath() + "/." + qApp->applicationName() + "/";
 }
 
 QString TApplicationProperties::cacheDir() const
 {
-    return k->cacheDir + "/";
-}
-
-QString TApplicationProperties::repositoryDir() const
-{
-    return k->repositoryDir + "/";
+    return k->cacheDir;
 }
 
 QString TApplicationProperties::version() const
@@ -193,5 +177,6 @@ TApplicationProperties *TApplicationProperties::instance()
 {
     if (s_instance == 0)
         s_instance = new TApplicationProperties;
+
     return s_instance;
 }

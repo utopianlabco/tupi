@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,17 @@
  ***************************************************************************/
 
 #include "tconfigurationdialog.h"
+#include "tseparator.h"
+#include "tdebug.h"
+
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QStackedWidget>
+#include <QLabel>
+#include <QHeaderView>
+#include <QDialogButtonBox>
+#include <QListWidget>
 
 ////////////////
 
@@ -45,40 +56,42 @@ struct TConfigurationDialog::Private
 
 TConfigurationDialog::TConfigurationDialog(QWidget *parent) : QDialog(parent), k(new Private)
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    QHBoxLayout *pagesLayout = new QHBoxLayout;
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    
+    QHBoxLayout *pages = new QHBoxLayout;
     
     k->list = new QListWidget(this);
-    k->list->setFlow(QListView::TopToBottom);
-    k->list->setWrapping(false);
     k->list->setViewMode(QListView::IconMode);
+    k->list->setWrapping(false);
+    k->list->setFlow(QListView::TopToBottom);
     k->list->setIconSize(QSize(96, 84));
     k->list->setMovement(QListView::Static);
-    k->list->setSpacing(10);
+    k->list->setMaximumWidth(128);
+    //k->list->setMinimumWidth(95);
+    k->list->setSpacing(12);
     
     connect(k->list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(changePage(QListWidgetItem *, QListWidgetItem*)));
-
-    QWidget *widget = new QWidget;
-    widget->setFixedWidth(130);
-    QVBoxLayout *listLayout = new QVBoxLayout(widget);
-    listLayout->addWidget(k->list);
-
-    k->pageArea = new QStackedWidget;
-    pagesLayout->addWidget(widget);
-    pagesLayout->addWidget(k->pageArea, 1);
-
-    mainLayout->addLayout(pagesLayout);
     
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal, this);
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    pages->addWidget(k->list);
+    
+    k->pageArea = new QStackedWidget;
+    pages->addWidget(k->pageArea, 1);
+    
+    layout->addLayout(pages);
+    
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply, Qt::Horizontal, this);
+    
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(ok()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
     connect(buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()), this, SLOT(apply()));
     
-    mainLayout->addWidget(new TSeparator());
-    mainLayout->addWidget(buttonBox);
+    layout->addWidget(new TSeparator());
+    layout->addWidget(buttonBox);
 }
 
 TConfigurationDialog::~TConfigurationDialog()
 {
+    delete k;
 }
 
 void TConfigurationDialog::addPage(QWidget *page, const QString &label, const QIcon &icon)
@@ -97,16 +110,26 @@ QWidget *TConfigurationDialog::currentPage() const
     return k->pageArea->currentWidget();
 }
 
+void TConfigurationDialog::ok()
+{
+    accept();
+}
+
+void TConfigurationDialog::cancel()
+{
+    reject();
+}
+
 void TConfigurationDialog::apply()
 {
 }
 
-void TConfigurationDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
+void TConfigurationDialog::changePage(QListWidgetItem *curr, QListWidgetItem *prev)
 {
-    if (!current)
-        current = previous;
+    if (!curr)
+        curr = prev;
     
-    k->pageArea->setCurrentIndex(k->list->row(current));
+    k->pageArea->setCurrentIndex(k->list->row(curr));
 }
 
 void TConfigurationDialog::setCurrentItem(int row)

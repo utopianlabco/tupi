@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,32 +33,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TALGORITHM_H
-#define TALGORITHM_H
-
-#include "tglobal.h"
+#ifndef KALGORITHM_H
+#define KALGORITHM_H
 
 #include <QString>
 #include <QColor>
 
-#include <cstdlib>
-#include <cstdio>
-#include <ctime>
-#include <QCryptographicHash>
-
-#ifdef Q_OS_LINUX
-#include <unistd.h>
-#include <sys/time.h>
-#include <fcntl.h>
-#endif
-
+#include "tglobal.h"
 
 /**
  * Class containing generic useful algorithms about random values
  * @author David Cuadrado
 */
 
-class T_CORE_EXPORT TAlgorithm
+class K_CORE_EXPORT TAlgorithm
 {
     public:
         /**
@@ -87,8 +75,6 @@ class T_CORE_EXPORT TAlgorithm
          * @return 
          */
         static QColor randomColor(bool withAlpha = false);
-
-        static QStringList header(const QString &input);
 };
 
 #endif

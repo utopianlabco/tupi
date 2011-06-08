@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,22 +36,14 @@
 #ifndef TCONFIGURATIONDIALOG_H
 #define TCONFIGURATIONDIALOG_H
 
-#include "tglobal.h"
-#include "twidgetlistview.h"
-#include "tflatbutton.h"
-#include "tseparator.h"
-
 #include <QDialog>
 #include <QMap>
 #include <QButtonGroup>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QStackedWidget>
-#include <QLabel>
-#include <QHeaderView>
-#include <QDialogButtonBox>
-#include <QListWidget>
+
+#include "kwidgetlistview.h"
+#include "kflatbutton.h"
+
+#include "tglobal.h"
 
 class QStackedWidget;
 class QListWidget;
@@ -61,7 +53,7 @@ class QListWidgetItem;
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TConfigurationDialog : public QDialog
+class K_GUI_EXPORT TConfigurationDialog : public QDialog
 {
     Q_OBJECT
 
@@ -74,10 +66,12 @@ class T_GUI_EXPORT TConfigurationDialog : public QDialog
         void setCurrentItem(int row);
         
     public slots:
+        virtual void ok();
+        virtual void cancel();
         virtual void apply();
         
     private slots:
-        void changePage(QListWidgetItem *, QListWidgetItem *);
+        void changePage(QListWidgetItem *, QListWidgetItem*);
         
     private:
         struct Private;

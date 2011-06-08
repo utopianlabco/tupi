@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,48 +33,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TAPPLICATIONPROPERTIES_H
-#define TAPPLICATIONPROPERTIES_H
-
-#include "tglobal.h"
+#ifndef KAPPLICATIONPROPERTIES_H
+#define KAPPLICATIONPROPERTIES_H
 
 #include <QString>
-#include <QDir>
-#include <QLocale>
-#include <QApplication>
+#include "tglobal.h"
 
 /**
  * @author David Cuadrado
 */
 
-class T_CORE_EXPORT TApplicationProperties
+class K_CORE_EXPORT TApplicationProperties
 {
     protected:
         TApplicationProperties();
         virtual ~TApplicationProperties();
 
     public:
-        void setHomeDir(const QString &path);
-        void setBinDir(const QString &path);
         void setShareDir(const QString &path);
         void setDataDir(const QString &path);
+        void setHomeDir(const QString &path);
         void setThemeDir(const QString &path);
         void setPluginDir(const QString &path);
         void setCacheDir(const QString &path);
-        void setRepositoryDir(const QString &path);
         void setVersion(const QString &path);
         void setCodeName(const QString &path);
         void setRevision(const QString &path);
 
-        virtual QString homeDir() const;
-        virtual QString binDir() const;
         virtual QString shareDir() const;
         virtual QString dataDir() const;
+        virtual QString homeDir() const;
         virtual QString themeDir() const;
         virtual QString pluginDir() const;
         virtual QString configDir() const;
         virtual QString cacheDir() const;
-        virtual QString repositoryDir() const;
         virtual QString version() const;
         virtual QString codeName() const;
         virtual QString revision() const;
@@ -89,14 +81,5 @@ class T_CORE_EXPORT TApplicationProperties
 };
 
 #define kAppProp TApplicationProperties::instance()
-#define HOME_DIR kAppProp->homeDir()
-#define BIN_DIR kAppProp->binDir()
-#define SHARE_DIR kAppProp->shareDir()
-#define DATA_DIR kAppProp->dataDir()
-#define THEME_DIR kAppProp->themeDir()
-#define CONFIG_DIR kAppProp->configDir()
-#define PLUGINS_DIR kAppProp->pluginDir()
-#define CACHE_DIR kAppProp->cacheDir()
-#define REPOSITORY_DIR kAppProp->repositoryDir()
 
 #endif
