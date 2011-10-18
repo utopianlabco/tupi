@@ -38,6 +38,7 @@
 
 #include "ktmodulewidgetbase.h"
 #include "kdualcolorbutton.h"
+#include "ticon.h"
 
 class KTColorPalette;
 
@@ -71,6 +72,7 @@ class KTColorPalette : public KTModuleWidgetBase
         void setupChooserTypeColor();
         void setupGradientManager();
         void setGlobalColors(const QBrush &brush);
+        QIcon setComboColor(const QColor &color) const;
 
     // protected:
     //    void mousePressEvent(QMouseEvent * e);
@@ -83,13 +85,14 @@ class KTColorPalette : public KTModuleWidgetBase
         // void changeTypeColor(KDualColorButton::ColorSpace s);
         void syncHsv(int h, int s, int v);
         void setHS(int h, int s);
-        // void changeBrushType(const QString &name);
+        void setColorSpace(int type);
         void updateColorFromPalette(const QBrush& brush);
         void updateColorFromDisplay(const QBrush& brush);
         void updateColorSpace(KDualColorButton::ColorSpace space);
         void updateGradientColor(const QBrush &brush);
         void switchColors();
         void resetColors();
+        void updateColorType(int index);
 		
     signals:
         void paintAreaEventTriggered(const KTPaintAreaEvent *event);
