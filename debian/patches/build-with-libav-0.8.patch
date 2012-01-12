@@ -1,0 +1,18 @@
+Last-Update: 2012-01-17
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+From: Gustav Gonzalez <info@maefloresta.com>
+Origin: upstream, backported
+Forwarded: not-needed
+Description: fix FTBFS with libav 0.8
+
+
+--- a/src/framework/tgui/kffmpegmoviegenerator.cpp
++++ b/src/framework/tgui/kffmpegmoviegenerator.cpp
+@@ -47,6 +47,7 @@
+ extern "C" {
+ #include "libavformat/avformat.h"
+ #include "libavcodec/avcodec.h"
++#include "libavutil/mathematics.h"
+ }
+ #endif
+ 

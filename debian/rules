@@ -1,81 +1,61 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# This file is public domain software, originally written by Joey Hess. 
-#
-# This version is for packages that are architecture dependent.
+# -*- makefile -*-
 
 # Uncomment this to turn on verbose mode.
-export DH_VERBOSE=1
+#export DH_VERBOSE=1
 
-build: build-stamp
-build-stamp:
-	dh_testdir
+# see http://lists.debian.org/debian-devel-announce/2011/09/msg00001.html
+# Also it does hardening by default, see http://wiki.debian.org/Hardening
+DPKG_EXPORT_BUILDFLAGS = 1
+-include /usr/share/dpkg/default.mk
 
-	# Add here commands to compile the package.
-	./configure --prefix=`pwd`/debian/tupi/usr --sharedir=`pwd`/debian/tupi/usr/share/tupi --debian-build
-	$(MAKE)	
+export LFLAGS= -Wl,--as-needed $(LDFLAGS)
 
-	touch build-stamp
+PDIR := $(CURDIR)/debian/tupi
+PDIRdata := $(CURDIR)/debian/tupi-data
 
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp
+%:
+	dh $@
 
-	# Add here commands to clean up after the build process.
-	#$(MAKE) clean
-	#$(MAKE) distclean
+override_dh_auto_clean:
+	# remove pre-generated binaries
+	cd configure.tests \
+	&& for dir in opengl ffmpeg aspell; do $(RM) $$dir/$$dir $$dir/*.o $$dir/Makefile; done
+	$(RM) launcher/tupi launcher/tupi.desktop
+	# fix wrong upstream permissions
+	chmod -R a-x+X . \
+	&& chmod +x configure debian/rules
+	dh_auto_clean
 
-	dh_clean
+override_dh_auto_configure:
+	# override qonf/defaults.rb
+	ruby configure.rb --debian-build=1 \
+                      --prefix=$(PDIR)/usr \
+                      --bindir=$(PDIR)/usr/bin \
+                      --libdir=$(PDIR)/usr/lib/tupi \
+                      --sharedir=$(PDIRdata)/usr/share/tupi \
+                      --includedir=$(PDIR)/usr/share/tupi/include
+	# force qmake-generated Makefiles to respect dpkg-provided flags
+	perl -pi -e 'local $$/; $$_=<>; s{((CX?X?|L)FLAGS\s*)=}{$$1+=}g;' `find . -name Makefile`
 
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep
-	dh_installdirs
+override_dh_auto_install:
+	dh_auto_install
+	$(RM) $(PDIR)/usr/share/man/man1/tupi.1.gz
+	mv $(PDIR)/usr/lib/tupi/tupi/plugins/* $(PDIR)/usr/lib/tupi/plugins/ \
+	&& $(RM) -r $(PDIR)/usr/lib/tupi/tupi \
+	&& $(RM) -r $(PDIR)/usr/share/tupi/include
+	convert launcher/icons/tupi_32x32.png $(PDIR)/usr/share/pixmaps/tupi_32x32.xpm
+	# patch the launcher for the correct paths
+	mv $(PDIR)/usr/bin/tupi.bin $(PDIR)/usr/lib/tupi
+	perl -pi -e 's{(/usr/lib)(?!/tupi)}{$$1/tupi}g; s{(export\s+TUPI_INCLUDE)}{#$$1}; s{/usr/bin}{/usr/lib/tupi};' $(PDIR)/usr/bin/tupi
+	# wipe empty dirs, if any
+	find $(PDIR) -type d -empty -delete
 
-	# Add here commands to install the package into debian/<packagename>
-	$(MAKE) install
+override_dh_shlibdeps:
+	LD_LIBRARY_PATH="$(PDIR)/usr/lib/tupi:$(PDIR)/usr/lib/tupi/plugins:$(LD_LIBRARY_PATH)" dh_shlibdeps
 
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
+override_dh_makeshlibs:
+	dh_makeshlibs --noscripts
 
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-#	dh_installdocs
-#	dh_installexamples
-#	dh_install
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installcatalogs
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-#	dh_installwm
-#	dh_installudev
-#	dh_lintian
-#	dh_bugfiles
-#	dh_undocumented
-#	dh_installman
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+get-orig-source:
+	uscan --noconf --force-download --repack --rename --download-current-version --verbose --destdir=.
