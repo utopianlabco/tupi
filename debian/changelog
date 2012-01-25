@@ -1,3 +1,18 @@
+tupi (0.1+git12-2) unstable; urgency=low
+
+  * corrected binary installation path argument for 'configure' script
+  * added symbolic link for crash handler (fixes relaunch button)
+  * added symbolic link for examples (sample project)
+  * qt4-linguist-tools added to Build-Depends
+  * debian/rules
+    + remove .qm files by clean rule
+    + regenerate .qm files (translation binaries) during build
+    + refreshing .ts files (translation sources) during build
+    + updated get-orig-source
+  * fixed de_DE translation (Closes: #657427 "Crash with LANG="de_DE.UTF-8")
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 25 Jan 2012 23:53:15 +1100
+
 tupi (0.1+git12-1) unstable; urgency=low
 
   * Debian release. (Closes: #650734, #619741)

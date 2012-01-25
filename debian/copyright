@@ -5,16 +5,16 @@ Source: http://www.maefloresta.com/
 
 
 Files: debian/*
-Copyright: © 2011 Dmitry Smirnov <onlyjob@member.fsf.org>
+Copyright: © 2011-2012 Dmitry Smirnov <onlyjob@member.fsf.org>
 License: GPL-3+
 
 
 Files: *
-Copyright: © 2010 Gustav Gonzalez <info@maefloresta.com>
-           © 2006 David Cuadrado
-           © 2006 Jorge Cuadrado
-           © 2003 Fernado Roldan
-           © 2003 Simena Dinas
+Copyright: © 2010-2012 Gustav Gonzalez <info@maefloresta.com>
+           © 2006      David Cuadrado
+           © 2006      Jorge Cuadrado
+           © 2003      Fernado Roldan
+           © 2003      Simena Dinas
 License: GPL-3+
 
 

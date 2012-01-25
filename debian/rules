@@ -4,6 +4,9 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+PDIR     := $(CURDIR)/debian/tupi
+QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
+
 # see http://lists.debian.org/debian-devel-announce/2011/09/msg00001.html
 # Also it does hardening by default, see http://wiki.debian.org/Hardening
 DPKG_EXPORT_BUILDFLAGS = 1
@@ -11,30 +14,32 @@ DPKG_EXPORT_BUILDFLAGS = 1
 
 export LFLAGS= -Wl,--as-needed $(LDFLAGS)
 
-PDIR := $(CURDIR)/debian/tupi
-PDIRdata := $(CURDIR)/debian/tupi-data
-
 %:
 	dh $@
+
+$(QM_FILES):
+	# rebuild translations
+	lupdate tupi.pro -locations none -ts $(@:.qm=.ts)
+	lrelease $(@:.qm=.ts)
 
 override_dh_auto_clean:
 	# remove pre-generated binaries
 	cd configure.tests \
 	&& for dir in opengl ffmpeg aspell; do $(RM) $$dir/$$dir $$dir/*.o $$dir/Makefile; done
-	$(RM) launcher/tupi launcher/tupi.desktop
+	$(RM) launcher/tupi launcher/tupi.desktop $(QM_FILES)
 	# fix wrong upstream permissions
 	chmod -R a-x+X . \
 	&& chmod +x configure debian/rules
 	dh_auto_clean
 
-override_dh_auto_configure:
+override_dh_auto_configure: $(QM_FILES)
 	# override qonf/defaults.rb
 	ruby configure.rb --debian-build=1 \
                       --prefix=$(PDIR)/usr \
-                      --bindir=$(PDIR)/usr/bin \
+                      --bindir=$(PDIR)/usr/lib/tupi/bin \
                       --libdir=$(PDIR)/usr/lib/tupi \
-                      --sharedir=$(PDIRdata)/usr/share/tupi \
-                      --includedir=$(PDIR)/usr/share/tupi/include
+                      --sharedir=$(PDIR)-data/usr/share/tupi \
+                      --includedir=$(PDIR)-dev/usr/include/tupi
 	# force qmake-generated Makefiles to respect dpkg-provided flags
 	perl -pi -e 'local $$/; $$_=<>; s{((CX?X?|L)FLAGS\s*)=}{$$1+=}g;' `find . -name Makefile`
 
@@ -42,12 +47,11 @@ override_dh_auto_install:
 	dh_auto_install
 	$(RM) $(PDIR)/usr/share/man/man1/tupi.1.gz
 	mv $(PDIR)/usr/lib/tupi/tupi/plugins/* $(PDIR)/usr/lib/tupi/plugins/ \
-	&& $(RM) -r $(PDIR)/usr/lib/tupi/tupi \
-	&& $(RM) -r $(PDIR)/usr/share/tupi/include
+	&& $(RM) -r $(PDIR)/usr/lib/tupi/tupi
 	convert launcher/icons/tupi_32x32.png $(PDIR)/usr/share/pixmaps/tupi_32x32.xpm
 	# patch the launcher for the correct paths
-	mv $(PDIR)/usr/bin/tupi.bin $(PDIR)/usr/lib/tupi
-	perl -pi -e 's{(/usr/lib)(?!/tupi)}{$$1/tupi}g; s{(export\s+TUPI_INCLUDE)}{#$$1}; s{/usr/bin}{/usr/lib/tupi};' $(PDIR)/usr/bin/tupi
+	mkdir "$(PDIR)/usr/bin" && mv "$(PDIR)/usr/lib/tupi/bin/tupi" "$(PDIR)/usr/bin/"
+	perl -pi -e 's{(/usr/lib)(?!/tupi)}{$$1/tupi}g; s{(export\s+TUPI_INCLUDE)}{#$$1}; s{/usr/bin}{/usr/lib/tupi/bin};' $(PDIR)/usr/bin/tupi
 	# wipe empty dirs, if any
 	find $(PDIR) -type d -empty -delete
 
@@ -58,4 +62,4 @@ override_dh_makeshlibs:
 	dh_makeshlibs --noscripts
 
 get-orig-source:
-	uscan --noconf --force-download --repack --rename --download-current-version --verbose --destdir=.
+	uscan --noconf --verbose --force-download --rename --repack --destdir=. --download-current-version
