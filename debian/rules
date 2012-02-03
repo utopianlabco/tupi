@@ -7,19 +7,15 @@
 PDIR     := $(CURDIR)/debian/tupi
 QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
 
-# see http://lists.debian.org/debian-devel-announce/2011/09/msg00001.html
-# Also it does hardening by default, see http://wiki.debian.org/Hardening
-DPKG_EXPORT_BUILDFLAGS = 1
--include /usr/share/dpkg/default.mk
-
 export LFLAGS= -Wl,--as-needed $(LDFLAGS)
+$(info LFLAGS=$(LFLAGS))
 
 %:
 	dh $@
 
 $(QM_FILES):
 	# rebuild translations
-	lupdate tupi.pro -locations none -ts $(@:.qm=.ts)
+	lupdate tupi.pro -locations none -silent -ts $(@:.qm=.ts)
 	lrelease $(@:.qm=.ts)
 
 override_dh_auto_clean:
@@ -33,8 +29,13 @@ override_dh_auto_clean:
 	dh_auto_clean
 
 override_dh_auto_configure: $(QM_FILES)
+	# arch-dependent patching
+	cat debian/patches/series.$(DEB_HOST_ARCH_OS) >> debian/patches/series \
+	&& $(RM) debian/patches/series.$(DEB_HOST_ARCH_OS) \
+	&& dh_quilt_patch || return 0
 	# override qonf/defaults.rb
 	ruby configure.rb --debian-build=1 \
+                      --with-debug \
                       --prefix=$(PDIR)/usr \
                       --bindir=$(PDIR)/usr/lib/tupi/bin \
                       --libdir=$(PDIR)/usr/lib/tupi \
@@ -60,6 +61,9 @@ override_dh_shlibdeps:
 
 override_dh_makeshlibs:
 	dh_makeshlibs --noscripts
+
+override_dh_strip:
+	dh_strip -v --dbg-package=tupi-dbg
 
 get-orig-source:
 	uscan --noconf --verbose --force-download --rename --repack --destdir=. --download-current-version

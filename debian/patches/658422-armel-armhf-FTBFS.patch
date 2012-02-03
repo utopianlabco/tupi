@@ -1,0 +1,29 @@
+Last-Update: 2012-02-03
+Author: peter green <plugwash@p10link.net>
+Bug-Debian: http://bugs.debian.org/658422
+Forwarded: 2012-02-03
+Description: fix FTBFS on armel and armhf
+ qreal on most architectures is defined as double but on arm architetures it is 
+ defined as float. It is OK to make assignments between qreal and double since 
+ it is ok to make assignments between float and double. But in more complex 
+ situations involving pointers, templates and/or overloading indiscriminate 
+ mixing of qreal and double can cause problems. In this particular case the 
+ problem is your code creates a QPair (which is a template) with a double and a
+ QColor and then tries to pass it to a function that expects a qpair with a
+ qreal and a QColor.
+ .
+ The fix is simple enough, add a typecast to turn the double into a qreal
+ before creating the QPair.
+
+
+--- a/src/components/colorpalette/ktpaletteparser.cpp
++++ b/src/components/colorpalette/ktpaletteparser.cpp
+@@ -130,7 +130,7 @@
+         } else if (tag == "Stop") {
+                    QColor c(atts.value("colorName") );
+                    c.setAlpha(atts.value("alpha").toInt() );
+-                   k->gradientStops << qMakePair(atts.value("value").toDouble(), c);	
++                   k->gradientStops << qMakePair((qreal)(atts.value("value").toDouble()), c);	
+         }
+      }
+ 

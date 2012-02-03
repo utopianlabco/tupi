@@ -1,3 +1,17 @@
+tupi (0.1+git12-3) unstable; urgency=medium
+
+  * patch for FTBFS on arm(el|hf), thanks to peter green
+    (Closes: #658422 "FTBFS on armel and armhf")
+  * patch to fix path-to-executable in crash handler
+  * new tupi-dbg package
+  * compat & debhelper to version 9
+  * debian/rules:
+    + give '-silent' to lupdate
+    + print LDFLAGS
+    + --with-debug
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Fri, 03 Feb 2012 23:58:56 +1100
+
 tupi (0.1+git12-2) unstable; urgency=low
 
   * corrected binary installation path argument for 'configure' script
