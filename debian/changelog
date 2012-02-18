@@ -1,3 +1,10 @@
+tupi (0.1+git12-4) unstable; urgency=low
+
+  * Fix upgrade for versions prior to 0.1+git12-3 by adding Breaks/Replaces
+    (Closes: #660329 "Conflicts/Replaces missing in tupi-data")
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Sat, 18 Feb 2012 23:49:29 +1100
+
 tupi (0.1+git12-3) unstable; urgency=medium
 
   * patch for FTBFS on arm(el|hf), thanks to peter green
