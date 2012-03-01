@@ -1,0 +1,16 @@
+Last-Update: 2012-02-23
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Forwarded: applied-upstream
+Description: lintianisation: remove "Encoding=UTF-8" from .desktop file
+
+
+--- a/qonf/configure.rb
++++ b/qonf/configure.rb
+@@ -223,7 +223,6 @@
+         }
+ 
+         newfile = "[Desktop Entry]\n"
+-        newfile += "Encoding=UTF-8\n"
+         newfile += "Name=Tupi: 2D Magic\n"
+         newfile += "Name[es]=Tupí: Magia 2D\n"
+         newfile += "Name[pt]=Tupí: Magia 2D\n"

@@ -1,3 +1,13 @@
+tupi (0.1+git12-5) unstable; urgency=low
+
+  * [patch] desktop icon replaced with smaller one
+    (Closes: #660933 "too big menu icon makes menu very slow")
+  * [patch] "Encoding=UTF-8" removed from .desktop file (lintianisation)
+  * d-control: standards to current 3.9.3
+  * d-copyright: DEP-5 URL is updated
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Thu, 01 Mar 2012 21:30:59 +1100
+
 tupi (0.1+git12-4) unstable; urgency=low
 
   * Fix upgrade for versions prior to 0.1+git12-3 by adding Breaks/Replaces
