@@ -1,51 +1,15 @@
 #!/usr/bin/ruby
-
-###########################################################################
-#   Project TUPI: Magia 2D                                                #
-#   Project Contact: info@maefloresta.com                                 #
-#   Project Website: http://www.maefloresta.com                           #
-#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
-#                                                                         #
-#   Developers:                                                           #
-#   2010:                                                                 #
-#    Gustavo Gonzalez / xtingray                                          #
-#                                                                         #
-#   KTooN's versions:                                                     #
-#                                                                         #
-#   2006:                                                                 #
-#    David Cuadrado                                                       #
-#    Jorge Cuadrado                                                       #
-#   2003:                                                                 #
-#    Fernado Roldan                                                       #
-#    Simena Dinas                                                         #
-#                                                                         #
-#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
-#   License:                                                              #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
-###########################################################################
-
-library = ARGV[0]
-oldpath  = ARGV[1]
-newpath = ARGV[2]
-
-libs = %x[otool -L #{library} |awk '{print $1}'|grep "#{oldpath}"]
-
-puts "---------------------------------------------"
-puts "Libs for: #{library}"
-libs.each_line do |line|
-  parsed = line.chop().gsub(/#{oldpath}/, newpath)
-  cmd = "install_name_tool -change #{line.chop()} #{parsed} #{library}"
-  puts cmd
-  system("#{cmd}")
+Dir.new(Dir.pwd).entries.each do |n| 
+	if File.file?(n) and n.end_with?(".dylib")
+        libs = %x[otool -L #{n}|awk '{print $1}'|grep -v '/usr/lib'|grep -v '/System'|grep "/lib"|grep -v '@executable']
+		puts "---------------------------------------------"
+		puts "Libs for: #{n}"
+		libs.each do |line|
+            parsed = line.chop().gsub(/^\/opt\/local\/lib/,"@executable_path/../Frameworks")
+            parsed = parsed.gsub(/^\/lib/,"@executable_path/../Frameworks")
+            cmd = "/usr/bin/install_name_tool -change #{line.chop()} #{parsed} #{File.expand_path(File.dirname(__FILE__))}/#{n}"
+            puts cmd
+            system("#{cmd}")
+        end
+	end
 end
