@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -38,14 +38,11 @@
 
 #include "tglobal.h"
 #include "tapplicationproperties.h"
-#include "tapplication.h"
 
 #include <QGroupBox>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QLabel>
-#include <QHBoxLayout>
-#include <QSizePolicy>
 
 /**
  * @author David Cuadrado
@@ -67,9 +64,6 @@ class T_GUI_EXPORT TXYSpinBox : public QGroupBox
         int y();
         void setModifyTogether(bool enable);
 
-    signals:
-        void valuesHaveChanged();
-
     private slots:
         void updateXValue();
         void updateYValue();
@@ -82,6 +76,13 @@ class T_GUI_EXPORT TXYSpinBox : public QGroupBox
         QSpinBox *m_y;
         QPushButton *m_separator;
         bool m_modifyTogether;
+
+    /*
+    signals:
+        void valueXChanged(double);
+        void valueYChanged(double);
+        void valueXYChanged(double, double);
+    */
 };
 
 #endif

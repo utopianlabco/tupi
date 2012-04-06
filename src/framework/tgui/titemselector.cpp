@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,7 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
+#include "tglobal.h"
 #include "titemselector.h"
+
+#include <QListWidget>
+#include <QToolButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 struct TItemSelector::Private
 {
@@ -43,9 +49,10 @@ struct TItemSelector::Private
 
 TItemSelector::TItemSelector(QWidget *parent) : QWidget(parent), k(new Private)
 {
+    QHBoxLayout *layout = new QHBoxLayout;
+
     k->available = new QListWidget;
 
-    QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(k->available);
 
     QVBoxLayout *controlBox = new QVBoxLayout;
@@ -54,14 +61,14 @@ TItemSelector::TItemSelector(QWidget *parent) : QWidget(parent), k(new Private)
     controlBox->addStretch();
 
     QToolButton *nextButton = new QToolButton;
-    nextButton->setIcon(QPixmap(THEME_DIR + "icons/select_scene.png"));
+    nextButton->setIcon(QPixmap(THEME_DIR + "icons/export_scene.png"));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(addCurrent()));
 
     controlBox->addWidget(nextButton);
     controlBox->setSpacing(5);
 
     QToolButton *previousButton = new QToolButton;
-    previousButton->setIcon(QPixmap(THEME_DIR + "icons/unselect_scene.png"));
+    previousButton->setIcon(QPixmap(THEME_DIR + "icons/unexport_scene.png"));
     connect(previousButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
 
     controlBox->addWidget(previousButton);
@@ -83,6 +90,7 @@ TItemSelector::~TItemSelector()
 
 void TItemSelector::selectFirstItem() {
      if (k->available->item(0)) {
+         // k->available->item(0)->setSelected(true);
          k->available->setCurrentRow(0);
          emit changed();
      }
@@ -91,6 +99,7 @@ void TItemSelector::selectFirstItem() {
 void TItemSelector::addCurrent()
 {
     int row = k->available->currentRow();
+
     if (row >= 0) {
         QListWidgetItem *item = k->available->takeItem(row);
         k->selected->addItem(item);
@@ -134,26 +143,20 @@ void TItemSelector::downCurrent()
     }
 }
 
+
 void TItemSelector::setItems(const QStringList &items)
 {
     k->available->clear();
     addItems(items);
 }
 
-int TItemSelector::addItem(const QString &itemLabel)
+int TItemSelector::addItem(const QString &item)
 {
-    QListWidgetItem *item = new QListWidgetItem(itemLabel, k->available);
+    QListWidgetItem *it = new QListWidgetItem(item, k->available);
     int index = k->available->count()-1;
-    item->setData(4321, index);
+    it->setData(4321, index);
 
     return index;
-}
-
-void TItemSelector::addSelectedItem(const QString &itemLabel)
-{
-    QListWidgetItem *item = new QListWidgetItem(itemLabel, k->selected);
-    int index = k->selected->count()-1;
-    item->setData(4321, index);
 }
 
 void TItemSelector::addItems(const QStringList &items)

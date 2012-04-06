@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,20 +36,12 @@
 #ifndef TBUTTONBAR_H
 #define TBUTTONBAR_H
 
-#include "tglobal.h"
-#include "tviewbutton.h"
-#include "toolview.h"
+#include "tideality.h"
 
 #include <QToolBar>
 #include <QButtonGroup>
 #include <QMap>
 #include <QTimer>
-#include <QToolButton>
-#include <QBoxLayout>
-#include <QAction>
-#include <QCheckBox>
-#include <QMenu>
-#include <QMouseEvent>
 
 class TViewButton;
 class ToolView;
@@ -60,7 +52,7 @@ class QMenu;
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TButtonBar : public QToolBar
+class T_IDEAL_EXPORT TButtonBar : public QToolBar
 {
     Q_OBJECT
 
@@ -76,7 +68,6 @@ class T_GUI_EXPORT TButtonBar : public QToolBar
 
         bool isExclusive() const;
         bool autohide() const;
-        bool shouldBeVisible() const;
         void showSeparator(bool e);
 
         int count() const;
@@ -88,7 +79,6 @@ class T_GUI_EXPORT TButtonBar : public QToolBar
         void setAutoHide(bool autohide);
         void setShowOnlyIcons();
         void setShowOnlyTexts();
-        void setShouldBeVisible(bool shouldBeVisible);
 
     private:
         QMenu *createMenu();
@@ -96,7 +86,6 @@ class T_GUI_EXPORT TButtonBar : public QToolBar
     private slots:
         void hideOthers(QAbstractButton *source);
         void doNotHide();
-        void onlySetShouldBeVisible(bool shouldBeVisible);
 
     protected:
         virtual void mousePressEvent(QMouseEvent *event);
@@ -110,7 +99,6 @@ class T_GUI_EXPORT TButtonBar : public QToolBar
         QTimer m_hider;
         bool m_autoHide;
         bool m_blockHider;
-        bool m_shouldBeVisible;
 };
 
 #endif

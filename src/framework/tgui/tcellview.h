@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -40,13 +40,6 @@
 
 #include <QTableWidget>
 #include <QStyleOptionViewItem>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QItemSelectionModel>
-#include <QPainterPath>
-#include <QScrollBar>
-#include <QHeaderView>
-#include <QTimer>
 
 class TCellViewItemDelegate;
 
@@ -55,7 +48,7 @@ class TCellViewItemDelegate;
  * @brief Include this file if you need the class TCellView, TCellViewItem, TCellViewItemDelegate or TCellViewModel
  */
 
-class T_GUI_EXPORT TCellViewItem : public QTableWidgetItem
+class TCellViewItem : public QTableWidgetItem
 {
     public:
         TCellViewItem();
@@ -68,7 +61,7 @@ class T_GUI_EXPORT TCellViewItem : public QTableWidgetItem
 /**
  * @author David Cuadrado
  */
-class T_GUI_EXPORT TCellView : public QTableWidget
+class TCellView : public QTableWidget
 {
     Q_OBJECT
 

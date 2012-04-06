@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,15 @@
  ***************************************************************************/
 
 #include "tcellview.h"
+#include "tdebug.h"
+
+#include <QPainter>
+#include <QPaintEvent>
+#include <QItemSelectionModel>
+#include <QPainterPath>
+#include <QScrollBar>
+#include <QHeaderView>
+#include <QTimer>
 
 ////////// TCellViewItemDelegate ///////////
 
@@ -164,11 +173,8 @@ void TCellView::setup()
 
     setItemSize(18, 18);
 
-    // horizontalHeader()->setResizeMode(QHeaderView::Custom);
-    // verticalHeader()->setResizeMode(QHeaderView::Custom);
-
-    horizontalHeader()->setSectionResizeMode(QHeaderView::Custom);
-    verticalHeader()->setSectionResizeMode(QHeaderView::Custom);
+    horizontalHeader()->setResizeMode(QHeaderView::Custom);
+    verticalHeader()->setResizeMode(QHeaderView::Custom);
 }
 
 void TCellView::setItemSize(int w, int h)
@@ -220,7 +226,7 @@ void TCellView::addItem(TCellViewItem *item)
     }
 
     m_countColor++;
-    setItem(m_row-1, m_col, item);
+    setItem(m_row-1 , m_col , item);
 
     fixSize();
 }
@@ -244,13 +250,7 @@ void TCellView::addItem(const QImage &i)
 void TCellView::wheelEvent(QWheelEvent *event)
 {
     if (event->modifiers() == Qt::ControlModifier) {
-        #ifdef K_DEBUG
-            #ifdef Q_OS_WIN
-                qDebug() << "[TCellView::wheelEvent()] - event->delta(): " << event->delta();
-            #else
-                SHOW_VAR(event->delta());
-            #endif
-        #endif
+        SHOW_VAR(event->delta());
     } else {
         QTableWidget::wheelEvent(event);
     }

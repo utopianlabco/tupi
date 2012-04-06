@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,12 +36,8 @@
 #ifndef TCOMMANDHISTORY_H
 #define TCOMMANDHISTORY_H
 
-#include "tglobal.h"
-
 #include <QObject>
 #include <QHash>
-#include <QUndoStack>
-#include <QMenu>
 
 class QUndoStack;
 class QMenu;
@@ -51,7 +47,7 @@ class QAction;
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TCommandHistory : public QObject
+class TCommandHistory : public QObject
 {
     Q_OBJECT
     

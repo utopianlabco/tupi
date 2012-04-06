@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,10 +39,6 @@
 #include "tglobal.h"
 
 #include <QTreeWidget>
-#include <QHeaderView>
-#include <QItemDelegate>
-#include <QEvent>
-#include <QLineEdit>
 
 /**
  * @author David Cuadrado
@@ -71,8 +67,7 @@ class T_GUI_EXPORT TreeListWidget : public QTreeWidget
         virtual void closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint);
         
     signals:
-        // void itemRenamed(QTreeWidgetItem *item);
-        void editorClosed();
+        void itemRenamed(QTreeWidgetItem *item);
         
     private:
         bool m_isEditable;

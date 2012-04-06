@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "tdoublecombobox.h"
+
+#include <QDoubleValidator>
+#include <QLineEdit>
+
+#include <cmath>
 
 #define PERCENT(v) (v * 100.0) / maximum()
 #define VALUE(p) (p * maximum()) / 100.0
@@ -48,6 +53,7 @@ struct TDoubleComboBox::Private
 TDoubleComboBox::TDoubleComboBox(double min, double max, QWidget *parent)
  : QComboBox(parent), k(new Private)
 {
+    
     k->validator = new QDoubleValidator(this);
     k->editor = new QLineEdit;
     k->editor->setValidator(k->validator);

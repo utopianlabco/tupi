@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,15 @@
  ***************************************************************************/
 
 #include "timagebutton.h"
+#include "tdebug.h"
+
+#include <QPainter>
+#include <QPixmap>
+#include <QLayout>
+#include <QBitmap>
+#include <QStyle>
+#include <QStyleOptionButton>
+#include <QStylePainter>
 
 class TImageButton::Animation
 {
@@ -100,10 +109,12 @@ void TImageButton::enterEvent(QEvent *)
     // setIconSize(QSize(m_imageSize-10,m_imageSize-10));
     
     if (m_isAnimated) {
+
         m_animator->begin();
         m_animator->aBeginning = true;
         if (m_animator->aSize >= m_imageSize + 10)
             m_animator->aSize = m_imageSize;
+
     } else {
         setFlat(false);
     }
@@ -112,10 +123,12 @@ void TImageButton::enterEvent(QEvent *)
 void TImageButton::leaveEvent(QEvent *)
 {
     if (m_isAnimated && !isDown()) {
+
         m_animator->aBeginning = false;
         m_animator->aSize = m_imageSize;
         m_animator->end();
-        setIconSize(QSize(m_imageSize,m_imageSize));
+        setIconSize( QSize(m_imageSize,m_imageSize));
+
     } else {
         setFlat(true);
     }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,15 +34,24 @@
  ***************************************************************************/
 
 #include "toptionaldialog.h"
+#include "tseparator.h"
+
+#include <QVBoxLayout>
+#include <QLabel>
 
 TOptionalDialog::TOptionalDialog(const QString &text,const QString &title,QWidget *parent) : QDialog(parent)
 {
     setWindowTitle(title);
     m_layout = new QVBoxLayout;
+    
     m_layout->addStretch(10);
+    
     QLabel *label = new QLabel(text, this);
+    
     m_layout->addWidget(label);
+    
     m_layout->addStretch(10);
+    
     m_layout->addWidget(new TSeparator);
     
     QHBoxLayout *buttonLayout = new QHBoxLayout;
@@ -69,5 +78,5 @@ TOptionalDialog::~TOptionalDialog()
 
 bool TOptionalDialog::shownAgain()
 {
-    return !m_checkBox->isChecked();
+    return m_checkBox->isChecked();
 }

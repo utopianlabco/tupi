@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,11 +34,12 @@
  ***************************************************************************/
 
 #include "tworkspacemainwindow.h"
+#include <QWorkspace>
 
 TWorkspaceMainWindow::TWorkspaceMainWindow(QWidget *parent) : TMainWindow(parent)
 {
-    mdiArea = new QMdiArea;
-    setCentralWidget(mdiArea);
+    m_workspace = new QWorkspace;
+    setCentralWidget(m_workspace);
 }
 
 TWorkspaceMainWindow::~TWorkspaceMainWindow()
@@ -48,7 +49,7 @@ TWorkspaceMainWindow::~TWorkspaceMainWindow()
 void TWorkspaceMainWindow::addWidget(QWidget *widget, int perspective)
 {
     addToPerspective(widget, perspective);
-    mdiArea->addSubWindow(widget);
+    m_workspace->addWindow(widget);
     widget->show();
 }
 

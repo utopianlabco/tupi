@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,13 @@
  ***************************************************************************/
 
 #include "trulerbase.h"
+#include "tdebug.h"
+
+#include <QMouseEvent>
+#include <QFrame>
+#include <QResizeEvent>
+#include <QPaintEvent> 
+#include <QPainter>
 
 struct TRulerBase::Private
 {
@@ -99,8 +106,8 @@ TRulerBase::TRulerBase(Qt::Orientation orientation, QWidget *parent) : QFrame(pa
 
     k->menu = new QMenu(this);
 
-    QAction *to5 = k->menu->addAction(tr("Change scale to 5..."));
-    QAction *to10 = k->menu->addAction(tr("Change scale to 10..."));
+    QAction *to5 = k->menu->addAction( tr("Change scale to 5..."));
+    QAction *to10 = k->menu->addAction( tr("Change scale to 10..."));
 
     connect(to5, SIGNAL(triggered()), this, SLOT(changeScaleTo5pts()));
     connect(to10, SIGNAL(triggered()), this, SLOT(changeScaleTo10pts()));
@@ -112,7 +119,7 @@ TRulerBase::~TRulerBase()
     delete k;
 }
 
-void TRulerBase::paintEvent(QPaintEvent *)
+void TRulerBase::paintEvent ( QPaintEvent * )
 {
     QPainter p(this);
 
@@ -136,20 +143,23 @@ void TRulerBase::paintEvent(QPaintEvent *)
 void TRulerBase::drawScale(QPainter *painter)
 {
     painter->save();
-    QFont tfont(font().family(), 7);
-    QFontMetrics fm(tfont);
-    painter->setFont(tfont);
+    QFont kfont(font().family(), 7);
+    QFontMetrics fm(kfont);
+    painter->setFont(kfont);
 
     int fact = 1;
+    int init;
 
     if (k->orientation == Qt::Horizontal) {
         painter->translate(k->zero.x(), 0);
+        init = (int)k->zero.x();
         painter->drawLine(-390, height()-1, width(), height()-1);
     } else {
         painter->drawLine(width()-1, 0, width()-1, height());
         fact = -1;
         painter->translate(0, k->zero.y());
         painter->rotate(90);
+        init = (int)k->zero.y();
     }
 
     int ypos = k->height*fact;
@@ -200,15 +210,15 @@ void TRulerBase::resizeEvent(QResizeEvent *)
     update();
 }
 
-void TRulerBase::mouseMoveEvent(QMouseEvent *event)
+void TRulerBase::mouseMoveEvent(QMouseEvent * e)
 {
     if (k->drawPointer)
-        movePointers(event->pos());
+        movePointers(e->pos());
 }
 
-void TRulerBase::setDrawPointer(bool flag)
+void TRulerBase::setDrawPointer(bool yes)
 {
-    k->drawPointer = flag;
+    k->drawPointer = yes;
     update();
 }
 
@@ -218,21 +228,14 @@ void TRulerBase::setSeparation(int sep)
         k->separation = sep;
         update();
     } else {
-        #ifdef K_DEBUG
-            QString msg = "TRulerBase::setSeparation() - Error: Can't assign separation : " + QString::number(sep);
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "I can't assign separation : " << sep << endl;
     }
 }
 
-void TRulerBase::mousePressEvent(QMouseEvent *event)
+void TRulerBase::mousePressEvent(QMouseEvent *e)
 {
-    if (event->button() == Qt::RightButton)
-        emit displayMenu(this, event->globalPos());
+    if (e->button() == Qt::RightButton)
+        emit displayMenu(this, e->globalPos());
 }
 
 Qt::Orientation TRulerBase::orientation()

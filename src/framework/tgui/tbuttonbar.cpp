@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,8 +34,20 @@
  ***************************************************************************/
 
 #include "tbuttonbar.h"
+#include "tviewbutton.h"
+#include "toolview.h"
+#include "tdebug.h"
 
-TButtonBar::TButtonBar(Qt::ToolBarArea area, QWidget *parent) : QToolBar(parent), m_autoHide(false), m_blockHider(false), m_shouldBeVisible(true)
+#include <QToolButton>
+#include <QBoxLayout>
+#include <QAction>
+#include <QCheckBox>
+#include <QMenu>
+#include <QMouseEvent>
+
+#include <QtDebug>
+
+TButtonBar::TButtonBar(Qt::ToolBarArea area, QWidget *parent) : QToolBar(parent), m_autoHide(false), m_blockHider(false)
 {
     setMovable(false);
     setIconSize(QSize(16,16));
@@ -73,7 +85,6 @@ TButtonBar::TButtonBar(Qt::ToolBarArea area, QWidget *parent) : QToolBar(parent)
 
     connect(&m_hider, SIGNAL(timeout()), this, SLOT(hide()));
     connect(&m_buttons, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(hideOthers(QAbstractButton *)));
-    connect(toggleViewAction(), SIGNAL(triggered(bool)), this, SLOT(onlySetShouldBeVisible(bool)));
 }
 
 TButtonBar::~TButtonBar()
@@ -170,53 +181,36 @@ bool TButtonBar::autohide() const
     return m_autoHide;
 }
 
-void TButtonBar::onlySetShouldBeVisible(bool shouldBeVisible)
-{
-    m_shouldBeVisible = shouldBeVisible;
-}
-
-void TButtonBar::setShouldBeVisible(bool shouldBeVisible)
-{
-    m_shouldBeVisible = shouldBeVisible;
-    setVisible(shouldBeVisible);
-}
-
-bool TButtonBar::shouldBeVisible() const
-{
-    return m_shouldBeVisible;
-}
-
-
 void TButtonBar::setShowOnlyIcons()
 {
-    foreach (QAbstractButton *button, m_buttons.buttons()) {
-             TViewButton *viewButton = static_cast<TViewButton *>(button);
+    foreach (QAbstractButton *b, m_buttons.buttons()) {
+             TViewButton *viewButton = static_cast<TViewButton *>(b);
              viewButton->setOnlyIcon();
     }
 }
 
 void TButtonBar::setShowOnlyTexts()
 {
-    foreach (QAbstractButton *button, m_buttons.buttons()) {
-             TViewButton *viewButton = static_cast<TViewButton *>(button);
+    foreach (QAbstractButton *b, m_buttons.buttons()) {
+             TViewButton *viewButton = static_cast<TViewButton *>(b);
              viewButton->setOnlyText();
     }
 }
 
-void TButtonBar::disable(TViewButton *view)
+void TButtonBar::disable(TViewButton *v)
 {
-    QAction *action = m_actionForWidget[view];
+    QAction *a = m_actionForWidget[v];
 
-    if (action)
-        action->setVisible(false);
+    if (a)
+        a->setVisible(false);
 }
 
-void TButtonBar::enable(TViewButton *view)
+void TButtonBar::enable(TViewButton *v)
 {
-    QAction *action = m_actionForWidget[view];
+    QAction *a = m_actionForWidget[v];
 
-    if (action)
-        action->setVisible(true);
+    if (a)
+        a->setVisible(true);
 }
 
 bool TButtonBar::isExclusive() const

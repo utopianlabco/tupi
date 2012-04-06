@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,19 @@
  ***************************************************************************/
 
 #include "tcirclebutton.h"
+#include "timageeffect.h"
+
+#include <QPainter>
+#include <QRegion>
+#include <QRect>
+#include <QPaintEvent>
+#include <QDebug>
+#include <QMoveEvent>
+#include <QApplication>
+#include <QBitmap>
+#include <QPainterPath>
+#include <QTimer>
+#include <QPaintEngine>
 
 static const char * new_xpm[] = {
 "12 16 6 1",
@@ -192,10 +205,8 @@ void TCircleButton::paintMask()
     paintMask.end();
 }
 
-void TCircleButton::paintEvent(QPaintEvent *event)
+void TCircleButton::paintEvent(QPaintEvent *e)
 {
-    Q_UNUSED(event);
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     

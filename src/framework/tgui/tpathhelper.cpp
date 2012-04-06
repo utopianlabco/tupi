@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tpathhelper.h"
+#include "tdebug.h"
 
 TPathHelper::TPathHelper()
 {
@@ -109,7 +110,7 @@ QList<QPainterPath> TPathHelper::toRect(const QList<QPainterPath> &l, const QRec
 
 QPainterPath TPathHelper::buildPath(const QStringList &polygonsStr, QChar sep)
 {
-    // SQA: It doesn't work for curves
+    // ###: Not work for curves
     QPainterPath path;
     
     foreach (QString polTmp, polygonsStr) {
@@ -134,16 +135,7 @@ QPainterPath TPathHelper::buildPath(const QStringList &polygonsStr, QChar sep)
 
 QPainterPath TPathHelper::buildPath(const QString &svgpath)
 {
-    Q_UNUSED(svgpath);
-
-    #ifdef K_DEBUG
-        QString msg = "TPathHelper::buildPath() - Warning: method pending for implementation";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
+    tWarning() << QObject::tr("Not implemented yet.");
     
     return QPainterPath();
 }

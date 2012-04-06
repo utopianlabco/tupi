@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,7 +34,12 @@
  ***************************************************************************/
 
 #include "thememanager.h"
+#include "themedocument.h"
+#include "tdebug.h"
+#include "tglobal.h"
 #include "tapplication.h"
+
+#include <QApplication>
 
 ThemeManager::ThemeManager() : QXmlDefaultHandler()
 {
@@ -57,15 +62,7 @@ bool ThemeManager::applyTheme(const QString &file)
     if (reader.parse(&xmlsource)) {
         ok = true;
     } else {
-        #ifdef K_DEBUG
-            QString msg = "ThemeManager::applyTheme() - Fatal Error: Can't process the theme file: " + file;
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-
+        tError() <<  QObject::tr("I can't analize the theme file: %1").arg(file) << endl;
         ok = false;
     }
     
@@ -86,15 +83,7 @@ bool ThemeManager::applyTheme(const ThemeDocument &kd)
     if (reader.parse(&xmlsource)) {
         ok = true;
     } else {
-        #ifdef K_DEBUG
-            QString msg = "ThemeManager::applyTheme() - Fatal Error: Can't process theme document";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-
+        tDebug() << QObject::tr("I can't analize the theme document") << endl;
         ok = false;
     }
     
@@ -189,42 +178,17 @@ bool ThemeManager::characters(const QString &)
     return true;
 }
 
-bool ThemeManager::error(const QXmlParseException &exception)
+bool ThemeManager::error(const QXmlParseException & exception)
 {
-    #ifdef K_DEBUG
-        QString msg = "ThemeManager::error() - Fatal Error: Can't process theme!";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-            qDebug() << "ThemeManager::error() - Message: " << exception.message();
-        #else
-            tError() << msg;
-            tError() << "ThemeManager::error() - Message: " << exception.message();
-        #endif
-    #else
-        Q_UNUSED(exception);
-    #endif
+    tError() << "Error analizing theme: " << exception.message() << endl;
 
     return false;
 }
 
-bool ThemeManager::fatalError(const QXmlParseException &exception)
+bool ThemeManager::fatalError(const QXmlParseException & exception)
 {
-    #ifdef K_DEBUG
-        QString msg1 = "ThemeManager::error() - Fatal Error: Can't load theme...";
-        QString msg2 = "ThemeManager::error() - Line: " + QString::number(exception.lineNumber()) + " Column: " + QString::number(exception.columnNumber());
-        QString msg3 = "ThemeManager::error() - Message: " + exception.message();
-        #ifdef Q_OS_WIN
-            qDebug() << msg1;
-            qDebug() << msg2;
-            qDebug() << msg3;
-        #else
-            tError() << msg1;
-            tError() << msg2;
-            tError() << msg3;
-        #endif
-    #else
-           Q_UNUSED(exception);
-    #endif
+    tError() << "FATAL Error analizing theme: " << endl;
+    tError() << "Line: " << exception.lineNumber() << " Column: " << exception.columnNumber() << " " << exception.message() << endl;
 
     return false;
 }

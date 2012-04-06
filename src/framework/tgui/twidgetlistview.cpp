@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,13 +34,16 @@
  ***************************************************************************/
 
 #include "twidgetlistview.h"
+#include "tdebug.h"
+
+#include <QHeaderView>
+#include <QResizeEvent>
 
 TWidgetListView::TWidgetListView(QWidget * parent) : QTableWidget(0,1,parent)
 {
     verticalHeader()->hide();
     horizontalHeader()->hide();
-    // horizontalHeader()->setResizeMode(QHeaderView::Custom);
-    horizontalHeader()->setSectionResizeMode(QHeaderView::Custom);
+    horizontalHeader()->setResizeMode(QHeaderView::Custom);
 }
 
 TWidgetListView::~TWidgetListView()

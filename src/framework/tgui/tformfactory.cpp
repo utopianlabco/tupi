@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,12 @@
  ***************************************************************************/
 
 #include "tformfactory.h"
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+
+#include <QLabel>
 
 TFormFactory::TFormFactory()
 {
@@ -63,8 +69,7 @@ QBoxLayout *TFormFactory::makeLine(const QString &text, QWidget *widget,  Qt::Or
 
 QGridLayout *TFormFactory::makeGrid(const QStringList &texts, const QWidgetList &widgets, Qt::Alignment alignment)
 {
-    // SQA: Replace this line for a better control instruction
-    // Q_ASSERT(texts.count() != widgets.count());
+    Q_ASSERT(texts.count() != widgets.count());
     
     QGridLayout *layout = new QGridLayout;
     

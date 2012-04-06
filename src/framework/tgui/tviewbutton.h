@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,17 +36,10 @@
 #ifndef TVIEWBUTTON_H
 #define TVIEWBUTTON_H
 
-#include "tglobal.h"
+#include "tideality.h"
 
 #include <QToolButton>
 #include <QStyleOptionToolButton>
-#include <QToolBar>
-#include <QStylePainter>
-#include <QMenu>
-#include <QIcon>
-#include <QMouseEvent>
-#include <QMainWindow>
-#include <QTimer>
 
 class ToolView;
 
@@ -54,7 +47,7 @@ class ToolView;
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TViewButton : public QToolButton
+class T_IDEAL_EXPORT TViewButton : public QToolButton
 {
     Q_OBJECT
 
@@ -74,8 +67,6 @@ class T_GUI_EXPORT TViewButton : public QToolButton
 
         ToolView *toolView() const;
         void setup();
-
-        void setFlag(bool value);
 
     public slots:
         void setSensible(bool s);
@@ -100,17 +91,21 @@ class T_GUI_EXPORT TViewButton : public QToolButton
         void animate();
         void toggleSensibility();
 
-    // signals:
-    //     void helpIsOpen();
+    signals:
+        void helpIsOpen();
 
     private:
         Qt::ToolBarArea m_area;
+
         class Animator;
         Animator *m_animator;
-        QPalette m_palette;
-        ToolView *m_toolView;
+
         bool m_isSensible;
         bool m_blending;
+
+        QPalette m_palette;
+
+        ToolView *m_toolView;
 };
 
 #endif

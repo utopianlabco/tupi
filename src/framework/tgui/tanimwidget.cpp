@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,14 @@
  ***************************************************************************/
 
 #include "tanimwidget.h"
+#include "tapplication.h"
+#include "tdebug.h"
+
+#include <QPixmap>
+#include <QHideEvent>
+#include <QShowEvent>
+#include <QPainter>
+#include <QFontMetricsF>
 
 class TAnimWidget::Controller
 {
@@ -66,19 +74,16 @@ TAnimWidget::TAnimWidget(const QPixmap &px, const QString &text, QWidget *parent
 {
     resize(px.width()/2, px.height());
 
-    fontSize = 10;
-    #ifdef Q_OS_MAC
-        fontSize = 12;
-    #endif
+    QPoint position = QPoint(50, px.height());
 
-    QFont tfont("lucida", fontSize, QFont::Bold, false);
-    QFontMetrics fontMetrics(tfont);
+    QFont kfont("lucida", 10, QFont::Bold, false);
+    QFontMetrics fontMetrics(kfont);
 
     m_textRect = QRectF(QPointF(20, height()), fontMetrics.size(Qt::TextWordWrap, m_text).expandedTo(QSize(px.width(), 0)));
     m_counter = 0;
     m_lines = m_text.count("\n");
-    int size = fontMetrics.height();
-    m_end = (size*m_lines) + height() - 100;
+    fontSize = fontMetrics.height();
+    m_end = (fontSize*m_lines) + height() - 100;
 }
 
 TAnimWidget::TAnimWidget(ListOfPixmaps lop, QWidget *parent) : QWidget(parent), m_type(AnimPixmap), m_controller(new Controller(this)), m_pixmaps(lop), m_pixmapIndex(0)
@@ -96,7 +101,7 @@ void TAnimWidget::setBackgroundPixmap(const QPixmap &px)
     m_background = px;
 }
 
-void TAnimWidget::showEvent(QShowEvent *event)
+void TAnimWidget::showEvent(QShowEvent * e)
 {
     switch (m_type) {
             case AnimText:
@@ -110,13 +115,13 @@ void TAnimWidget::showEvent(QShowEvent *event)
              }
             break;
     }
-    QWidget::showEvent(event);
+    QWidget::showEvent(e);
 }
 
-void TAnimWidget::hideEvent(QHideEvent *event)
+void TAnimWidget::hideEvent(QHideEvent *e)
 {
     m_controller->stop();
-    QWidget::hideEvent(event);
+    QWidget::hideEvent(e);
 }
 
 void TAnimWidget::timerEvent(QTimerEvent *)
@@ -155,7 +160,7 @@ void TAnimWidget::paintEvent(QPaintEvent *)
             case AnimText:
              {
                  painter.setRenderHint(QPainter::TextAntialiasing, true);
-                 painter.setFont(QFont("lucida", fontSize, QFont::Bold, false));
+                 painter.setFont(QFont("lucida", 10, QFont::Bold, false));
                  painter.drawText(m_textRect, m_text);
              }
             break;

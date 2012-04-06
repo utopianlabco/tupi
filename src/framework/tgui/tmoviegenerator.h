@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,14 +36,15 @@
 #ifndef TMOVIEGENERATOR_H
 #define TMOVIEGENERATOR_H
 
-#include "tglobal.h"
+#include <QImage>
+
 #include "tmoviegeneratorinterface.h"
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TMovieGenerator : public QImage, public TMovieGeneratorInterface
+class TMovieGenerator : public QImage, public TMovieGeneratorInterface
 {
     public:
         TMovieGenerator(int width, int height);
@@ -51,7 +52,7 @@ class T_GUI_EXPORT TMovieGenerator : public QImage, public TMovieGeneratorInterf
         void nextFrame();
         void reset();
         virtual bool movieHeaderOk() = 0;
-        virtual QString getErrorMsg() const = 0;
+        virtual const char* getErrorMsg() = 0;
 
     protected:
         virtual bool begin();

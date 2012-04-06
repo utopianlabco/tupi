@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,10 +34,22 @@
  ***************************************************************************/
 
 #include "tipdialog.h"
+#include "tseparator.h"
+#include "tconfig.h"
+#include "tdebug.h"
+#include "tapplicationproperties.h"
+
+#include <QVBoxLayout>
+#include <QTextBrowser>
+#include <QTextFrame>
+#include <QTextFrameFormat>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QDomDocument>
+#include <QFile>
 
 TipDialog::TipDialog(QStringList &labels, const QString &file, QWidget *parent) : QDialog(parent)
 {
-    setModal(true);
     tags = labels;
     m_database = new TipDatabase(file, parent);
     setupGUI();
@@ -52,34 +64,35 @@ TipDialog::TipDialog(QStringList &labels, TipDatabase *database, QWidget *parent
 void TipDialog::setupGUI()
 {
     setWindowTitle(tags.at(0));
-    setWindowIcon(QPixmap(THEME_DIR + "icons/bubble.png"));
-
-    /*
-    int h;
-    int s;
-    int v;
+    setWindowIcon(QPixmap(THEME_DIR + "icons/today_tip.png"));
+    
+    int h,s,v;
     QColor baseColor = palette().base().color();
     baseColor.getHsv(&h,&s,&v);
     baseColor.setHsv(h, int(s*(71/76.0)), int(v*(67/93.0)));
-    */
+    // baseColor.setHsv(h, int(s*(10/6.0)), int(v*(93/99.0)));
     
     QVBoxLayout *layout = new QVBoxLayout(this);
+    
     textBrowser = new QTextBrowser;
+
+    /* 
+    QTextFrameFormat format = textBrowser->document()->rootFrame()->frameFormat();
+    format.setMargin(15);
+    format.setBorder(5);
+    textBrowser->document()->rootFrame()->setFrameFormat(format);
+    */
+    
     textBrowser->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     textBrowser->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
     textBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     textBrowser->setOpenExternalLinks(true);
-
-    QStringList path;
-#ifdef Q_OS_WIN
-    QString resources = SHARE_DIR + "help/";
-#else
-    QString resources = SHARE_DIR + "data/help/";
-#endif	
-
-    path << resources + "css";
-    path << resources + "images";
-    textBrowser->setSearchPaths(path);
+    
+    /*    
+    QPalette pal = textBrowser->palette();
+    pal.setBrush(QPalette::Base, baseColor);
+    textBrowser->setPalette(pal);
+    */
     
     layout->addWidget(textBrowser);
     layout->addWidget(new TSeparator);
@@ -108,8 +121,8 @@ void TipDialog::setupGUI()
     
     setAttribute(Qt::WA_DeleteOnClose, true);
     
-    TCONFIG->beginGroup("General");
-    m_showOnStart->setChecked(qvariant_cast<bool>(TCONFIG->value("ShowTipOfDay", true)));
+    TCONFIG->beginGroup("TipOfDay");
+    m_showOnStart->setChecked(qvariant_cast<bool>(TCONFIG->value("ShowOnStart", true)));
     
     showNextTip();
 }
@@ -134,7 +147,7 @@ void TipDialog::showNextTip()
 
 void TipDialog::setShowOnStart()
 {
-    TCONFIG->beginGroup("General");
-    TCONFIG->setValue("ShowTipOfDay", m_showOnStart->isChecked());
+    TCONFIG->beginGroup("TipOfDay");
+    TCONFIG->setValue("ShowOnStart", m_showOnStart->isChecked());
 }
 

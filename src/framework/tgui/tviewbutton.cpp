@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,6 +35,16 @@
 
 #include "tviewbutton.h"
 #include "toolview.h"
+#include "tdebug.h"
+
+#include <QToolBar>
+#include <QStylePainter>
+#include <QMenu>
+#include <QIcon>
+#include <QMouseEvent>
+#include <QMainWindow>
+#include <QTimer>
+#include <QtDebug>
 
 class TViewButton::Animator
 {
@@ -96,6 +106,7 @@ void TViewButton::setup()
 
     m_isSensible = false;
     m_animator = new Animator(this);
+
     connect(m_animator->timer, SIGNAL(timeout()), this, SLOT(animate()));
 	
     setChecked(false);
@@ -138,6 +149,7 @@ Qt::ToolBarArea TViewButton::area() const
 QSize TViewButton::sizeHint() const
 {
     QSize size = QToolButton::sizeHint();
+
     if (m_area == Qt::RightToolBarArea || m_area == Qt::LeftToolBarArea)
         size.transpose();
 
@@ -265,23 +277,23 @@ QMenu *TViewButton::createMenu()
     menu->addAction(tr("Only text"), this, SLOT(setOnlyText()) );
     menu->addSeparator();
 	
-    QAction *action = menu->addAction(tr("Mouse sensibility"));
-    connect(action, SIGNAL(toggled(bool)), this, SLOT(setSensible(bool)));
-    action->setCheckable(true);
-    action->setChecked(isSensible());
+    QAction *a = menu->addAction(tr("Mouse sensibility"));
+    connect(a, SIGNAL(toggled(bool)), this, SLOT(setSensible(bool)));
+    a->setCheckable(true);
+    a->setChecked(isSensible());
 
     return menu;
 }
 
-void TViewButton::mousePressEvent(QMouseEvent *event)
+void TViewButton::mousePressEvent(QMouseEvent *e)
 {
     m_toolView->setExpandingFlag();
 
-    QToolButton::mousePressEvent(event);
+    QToolButton::mousePressEvent(e);
 
-    if (event->button() == Qt::RightButton) {
-        createMenu()->exec(event->globalPos());
-        event->accept();
+    if (e->button() == Qt::RightButton) {
+        createMenu()->exec(e->globalPos());
+        e->accept();
     }
 }
 
@@ -375,7 +387,9 @@ bool TViewButton::blending() const
 void TViewButton::toggleView()
 {
     QMainWindow *mw = static_cast<QMainWindow *>(m_toolView->parentWidget());
+
     m_toolView->setUpdatesEnabled(false);
+
     if (mw)
         mw->setUpdatesEnabled(false);
 
@@ -385,11 +399,17 @@ void TViewButton::toggleView()
         m_toolView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     m_toolView->toggleViewAction()->trigger();
+	
     setChecked(m_toolView->isVisible());
     m_toolView->setUpdatesEnabled(true);
+
     if (mw)
         mw->setUpdatesEnabled(true);
+
+    if (m_toolView->objectName().compare("ToolView-Help") == 0)
+        emit helpIsOpen();
 }
+
 
 ToolView *TViewButton::toolView() const
 {

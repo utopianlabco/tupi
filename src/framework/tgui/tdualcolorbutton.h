@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,9 +36,7 @@
 #ifndef TDUALCOLORBUTTON_H
 #define TDUALCOLORBUTTON_H
 
-#include "tglobal.h"
-
-// class QBitmap;
+class QBitmap;
 
 #include <QMouseEvent>
 #include <QDragEnterEvent>
@@ -47,10 +45,8 @@
 #include <QDropEvent>
 #include <QBrush>
 #include <QWidget>
-#include <qdrawutil.h>
-#include <QPainter>
-#include <QBitmap>
-#include <QApplication>
+
+#include "tglobal.h"
 
 /**
  * @note This class was adapted to Tupi by David Cuadrado

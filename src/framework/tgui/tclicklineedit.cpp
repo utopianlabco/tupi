@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,8 @@
  ***************************************************************************/
 
 #include "tclicklineedit.h"
+
+#include <QPainter>
 
 struct TClickLineEdit::Private
 {
@@ -74,9 +76,9 @@ void TClickLineEdit::setText(const QString &txt)
     QLineEdit::setText(txt);
 }
 
-void TClickLineEdit::paintEvent(QPaintEvent *event)
+void TClickLineEdit::paintEvent(QPaintEvent *e)
 {
-    QLineEdit::paintEvent(event);
+    QLineEdit::paintEvent(e);
     
     QPainter p(this);
     if (k->drawClickMsg == true && !hasFocus()) {
@@ -86,24 +88,24 @@ void TClickLineEdit::paintEvent(QPaintEvent *event)
         
         cr.adjust(3, 0, 0 ,0);
         p.drawText(cr, Qt::AlignVCenter, k->clickMessage);
-        p.setPen(tmp);
+        p.setPen( tmp );
     }
 }
 
-void TClickLineEdit::focusInEvent(QFocusEvent *event)
+void TClickLineEdit::focusInEvent(QFocusEvent *ev)
 {
     if (k->drawClickMsg == true) {
         k->drawClickMsg = false;
         repaint();
     }
-    QLineEdit::focusInEvent(event);
+    QLineEdit::focusInEvent(ev);
 }
 
-void TClickLineEdit::focusOutEvent(QFocusEvent *event)
+void TClickLineEdit::focusOutEvent(QFocusEvent *ev)
 {
     if (text().isEmpty()) {
         k->drawClickMsg = true;
         repaint();
     }
-    QLineEdit::focusOutEvent(event);
+    QLineEdit::focusOutEvent(ev);
 }

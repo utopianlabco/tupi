@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,24 +36,19 @@
 #ifndef TOOLVIEW_H
 #define TOOLVIEW_H
 
-#include "tglobal.h"
-#include "tviewbutton.h"
-#include "tmainwindow.h"
+#include "tideality.h"
 
 #include <QDockWidget>
 #include <QIcon>
 #include <QKeySequence>
-#include <QAction>
-#include <QMainWindow>
-#include <QMouseEvent>
-#include <QLayout>
-#include <QEvent>
+
+class TViewButton;
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT ToolView : public QDockWidget
+class T_IDEAL_EXPORT ToolView : public QDockWidget
 {
     Q_OBJECT
 
@@ -77,9 +72,6 @@ class T_GUI_EXPORT ToolView : public QDockWidget
         bool isChecked();
         void setShortcut(QKeySequence shortcut);
 
-    // signals:
-    //     void dockExpanded(bool expanded);
-
     public slots:
         void saveSize(bool checked);
 
@@ -87,7 +79,17 @@ class T_GUI_EXPORT ToolView : public QDockWidget
         void setup(const QString &label);
 
     protected:
-        virtual void showEvent(QShowEvent *event);
+        virtual void showEvent(QShowEvent *e);
+
+/*		
+#if QT_VERSION < 0x040200
+    protected:
+        virtual bool event(QEvent *e);
+
+    private:
+        Qt::DockWidgetArea m_area;
+#endif
+*/
 
     private:
         TViewButton *m_button;

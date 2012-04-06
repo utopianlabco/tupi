@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,15 @@
  ***************************************************************************/
 
 #include "tformvalidator.h"
+#include "tdebug.h"
+
+#include <QLineEdit>
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include <QRegExpValidator>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QtDebug>
 
 TFormValidator::TFormValidator(QWidget *form) : m_parent(form)
 {

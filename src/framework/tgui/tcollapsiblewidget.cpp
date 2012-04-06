@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,21 @@
  ***************************************************************************/
 
 #include "tcollapsiblewidget.h"
+#include "tdebug.h"
+
+#include <QTextDocument>
+#include <QMimeData>
+#include <QPainter>
+#include <QMouseEvent>
+#include <QDragEnterEvent>
+#include <QVBoxLayout>
+#include <QApplication>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QPainterPath>
+#include <QStyleOption>
+#include <QGroupBox>
+#include <QFontMetrics>
 
 /******************************************************************
  * Helper classes
@@ -107,29 +122,27 @@ bool TClickableLabel::isChecked() const
     return m_checked;
 }
 
-void TClickableLabel::mousePressEvent(QMouseEvent *event)
+void TClickableLabel::mousePressEvent(QMouseEvent *e)
 {
     m_isDragging = false;
     
-    m_position = event->pos();
-    QWidget::mousePressEvent(event);
+    m_position = e->pos();
+    QWidget::mousePressEvent(e);
 }
 
-void TClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+void TClickableLabel::mouseReleaseEvent(QMouseEvent *e)
 {
-    Q_UNUSED(event);
-
     if (! m_isDragging) {
         m_checked = !m_checked;
         emit clicked();
     }
 }
 
-void TClickableLabel::mouseMoveEvent(QMouseEvent *event)
+void TClickableLabel::mouseMoveEvent(QMouseEvent* e)
 {
-    QWidget::mouseMoveEvent(event);
+    QWidget::mouseMoveEvent(e);
 
-    if ((event->pos() - m_position).manhattanLength() <  QApplication::startDragDistance())
+    if ((e->pos() - m_position).manhattanLength() <  QApplication::startDragDistance())
         return;
     
     QDrag *drag = new QDrag(this);

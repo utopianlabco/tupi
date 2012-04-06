@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,20 +33,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TFORMVALIDATOR_H
-#define TFORMVALIDATOR_H
-
-#include "tglobal.h"
+#ifndef TVALIDATES_H
+#define TVALIDATES_H
 
 #include <QWidget>
-#include <QLineEdit>
-#include <QIntValidator>
-#include <QDoubleValidator>
-#include <QRegExpValidator>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-
-// class QLineEdit;
+class QLineEdit;
 
 #define K_GIVE_NAME(obj) obj->setObjectName(#obj);
 
@@ -54,7 +45,7 @@
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TFormValidator
+class TFormValidator
 {
     public:
         TFormValidator(QWidget *form);

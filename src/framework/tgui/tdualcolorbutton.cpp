@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,9 +34,20 @@
  ***************************************************************************/
 
 #include "tdualcolorbutton.h"
+#include "tdebug.h"
 
 #include "tcolorarrow.xpm"
 #include "tcolorreset.xpm"
+
+#include <qdrawutil.h>
+#include <QPainter>
+#include <QBitmap>
+#include <QDragEnterEvent>
+#include <QPixmap>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QDropEvent>
+#include <QApplication>
 
 struct TDualColorButton::Private
 {
@@ -172,11 +183,11 @@ void TDualColorButton::mousePressEvent(QMouseEvent *event)
 
     if (fgRect.contains(mPos)) {
         k->currentSpace = Foreground;
-        // tFatal() << "TDualColorButton::mousePressEvent() - emitting foreground signal!";
+        tFatal() << "TDualColorButton::mousePressEvent() - emitting foreground signal!";
         emit selectionChanged(Foreground);
     } else if (bgRect.contains(mPos)) {
                k->currentSpace = Background;
-               // tFatal() << "TDualColorButton::mousePressEvent() - emitting background signal!";
+               tFatal() << "TDualColorButton::mousePressEvent() - emitting background signal!";
                emit selectionChanged(Background);
     } else if (event->pos().x() > fgRect.width()) {
                // We handle the swap and reset controls as soon as the mouse is

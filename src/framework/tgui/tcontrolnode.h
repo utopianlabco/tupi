@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,23 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TCONTROLNODE_H
-#define TCONTROLNODE_H
+#ifndef CONTROLNODE_H
+#define CONTROLNODE_H
 
-#include "tglobal.h"
-
-#include <QCursor>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QStyleOptionButton>
-#include <QApplication>
-#include <QCursor>
-#include <QGraphicsPathItem>
 #include <QGraphicsItem>
 #include <QObject>
 #include <QPointF>
+#include <QGraphicsScene>
 
 /**
  * @author Jorge Cuadrado
@@ -57,10 +47,15 @@
 
 class TNodeGroup;
 
-class T_GUI_EXPORT TControlNode : public QGraphicsItem
+// class TControlNode : public QObject, public QGraphicsItem
+class TControlNode : public QGraphicsItem
 {
+    // Q_OBJECT
+    
     public:
+
         enum State { Pressed = 1, Released };
+        
         TControlNode(int index, TNodeGroup *nodeGroup, const QPointF & pos = QPoint(0,0),  
                      QGraphicsItem * parent = 0, QGraphicsScene * scene = 0, int level = 0);
         
@@ -84,8 +79,8 @@ class T_GUI_EXPORT TControlNode : public QGraphicsItem
         TControlNode *centralNode();
         
         void hasChanged(bool notChange);
-        void resize(qreal factor);
-
+        void clear();
+        
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);

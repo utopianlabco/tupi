@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,10 @@
  ***************************************************************************/
 
 #include "tcommandhistory.h"
+#include "tdebug.h"
+
+#include <QUndoStack>
+#include <QMenu>
 
 TCommandHistory::TCommandHistory(QUndoStack *stack, QObject *parent) 
     : QObject(parent), m_stack(stack), m_currentIndex(0), m_isLastRedo(false)
@@ -89,22 +93,19 @@ void TCommandHistory::updateMenu()
 
 void TCommandHistory::updateFromIndex(int idx)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << idx << " == " << m_stack->count() << " == " << m_currentIndex;
-            qDebug() << m_stack->text(idx-1);
-        #else
-            tDebug() << idx << " == " << m_stack->count() << " == " << m_currentIndex;
-            tDebug() << m_stack->text(idx-1);
-        #endif
-    #endif
+    qDebug("*** TCommandHistory::updateFromIndex");
+    
+    tfDebug << idx << " == " << m_stack->count() << " == " << m_currentIndex;
+    tDebug() << m_stack->text(idx-1);
     
     if (idx > m_stack->count()) {
+        qDebug("*** Exiting...");
         m_stack->setIndex(m_stack->count());
         return;
     }
     
     if (idx == m_stack->count()  && !m_isLastRedo) { // Added
+
         QAction *a = m_undoMenu->addAction(m_stack->text(idx-1));
         a->setData(idx);
         a->setText(QString::number(idx)+": "+m_stack->text(idx-1));
@@ -116,44 +117,33 @@ void TCommandHistory::updateFromIndex(int idx)
         m_undoMenu->setActiveAction(a);
         
         m_redoMenu->clear();
+
     } else if (idx > m_currentIndex) {
                // redo clicked
-               // qDebug("REDO");
-               // tDebug() << idx << " " << m_currentIndex;
+               qDebug("REDO");
+               tDebug() << idx << " " << m_currentIndex;
         
                if (m_actions.contains(idx)) {
                    m_redoMenu->removeAction(m_actions[idx]);
                    m_undoMenu->addAction(m_actions[idx]);
                    m_undoMenu->menuAction()->setEnabled(true);
                } else {
-                   #ifdef K_DEBUG
-                       QString msg = "TCommandHistory::updateFromIndex() - Error: invalid id " + QString::number(idx);
-                       #ifdef Q_OS_WIN
-                           qDebug() << msg;
-                       #else
-                           tError() << msg;
-                       #endif
-                   #endif
+                   tError() << "Error!";
                }
     } else if (idx < m_currentIndex) {
+
                // Undo clicked
-               // qDebug("UNDO");
-               // tDebug() << idx << " " << m_currentIndex;
+               qDebug("UNDO");
+               tDebug() << idx << " " << m_currentIndex;
         
                if (m_actions.contains(idx-1)) {
                    m_undoMenu->removeAction(m_actions[idx-1]);
                    m_redoMenu->addAction(m_actions[idx-1]);
                    m_redoMenu->menuAction()->setEnabled(true);
                } else {
-                   #ifdef K_DEBUG
-                       QString msg = "TCommandHistory::updateFromIndex() - Error: invalid id " + QString::number(idx);
-                       #ifdef Q_OS_WIN
-                           qDebug() << msg;
-                       #else
-                           tError() << msg;
-                       #endif
-                   #endif
+                   tError() << "Error!";
                }
+
     }
     
     m_currentIndex = m_stack->index();
@@ -166,14 +156,7 @@ void TCommandHistory::undoFromAction(QAction *a)
 
     for (int i = qMin(idx, m_currentIndex); i < qMax(idx, m_currentIndex); i++) {
         if (!m_stack->canUndo()) {
-            #ifdef K_DEBUG
-                QString msg = "TCommandHistory::undoFromAction() - Error: Cannot undo!!!";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
+            tError() << "Cannot undo!!!";
             break;
         }
         
@@ -183,14 +166,7 @@ void TCommandHistory::undoFromAction(QAction *a)
             m_undoMenu->removeAction(m_actions[i]);
             m_redoMenu->addAction(m_actions[i]);
         } else {
-            #ifdef K_DEBUG
-                QString msg = "TCommandHistory::undoFromAction() - Error: History item not found!";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
+            qDebug("History item not found!");
         }
     }
     
@@ -212,25 +188,9 @@ void TCommandHistory::redoFromAction(QAction *a)
     
     m_stack->blockSignals(true);
     for (int i = qMax(idx, m_currentIndex)-1; i >= qMin(idx, m_currentIndex)-1; i--) {
-         #ifdef K_DEBUG
-             QString msg = "TupCommandExecutor::createItem() - Error: Invalid scene index!";
-             #ifdef Q_OS_WIN
-                 qDebug() << "SHOW_VAR: " << i;
-             #else
-                 SHOW_VAR(i);
-             #endif
-          #endif
-
+         SHOW_VAR(i);
          if (!m_stack->canRedo()) {
-             #ifdef K_DEBUG
-                 QString msg = "TCommandHistory::redoFromAction() - Error: Cannot redo!!!";
-                 #ifdef Q_OS_WIN
-                     qDebug() << msg;
-                 #else
-                     tError() << msg;
-                 #endif
-             #endif
-
+             tError() << "Cannot redo!!!";
              break;
          }
         
@@ -240,14 +200,7 @@ void TCommandHistory::redoFromAction(QAction *a)
              m_redoMenu->removeAction(m_actions[i]);
              m_undoMenu->addAction(m_actions[i]);
          } else {
-             #ifdef K_DEBUG
-                 QString msg = "TCommandHistory::redoFromAction() - Error while doing REDO";
-                 #ifdef Q_OS_WIN
-                     qDebug() << msg;
-                 #else
-                     tError() << msg;
-                 #endif
-             #endif
+             qDebug("ERROR REDO");
         }
     }
     
@@ -267,27 +220,13 @@ void TCommandHistory::redoFromAction(QAction *a)
 
 void TCommandHistory::enableRedoMenu(bool e)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TCommandHistory::enableRedoMenu()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
+    T_FUNCINFO;
     m_redoMenu->menuAction()->setEnabled(e);
 }
 
 void TCommandHistory::enableUndoMenu(bool e)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TCommandHistory::enableUndoMenu()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
+    T_FUNCINFO;
     m_undoMenu->menuAction()->setEnabled(e);
 }
 

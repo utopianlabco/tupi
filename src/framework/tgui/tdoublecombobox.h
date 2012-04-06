@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,20 +36,15 @@
 #ifndef TDOUBLECOMBOBOX_H
 #define TDOUBLECOMBOBOX_H
 
-#include "tglobal.h"
-
 #include <QComboBox>
-#include <QDoubleValidator>
-#include <QLineEdit>
-#include <cmath>
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TDoubleComboBox : public QComboBox
+class TDoubleComboBox : public QComboBox
 {
-    Q_OBJECT
+    Q_OBJECT;
     
     public:
         TDoubleComboBox(double min, double max, QWidget *parent = 0);

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,16 +36,14 @@
 #ifndef TWORKSPACEMAINWINDOW_H
 #define TWORKSPACEMAINWINDOW_H
 
-#include "tglobal.h"
 #include "tmainwindow.h"
-
-#include <QMdiArea>
+#include <QWorkspace>
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TWorkspaceMainWindow : public TMainWindow
+class T_IDEAL_EXPORT TWorkspaceMainWindow : public TMainWindow
 {
     Q_OBJECT
 
@@ -56,8 +54,7 @@ class T_GUI_EXPORT TWorkspaceMainWindow : public TMainWindow
         void removeWidget(QWidget *widget);
 
     private:
-        // QWorkspace *m_workspace;
-        QMdiArea *mdiArea;
+        QWorkspace *m_workspace;
 };
 
 #endif

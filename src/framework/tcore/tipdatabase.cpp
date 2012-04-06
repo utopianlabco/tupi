@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "tipdatabase.h"
+#include "talgorithm.h"
+#include "tdebug.h"
+
+#include <QDomDocument>
+#include <QFile>
 
 struct TipDatabase::Private
 {
@@ -102,16 +107,18 @@ void TipDatabase::loadTips(const QString &filePath)
     QDomNode n = docElem.firstChild();
 
     while(!n.isNull()) {
+
         QDomElement e = n.toElement();
 
         if(!e.isNull()) {
             if (e.tagName() == "tip") {
-                int index = TAlgorithm::random() % 3;
+                int index = random() % 3;
                 Tip tip;
                 tip.text = "<html>\n";
                 tip.text += "<head>\n";
                 tip.text += "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html;charset=utf-8\">\n";
-                tip.text += "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:tupi.css\" />\n";
+                tip.text += "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + QString::fromLocal8Bit(::getenv("TUPI_SHARE")) + "/data/help/css/tupi.css\" />\n";
+
                 tip.text += "</head>\n";
                 tip.text += "<body class=\"tip_background0" + QString::number(index) + "\">\n";
                 tip.text += e.text();

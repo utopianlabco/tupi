@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,13 +36,11 @@
 #ifndef TMOVIEGENERATORINTERFACE_H
 #define TMOVIEGENERATORINTERFACE_H
 
-#include <QImage>
-
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TMovieGeneratorInterface
+class TMovieGeneratorInterface
 {
     public:
         enum Format
@@ -53,9 +51,10 @@ class T_GUI_EXPORT TMovieGeneratorInterface
                SWF  = 1 << 2,
                MPEG = 1 << 3,
                AVI  = 1 << 4,
-               ASF  = 1 << 5,
-               MOV  = 1 << 6,
-               GIF  = 1 << 7
+               RM   = 1 << 5,
+               ASF  = 1 << 6,
+               MOV  = 1 << 7,
+               GIF  = 1 << 8
              };
 
         Q_DECLARE_FLAGS(Formats, Format);
@@ -64,15 +63,15 @@ class T_GUI_EXPORT TMovieGeneratorInterface
         virtual void nextFrame() = 0;
         virtual void reset() = 0;
         virtual bool movieHeaderOk() = 0;
-        virtual QString getErrorMsg() const = 0;
+        virtual const char* getErrorMsg() = 0;
 
         void saveMovie(const QString &filename) {
                        end();
-                       createMovieFile(filename);
+                       __saveMovie(filename);
         };
 
     protected:
-        virtual void createMovieFile(const QString &filename) = 0;
+        virtual void __saveMovie(const QString &filename) = 0;
         virtual bool begin() = 0;
         virtual void end() = 0;
 };

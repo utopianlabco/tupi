@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,11 +34,20 @@
  ***************************************************************************/
 
 #include "toolview.h"
+#include "tviewbutton.h"
+#include "tmainwindow.h"
+#include "tdebug.h"
+
+#include <QtDebug>
+#include <QAction>
+#include <QMainWindow>
+#include <QMouseEvent>
+#include <QLayout>
+#include <QEvent>
 
 ToolView::ToolView(const QString &title, const QIcon &icon, const QString &code, QWidget * parent)
           : QDockWidget(title, parent), m_size(-1), m_perspective(0)
 {
-    setFeatures(AllDockWidgetFeatures);
     setWindowIcon(icon);
     setup(title);
     setObjectName("ToolView-" + code);
@@ -51,6 +60,7 @@ ToolView::~ToolView()
 
 void ToolView::setup(const QString &label)
 {
+    setFeatures(AllDockWidgetFeatures);
     m_button = new TViewButton(this);
     m_button->setToolTip(label);
 
@@ -65,11 +75,14 @@ TViewButton *ToolView::button() const
 void ToolView::expandDock(bool flag)
 {
     expanded = flag;
-    if (flag)
-        show();
-    else 
-        close();
 
+    if (flag) {
+        show();
+    } else { 
+        close();
+    }
+
+    //m_button->setChecked(flag);
     m_button->setActivated(flag);
 }
 
@@ -78,29 +91,25 @@ bool ToolView::isExpanded()
     return expanded;
 }
 
-void ToolView::setExpandingFlag() 
-{
+void ToolView::setExpandingFlag() {
     if (expanded)
         expanded = false;
-    else 
+    else
         expanded = true;
-
-    // emit dockExpanded(expanded); 
 }
 
-void ToolView::setSizeHint() 
-{
+void ToolView::setSizeHint() {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
 void ToolView::saveSize(bool checked)
 {
-    Q_UNUSED(checked);
-
     if (m_button->area() == Qt::LeftToolBarArea || m_button->area() == Qt::RightToolBarArea)
         m_size = width();
     else
         m_size = height();
+
+    //setVisible(checked);
 }
 
 QSize ToolView::sizeHint() const
@@ -148,16 +157,16 @@ void ToolView::setFixedSize(int s)
     m_size = s;
 }
 
-void ToolView::showEvent(QShowEvent *event)
+void ToolView::showEvent(QShowEvent *e)
 {
     if (TMainWindow *mw = dynamic_cast<TMainWindow *>(parentWidget())) {
         if (!(mw->currentPerspective() & m_perspective)) {
-            event->ignore(); // make sure!
+            e->ignore(); // make sure!
             return;
         }
     }
 
-    QDockWidget::showEvent(event);
+    QDockWidget::showEvent(e);
 }
 
 void ToolView::enableButton(bool flag)
@@ -165,8 +174,7 @@ void ToolView::enableButton(bool flag)
     m_button->setEnabled(flag);
 }
 
-QString ToolView::getObjectID() 
-{
+QString ToolView::getObjectID() {
     return objectName();
 }
 
@@ -177,3 +185,32 @@ bool ToolView::isChecked()
 
     return false;
 }
+
+/*
+#if QT_VERSION < 0x040200
+
+bool ToolView::event(QEvent *e)
+{
+    bool toReturn =  QDockWidget::event(e);
+
+    if (e->type() == QEvent::MouseButtonPress) {
+        if (QMainWindow *mw = dynamic_cast<QMainWindow *>(parentWidget())) {
+            m_area = mw->dockWidgetArea(this);
+        }
+    } else if (e->type() == QEvent::MouseButtonRelease) {
+               if (QMainWindow *mw = dynamic_cast<QMainWindow *>(parentWidget())) {
+                   Qt::DockWidgetArea newArea = mw->dockWidgetArea(this);
+                   if (m_area != newArea) {
+                       mw->removeDockWidget(this);
+                       mw->addDockWidget(newArea, this);
+                       emit topLevelChanged(false);
+                   }
+               }
+    }
+
+    return toReturn;
+}
+
+#endif
+*/
+

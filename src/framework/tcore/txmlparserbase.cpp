@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,8 @@
  ***************************************************************************/
 
 #include "txmlparserbase.h"
+
+#include "tdebug.h"
 
 struct TXmlParserBase::Private
 {
@@ -114,34 +116,16 @@ bool TXmlParserBase::characters(const QString & ch)
 
 bool TXmlParserBase::error(const QXmlParseException & exception)
 {
-#ifdef K_DEBUG	
-    #ifdef Q_OS_WIN
-        qWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        qWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
-    #else
-        tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
-    #endif
-#else
-     Q_UNUSED(exception);
-#endif
+    tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+    tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
 
     return true;
 }
 
 bool TXmlParserBase::fatalError(const QXmlParseException & exception)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        qWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
-    #else
-        tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
-    #endif
-#else
-     Q_UNUSED(exception);
-#endif
+    tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+    tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
 
     return true;
 }
@@ -185,15 +169,7 @@ bool TXmlParserBase::parse(QFile *file)
 {
     if (!file->isOpen()) {
         if (! file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-#ifdef K_DEBUG
-            QString msg = "TXmlParserBase::parse() - Error: Cannot open file -> " + file->fileName();
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-#endif
-
+            tWarning() << "Cannot open file " << file->fileName();
             return false;
         }
     }

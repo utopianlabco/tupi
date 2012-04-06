@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,12 @@
  ***************************************************************************/
 
 #include "treelistwidget.h"
+#include "tdebug.h"
+
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QEvent>
+#include <QLineEdit>
 
 class TreeListWidgetDelegate : public QItemDelegate
 {
@@ -114,17 +120,16 @@ bool TreeListWidget::isEditable() const
 void TreeListWidget::closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupCommandExecutor::removeItem()]";
-        #else
            T_FUNCINFO;
-        #endif
     #endif
 
     QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
 
-    if (edit)
-        emit editorClosed();
+    if (edit) {
+        QTreeWidgetItem *item = currentItem();
+        if (item)
+            emit itemRenamed(item);
+    }
 
     QTreeWidget::closeEditor(editor, hint);
 }

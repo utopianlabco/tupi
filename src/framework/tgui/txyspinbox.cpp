@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "txyspinbox.h"
+#include "tapplication.h"
+#include "tdebug.h"
+
+#include <QHBoxLayout>
+#include <QSizePolicy>
 
 TXYSpinBox::TXYSpinBox(const QString &title, QWidget *parent) : QGroupBox(title, parent), m_modifyTogether(false)
 {
@@ -46,8 +51,6 @@ TXYSpinBox::TXYSpinBox(const QString &title, QWidget *parent) : QGroupBox(title,
     m_x = new QSpinBox;
     m_x->setMinimumWidth(60);
     internal->addWidget(m_x, 0, 1);
-    connect(m_x, SIGNAL(valueChanged(int)), this, SIGNAL(valuesHaveChanged()));
-
     m_textX->setBuddy(m_x);
 
     m_textY = new QLabel("Y: ");
@@ -56,7 +59,6 @@ TXYSpinBox::TXYSpinBox(const QString &title, QWidget *parent) : QGroupBox(title,
     m_y = new QSpinBox;
     m_y->setMinimumWidth(60);
     internal->addWidget(m_y, 1, 1);
-    connect(m_y, SIGNAL(valueChanged(int)), this, SIGNAL(valuesHaveChanged()));
 
     m_textY->setBuddy(m_y);
     layout->addLayout(internal);

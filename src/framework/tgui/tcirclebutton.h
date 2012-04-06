@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,8 +33,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TCIRCLEBUTTON_H
-#define TCIRCLEBUTTON_H
+#ifndef CCBUTTON_H
+#define CCBUTTON_H
 /**
  * @file tcirclebutton.h
  * Include this file if you need the class TCircleButton
@@ -44,17 +44,6 @@
 
 #include <QPushButton>
 #include <QStyleOptionButton>
-#include <QPainter>
-#include <QRegion>
-#include <QRect>
-#include <QPaintEvent>
-#include <QDebug>
-#include <QMoveEvent>
-#include <QApplication>
-#include <QBitmap>
-#include <QPainterPath>
-#include <QTimer>
-#include <QPaintEngine>
 
 /**
  * @short The TCircleButton class provides a circular button
