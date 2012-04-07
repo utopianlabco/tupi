@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,13 @@
  ***************************************************************************/
 
 #include "tuppaintareacommand.h"
+#include "tuppaintarea.h"
+#include "tuppaintareaevent.h"
+#include "tupbrushmanager.h"
+
+#include "tdebug.h" 
+
+#include <QVariant>
 
 /**
  * This class defines the undo/redo functions for the paint area
@@ -62,29 +69,13 @@ void TupPaintAreaCommand::undo()
 {
     switch(k->event->action()) {
            case TupPaintAreaEvent::ChangePen:
-                {
-                  k->paintArea->brushManager()->setPen(qvariant_cast<QPen>(k->oldData));
-                }
+                k->paintArea->brushManager()->setPen(qvariant_cast<QPen>(k->oldData));
                 break;
-           case TupPaintAreaEvent::ChangePenColor:
-                {
-                  k->paintArea->brushManager()->setPenColor(qvariant_cast<QColor>(k->oldData));
-                }
-                break;
-           case TupPaintAreaEvent::ChangePenThickness:
-                {
-                  k->paintArea->brushManager()->setPenWidth(qvariant_cast<int>(k->oldData));
-                }
+           case TupPaintAreaEvent::ChangeColorPen:
+                k->paintArea->brushManager()->setPenColor(qvariant_cast<QColor>(k->oldData));
                 break;
            case TupPaintAreaEvent::ChangeBrush:
-                {
-                  k->paintArea->brushManager()->setBrush(qvariant_cast<QBrush>(k->oldData));
-                }
-                break;
-           case TupPaintAreaEvent::ChangeBgColor:
-                {
-                  k->paintArea->brushManager()->setBgColor(qvariant_cast<QColor>(k->oldData));
-                }
+                k->paintArea->brushManager()->setBrush(qvariant_cast<QBrush>(k->oldData));
                 break;
            default: 
                 break;
@@ -106,30 +97,23 @@ void TupPaintAreaCommand::redo()
                    k->paintArea->brushManager()->setPen(pen);
                  }
                  break;
-            case TupPaintAreaEvent::ChangePenColor:
+
+            case TupPaintAreaEvent::ChangeColorPen:
                  {
+                   // tFatal() << "TupPaintAreaCommand::redo() - ChangeColorPen/Setting color!";
                    k->oldData = k->paintArea->brushManager()->pen().color();
                    k->paintArea->brushManager()->setPenColor(qvariant_cast<QColor>(k->event->data()));
                  }
                  break;
-            case TupPaintAreaEvent::ChangePenThickness:
-                 {
-                   k->oldData = k->paintArea->brushManager()->pen().width();
-                   k->paintArea->brushManager()->setPenWidth(qvariant_cast<int>(k->event->data()));
-                 }
-                 break;
+
             case TupPaintAreaEvent::ChangeBrush:
                  {
+                   // tFatal() << "TupPaintAreaCommand::redo() - ChangeBrush/Setting brush!";
                    k->oldData = k->paintArea->brushManager()->brush();
                    k->paintArea->brushManager()->setBrush(qvariant_cast<QBrush>(k->event->data()));
                  }
                  break;
-            case TupPaintAreaEvent::ChangeBgColor:
-                 {
-                   k->oldData = k->paintArea->brushManager()->bgColor();
-                   k->paintArea->brushManager()->setBgColor(qvariant_cast<QColor>(k->event->data()));
-                 }
-                 break;
+
             default: 
                  break;
     }

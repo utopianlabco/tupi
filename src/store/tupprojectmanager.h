@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,16 +33,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPROJECTMANAGER_H
-#define TUPPROJECTMANAGER_H
+#ifndef TupPROJECTMANAGER_H
+#define TupPROJECTMANAGER_H
 
-#include "tglobal.h"
-
-#include <QUndoStack>
-#include <QDir>
-#include <QFileInfo>
-#include <QObject>
-#include <QSize>
+#include "tupglobal_store.h"
 
 class TupProject;
 class TupProjectRequest;
@@ -53,12 +47,14 @@ class QUndoStack;
 class TupCommandExecutor;
 class TupProjectResponse;
 
+#include <QObject>
+
 /**
  * Events handler class for the project
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupProjectManager : public QObject
+class STORE_EXPORT TupProjectManager : public QObject
 {
     Q_OBJECT
 
@@ -74,12 +70,11 @@ class TUPI_EXPORT TupProjectManager : public QObject
 
         bool isOpen() const;
         bool isModified() const;
-        TupProject *project();
+        TupProject *project() const;
         void setHandler(TupAbstractProjectHandler *handler, bool isNetworked);
         TupAbstractProjectHandler *handler() const;
 
-        void createCommand(TupProjectCommand *command);
-        void clearUndoStack();
+        QUndoStack *undoHistory() const;
 
         virtual bool saveProject(const QString &fileName);
         virtual bool loadProject(const QString &fileName);
@@ -87,10 +82,12 @@ class TUPI_EXPORT TupProjectManager : public QObject
         bool isValid() const;
         void undoModified();
         void setOpen(bool isOpen);
-
-        void updateProjectDimension(const QSize size);
-        bool removeProjectPath(const QString &projectPath);
    
+    /* 
+    private:
+        void setupProjectDir();
+    */
+
     protected slots:
         virtual void handleProjectRequest(const TupProjectRequest *request);
         virtual void handleLocalRequest(const TupProjectRequest *request);
@@ -98,12 +95,12 @@ class TUPI_EXPORT TupProjectManager : public QObject
 
     private slots:
         void emitResponse(TupProjectResponse *response);
-        void undo();
-        void redo();
 
     signals:
         void responsed(TupProjectResponse *reponse);
         void requestOpenProject(const QString& filename);
+        void modified(bool remove); 
+        //void updateAnimationModule(TupProject *project, int sceneIndex, int layerIndex, int frameIndex);
 
     private:
         class Private;

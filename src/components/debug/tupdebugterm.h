@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,35 +33,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPDEBUGTERM_H
-#define TUPDEBUGTERM_H
+#ifndef TupDEBUGTERM_H
+#define TupDEBUGTERM_H
 
-#ifdef K_DEBUG
-
-#include "tglobal.h"
-
-#include <QWidget>
+#include <qwidget.h>
 #include <QTextEdit>
-#include <QIcon>
-#include <QBoxLayout>
-#include <QTextBrowser>
 
 /**
  * @author Gustav Gonzalez <info@maefloresta.com>
 */
 
-class TUPI_EXPORT TupDebugTerm : public QWidget 
+class TupDebugTerm : public QWidget 
 {
     Q_OBJECT
 
     public:
         TupDebugTerm(QWidget *parent = 0, int width = 0);
         ~TupDebugTerm();
-        void setProjectStatus(bool status);
 
     private:
         QTextEdit *debugBrowser;
 };
 
-#endif
 #endif

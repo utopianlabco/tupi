@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,24 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPAINTAREABASE_H
-#define TUPPAINTAREABASE_H
+#ifndef TupPAINTAREABASE_H
+#define TupPAINTAREABASE_H
 
-#include "tglobal.h"
 #include "tuptoolplugin.h"
+#include "tupglobal.h"
 
 #include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QMouseEvent>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsRectItem>
-#include <QPolygon>
-#include <QApplication>
-#include <QTimer>
-#include <QStyleOptionGraphicsItem>
-#include <QClipboard>
-
-#include <cmath>
 
 class QGraphicsRectItem;
 class TupBrushManager;
@@ -68,17 +57,16 @@ class TUPI_EXPORT TupPaintAreaBase : public QGraphicsView
     Q_OBJECT
 
     public:
-        TupPaintAreaBase(QWidget * parent = 0, QSize dimension = QSize(0, 0), TupLibrary *library = 0);
+        TupPaintAreaBase(QWidget * parent = 0, QSize dimension = QSize(0, 0));
         ~TupPaintAreaBase();
 
         void setBgColor(const QColor color);
         void setAntialiasing(bool use);
-        void drawGrid(bool draw);
-        void drawActionSafeArea(bool draw);
+        void setUseOpenGL(bool opengl);
+        void setDrawGrid(bool draw);
         void setTool(TupToolPlugin *tool);
 
-        bool gridFlag() const;
-        bool actionSafeAreaFlag() const;
+        bool drawGrid() const;
 
         void scaleView(qreal scaleFactor);
         void setRotationAngle(int angle);
@@ -91,20 +79,15 @@ class TUPI_EXPORT TupPaintAreaBase : public QGraphicsView
         QPointF viewPosition();
         QPointF centerPoint() const;
 
-        void updateDimension(const QSize dimension);
-        void updateGridParameters();
-
     private:
+        virtual void saveState();
+        virtual void restoreState();
         void drawPadLock(QPainter *painter, const QRectF &rect, QString text);
-        void updateCenter(const QPoint point);
 
     protected:
         virtual void mousePressEvent(QMouseEvent *event);
         virtual void mouseMoveEvent(QMouseEvent *event);
         virtual void mouseReleaseEvent(QMouseEvent *event);
-        virtual void keyPressEvent(QKeyEvent *event);
-        virtual void keyReleaseEvent(QKeyEvent *event);
-
         virtual void tabletEvent(QTabletEvent *event);
         virtual void enterEvent(QEvent *event);
         virtual void leaveEvent(QEvent *event);
@@ -116,11 +99,7 @@ class TUPI_EXPORT TupPaintAreaBase : public QGraphicsView
         void cursorPosition(const QPointF &pos);
         void requestTriggered(const TupProjectRequest *event);
         void changedZero(const QPointF &zero);
-        void scaled(qreal scaleFactor);
-        void rotated(int angle);
-
-    private slots:
-        void updateAngle(int angle);
+        void scaled(double scaleFactor);
 
     public slots:
         void centerDrawingArea();

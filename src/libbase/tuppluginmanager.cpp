@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -37,6 +37,11 @@
 #include "tupfilterinterface.h"
 #include "tuptoolinterface.h"
 #include "tupexportinterface.h"
+#include "tglobal.h"
+#include "tdebug.h"
+
+#include <QPluginLoader>
+#include <QDir>
 
 TupPluginManager *TupPluginManager::s_instance = 0;
 
@@ -68,30 +73,21 @@ TupPluginManager *TupPluginManager::instance()
 void TupPluginManager::loadPlugins()
 {
     #ifdef K_DEBUG
-        QString msg = "TupPluginManager::loadPlugins() - Loading plugins...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
+           tWarning("plugins") << "TupPluginManager::loadPlugins() - Loading plugins...";
     #endif
 
     k->filters.clear();
     k->tools.clear();
     k->formats.clear();
     
-    QDir pluginDirectory = QDir(kAppProp->pluginDir());
+    QDir pluginDirectory = QDir(PLUGINS_DIR);
 
     foreach (QString fileName, pluginDirectory.entryList(QStringList() << "*.so" << "*.dll" << "*.dylib", QDir::Files)) {
              QPluginLoader *loader = new QPluginLoader(pluginDirectory.absoluteFilePath(fileName));
              QObject *plugin = qobject_cast<QObject*>(loader->instance());
 
              #ifdef K_DEBUG
-                 #ifdef Q_OS_WIN
-                     qWarning() << "TupPluginManager::loadPlugins() - Trying to load plugin from: " << fileName;
-                 #else
-                     tWarning("plugins") << "*** Trying to load plugin from: " << fileName;
-                 #endif
+                    tDebug("plugins") << "*** Trying to load plugin from: " << fileName;
              #endif
         
              if (plugin) {
@@ -114,12 +110,7 @@ void TupPluginManager::loadPlugins()
                  k->loaders << loader;
              } else {
                  #ifdef K_DEBUG
-                     QString msg = "TupPluginManager::loadPlugins() - Cannot load plugin, error was: " + loader->errorString();
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError("plugins") << "TupPluginManager::loadPlugins() - Cannot load plugin, error was: " << loader->errorString();
                  #endif
              }
     }
@@ -128,12 +119,7 @@ void TupPluginManager::loadPlugins()
 void TupPluginManager::unloadPlugins()
 {
     #ifdef K_DEBUG
-        QString msg = "TupPluginManager::unloadPlugins() - Unloading plugins...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
+           tWarning("plugins") << "TupPluginManager::unloadPlugins() - Unloading plugins...";
     #endif
 
     foreach (QPluginLoader *loader, k->loaders) {

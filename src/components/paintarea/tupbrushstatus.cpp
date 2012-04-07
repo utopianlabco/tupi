@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,15 +34,25 @@
  ***************************************************************************/
 
 #include "tupbrushstatus.h"
+#include "tseparator.h"
+#include "tdebug.h"
 
-TupBrushStatus::TupBrushStatus(const QString &label, TColorCell::FillType context, const QPixmap &pix)
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QPen>
+#include <QBrush>
+#include <QColorDialog>
+
+TupBrushStatus::TupBrushStatus(const QString &label, const QPixmap &pix, bool bg)
 {
+    background = bg;
+
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(2);
     layout->setSpacing(2);
 
-    brushCell = new TColorCell(context, QBrush(Qt::black), QSize(20, 20));
-    brushCell->setEnabled(false);
+    brush = new TupColorWidget;
+    connect(brush, SIGNAL(clicked()), this, SLOT(updateColour()));
 
     QLabel *icon = new QLabel("");
     icon->setToolTip(label);
@@ -50,24 +60,40 @@ TupBrushStatus::TupBrushStatus(const QString &label, TColorCell::FillType contex
 
     layout->addWidget(icon);
     layout->addSpacing(3);
-    layout->addWidget(brushCell);
+    layout->addWidget(brush);
 }
 
 TupBrushStatus::~TupBrushStatus()
 {
 }
 
-void TupBrushStatus::setColor(const QPen &pen)
+void TupBrushStatus::setForeground(const QPen &pen)
 {
-    brushCell->setBrush(pen.brush());
+    brush->setBrush(pen.brush());
 }
 
-void TupBrushStatus::setColor(const QBrush &brush)
+void TupBrushStatus::setColor(const QColor &color)
 {
-    brushCell->setBrush(brush);
+    QBrush square(color);
+    brush->setBrush(square);
+}
+
+void TupBrushStatus::updateColour()
+{
+    if (background) {
+        QColor color = QColorDialog::getColor(brush->color(), this);
+        if (color.isValid()) {
+            setColor(color);
+            emit colorUpdated(color);
+        }
+
+    } else {
+        emit colorRequested();
+    }
 }
 
 void TupBrushStatus::setTooltip(const QString &tip)
 {
-    brushCell->setToolTip(tip);
+    brush->setToolTip(tip);
 }
+

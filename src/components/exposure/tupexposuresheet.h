@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,99 +33,77 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPEXPOSURESHEET_H
-#define TUPEXPOSURESHEET_H
+#ifndef TupEXPOSURESHEET_H
+#define TupEXPOSURESHEET_H
 
-#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
 #include "tupexposuretable.h"
 #include "tupscenetabwidget.h"
 #include "timagebutton.h"
 #include "tupprojectactionbar.h"
 #include "tupproject.h"
-#include "tapplication.h"
-// #include "toptionaldialog.h"
-#include "tupprojectrequest.h"
-#include "tuprequestbuilder.h"
-#include "tupscene.h"
-#include "tuplayer.h"
-#include "tupframe.h"
 
+// Qt
 #include <QButtonGroup>
 #include <QGroupBox>
 #include <QPushButton>
 #include <QListWidget>
 #include <QList>
 #include <QActionGroup>
-#include <QToolTip>
-#include <QPixmap>
-#include <QHBoxLayout>
-#include <QList>
-#include <QMenu>
-
+ 
 /**
 * @author Jorge Cuadrado
 */
 
-class TUPI_EXPORT TupExposureSheet : public TupModuleWidgetBase
+class TupExposureSheet : public TupModuleWidgetBase
 {
     Q_OBJECT
 
     public:
-        TupExposureSheet(QWidget *parent = 0, TupProject *project = 0);
+        TupExposureSheet(QWidget *parent = 0);
         ~TupExposureSheet();
-        void updateFramesState();
-        void updateLayerOpacity(int sceneIndex, int layerIndex);
-        double getLayerOpacity(int sceneIndex, int layerIndex);
-        void initLayerVisibility();
+        void updateFramesState(TupProject *project);
 
     private:
         struct Private;
         Private * const k;
         void createMenu();
-        void requestExpandCurrentFrame(int n);
+        void emitRequestExpandCurrentFrame(int n);
         void insertFrames(int n);
-        void copyTimeLine(int times);
 
     protected:
-        virtual void sceneResponse(TupSceneResponse *response);
-        virtual void layerResponse(TupLayerResponse *response);
-        virtual void frameResponse(TupFrameResponse *response);
-        virtual void itemResponse(TupItemResponse *response);
-        virtual void libraryResponse(TupLibraryResponse *response);
-
-    // signals:
-    //     void newPerspective(int);
+        virtual void sceneResponse(TupSceneResponse *event);
+        virtual void layerResponse(TupLayerResponse *event);
+        virtual void frameResponse(TupFrameResponse *event);
+        virtual void itemResponse(TupItemResponse *event);
+        virtual void libraryResponse(TupLibraryResponse *event);
 
     public slots:
         void closeAllScenes();
         void applyAction(int action);
-        void addScene(int sceneIndex, const QString &name);
-        void renameScene(int sceneIndex, const QString &name);
-        void setScene(int sceneIndex);
-        void changeLayerVisibility(int, bool);
+        void addScene(int index, const QString &name);
+        void renameScene(int index, const QString &name);
+        void setScene(int index);
+        void changeVisibilityLayer(int, bool);
 
     private slots: 
-        void requestChangeScene(int index);
-        void requestCopyCurrentFrame();
-        void requestPasteInCurrentFrame();
-        void requestUpdateLayerOpacity(double opacity);
-
-        void insertFramesFromMenu(QAction *action);
-        void copyTimeLineFromMenu(QAction *action);
-
-        // void removeOne();
+        void emitRequestChangeScene(int index);
+        void emitRequestCopyCurrentFrame();
+        void emitRequestPasteInCurrentFrame();
+        void expandCurrentFrameOnce();
+        void expandCurrentFrameFive();
+        void expandCurrentFrameTen();
+        void insertOneFrame();
+        void insertFiveFrames();
+        void insertTenFrames();
+        void removeOne();
         void clearFrame();
         void lockFrame();
-
-        void insertFrame(int layerIndex, int frameIndex);
-        void renameFrame(int layerIndex, int frameIndex, const QString &name);
-        void selectFrame(int layerIndex, int frameIndex);
-        // void removeFrameCopy(int layerIndex, int frameIndex);
-        void removeFrameCopy();
-        void copyFrameForward(int layerIndex, int frameIndex);
-
-        void requestRenameLayer(int layerIndex, const QString &name);
+		
+        void insertFrame(int indexLayer, int indexFrame);
+        void renameFrame(int indexLayer, int indexFrame, const QString & name);
+        void selectFrame(int indexLayer, int indexFrame);
+        void renameLayer(int indexLayer, const QString & name);
         void moveLayer(int oldIndex, int newIndex);
         void actionTriggered(QAction *action);
 };

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tupprojectlistparser.h"
+#include "tdebug.h"
 
 struct TupProjectListParser::Private
 {
@@ -53,6 +54,7 @@ TupProjectListParser::~TupProjectListParser()
 bool TupProjectListParser::startTag(const QString &tag, const QXmlAttributes &atts)
 {
     if (root() == "server_projectlist") {
+ 
         if (tag == "works") {
             k->pivot = false;
         } else if (tag == "contributions") {
@@ -78,14 +80,12 @@ bool TupProjectListParser::startTag(const QString &tag, const QXmlAttributes &at
 
 bool TupProjectListParser::endTag(const QString &tag)
 {
-    Q_UNUSED(tag);
-
     return true;
 }
 
 void TupProjectListParser::text(const QString &text)
 {
-    Q_UNUSED(text); 
+    
 }
 
 QList<TupProjectListParser::ProjectInfo> TupProjectListParser::works()

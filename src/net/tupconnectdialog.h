@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,31 +33,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCONNECTDIALOG_H
-#define TUPCONNECTDIALOG_H
-
-#include "tglobal.h"
-#include "tupnetprojectmanagerparams.h"
-#include "tconfig.h"
-#include "tformfactory.h"
-#include "tosd.h"
+#ifndef TupCONNECTDIALOG_H
+#define TupCONNECTDIALOG_H
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QCheckBox>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QSpinBox>
-#include <QDialogButtonBox>
 
-// class TupNetProjectManagerParams;
+class TupNetProjectManagerParams;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupConnectDialog : public QDialog
+class TupConnectDialog : public QDialog
 {
     Q_OBJECT
 
@@ -81,7 +68,7 @@ class TUPI_EXPORT TupConnectDialog : public QDialog
         void saveSettings();
         
     private:
-        struct Private;
+        class Private;
         Private *const k;
 };
 

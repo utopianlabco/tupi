@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,22 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPEXPOSUREHEADER_H
-#define TUPEXPOSUREHEADER_H
-
-#include "tglobal.h"
+#ifndef TupEXPOSUREHEADER_H
+#define TupEXPOSUREHEADER_H
 
 #include <QHeaderView>
 #include <QPainter>
 #include <QStyleOptionButton>
-#include <QMap>
-#include <QList>
-#include <QItemDelegate>
+//#include <QMap>
+#include <QVector>
+//#include <QItemDelegate>
 #include <QLineEdit>
 #include <QMouseEvent>
-#include <QMenu>
+//#include <QMenu>
 
-struct ExposureLayerItem
+//#include "tdebug.h"
+//#include <tupglobal.h>
+
+struct LayerItem
 {
     QString title;
     int lastFrame;
@@ -59,51 +60,47 @@ struct ExposureLayerItem
 /**
  * @author Jorge Cuadrado
  */
-
-class TUPI_EXPORT TupExposureHeader: public QHeaderView
+class TupExposureHeader: public QHeaderView
 {
     Q_OBJECT
 
     public:
         TupExposureHeader(QWidget * parent = 0);
         ~TupExposureHeader();
-        void paintSection(QPainter *painter, const QRect & rect, int section) const;
-        void insertSection(int section, const QString &text);
-        void setSectionTitle(int section, const QString &text);
-        void removeSection(int section);
-        void moveHeaderSection(int index, int newIndex, bool isLocalRequest);
-        void setLockFlag(int section, bool lock);
-        bool sectionIsMoving();
-        void setSectionVisibility(int section, bool visibility);
-        int sectionsTotal();
-        int currentSectionIndex();
+        void paintSection(QPainter *painter, const QRect & rect, int layerIndex) const;
+        void insertLayer(int layerIndex, const QString &text);
+        void setLayerName(int layerIndex, const QString &text);
+        void setLastFrame(int layerIndex, int num);
+        int lastFrame(int layerIndex);
+        void removeLayer(int layerIndex);
+        void moveLayer(int index, int newIndex);
+        void setLockLayer(int logicalndex, bool lock);
+        bool signalMovedBlocked();
+        void setVisibilityChanged(int logicalndex, bool visibility);
+        int layersTotal();
 
-        void setLastFrame(int section, int num);
-        int lastFrame(int section);
+    public slots:
+        void updateSelection(int col);
+
+    private slots:
+        void emitVisibilityChanged(int section);
+        void showEditorName(int section);
+        void hideEditorName();
 
     protected:
         virtual void mousePressEvent(QMouseEvent * event);
 
-    public slots:
-        void updateSelection(int section);
-
-    private slots:
-        void notifyVisibilityChange(int section);
-        void showTitleEditor(int section);
-        void hideTitleEditor();
+    private:
+        QVector<LayerItem> m_layers;
+        QLineEdit *m_editor;
+        int m_sectionEdited;
+        int m_blockSectionMoved;
+        int currentCol;
 
     signals:
-        void nameChanged(int section, const QString & name);
-        void visibilityChanged(int section, bool visibility);
-        void headerSelectionChanged(int section);
-
-    private:
-        QList<ExposureLayerItem> m_sections;
-        QLineEdit *m_editor;
-        int m_editedSection;
-        bool m_sectionOnMotion;
-        int m_currentSection;
-        QString themeName;
+        void changedName(int indexLayer, const QString & name);
+        void visibilityChanged(int indexLayer, bool visibility);
+        void selectionChanged(int indexLayer);
 };
 
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,19 +33,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPFRAME_H
-#define TUPFRAME_H
+#ifndef TupFRAME_H
+#define TupFRAME_H
 
-#include "tglobal.h"
 #include "tupabstractserializable.h"
+#include "tupinthash.h"
 #include "tupsvgitem.h"
 #include "tupbackground.h"
-#include "tupgraphiclibraryitem.h"
+#include "tupglobal_store.h"
 
 #include <QGraphicsScene>
 #include <QDomDocument>
 #include <QDomElement>
-#include <QList>
 
 class TupFrame;
 class TupLayer;
@@ -55,130 +54,112 @@ class TupSvgItem;
 class TupProject;
 class TupScene;
 
-typedef QList<TupGraphicObject *> GraphicObjects;
-typedef QList<TupSvgItem *> SvgObjects;
+typedef TupIntHash<TupGraphicObject *> GraphicObjects;
+typedef TupIntHash<TupSvgItem *> SvgObjects;
 
 /**
  * @brief Esta clase representa un marco o frame de la animacion
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
 {
-    Q_OBJECT
-
     public:
-        enum FrameType { DynamicBg = 0, StaticBg, Regular };
-        enum MoveItemType { MoveBack, MoveToFront, MoveOneLevelBack, MoveOneLevelToFront };
-
-        TupFrame();
-        TupFrame(TupLayer *parent);
-        TupFrame(TupBackground *bg, const QString &label);
+       /**
+        * Constructor por defecto
+        */
+       TupFrame(TupLayer *parent);
+       TupFrame(TupBackground *bg);
        
-        ~TupFrame();
+       /**
+        * Destructor
+        */
+       ~TupFrame();
        
-        void setFrameName(const QString &name);
-        QString frameName() const;
-
-        void setDynamicDirection(const QString &direction);
-        void setDynamicShift(const QString &shift);
-        TupBackground::Direction dynamicDirection() const;
-        int dynamicShift() const;
-
-        void setLocked(bool isLocked);
-        bool isLocked() const;
+       /**
+        * Pone el nombre del frame
+        */
+       void setFrameName(const QString &name);
        
-        void setVisible(bool isVisible);
-        bool isVisible() const;
-
-        void setOpacity(double opacity);
-        double opacity(); 
-
-        TupFrame::FrameType type();
-      
-        void addLibraryItem(const QString &id, TupGraphicLibraryItem *libraryItem);
-        void addItem(const QString &id, QGraphicsItem *item);
-        void removeImageItemFromFrame(const QString &id);
-        void updateIdFromFrame(const QString &oldId, const QString &newId);
-
-        void addSvgItem(const QString &id, TupSvgItem *item);
-        void removeSvgItemFromFrame(const QString &id);
-        void updateSvgIdFromFrame(const QString &oldId, const QString &newId);
-
-        void replaceItem(int position, QGraphicsItem *item);
-        bool moveItem(TupLibraryObject::Type type, int currentPosition, int action);
-      
-        bool removeGraphic(int position);
-        bool removeGraphicAt(int position);
-        void restoreGraphic();
-
-        bool removeSvg(int position);
-        bool removeSvgAt(int position);
-        void restoreSvg();
-
-        QGraphicsItem *createItem(QPointF coords, const QString &xml, bool loaded = false);
-        TupSvgItem *createSvgItem(QPointF coords, const QString &xml, bool loaded = false);
-
-        void setGraphics(GraphicObjects objects);       
-        void setSvgObjects(SvgObjects objects);
-        GraphicObjects graphics() const;
-        SvgObjects svgItems() const; 
+       /**
+        * Bloquea el frame
+        */
+       void setLocked(bool isLocked);
        
-        TupGraphicObject *graphicAt(int position) const;
-        TupSvgItem *svgAt(int position) const; 
-        QGraphicsItem *item(int position) const;
+       /**
+        * Retorna el nombre del frame
+        */
+       QString frameName() const;
        
-        int createItemGroup(int position, QList<int> group);
-        QList<QGraphicsItem *> splitGroup(int position);
+       /**
+        * Returna verdadero cuando el frame esta bloqueado
+        */
+       bool isLocked() const;
+       
+       void setVisible(bool isVisible);
+       bool isVisible() const;
+       
+       void addItem(QGraphicsItem *item);
+       void addItem(const QString &key, QGraphicsItem *item);
+       void removeItemFromFrame(const QString &key);
+       void updateIdFromFrame(const QString &oldId, const QString &newId);
+
+       void addSvgItem(const QString &key, TupSvgItem *item);
+       void removeSvgItemFromFrame(const QString &key);
+       void updateSvgIdFromFrame(const QString &oldId, const QString &newId);
+
+       void insertItem(int position, QGraphicsItem *item);
+       void insertSvgItem(int position, TupSvgItem *item);
+       
+       void replaceItem(int position, QGraphicsItem *item);
+       bool moveItem(int currentPosition, int newPosition);
+       
+       bool removeGraphicAt(int position);
+       bool removeSvgAt(int position);
+
+       QGraphicsItem *createItem(int position, QPointF coords, const QString &xml, bool loaded = false);
+       TupSvgItem *createSvgItem(int position, QPointF coords, const QString &xml, bool loaded = false);
+
+       void setGraphics(GraphicObjects objects);       
+       void setSvgObjects(SvgObjects objects);
+       GraphicObjects graphics() const;
+       SvgObjects svgItems() const; 
+       
+       TupGraphicObject *graphic(int position) const;
+       TupSvgItem *svg(int position) const; 
+       QGraphicsItem *item(int position) const;
+       
+       QGraphicsItemGroup *createItemGroupAt(int position, QList<qreal> group);
+       QList<QGraphicsItem *> destroyItemGroup(int position);
              
-        TupLayer *layer() const;
-        TupScene *scene() const;
-        TupProject *project() const;
+       TupLayer *layer() const;
+       TupScene *scene() const;
+       TupProject *project() const;
        
-        int indexOf(TupGraphicObject *object) const;
-        int indexOf(QGraphicsItem *item) const;
-        int indexOf(TupSvgItem *item) const;
+       int indexOf(TupGraphicObject *object) const;
+       int indexOf(QGraphicsItem *item) const;
+       int indexOf(TupSvgItem *item) const;
        
-        int index() const;
+       int index() const;
        
-        void reset();
-        void clear();
-        int graphicItemsCount();
-        int svgItemsCount();
-        int itemsTotalCount();
+       void setRepeat(int repeat);
+       int repeat() const;
+       
+       void clear();
+       int graphicItemsCount();
+       int svgItemsCount();
 
-        int getTopZLevel();
+       int getTopZLevel();
+       QList<int> itemIndexes();
+       QList<int> svgIndexes();
 
-        bool isEmpty();
-
-        void reloadGraphicItem(const QString &id, const QString &path);
-        void reloadSVGItem(const QString &id, TupLibraryObject *object);
-        void updateZLevel(int zLevelIndex);
-
-        void checkTransformationStatus(TupLibraryObject::Type itemType, int index);
-        void storeItemTransformation(TupLibraryObject::Type itemType, int index, const QString &properties);
-        void undoTransformation(TupLibraryObject::Type itemType, int index);
-        void redoTransformation(TupLibraryObject::Type itemType, int index);
-
-       void checkBrushStatus(int itemIndex);
-       void setBrushAtItem(int itemIndex, const QString &xml);
-       void redoBrushAction(int itemIndex);
-       void undoBrushAction(int itemIndex);
-
-       void checkPenStatus(int itemIndex);
-       void setPenAtItem(int itemIndex, const QString &xml);
-       void redoPenAction(int itemIndex);
-       void undoPenAction(int itemIndex);
+       bool isEmpty();
        
     public:
        virtual void fromXml(const QString &xml);
        virtual QDomElement toXml(QDomDocument &doc) const;
        
     private:
-       void insertItem(int position, QGraphicsItem *item, const QString &label);
-       void insertObject(int position, TupGraphicObject *object, const QString &label);
-       void insertSvg(int position, TupSvgItem *item, const QString &label);
-
        struct Private;
        Private *const k;
 };

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,7 +34,41 @@
  ***************************************************************************/
 
 #include "tuppaintarea.h"
-#include "toptionaldialog.h"
+#include "tupbrushmanager.h"
+#include "tupinputdeviceinformation.h"
+
+#include "tuppaintareaevent.h"
+#include "tuppaintarearotator.h"
+#include "tupimagedevice.h"
+#include "tupgraphicsscene.h"
+#include "tconfig.h"
+#include "tapplication.h"
+#include "tdebug.h"
+#include "tuptextitem.h"
+#include "tuplibrarydialog.h"
+#include "tuplibraryobject.h"
+#include "tuprequestbuilder.h"
+#include "tupprojectrequest.h"
+#include "tupprojectresponse.h"
+
+#include "tupscene.h"
+#include "tuplayer.h"
+#include "tupsvgitem.h"
+#include "tuppixmapitem.h"
+#include "node.h"
+#include "tcontrolnode.h"
+#include "tupproject.h"
+#include "tosd.h"
+
+#include <QGraphicsScene>
+#include <QMouseEvent>
+#include <QGraphicsRectItem>
+#include <QPolygon>
+#include <QApplication>
+// #include <QTimer>
+#include <QStyleOptionGraphicsItem>
+#include <QClipboard>
+#include <QMenu>
 
 /**
  * This class defines the behavior of the main paint area when ilustration module is on
@@ -53,57 +87,33 @@ struct TupPaintArea::Private
     QPointF oldPosition;
     QPointF position;
     bool menuOn;
-    // QString frameCopy;
-    QString copyFrameName;
-    bool copyIsValid;
-    bool canvasEnabled;
+    QString frameCopy;
 };
 
-TupPaintArea::TupPaintArea(TupProject *project, QWidget * parent) : TupPaintAreaBase(parent, project->dimension(), project->library()), k(new Private)
+TupPaintArea::TupPaintArea(TupProject *project, QWidget * parent) : TupPaintAreaBase(parent, project->dimension()), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea()]";
-        #else
-            TINIT;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    setAccessibleName("WORKSPACE");
     k->project = project;
-    k->canvasEnabled = false;
+    setBgColor(project->bgColor());
     k->currentSceneIndex = 0;
     k->deleteMode = false;
     k->menuOn = false;
-    k->copyIsValid = false;
+
+    setCurrentScene(0);
     k->currentTool = tr("Pencil");
 
-    setBgColor(project->bgColor());
-
-    setCurrentScene(0);
-    graphicsScene()->setCurrentFrame(0, 0);
-
-    /*
-    if (graphicsScene()->scene()) {
+    if (graphicsScene()->scene())
         graphicsScene()->setCurrentFrame(0, 0);
-        graphicsScene()->setLibrary(project->library());
-    }
-    setCurrentScene(0);
-    */
 }
 
 TupPaintArea::~TupPaintArea()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupPaintArea()]";
-        #else
-            TEND;
-        #endif
+           TEND;
     #endif
-
-    graphicsScene()->clear();
-    delete graphicsScene();
 
     delete k;
 }
@@ -111,34 +121,24 @@ TupPaintArea::~TupPaintArea()
 void TupPaintArea::setCurrentScene(int index)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::setCurrentScene()]";
-        #else
-            T_FUNCINFO << "scene index: " << index;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    if (k->project->scenesCount() > 0) {
-        TupScene *scene = k->project->sceneAt(index);
+    if (k->project->scenesTotal() > 0) {
+
+        TupScene *scene = k->project->scene(index);
         if (scene) {
             k->currentSceneIndex = index;
             graphicsScene()->setCurrentScene(scene);
         } else {
-            if (k->project->scenesCount() == 1) {
+            if (k->project->scenesTotal() == 1) {
                 setDragMode(QGraphicsView::NoDrag);
                 k->currentSceneIndex = 0;
                 graphicsScene()->setCurrentScene(0);
             } else {
                 #ifdef K_DEBUG
-                    QString msg1 = "TupPaintArea::setCurrentScene() - [ Fatal Error ] -  No scenes available. Invalid index -> " + QString::number(index);
-                    QString msg2 = "TupPaintArea::setCurrentScene() - Scenes total -> " + QString::number(k->project->scenesCount()); 
-                    #ifdef Q_OS_WIN
-                        qDebug() << msg1;
-                        qDebug() << msg2;
-                    #else
-                        tError() << msg1;
-                        tError() << msg2;
-                    #endif
+                       tError() << "TupPaintArea::setCurrentScene() - [ Fatal Error ] -  No scenes available. Invalid index -> " << index;
+                       tError() << "TupPaintArea::setCurrentScene() - Scenes total -> " << k->project->scenesTotal();
                 #endif
             }
         }
@@ -148,131 +148,79 @@ void TupPaintArea::setCurrentScene(int index)
 void TupPaintArea::mousePressEvent(QMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::mousePressEvent()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    if (!k->canvasEnabled)
-        return;
-
-    TupFrame *frame = graphicsScene()->currentFrame();
-    if (frame) {
-        if (frame->isLocked()) {
-            #ifdef K_DEBUG
-                QString msg = "TupPaintArea::mousePressEvent() - Frame is locked!";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tFatal() << msg;
-                #endif
-            #endif
-            return;
-        }
-    } else {
+    if (graphicsScene()->currentFrame()->isLocked()) {
         #ifdef K_DEBUG
-            QString msg = "TupPaintArea::mousePressEvent() - Frame is NULL!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
+               tFatal() << "TupPaintArea::mousePressEvent() - Frame is locked!";
         #endif
         return;
     }
 
-    if (k->currentTool.compare(tr("Nodes Selection")) == 0) {
+    if (k->currentTool.compare(tr("Line Selection")) == 0) {
         // If a node is the target... abort!
         if (event->buttons() == Qt::RightButton) {
-            if (qgraphicsitem_cast<TControlNode *>(scene()->itemAt(mapToScene(event->pos()), QTransform())))
+            if (qgraphicsitem_cast<TControlNode *>(scene()->itemAt(mapToScene(event->pos()))))
                 return;
-        }
-    }
-
-    if (event->buttons() == Qt::RightButton) {
-        if (k->currentTool.compare(tr("PolyLine")) == 0) {
-            emit closePolyLine();
-            return;
-        }
-        if (k->currentTool.compare(tr("Line")) == 0) {
-            emit closeLine();
-            return;
         }
     }
 
     if (k->currentTool.compare(tr("Object Selection")) == 0) {
+
         if (event->buttons() == Qt::RightButton) {
+
             // If a node is the target... abort!
-            if (qgraphicsitem_cast<Node *>(scene()->itemAt(mapToScene(event->pos()), QTransform())))
+            if (qgraphicsitem_cast<Node *>(scene()->itemAt(mapToScene(event->pos()))))
                 return;
 
-            /* SQA: This code seems to be useless
-            if (QGraphicsItem *item = scene()->itemAt(mapToScene(event->pos()), QTransform())) {
-                if (item->opacity() == 1) // If target is part of the current frame
+            if (QGraphicsItem *item = scene()->itemAt(mapToScene(event->pos()))) {
+                if (item->opacity() == 1) {
                     item->setFlag(QGraphicsItem::ItemIsSelectable, true);
-                else 
-                    return; // If target is NOT part of the current frame
+                    item->setSelected(true);
+                } else {
+                    return;
+                }
             }
-            */
 
             QMenu *menu = new QMenu(tr("Drawing area"));
             menu->addAction(kApp->findGlobalAction("undo"));
             menu->addAction(kApp->findGlobalAction("redo"));
+            menu->addSeparator();
 
-            bool activeSelection = !scene()->selectedItems().isEmpty();
+            QAction *cut = menu->addAction(tr("Cut"), this, SLOT(cutItems()), QKeySequence(tr("Ctrl+X")));
+            QAction *copy = menu->addAction(tr("Copy"), this, SLOT(copyItems()), QKeySequence(tr("Ctrl+C")));
+            QAction *paste = menu->addAction(tr("Paste"), this, SLOT(pasteItems()), QKeySequence(tr("Ctrl+V")));
+            QAction *del = menu->addAction(tr("Delete"), this, SLOT(deleteItems()), QKeySequence(Qt::Key_Delete));
 
-            if (activeSelection) {
-                menu->addSeparator();
-                menu->addAction(tr("Cut"), this, SLOT(cutItems()), QKeySequence(tr("Ctrl+X")));
-                menu->addAction(tr("Copy"), this, SLOT(copyItems()), QKeySequence(tr("Ctrl+C")));
-            }
+            menu->addSeparator();
+            QMenu *order = new QMenu(tr("Order"));
 
-            if (!k->copiesXml.isEmpty()) {
-                if (!activeSelection)
-                    menu->addSeparator();
-                menu->addAction(tr("Paste"), this, SLOT(pasteItems()), QKeySequence(tr("Ctrl+V")));
+            connect(order, SIGNAL(triggered(QAction*)), this, SLOT(requestMoveSelectedItems(QAction*)));
+            order->addAction(tr("Send to back"))->setData(MoveBack);
+            order->addAction(tr("Bring to front"))->setData(MoveFront);
+            order->addAction(tr("Send backwards"))->setData(MoveBackwards);
+            order->addAction(tr("Brind forwards"))->setData(MoveForwards);
 
-                QMenu *pasteMenu = new QMenu(tr("Paste in..."));
-                QAction *pasteFive = pasteMenu->addAction(tr("next 5 frames"), this, SLOT(pasteNextFive()));
-                QAction *pasteTen = pasteMenu->addAction(tr("next 10 frames"), this, SLOT(pasteNextTen()));
-                QAction *pasteTwenty = pasteMenu->addAction(tr("next 20 frames"), this, SLOT(pasteNextTwenty()));
-                QAction *pasteFifty = pasteMenu->addAction(tr("next 50 frames"), this, SLOT(pasteNextFifty()));
-                QAction *pasteHundred = pasteMenu->addAction(tr("next 100 frames"), this, SLOT(pasteNextHundred()));
+            menu->addMenu(order);
+            order->setDisabled(true);
+            menu->addSeparator();
 
-                pasteMenu->addAction(pasteFive);
-                pasteMenu->addAction(pasteTen);
-                pasteMenu->addAction(pasteTwenty);
-                pasteMenu->addAction(pasteFifty);
-                pasteMenu->addAction(pasteHundred);
+            // Code commented temporary while SQA is done
+            QAction *addItem = menu->addAction(tr("Add to library..."), this, SLOT(addSelectedItemsToLibrary()));
+            menu->addSeparator();
 
-                menu->addMenu(pasteMenu);
-            }
-
-            if (activeSelection) {
-                menu->addAction(tr("Delete"), this, SLOT(deleteItems()), QKeySequence(Qt::Key_Delete));
-                menu->addSeparator();
-                QMenu *order = new QMenu(tr("Send"));
-
-                connect(order, SIGNAL(triggered(QAction*)), this, SLOT(requestItemMovement(QAction*)));
-                order->addAction(tr("To back"))->setData(TupFrame::MoveBack);
-                order->addAction(tr("To front"))->setData(TupFrame::MoveToFront);
-                order->addAction(tr("One level to back"))->setData(TupFrame::MoveOneLevelBack);
-                order->addAction(tr("One level to front"))->setData(TupFrame::MoveOneLevelToFront);
-
-                menu->addMenu(order);
-                menu->addSeparator();
-
-                // Code commented temporary while SQA is done
-                QAction *addItem = menu->addAction(tr("Add to library..."), this, SLOT(addSelectedItemsToLibrary()));
-                menu->addSeparator();
-
+            if (scene()->selectedItems().isEmpty()) {
+                del->setEnabled(false);
+                cut->setEnabled(false);
+                copy->setEnabled(false);
+                addItem->setEnabled(false);
+            } else {
                 QList<QGraphicsItem *> selected = scene()->selectedItems();
                 foreach (QGraphicsItem *item, selected) {
                          QDomDocument dom;
                          dom.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(dom));
-                         QDomElement root = dom.documentElement();
+		         QDomElement root = dom.documentElement();
 
                          if (root.tagName() == "symbol") {
                              QString key = root.attribute("id").toUpper();
@@ -287,12 +235,13 @@ void TupPaintArea::mousePressEvent(QMouseEvent *event)
                 }
             }
 
-            /* SQA: This menu is a pending feature to *consider*
+            if (k->copiesXml.isEmpty())
+                paste->setEnabled(false);
+
             if (QMenu *toolMenu = graphicsScene()->currentTool()->menu()) {
                 menu->addSeparator();
                 menu->addMenu(toolMenu);
             }
-            */
 
             k->position = viewPosition();
             k->menuOn = true;
@@ -303,338 +252,272 @@ void TupPaintArea::mousePressEvent(QMouseEvent *event)
     TupPaintAreaBase::mousePressEvent(event);
 }
 
-void TupPaintArea::frameResponse(TupFrameResponse *response)
+void TupPaintArea::frameResponse(TupFrameResponse *event)
 {
     #ifdef K_DEBUG
-        QString msg = "TupPaintArea::frameResponse() - [" + QString::number(response->sceneIndex()) 
-                      + ", " + QString::number(response->layerIndex()) + ", " 
-                      + QString::number(response->frameIndex()) + "]";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tDebug() << msg;
-        #endif
+           T_FUNCINFO;
+           tDebug() << "TupPaintArea::frameResponse() - [" << event->sceneIndex() << ", " << event->layerIndex() << ", " << event->frameIndex() << "]";
     #endif
 
-    TupGraphicsScene *guiScene = graphicsScene();
-    if (!guiScene->scene()) {
-        #ifdef K_DEBUG
-            QString msg = "TupPaintArea::frameResponse() - Fatal error: No TupScene available!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+    if (graphicsScene()->isDrawing())
         return;
+
+    switch (event->action()) {
+            case TupProjectRequest::Add:
+                 {
+                 }
+                 break; 
+
+            case TupProjectRequest::Select:
+            case TupProjectRequest::Paste:
+            case TupProjectRequest::Reset:
+                 {
+                    TupGraphicsScene *guiScene = graphicsScene();
+                    if (event->action() == TupProjectRequest::Select) {
+                        if (guiScene->currentFrameIndex() != event->frameIndex())
+                            emit frameChanged(event->frameIndex());
+                    }
+
+                    // SQA: Check if this instruction is really required
+                    // setUpdatesEnabled(true);
+
+                    guiScene->setCurrentFrame(event->layerIndex(), event->frameIndex());
+
+                    if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                        guiScene->drawPhotogram(event->frameIndex());
+                    } else {
+                        guiScene->cleanWorkSpace();
+                        guiScene->drawBackground();
+                    }
+
+                    if (guiScene->currentTool()->toolType() == TupToolInterface::Selection)
+                        guiScene->currentTool()->init(graphicsScene());
+                 }
+
+                 break;
+
+            case TupProjectRequest::Lock:
+                 {
+                    TupGraphicsScene *guiScene = graphicsScene();
+                    if (!guiScene->scene()) 
+                        return;
+                    if (guiScene->currentFrameIndex() == event->frameIndex())
+                        viewport()->update();
+                 }
+                 break;
+            
+            case TupProjectRequest::Remove:
+                 {
+                    if (event->frameIndex() == 0) {
+                        TupGraphicsScene *guiScene = graphicsScene();
+                        if (!guiScene->scene())
+                            return;
+                        guiScene->cleanWorkSpace();
+                        viewport()->update();
+                    }
+                 }
+                 break;
+
+            default:
+                 break;
     }
 
-    if (!guiScene->isDrawing()) {
-        switch (response->action()) {
-                case TupProjectRequest::Exchange:
-                    {
-                        if (k->spaceMode == TupProject::FRAMES_EDITION)
-                            guiScene->drawCurrentPhotogram();
-                    }
-                    break;
-                case TupProjectRequest::Select:
-                case TupProjectRequest::Paste:
-                case TupProjectRequest::Reset:
-                    {
-                        if (response->action() == TupProjectRequest::Select) {
-                            if (guiScene->currentFrameIndex() != response->frameIndex())
-                                emit frameChanged(response->frameIndex());
-                        }
-                        guiScene->setCurrentFrame(response->layerIndex(), response->frameIndex());
-
-                        if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                            guiScene->drawPhotogram(response->frameIndex(), true);
-                        } else {
-                            guiScene->cleanWorkSpace();
-                            guiScene->drawSceneBackground(guiScene->currentFrameIndex());
-                        }
-
-                        if (guiScene->currentTool()->toolType() == TupToolInterface::Selection)
-                            guiScene->resetCurrentTool();
-                    }
-                    break;
-                case TupProjectRequest::Lock:
-                    {
-                        if (guiScene->currentFrameIndex() == response->frameIndex())
-                            viewport()->update();
-                    }
-                    break;
-                default:
-                    break;
-        }
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupPaintArea::frameResponse() - isDrawing() == true! - No action taken!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
-        #endif
-    }
-
-    guiScene->frameResponse(response);
+    graphicsScene()->frameResponse(event);
 }
 
-void TupPaintArea::layerResponse(TupLayerResponse *response)
+void TupPaintArea::layerResponse(TupLayerResponse *event)
 {
     #ifdef K_DEBUG
-        QString msg = "TupPaintArea::layerResponse() - [" + QString::number(response->sceneIndex()) + ", " + QString::number(response->layerIndex()) + "]";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tDebug() << msg;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    TupGraphicsScene *guiScene = graphicsScene();
-    if (!guiScene->scene())
+    if (graphicsScene()->isDrawing())
         return;
 
-    int frameIndex = guiScene->currentFrameIndex();
+    if (event->action() == TupProjectRequest::Add)
+        return;
 
-    switch (response->action()) {
-            case TupProjectRequest::Add:
-                {
-                    if (response->mode() == TupProjectResponse::Redo || response->mode() == TupProjectResponse::Undo) {
-                        if (k->spaceMode == TupProject::FRAMES_EDITION)
-                            guiScene->drawCurrentPhotogram();
-                    }
-                    return;
-                }
-            break;
-            case TupProjectRequest::Remove:
-                {
-                    TupScene *scene = k->project->sceneAt(k->currentSceneIndex);
+    TupGraphicsScene *guiScene = graphicsScene();
 
-                    if (scene->layersCount() > 1) {
-                        if (response->layerIndex() != 0)
-                            guiScene->setCurrentFrame(response->layerIndex() - 1, frameIndex);
-                        else
-                            guiScene->setCurrentFrame(response->layerIndex() + 1, frameIndex);
+    if (!guiScene->scene()) 
+        return;
 
-                        if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                            guiScene->drawCurrentPhotogram();
-                        } else {
-                            guiScene->cleanWorkSpace();
-                            guiScene->drawSceneBackground(frameIndex);
-                        }
-                    } else {
-                        if (scene->layersCount() == 1) {
-                            guiScene->setCurrentFrame(0, frameIndex);
-                            if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                                guiScene->drawCurrentPhotogram();
-                            } else {
-                                guiScene->cleanWorkSpace();
-                                guiScene->drawSceneBackground(frameIndex);
-                            }
-                        }
-                    }
-
-                    viewport()->update();
-                }
-            break;
-            case TupProjectRequest::UpdateOpacity:
-                {
-                    // if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                        guiScene->drawCurrentPhotogram();
-                        viewport()->update(scene()->sceneRect().toRect());
-                    // }
-                }
-            break;
-
-            case TupProjectRequest::TupProjectRequest::View:
-                {
-                    guiScene->updateLayerVisibility(response->layerIndex(), response->arg().toBool());
-                    if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                        guiScene->drawCurrentPhotogram();
-                    } else {
-                        guiScene->cleanWorkSpace();
-                        guiScene->drawSceneBackground(frameIndex);
-                    }
-                    viewport()->update(scene()->sceneRect().toRect());
-                }
-            break;
-            case TupProjectRequest::TupProjectRequest::Move:
-                {
-                    guiScene->setCurrentFrame(response->arg().toInt(), frameIndex);
-                    if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                        guiScene->drawCurrentPhotogram();
-                    } else {
-                        guiScene->cleanWorkSpace();
-                        guiScene->drawSceneBackground(frameIndex);
-                    }
-                    viewport()->update(scene()->sceneRect().toRect());
-                }
-            break;
-            default:
-                {
-                    if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                        guiScene->drawCurrentPhotogram();
-                    } else {
-                        guiScene->cleanWorkSpace();
-                        guiScene->drawSceneBackground(frameIndex);
-                    }
-                    viewport()->update(scene()->sceneRect().toRect());
-                }
-            break;
+    if (event->action() == TupProjectRequest::View) {
+        guiScene->setLayerVisible(event->layerIndex(), event->arg().toBool());
     }
 
-    guiScene->layerResponse(response);
+    if (event->action() != TupProjectRequest::Add && event->action() != TupProjectRequest::Remove) {
+        if (k->spaceMode == TupProject::FRAMES_EDITION) {
+            graphicsScene()->drawCurrentPhotogram();
+        } else {
+            graphicsScene()->cleanWorkSpace();
+            graphicsScene()->drawBackground();
+        }
+
+        viewport()->update(scene()->sceneRect().toRect());
+    } else {
+        if (event->action() == TupProjectRequest::Remove) {
+            TupGraphicsScene *guiScene = graphicsScene();
+            if (!guiScene->scene())
+                return;
+
+            TupScene *scene = k->project->scene(k->currentSceneIndex);
+            int frameIndex = guiScene->currentFrameIndex(); 
+
+            if (scene->layersTotal() > 1) {
+                if (event->layerIndex() != 0)
+                    guiScene->setCurrentFrame(event->layerIndex() - 1, frameIndex);
+                else 
+                    guiScene->setCurrentFrame(event->layerIndex() + 1, frameIndex);
+
+                if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                    guiScene->drawCurrentPhotogram();
+                } else {
+                    guiScene->cleanWorkSpace();
+                    guiScene->drawBackground();
+                }
+            } else {
+                if (scene->layersTotal() == 1) {
+                    QList<int> indexes = scene->layerIndexes();
+                    TupGraphicsScene *guiScene = graphicsScene();
+                    if (!guiScene->scene())
+                         return;
+                    guiScene->setCurrentFrame(indexes.at(0), frameIndex);                
+                    if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                        guiScene->drawCurrentPhotogram();
+                    } else {
+                        guiScene->cleanWorkSpace();
+                        guiScene->drawBackground();
+                    }
+                } 
+            }
+
+            viewport()->update();
+        }
+    }
+
+    graphicsScene()->layerResponse(event);
 }
 
 void TupPaintArea::sceneResponse(TupSceneResponse *event)
 {
     #ifdef K_DEBUG
-        QString msg = "TupPaintArea::sceneResponse() - [" + QString::number(event->sceneIndex()) + "]";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tDebug() << msg;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    TupGraphicsScene *guiScene = graphicsScene();
-
-    if (!guiScene->scene())
+    if (graphicsScene()->isDrawing()) {
+        #ifdef K_DEBUG
+               tFatal() << "TupPaintArea::sceneResponse() - Exiting from method. User is drawing!";
+        #endif
         return;
+    }
 
-    if (!guiScene->isDrawing()) {
-        switch(event->action()) {
-            case TupProjectRequest::Select:
+    switch(event->action()) {
+           case TupProjectRequest::Select:
                 {
                     if (event->sceneIndex() >= 0) {
-                        if (k->project->scenesCount() == 1)
+                        if (k->project->scenesTotal() == 1)
                             setCurrentScene(0);
                         else
                             setCurrentScene(event->sceneIndex());
                     }
+                    break;
                 }
-                break;
-            case TupProjectRequest::Remove:
+           case TupProjectRequest::Remove:
                 {
                     /*
-                    if (k->project->scenesCount() > 0)
+                    if (k->project->scenesTotal() > 0)
                         setCurrentScene(k->currentSceneIndex);
                     */
                 }
                 break;
-            case TupProjectRequest::Reset:
+           case TupProjectRequest::Reset:
                 {
                     setCurrentScene(0);
                 }
                 break;
-            case TupProjectRequest::BgColor:
+           case TupProjectRequest::BgColor:
                 {
                     QString colorName = event->arg().toString();
                     QColor color(colorName);
                     setBgColor(color);
+                    emit updateStatusBgColor(color);
                 }
                 break;
-            default: 
+           default: 
                 {
                     #ifdef K_DEBUG
-                        QString msg = "TupPaintArea::sceneResponse <- TupProjectRequest::Default";
-                        #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                        #else
-                            tFatal() << msg;
-                        #endif
+                           tFatal() << "TupPaintArea::sceneResponse <- TupProjectRequest::Default";
                     #endif
                 }
                 break;
-        }
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupPaintArea::sceneResponse() - isDrawing() == true! - No action taken!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
-        #endif
     }
 
-    guiScene->sceneResponse(event);
+    graphicsScene()->sceneResponse(event);
 }
 
-void TupPaintArea::itemResponse(TupItemResponse *response)
+void TupPaintArea::itemResponse(TupItemResponse *event)
 {
     #ifdef K_DEBUG
-        QString msg = "TupPaintArea::itemResponse() - [" + QString::number(response->sceneIndex()) + ", " + QString::number(response->layerIndex()) + ", " + QString::number(response->frameIndex()) + "]";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tDebug() << msg;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    TupGraphicsScene *guiScene = graphicsScene();
-    if (!guiScene->scene())
-        return;
+    if (!graphicsScene()->isDrawing()) {
 
-    if (!guiScene->isDrawing()) {
-        switch(response->action()) {
-            case TupProjectRequest::Transform:
-                 {
-                     viewport()->update();
-                 }
-                 break;
+        switch(event->action()) {
+               case TupProjectRequest::Transform:
+                    {
+                        viewport()->update();
+                    }
+                    break;
 
-           case TupProjectRequest::Remove:
-                { 
-                     if (!k->deleteMode) {
-                         if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                             guiScene->drawCurrentPhotogram();
-                         } else {
-                             guiScene->cleanWorkSpace();
-                             guiScene->drawSceneBackground(guiScene->currentFrameIndex());
-                         }
+               case TupProjectRequest::Remove:
+                    { 
+                        if (!k->deleteMode) {
+                            TupGraphicsScene *guiScene = graphicsScene();
+                            if (!guiScene->scene())
+                                return;
 
-                         viewport()->update(scene()->sceneRect().toRect());
-                     } 
-                }
-                break;
+                            if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                                guiScene->drawCurrentPhotogram();
+                            } else {
+                                guiScene->cleanWorkSpace();
+                                guiScene->drawBackground();
+                            }
 
-           case TupProjectRequest::Move:
-                {
-                     // Do nothing
-                }
-                break;
-           default:
-                {
-                     if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                         guiScene->drawCurrentPhotogram();
-                     } else {
-                        guiScene->cleanWorkSpace();
-                        guiScene->drawSceneBackground(guiScene->currentFrameIndex());
-                     }
+                            viewport()->update(scene()->sceneRect().toRect());
+                        } 
+                    }
+                    break;
 
-                     viewport()->update(scene()->sceneRect().toRect());
+               default:
+                    {
+                        TupGraphicsScene *guiScene = graphicsScene();
+                        if (!guiScene->scene())
+                            return;
 
-                     if (guiScene->currentTool()->toolType() != TupToolInterface::Tweener && k->currentTool.compare(tr("PolyLine")) != 0)
-                         guiScene->resetCurrentTool();
-                         // guiScene->currentTool()->init(graphicsScene());          
-                }
-                break;
-            }
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupPaintArea::itemResponse() - isDrawing() == true! - No action taken!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
-        #endif
+                        if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                            guiScene->drawCurrentPhotogram();
+                        } else {
+                            guiScene->cleanWorkSpace();
+                            guiScene->drawBackground();
+                        }
+
+                        viewport()->update(scene()->sceneRect().toRect());
+
+                        if (guiScene->currentTool()->toolType() != TupToolInterface::Tweener && k->currentTool.compare(tr("PolyLine")) != 0)
+                            guiScene->currentTool()->init(graphicsScene());          
+                    }
+                    break;
+        }
+
+    } else { 
+      #ifdef K_DEBUG
+             tDebug() << "TupPaintArea::itemResponse - isDrawing() == true! - No action taken";
+      #endif
     }
 
-    guiScene->itemResponse(response);
+    graphicsScene()->itemResponse(event);
 }
 
 void TupPaintArea::projectResponse(TupProjectResponse *)
@@ -643,61 +526,45 @@ void TupPaintArea::projectResponse(TupProjectResponse *)
 
 void TupPaintArea::libraryResponse(TupLibraryResponse *request)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupPaintArea::libraryResponse() - Request Action: " + QString::number(request->action());
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tDebug() << msg;
-        #endif
-    #endif
-
-    TupGraphicsScene *guiScene = graphicsScene();
-
-    if (!guiScene->scene())
+    if (graphicsScene()->isDrawing())
         return;
 
-    if (!guiScene->isDrawing()) {
-        int frameIndex = guiScene->currentFrameIndex();
-        switch (request->action()) {
-                case TupProjectRequest::InsertSymbolIntoFrame:
-                    {
-                         if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                             guiScene->drawCurrentPhotogram();
-                         } else {
-                             guiScene->cleanWorkSpace();
-                             guiScene->drawSceneBackground(frameIndex);
-                         }
+    switch (request->action()) {
 
-                         viewport()->update(scene()->sceneRect().toRect());
-
-                         if (k->currentTool.compare(tr("Object Selection")) == 0)
-                             emit itemAddedOnSelection(guiScene);
+            case TupProjectRequest::AddSymbolToProject:
+                 {
+                     TupGraphicsScene *guiScene = graphicsScene();
+                     if (!guiScene->scene())
+                         return;
+                     if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                         guiScene->drawCurrentPhotogram();
+                     } else {
+                         guiScene->cleanWorkSpace();
+                         guiScene->drawBackground();
                      }
-                     break;
-                     case TupProjectRequest::Remove:
-                     case TupProjectRequest::RemoveSymbolFromFrame:
-                     {
-                         if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                             guiScene->drawCurrentPhotogram();
-                         } else {
-                             guiScene->cleanWorkSpace();
-                             guiScene->drawSceneBackground(frameIndex);
-                         }
 
-                         viewport()->update(scene()->sceneRect().toRect());
+                     viewport()->update(scene()->sceneRect().toRect());
+
+                     if (k->currentTool.compare(tr("Object Selection")) == 0)
+                         emit itemAddedOnSelection(guiScene);
+                 }
+                 break;
+            case TupProjectRequest::Remove:
+            case TupProjectRequest::RemoveSymbolFromProject:
+                 {
+                     TupGraphicsScene *guiScene = graphicsScene();
+                     if (!guiScene->scene())
+                         return;
+                     if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                         guiScene->drawCurrentPhotogram();
+                     } else {
+                         guiScene->cleanWorkSpace();
+                         guiScene->drawBackground();
                      }
-                     break;
-        } 
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupPaintArea::libraryResponse() - isDrawing() == true! - No action taken!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
-        #endif
+
+                     viewport()->update(scene()->sceneRect().toRect());
+                 }
+                 break;
     }
 }
 
@@ -716,27 +583,19 @@ bool TupPaintArea::canPaint() const
 void TupPaintArea::deleteItems()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::deleteItems()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+           T_FUNCINFOX("paintarea");
     #endif
 
-    if (k->currentTool.compare(tr("Object Selection")) != 0 && k->currentTool.compare(tr("Nodes Selection")) != 0)
+    if (k->currentTool.compare(tr("Object Selection")) != 0 && k->currentTool.compare(tr("Line Selection")) != 0)
         return;
 
     QList<QGraphicsItem *> selected = scene()->selectedItems();
 
     if (!selected.empty()) {
-        foreach (QGraphicsItem *item, selected) {
-                 if (qgraphicsitem_cast<TControlNode *> (item))
-                     selected.removeOne(item);
-        }
-
         TupGraphicsScene* currentScene = graphicsScene();
 
         if (currentScene) {
+
             int counter = 0;
             int total = selected.count();
             k->deleteMode = true;
@@ -744,73 +603,47 @@ void TupPaintArea::deleteItems()
                      if (counter == total-1) 
                          k->deleteMode = false;
 
-                     TupLibraryObject::Type type = TupLibraryObject::Svg;
+                     TupLibraryObject::Type type;
+
                      TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item);
                      int itemIndex = -1;
-                     int frameIndex = -1;
-                     int layerIndex = -1;
 
-                     if (k->spaceMode == TupProject::FRAMES_EDITION) {
-                         frameIndex = currentScene->currentFrameIndex();
-                         layerIndex = currentScene->currentLayerIndex();
-                         if (svg) {
+                     if (svg) {
+                         type = TupLibraryObject::Svg;
+                         if (k->spaceMode == TupProject::FRAMES_EDITION) {
                              itemIndex = currentScene->currentFrame()->indexOf(svg);
                          } else {
-                             type = TupLibraryObject::Item;
-                             itemIndex = currentScene->currentFrame()->indexOf(item);
+                             TupBackground *bg = currentScene->scene()->background();
+                             if (bg) {
+                                 TupFrame *frame = bg->frame();
+                                 if (frame)
+                                     itemIndex = frame->indexOf(svg);;
+                             }
                          }
                      } else {
-                         TupBackground *bg = currentScene->scene()->background();
-                         if (bg) {
-                             TupFrame *frame;
-                             if (k->spaceMode == TupProject::STATIC_BACKGROUND_EDITION)
-                                 frame = bg->staticFrame();
-                             else
-                                 frame = bg->dynamicFrame();
-
-                             if (frame) {
-                                 if (svg) {
-                                     itemIndex = frame->indexOf(svg);
-                                 } else {
-                                     type = TupLibraryObject::Item;
-                                     itemIndex = frame->indexOf(item);
-                                 }
-                             } else {
-                                 #ifdef K_DEBUG
-                                     QString msg = "TupPaintArea::deleteItems() - Fatal Error: Background frame is NULL!";
-                                     #ifdef Q_OS_WIN
-                                         qDebug() << msg;
-                                     #else
-                                         tError() << msg;
-                                     #endif
-                                 #endif
-                             } 
+                         type = TupLibraryObject::Item;
+                         if (k->spaceMode == TupProject::FRAMES_EDITION) {
+                             itemIndex = currentScene->currentFrame()->indexOf(item);
                          } else {
-                             #ifdef K_DEBUG
-                                 QString msg = "TupPaintArea::deleteItems() - Fatal Error: Scene has no background element!";
-                                 #ifdef Q_OS_WIN
-                                     qDebug() << msg;
-                                 #else
-                                     tError() << msg;
-                                 #endif
-                             #endif
+                             TupBackground *bg = currentScene->scene()->background();
+                             if (bg) {
+                                 TupFrame *frame = bg->frame();
+                                 if (frame)
+                                     itemIndex = frame->indexOf(item);
+                             }
                          }
                      }
 
                      if (itemIndex >= 0) {
                          TupProjectRequest event = TupRequestBuilder::createItemRequest( 
-                                                   currentScene->currentSceneIndex(), layerIndex, frameIndex, 
-                                                   itemIndex, QPointF(), k->spaceMode, type,
-                                                   TupProjectRequest::Remove);
+                                                  currentScene->currentSceneIndex(), currentScene->currentLayerIndex(), 
+                                                  currentScene->currentFrameIndex(), 
+                                                  itemIndex, QPointF(), k->spaceMode, type,
+                                                  TupProjectRequest::Remove);
                          emit requestTriggered(&event);
                      } else {
                          #ifdef K_DEBUG
-                             QString msg = "TupPaintArea::deleteItems() - Fatal Error: Invalid item index -> " + QString::number(itemIndex);
-                             #ifdef Q_OS_WIN
-                                 qDebug() << msg;
-                             #else
-                                 tFatal() << msg;
-                             #endif
+                                tFatal() << "TupPaintArea::deleteItems() - Error: Invalid item index";
                          #endif
                      }
 
@@ -821,7 +654,41 @@ void TupPaintArea::deleteItems()
     }
 }
 
-/*
+void TupPaintArea::groupItems()
+{
+    // T_FUNCINFO;
+    QList<QGraphicsItem *> selected = scene()->selectedItems();
+
+    if (!selected.isEmpty()) {
+        QString strItems= "";
+        TupGraphicsScene *currentScene = graphicsScene();
+        int firstItem = -1;
+
+        if (currentScene) {
+            foreach (QGraphicsItem *item, selected) {
+                     if (currentScene->currentFrame()->indexOf(item) != -1) {
+                         if (strItems.isEmpty()) {
+                             strItems +="("+ QString::number(currentScene->currentFrame()->indexOf(item));
+                             firstItem = currentScene->currentFrame()->indexOf(item);
+                         } else {
+                             strItems += " , " + 
+                             QString::number(currentScene->currentFrame()->indexOf(item));
+                         }
+                     }
+            }
+            strItems+= ")";
+        }
+
+        if (strItems != ")") {
+            TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(), 
+                                     currentScene->currentLayerIndex(),
+                                     currentScene->currentFrameIndex(), firstItem, QPointF(), k->spaceMode,
+                                     TupLibraryObject::Item, TupProjectRequest::Group, strItems);
+            emit requestTriggered(&event);
+        }
+    }
+}
+
 void TupPaintArea::ungroupItems()
 {
     QList<QGraphicsItem *> selected = scene()->selectedItems();
@@ -841,32 +708,23 @@ void TupPaintArea::ungroupItems()
         }
     }
 }
-*/
 
 void TupPaintArea::copyItems()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::copyItems()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+           T_FUNCINFOX("paintarea");
     #endif
 
     k->copiesXml.clear();
     QList<QGraphicsItem *> selected = scene()->selectedItems();
 
     if (!selected.isEmpty()) {
-        foreach (QGraphicsItem *item, selected) {
-                 if (qgraphicsitem_cast<TControlNode *> (item))
-                     selected.removeOne(item);
-        }
-
         TupGraphicsScene* currentScene = graphicsScene();
 
         if (currentScene) {
             k->oldPosition = selected.at(0)->boundingRect().topLeft();
             foreach (QGraphicsItem *item, selected) {
+
                      QDomDocument dom;
                      dom.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(dom));
                      k->copiesXml << dom.toString();
@@ -899,66 +757,13 @@ void TupPaintArea::copyItems()
                      QApplication::clipboard()->setPixmap(toPixmap);
             }
         }
-    } else {
-        copyCurrentFrame();
     }
 }
 
 void TupPaintArea::pasteItems()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::pasteItems()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
-    #endif
-
-    if (!k->copiesXml.isEmpty()) {
-        TupGraphicsScene* currentScene = graphicsScene();
-
-        if (!k->menuOn)
-            k->position = viewPosition();
-    
-        foreach (QString xml, k->copiesXml) {
-                 TupLibraryObject::Type type = TupLibraryObject::Item;
-                 int total = currentScene->currentFrame()->graphicItemsCount();
-
-                 if (xml.startsWith("<svg")) {
-                     type = TupLibraryObject::Svg;
-                     total = currentScene->currentFrame()->svgItemsCount();
-                 } 
-
-                 int init = xml.indexOf("pos=") + 6;
-                 int end = xml.indexOf(")", init);
-                 int n = end - init;
-                 QString string = xml.mid(init, n);  
-                 QStringList list = string.split(",");
-                 int x = list.at(0).toFloat();
-                 int y = list.at(1).toFloat();
-                 QPoint point = QPoint(x, y);
-
-                 TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(),
-                                           currentScene->currentLayerIndex(),
-                                           currentScene->currentFrameIndex(),
-                                           total, point, k->spaceMode, type,   
-                                           TupProjectRequest::Add, xml);
-                 emit requestTriggered(&event);
-        }
-        k->menuOn = false;
-    } else {
-        pasteCurrentFrame();
-    }
-}
-
-void TupPaintArea::multipasteObject(int pasteTotal)
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::multipasteObject()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+           T_FUNCINFOX("paintarea");
     #endif
 
     TupGraphicsScene* currentScene = graphicsScene();
@@ -966,7 +771,9 @@ void TupPaintArea::multipasteObject(int pasteTotal)
     if (!k->menuOn) {
         k->position = viewPosition();
     }
-   
+    
+    // QPointF point = k->position - k->oldPosition;
+
     foreach (QString xml, k->copiesXml) {
              TupLibraryObject::Type type = TupLibraryObject::Item;
              int total = currentScene->currentFrame()->graphicItemsCount();
@@ -976,74 +783,39 @@ void TupPaintArea::multipasteObject(int pasteTotal)
                  total = currentScene->currentFrame()->svgItemsCount();
              }
 
-             TupScene *scene = k->project->sceneAt(currentScene->currentSceneIndex());
-             if (scene) {
-                 int framesCount = scene->framesCount();
-                 int currentFrame = currentScene->currentFrameIndex();
-                 int newFrameIndex = currentFrame + pasteTotal;
-                 int distance = framesCount - (newFrameIndex + 1);
-                 
-                 if (distance < 0) {
-                     for (int i=framesCount; i<=newFrameIndex; i++) {
-                          TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentSceneIndex,
-                                                                                            currentScene->currentLayerIndex(),
-                                                                                            i,
-                                                                                            TupProjectRequest::Add, tr("Frame"));
-                                                                                            // TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
-                          emit requestTriggered(&request);
-                     }
-                 }
-
-                 int limit = currentFrame + pasteTotal;
-                 for (int i=currentFrame+1; i<=limit; i++) {
-                      TupProjectRequest event = TupRequestBuilder::createItemRequest(k->currentSceneIndex,
-                                                                                     currentScene->currentLayerIndex(),
-                                                                                     i,
-                                                                                     total, QPoint(), k->spaceMode, type,
-                                                                                     TupProjectRequest::Add, xml);
-                      emit requestTriggered(&event);
-                 }
+             /*
+             if (xml.startsWith("<ellipse")) {
+                 tFatal() << "TupPaintArea::pasteItems() - Tracing ellipse!"; 
+             } else {
+                 tFatal() << "TupPaintArea::pasteItems() - NO ellipse detected!: " << xml;
              }
+             */
+
+             TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(),
+                                      currentScene->currentLayerIndex(),
+                                      currentScene->currentFrameIndex(),
+                                      total, QPoint(), k->spaceMode, type,   
+                                      TupProjectRequest::Add, xml);
+             emit requestTriggered(&event);
+
+             /* SQA: Pay attention to the point variable - Copy/Paste issue 
+             TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(),
+                                      currentScene->currentLayerIndex(), 
+                                      currentScene->currentFrameIndex(), 
+                                      total, point, k->spaceMode, type, 
+                                      TupProjectRequest::Add, xml);
+             emit requestTriggered(&event);
+             */
      }
 
      k->menuOn = false;
 }
 
-void TupPaintArea::pasteNextFive()
-{
-     multipasteObject(5);
-}
-
-void TupPaintArea::pasteNextTen()
-{
-     multipasteObject(10);
-}
-
-void TupPaintArea::pasteNextTwenty()
-{
-     multipasteObject(20);
-}
-
-void TupPaintArea::pasteNextFifty()
-{
-     multipasteObject(50);
-}
-
-void TupPaintArea::pasteNextHundred()
-{
-     multipasteObject(100);
-}
-
 void TupPaintArea::cutItems()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::cutItems()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+           T_FUNCINFOX("paintarea");
     #endif
-
     copyItems();
     deleteItems();
 }
@@ -1051,11 +823,7 @@ void TupPaintArea::cutItems()
 void TupPaintArea::setNextFramesOnionSkinCount(int n)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::setNextFramesOnionSkinCount()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+       T_FUNCINFO;
     #endif
 
     if (TupGraphicsScene* currentScene = graphicsScene())
@@ -1065,11 +833,7 @@ void TupPaintArea::setNextFramesOnionSkinCount(int n)
 void TupPaintArea::setPreviousFramesOnionSkinCount(int n)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::setPreviousFramesOnionSkinCount()]";
-        #else
-            T_FUNCINFO;
-        #endif
+       T_FUNCINFO;
     #endif
 
     if (TupGraphicsScene* currentScene = graphicsScene())
@@ -1079,11 +843,7 @@ void TupPaintArea::setPreviousFramesOnionSkinCount(int n)
 void TupPaintArea::addSelectedItemsToLibrary()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::addSelectedItemsToLibrary()]";
-        #else
-            tDebug("paintarea") << "TupPaintArea::addSelectedItemsToLibrary()";
-        #endif
+           tDebug("paintarea") << "Adding to library";
     #endif
 
     QList<QGraphicsItem *> selected = scene()->selectedItems();
@@ -1093,34 +853,31 @@ void TupPaintArea::addSelectedItemsToLibrary()
         return;
     }
 
-    TupLibraryDialog dialog(k->project->library());
+    TupLibraryDialog dialog;
     foreach (QGraphicsItem *item, selected)
              dialog.addItem(item);
+	
+    if (dialog.exec() != QDialog::Accepted)
+        return;
 
-    if (dialog.exec() == QDialog::Accepted) {
-        foreach (QGraphicsItem *item, selected) {
-            if (TupAbstractSerializable *itemSerializable = dynamic_cast<TupAbstractSerializable *>(item)) {
-                QString symName = dialog.symbolName(item) + ".tobj";
+    foreach (QGraphicsItem *item, selected) {
+             if (TupAbstractSerializable *itemSerializable = dynamic_cast<TupAbstractSerializable *>(item)) {
+                 QString symName = dialog.symbolName(item) + ".obj";
 
-                QDomDocument doc;
-                doc.appendChild(itemSerializable->toXml(doc));
+                 QDomDocument doc;
+                 doc.appendChild(itemSerializable->toXml(doc));
 
-                TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, 
+                 TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, 
                                             symName, TupLibraryObject::Item, k->spaceMode, doc.toString().toLocal8Bit(), QString());
-                emit requestTriggered(&request);
-            }
-        }
+                 emit requestTriggered(&request);
+             }
     }
 }
 
-void TupPaintArea::requestItemMovement(QAction *action)
+void TupPaintArea::requestMoveSelectedItems(QAction *action)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::requestItemMovement()]";
-        #else
-            T_FUNCINFOX("paintarea");
-        #endif
+           T_FUNCINFOX("paintarea");
     #endif
 
     QList<QGraphicsItem *> selected = scene()->selectedItems();
@@ -1136,44 +893,35 @@ void TupPaintArea::requestItemMovement(QAction *action)
 
     TupFrame *currentFrame = currentScene->currentFrame();
 
+    QList<int> positions;
     foreach (QGraphicsItem *item, selected) {
-             TupLibraryObject::Type type = TupLibraryObject::Item; 
-             int index = -1;
-             if (TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item)) {
-                 type = TupLibraryObject::Svg;
-                 index = currentFrame->indexOf(svg);
-             } else {
-                 index = currentFrame->indexOf(item);
-             }
+             int newPos = 0;
+             int  value = currentFrame->indexOf(item);
+             bool ok;
+             int moveType = action->data().toInt(&ok);
 
-             if (index >= 0) {
-                 bool ok;
-                 int moveType = action->data().toInt(&ok);
-
-                 if (ok) {
-                     TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(),
-                                               currentScene->currentLayerIndex(), currentScene->currentFrameIndex(), index, QPointF(), 
-                                               k->spaceMode, type, TupProjectRequest::Move, moveType);
-                     emit requestTriggered(&event);
-                 } else {
-                     #ifdef K_DEBUG
-                         QString msg = "TupPaintArea::requestItemMovement() - Fatal error: Invalid action [ " + QString::number(moveType) + " ]";
-                         #ifdef Q_OS_WIN
-                             qDebug() << msg;
-                         #else
-                             tError() << msg;
-                         #endif
-                     #endif
+             if (ok) {
+                 switch (moveType) {
+                         case TupPaintArea::MoveBack:
+                              newPos = 0;
+                              break;
+                         case TupPaintArea::MoveFront:
+                              newPos = currentScene->currentFrame()->graphics().count() - 1;
+                              break;
+                         case TupPaintArea::MoveBackwards:
+                              newPos = value - 1;
+                              break;
+                         case TupPaintArea::MoveForwards:
+                              newPos = value + 1;
+                              break;
+                         default: 
+                              return;
                  }
-             } else {
-                 #ifdef K_DEBUG
-                     QString msg = "TupPaintArea::requestItemMovement() - Fatal error: Invalid object index [ " + QString::number(index) + " ]";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+
+                 TupProjectRequest event = TupRequestBuilder::createItemRequest(currentScene->currentSceneIndex(),
+                                          currentScene->currentLayerIndex(), currentScene->currentFrameIndex(), value, QPointF(), 
+                                          k->spaceMode, TupLibraryObject::Item,  TupProjectRequest::Move, newPos);
+                 emit requestTriggered(&event);
              }
     }
 }
@@ -1181,11 +929,7 @@ void TupPaintArea::requestItemMovement(QAction *action)
 void TupPaintArea::updatePaintArea() 
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::updatePaintArea()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     if (k->spaceMode == TupProject::FRAMES_EDITION) {
@@ -1199,42 +943,28 @@ void TupPaintArea::updatePaintArea()
 void TupPaintArea::paintBackground()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::paintBackground()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     TupGraphicsScene* currentScene = graphicsScene();
     currentScene->cleanWorkSpace();
-    currentScene->drawSceneBackground(currentScene->currentFrameIndex());
+    currentScene->drawBackground();
 }
 
 void TupPaintArea::setCurrentTool(QString tool) 
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::setCurrentTool()]";
-            qDebug() << "SHOW_VAR : " << tool;
-        #else
-            T_FUNCINFO;
-            SHOW_VAR(tool);
-        #endif
+           T_FUNCINFO;
+           SHOW_VAR(tool);
     #endif
 
     k->currentTool = tool;
-    k->canvasEnabled = true;
 }
 
 void TupPaintArea::updateSpaceContext()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::updateSpaceContext()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     TupGraphicsScene* currentScene = graphicsScene();
@@ -1251,51 +981,23 @@ void TupPaintArea::setOnionFactor(double value)
 void TupPaintArea::keyPressEvent(QKeyEvent *event)
 {
     #ifdef K_DEBUG
-        QString msg1 = "TupPaintArea::keyPressEvent() - Current tool: " + k->currentTool;
-        QString msg2 = "TupPaintArea::keyPressEvent() - Key: " + QString::number(event->key());
-        QString msg3 = "TupPaintArea::keyPressEvent() - Key: " + event->text(); 
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupPaintArea::keyPressEvent()]";
-            qDebug() << msg1;
-            qDebug() << msg2;
-            qDebug() << msg3;
-        #else
-            T_FUNCINFO;
-            tDebug() << msg1;
-            tDebug() << msg2;
-            tDebug() << msg3;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    if (event->key() == Qt::Key_Return) {
-        emit newPerspective(4);
+    /* SQA: This code has been deprecated 
+    if (k->currentTool.compare(tr("Object Selection")) == 0 
+        || k->currentTool.compare(tr("Line Selection")) == 0
+        || k->currentTool.compare(tr("Rectangle")) == 0
+        || k->currentTool.compare(tr("Ellipse")) == 0) {
+        TupPaintAreaBase::keyPressEvent(event);
         return;
     }
+    */
 
-    if (event->modifiers() == Qt::ControlModifier) {
-        if (event->key() == Qt::Key_2) {
-            emit newPerspective(1);
-            return;
-        }
-        if (event->key() == Qt::Key_3) {
-            emit newPerspective(2);
-            return;
-        }
-    }
-
-    if (event->key() == Qt::Key_1) {
-        if (event->modifiers() == Qt::NoModifier) {
-            emit zoomIn();
-            return;
-        }
-    }
-
-    if (event->key() == Qt::Key_2) {
-        if (event->modifiers() == Qt::NoModifier) {
-            emit zoomOut();
-            return;
-        }
-    }
+    #ifdef K_DEBUG
+           tWarning() << "TupPaintArea::keyPressEvent() - Current tool: " << k->currentTool;
+           tWarning() << "TupPaintArea::keyPressEvent() - Key: " << event->key();
+    #endif
 
     if (k->currentTool.compare(tr("PolyLine")) == 0) {
         if (event->key() == Qt::Key_X)
@@ -1303,69 +1005,65 @@ void TupPaintArea::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    if (event->key() == Qt::Key_PageUp) {
-        if (event->modifiers() == Qt::ControlModifier)
-            removeCurrentFrame();
-        else
-            goOneFrameBack();
+    if (k->currentTool.compare(tr("Rectangle")) == 0 
+        || k->currentTool.compare(tr("Ellipse")) == 0 
+        || k->currentTool.compare(tr("Line")) == 0) {
+        TupPaintAreaBase::keyPressEvent(event);
         return;
     }
 
-    if (event->key() == Qt::Key_PageDown) {
+    QList<QGraphicsItem *> selected = scene()->selectedItems();
+    if (k->currentTool.compare(tr("Pencil")) != 0) {
+        if (k->currentTool.compare(tr("Object Selection")) == 0) {
+            if (!selected.isEmpty()) {
+                TupPaintAreaBase::keyPressEvent(event);
+                return;
+            }
+        }
+    }
+
+    if (event->key() == Qt::Key_Left) {
+        goOneFrameBack();
+        return;
+    }
+
+    if (event->key() == Qt::Key_Right) {
         if (event->modifiers() == Qt::ControlModifier)
-            copyFrameForward();
-        else  
+            quickCopy();
+        else 
             goOneFrameForward();
-        return;
     }
-
-    // Redundant shortcut for "Add Frame" feature (as 9)
-    if (event->key() == Qt::Key_Insert) {
-        TupGraphicsScene *gScene = graphicsScene();
-        int sceneIndex = gScene->currentSceneIndex();
-        int layerIndex = gScene->currentLayerIndex();
-        int frameIndex = gScene->currentFrameIndex() + 1;
-
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Add, tr("Frame"));
-        emit requestTriggered(&request);
-
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Select);
-        emit localRequestTriggered(&request);
-        return;
-    }
-
-    TupPaintAreaBase::keyPressEvent(event);
 }
 
-/*
 void TupPaintArea::keyReleaseEvent(QKeyEvent *event)
 {
     TupPaintAreaBase::keyReleaseEvent(event);
 }
-*/
 
 void TupPaintArea::goOneFrameBack()
 {
     TupGraphicsScene *scene = graphicsScene();
 
     if (scene->currentFrameIndex() > 0) {
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(scene->currentSceneIndex(), scene->currentLayerIndex(),
-                                                                        scene->currentFrameIndex() - 1, TupProjectRequest::Select, "1");
-        emit localRequestTriggered(&request);
+        TupProjectRequest request = TupRequestBuilder::createFrameRequest(scene->currentSceneIndex(),
+                                                                        scene->currentLayerIndex(),
+                                                                        scene->currentFrameIndex() - 1,
+                                                                        TupProjectRequest::Select, "1");
+        emit requestTriggered(&request);
     }
 }
 
 void TupPaintArea::goOneFrameForward()
 {
     TupGraphicsScene *scene = graphicsScene();
-    int framesCount = scene->framesCount();
+    int framesTotal = scene->framesTotal();
     int frameIndex = scene->currentFrameIndex() + 1;
 
-    if (frameIndex == framesCount) {
+    if (frameIndex == framesTotal) {
         TupProjectRequest request = TupRequestBuilder::createFrameRequest(scene->currentSceneIndex(),
                                                      scene->currentLayerIndex(),
                                                      frameIndex,
-                                                     TupProjectRequest::Add, tr("Frame"));
+                                                     TupProjectRequest::Add, tr("Frame %1").arg(frameIndex + 1));
         emit requestTriggered(&request);
     }
 
@@ -1375,129 +1073,39 @@ void TupPaintArea::goOneFrameForward()
 void TupPaintArea::copyCurrentFrame()
 {
     TupGraphicsScene *gScene = graphicsScene();
-    int sceneIndex = gScene->currentSceneIndex();
-    int layerIndex = gScene->currentLayerIndex();
-    int frameIndex = gScene->currentFrameIndex();
 
-    k->copyFrameName = tr("Frame");
-    TupScene *scene = k->project->sceneAt(sceneIndex);
+    TupScene *scene = k->project->scene(gScene->currentSceneIndex());
     if (scene) {
-        TupLayer *layer = scene->layerAt(layerIndex);
+        TupLayer *layer = scene->layer(gScene->currentLayerIndex());
         if (layer) {
-            TupFrame *frame = layer->frameAt(frameIndex);
+            TupFrame *frame = layer->frame(gScene->currentFrameIndex());
             if (frame) {
-                k->copyFrameName = frame->frameName();
-                TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Copy);
-                emit localRequestTriggered(&request);
-                k->copyIsValid = true;
+                QDomDocument doc;
+                doc.appendChild(frame->toXml(doc));
+                k->frameCopy = doc.toString(0);
             }
         }
     }
+
 }
 
-void TupPaintArea::pasteCurrentFrame()
+void TupPaintArea::pasteDataOnCurrentFrame()
 {
-    if (k->copyIsValid) {
-        TupGraphicsScene *gScene = graphicsScene();
-        int sceneIndex = gScene->currentSceneIndex();
-        int layerIndex = gScene->currentLayerIndex();
-        int frameIndex = gScene->currentFrameIndex();
+    TupGraphicsScene *scene = graphicsScene();
 
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Paste);
-        emit localRequestTriggered(&request);
 
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Rename, k->copyFrameName);
-        emit requestTriggered(&request);
-    }
-}
-
-void TupPaintArea::copyFrameForward()
-{
-    TupGraphicsScene *gScene = graphicsScene();
-    int sceneIndex = gScene->currentSceneIndex();
-    int layerIndex = gScene->currentLayerIndex();
-    int frameIndex = gScene->currentFrameIndex();
-
-    QString frameName = tr("Frame");
-    TupScene *scene = k->project->sceneAt(sceneIndex);
-    if (scene) {
-        TupLayer *layer = scene->layerAt(layerIndex);
-        if (layer) {
-            TupFrame *frame = layer->frameAt(frameIndex);
-            if (frame)
-                frameName = frame->frameName();
-        }
-    }
-
-    TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Copy);
-    emit localRequestTriggered(&request);
-
-    int target = frameIndex + 1;
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Add, "");
+    TupProjectRequest request = TupRequestBuilder::createFrameRequest(scene->currentSceneIndex(),
+                                                                    scene->currentLayerIndex(), 
+                                                                    scene->currentFrameIndex(),
+                                                                    TupProjectRequest::Paste, k->frameCopy);
     emit requestTriggered(&request);
-
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Paste);
-    emit localRequestTriggered(&request);
-
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Rename, frameName);
-    emit requestTriggered(&request);
-
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Select);
-    emit localRequestTriggered(&request);
 }
 
-void TupPaintArea::removeCurrentFrame()
+void TupPaintArea::quickCopy()
 {
-    TCONFIG->beginGroup("General");
-    bool ask = TCONFIG->value("ConfirmRemoveFrame", true).toBool();
-    if (ask) {
-        TOptionalDialog dialog(tr("Do you want to remove this frame?"), tr("Confirmation"), this);
-        dialog.setModal(true);
-        QDesktopWidget desktop;
-        dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
-                    (int) (desktop.screenGeometry().height() - dialog.sizeHint().height())/2);
-
-        if (dialog.exec() == QDialog::Rejected)
-            return;
-
-        TCONFIG->beginGroup("General");
-        TCONFIG->setValue("ConfirmRemoveFrame", dialog.shownAgain());
-        TCONFIG->sync();
-    }
-
-    TupGraphicsScene *gScene = graphicsScene();
-    int sceneIndex = gScene->currentSceneIndex();
-    int layerIndex = gScene->currentLayerIndex();
-    int frameIndex = gScene->currentFrameIndex();
-
-    int framesCount = 0;
-    TupScene *scene = k->project->sceneAt(sceneIndex);
-    if (scene) {
-        TupLayer *layer = scene->layerAt(layerIndex);
-        if (layer)
-            framesCount = layer->framesCount();
-        else
-            return;
-    } else {
-        return;
-    }
-
-    TupProjectRequest request;
-    if (framesCount == 1) {
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, 0, TupProjectRequest::Reset);
-        emit requestTriggered(&request);
-
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, 0, TupProjectRequest::Rename, tr("Frame"));
-        emit requestTriggered(&request);
-    } else {
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Remove);
-        emit requestTriggered(&request);
-
-        if (frameIndex > 0) {
-            request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex - 1, TupProjectRequest::Select);
-            emit localRequestTriggered(&request);
-        }
-    }
+    copyCurrentFrame();
+    goOneFrameForward();
+    pasteDataOnCurrentFrame();
 }
 
 void TupPaintArea::goToFrame(int index)
@@ -1506,62 +1114,6 @@ void TupPaintArea::goToFrame(int index)
     TupProjectRequest request = TupRequestBuilder::createFrameRequest(scene->currentSceneIndex(),
                                                                     scene->currentLayerIndex(),
                                                                     index,
-                                                                    TupProjectRequest::Select);
-                                                                    // TupProjectRequest::Select, "1");
-    emit localRequestTriggered(&request);
-}
-
-void TupPaintArea::goToFrame(int frameIndex, int layerIndex, int sceneIndex)
-{
-    TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex,
-                                                                      TupProjectRequest::Select);
-    emit localRequestTriggered(&request);
-}
-
-void TupPaintArea::goToScene(int sceneIndex)
-{
-    TupProjectRequest request = TupRequestBuilder::createSceneRequest(sceneIndex, TupProjectRequest::Select);
-    emit localRequestTriggered(&request);
-}
-
-/*
-void TupPaintArea::tabletEvent(QTabletEvent *event)
-{
-    tError() << "TupPaintArea::tabletEvent() - Pressure: " << event->pressure();
-    tError() << "TupPaintArea::tabletEvent() - xTilt: " << event->xTilt();
-    tError() << "TupPaintArea::tabletEvent() - yTilt: " << event->yTilt();
-
-    TupPaintAreaBase::tabletEvent(event);
-}
-*/
-
-int TupPaintArea::currentSceneIndex()
-{
-    return graphicsScene()->currentSceneIndex();
-}
-
-int TupPaintArea::currentLayerIndex()
-{
-    return graphicsScene()->currentLayerIndex();
-}
-
-int TupPaintArea::currentFrameIndex()
-{
-    return graphicsScene()->currentFrameIndex();
-}
-
-void TupPaintArea::resetWorkSpaceCenter(const QSize projectSize)
-{
-    int centerX = projectSize.width()/2;
-    int centerY = projectSize.height()/2;
-
-    foreach (QGraphicsView *view, graphicsScene()->views()) {
-             view->centerOn(QPointF(centerX, centerY));
-             view->setSceneRect(0, 0, projectSize.width(), projectSize.height());
-    }
-}
-
-void TupPaintArea::updateLoadingFlag(bool flag)
-{
-    graphicsScene()->updateLoadingFlag(flag);
+                                                                    TupProjectRequest::Select, "1");
+    emit requestTriggered(&request);
 }

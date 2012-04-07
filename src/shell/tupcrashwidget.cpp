@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,9 +33,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupcrashwidget.h"
+#include <QPainter>
+#include <QDialog>
+#include <QPushButton>
+#include <QApplication>
+#include <QFile>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QTextBrowser>
+#include <QtDebug>
+#include <QProcess>
+#include <signal.h>
 
-#ifdef K_DEBUG
+#include "tupcrashwidget.h"
+#include "tupcrashhandler.h"
+
+#include "tglobal.h"
+#include "tconfig.h"
+#include "tdebug.h"
+
+#include <unistd.h>
 
 class TextArea : public QTextBrowser
 {
@@ -69,7 +86,7 @@ void TextArea::setSource(const QUrl &name)
     }
 }
 
-#include "tupcrashwidget.moc"
+#include "ktcrashwidget.moc"
 
 TupCrashWidget::TupCrashWidget(int sig) : QDialog(0), m_sig(sig)
 {
@@ -133,7 +150,9 @@ void TupCrashWidget::setPid(int pid)
 
 void TupCrashWidget::addBacktracePage(const QString &execInfo, const QString &backtrace)
 {
-    T_FUNCINFO << execInfo << " " << backtrace;
+    #ifdef K_DEBUG
+        T_FUNCINFO << execInfo << " " << backtrace;
+    #endif
 
     QWidget *btPage = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(btPage);
@@ -155,19 +174,9 @@ void TupCrashWidget::addBacktracePage(const QString &execInfo, const QString &ba
 
 void TupCrashWidget::restart()
 {
-   /*
    QString path = QString::fromLocal8Bit(::getenv("TUPI_BIN")) + "/tupi &";
    QByteArray ba = path.toAscii();
    system(ba.data());
-   kill(m_pid, 9);
-   */
-
-   QString path = QString::fromLocal8Bit(::getenv("TUPI_BIN")) + "/tupi &";
-   QByteArray ba = path.toLatin1();
-
-   int flag = system(ba.data());
-   tWarning() << "TupCrashWidget::restart() - System output: " << flag;
-
    kill(m_pid, 9);
 }
 
@@ -175,6 +184,4 @@ void TupCrashWidget::exit()
 {
    kill(m_pid, 9);
 }
-
-#endif
 

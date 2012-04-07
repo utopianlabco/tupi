@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tupbrushmanager.h"
+#include "tdebug.h"
 
 /**
  * This class handles the set of brushes for painting.
@@ -46,7 +47,6 @@ struct TupBrushManager::Private
     Private() : pen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap)), brush(Qt::transparent) {}
     QPen pen;
     QBrush brush;
-    QColor bgColor;
 };
 
 TupBrushManager::TupBrushManager(QObject * parent) : QObject(parent), k(new Private)
@@ -64,11 +64,6 @@ TupBrushManager::~TupBrushManager()
     delete k;
 }
 
-QPen TupBrushManager::pen() const
-{
-    return k->pen;
-}
-
 void TupBrushManager::setPen(const QPen &pen)
 {
     k->pen = pen;
@@ -84,38 +79,20 @@ void TupBrushManager::setPenColor(const QColor &color)
     emit penChanged(k->pen);
 }
 
-void TupBrushManager::setPenWidth(int width)
+QPen TupBrushManager::pen() const
 {
-    return k->pen.setWidth(width);
-}
-
-QBrush TupBrushManager::brush() const
-{
-    return k->brush;
+    return k->pen;
 }
 
 void TupBrushManager::setBrush(const QBrush &brush)
 {
     k->brush = brush;
-
     emit brushChanged(brush);
 }
 
-void TupBrushManager::initBgColor(const QColor &color)
+QBrush TupBrushManager::brush() const
 {
-    k->bgColor = color;
-}
-
-void TupBrushManager::setBgColor(const QColor &color)
-{
-    k->bgColor = color;
-
-    emit bgColorChanged(color);
-}
-
-QColor TupBrushManager::bgColor()
-{
-    return k->bgColor;
+    return k->brush;
 }
 
 int TupBrushManager::penWidth() const

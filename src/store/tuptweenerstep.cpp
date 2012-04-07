@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tuptweenerstep.h"
+#include "tdebug.h"
 
 #include <QVector>
 
@@ -86,6 +87,8 @@ void TupTweenerStep::setScale(double sx, double sy)
 
 void TupTweenerStep::setShear(double sh, double sv)
 {
+    tFatal() << "TupTweenerStep::setShear() - X: " << sh;
+    tFatal() << "TupTweenerStep::setShear() - Y: " << sv;
     k->shear.x = sh;
     k->shear.y = sv;
     k->flags |= Shear;
@@ -105,6 +108,7 @@ void TupTweenerStep::setColor(const QColor &color)
 
 bool TupTweenerStep::has(Type type) const
 {
+    bool test = k->flags & type;
     return k->flags & type;
 }
 
@@ -160,38 +164,38 @@ QDomElement TupTweenerStep::toXml(QDomDocument& doc) const
     
     if (this->has(TupTweenerStep::Position)) {
         QDomElement e = doc.createElement("position");
-        e.setAttribute("x", QString::number(k->position.x()));
-        e.setAttribute("y", QString::number(k->position.y()));
-
+        e.setAttribute("x", k->position.x());
+        e.setAttribute("y", k->position.y());
+        
         step.appendChild(e);
     }
 
     if (this->has(TupTweenerStep::Rotation)) {
         QDomElement e = doc.createElement("rotation");
-        e.setAttribute("angle", QString::number(k->rotation));
+        e.setAttribute("angle", k->rotation);
     
         step.appendChild(e);
     }
     
     if (this->has(TupTweenerStep::Scale)) {
         QDomElement e = doc.createElement("scale");
-        e.setAttribute("sx", QString::number(k->scale.x));
-        e.setAttribute("sy", QString::number(k->scale.y));
+        e.setAttribute("sx", k->scale.x);
+        e.setAttribute("sy", k->scale.y);
         
         step.appendChild(e);
     }
     
     if (this->has(TupTweenerStep::Shear)) {
         QDomElement e = doc.createElement("shear");
-        e.setAttribute("sh", QString::number(k->shear.x));
-        e.setAttribute("sv", QString::number(k->shear.y));
+        e.setAttribute("sh", k->shear.x);
+        e.setAttribute("sv", k->shear.y);
         
         step.appendChild(e);
     }
     
     if (this->has(TupTweenerStep::Opacity)) {
         QDomElement e = doc.createElement("opacity");
-        e.setAttribute("opacity", QString::number(k->opacity));
+        e.setAttribute("opacity", k->opacity);
 
         step.appendChild(e);
     }
@@ -218,7 +222,9 @@ void TupTweenerStep::fromXml(const QString& xml)
     
     if (doc.setContent(xml)) {
         QDomElement root = doc.documentElement();
+        
         QDomNode node = root.firstChild();
+        
         k->index = root.attribute("value").toInt();
         
         while (!node.isNull()) {

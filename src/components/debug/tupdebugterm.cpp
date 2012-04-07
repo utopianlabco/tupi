@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,26 +34,26 @@
  ***************************************************************************/
 
 #include "tupdebugterm.h"
+#include "tdebug.h"
 
-#ifdef K_DEBUG
+#include <QIcon>
+#include <QBoxLayout>
+#include <QTextBrowser>
 
 TupDebugTerm::TupDebugTerm(QWidget *parent, int width) : QWidget(parent)
 {
-    TINIT;
-    QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this); 
-    mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
-    debugBrowser = TDebug::browser(this, width);
-    mainLayout->addWidget(debugBrowser);
+    #ifdef K_DEBUG
+           TINIT;
+           QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this); 
+           mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
+           debugBrowser = TDebug::browser(this, width);
+           mainLayout->addWidget(debugBrowser);
+    #endif
 }
 
 TupDebugTerm::~TupDebugTerm()
 {
-    TEND;
+    #ifdef K_DEBUG
+           TEND;
+    #endif
 }
-
-void TupDebugTerm::setProjectStatus(bool status)
-{
-    TDebug::setProjectStatus(status);     
-}
-
-#endif

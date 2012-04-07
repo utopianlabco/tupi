@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,18 @@
  ***************************************************************************/
 
 #include "tupimagedialog.h"
+#include "tapplicationproperties.h"
+#include "tglobal.h"
+#include "tconfig.h"
+#include "tdebug.h"
+
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QIcon>
+#include <QLabel>
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QPushButton>
 
 struct TupImageDialog::Private
 {
@@ -48,25 +60,19 @@ TupImageDialog::TupImageDialog(QWidget *parent) : QDialog(parent), k(new Private
     setWindowTitle(tr("Image Properties"));
     setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/animation_mode.png")));
 
-    QLocale utf(QLocale::AnyLanguage, QLocale::AnyCountry);
-
     QLabel *titleLabel = new QLabel(tr("Title"));
     k->titleEdit = new QLineEdit(tr("My Picture"));
-    k->titleEdit->setLocale(utf);
-
     connect(k->titleEdit, SIGNAL(textChanged(const QString &)), this, SLOT(resetTitleColor(const QString &)));
     titleLabel->setBuddy(k->titleEdit);
 
-    QLabel *topicLabel = new QLabel(tr("Topics"));
+    QLabel *topicLabel = new QLabel(tr("Title"));
     k->topicEdit = new QLineEdit(tr("#topic1 #topic2 #topic3"));
-    k->topicEdit->setLocale(utf);
     connect(k->topicEdit, SIGNAL(textChanged(const QString &)), this, SLOT(resetTopicColor(const QString &)));
     topicLabel->setBuddy(k->topicEdit);
 
     QLabel *descLabel = new QLabel(tr("Description"));
 
     k->descText = new QTextEdit;
-    k->descText->setLocale(utf);
     k->descText->setAcceptRichText(false);
     k->descText->setFixedHeight(80);
     k->descText->setText(tr("Just a little taste of my style :)"));
@@ -97,7 +103,6 @@ TupImageDialog::TupImageDialog(QWidget *parent) : QDialog(parent), k(new Private
     layout->addWidget(descLabel);
     layout->addWidget(k->descText);
     layout->addLayout(buttonLayout);
-
     setLayout(layout);
 }
 
@@ -146,16 +151,16 @@ void TupImageDialog::resetTopicColor(const QString &)
 
 QString TupImageDialog::imageTitle() const
 {
-     return QString::fromUtf8(k->titleEdit->text().toUtf8());
+     return k->titleEdit->text();
 }
 
 QString TupImageDialog::imageTopics() const
 {
-     return QString::fromUtf8(k->topicEdit->text().toUtf8());
+     return k->topicEdit->text();
 }
 
 QString TupImageDialog::imageDescription() const
 {
-     return QString::fromUtf8(k->descText->toPlainText().toUtf8());
+     return k->descText->toPlainText();
 }
 

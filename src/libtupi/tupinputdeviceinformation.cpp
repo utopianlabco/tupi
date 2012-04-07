@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,9 @@
  ***************************************************************************/
 
 #include "tupinputdeviceinformation.h"
+#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
+#include <QTabletEvent>
 
 /**
  * This class captures and process all the mouse/tablet events.
@@ -107,8 +110,6 @@ void TupInputDeviceInformation::updateFromMouseEvent(QMouseEvent *event)
 
 void TupInputDeviceInformation::updateFromTabletEvent(QTabletEvent *event)
 {
-    // tError() << "updateFromTabletEvent() - Pressure: " << event->pressure();
-
     k->tabletInfo.pressure = event->pressure();
     k->tabletInfo.rotation = event->rotation();
     k->tabletInfo.tangentialPressure = event->tangentialPressure();
@@ -120,7 +121,6 @@ void TupInputDeviceInformation::updateFromTabletEvent(QTabletEvent *event)
 
 double TupInputDeviceInformation::pressure() const
 {
-    //tError() << "TupInputDeviceInformation::pressure() - Testing pressure: " << k->tabletInfo.pressure;
     return k->tabletInfo.pressure;
 }
 

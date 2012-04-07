@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,17 @@
  ***************************************************************************/
 
 #include "tupsymboleditor.h"
+#include "tuplibraryobject.h"
+#include "tuppluginmanager.h"
+#include "tuptoolplugin.h"
+// Tupi Framework
+#include "taction.h"
+#include "tdebug.h"
+
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QToolBar>
+#include <QTimer>
 
 /**
  * This class defines the toolbar at the left side of the paint area.
@@ -41,7 +52,7 @@
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT View : public QGraphicsView
+class View : public QGraphicsView
 {
     public:
         View();
@@ -124,12 +135,7 @@ void TupSymbolEditor::loadTools()
             
              for (it = keys.begin(); it != keys.end(); ++it) {
                   #ifdef K_DEBUG
-                      QString msg = "TupSymbolEditor::loadTools() - *** Tool Loaded: " + *it;
-                      #ifdef Q_OS_WIN
-                          qDebug() << msg;
-                      #else
-                          tDebug("plugins") << msg;
-                      #endif
+                         tDebug("plugins") << "*** Tool Loaded: " << *it;
                   #endif
             
                   TAction *act = tool->actions()[*it];
@@ -170,11 +176,7 @@ void TupSymbolEditor::loadTools()
 void TupSymbolEditor::selectTool()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupSymbolEditor::selectTool()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;                         
     #endif
 
     TAction *action = qobject_cast<TAction *>(sender());

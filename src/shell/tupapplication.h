@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,23 +33,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPAPPLICATION_H
-#define TUPAPPLICATION_H
+#ifndef TupAPPLICATION_H
+#define TupAPPLICATION_H
 
 #include "tapplication.h"
-
-#ifdef K_DEBUG
-
-#ifdef Q_OS_WIN
-#include <QDebug>
-#else
-#include "tdebug.h"
-#endif
-
-#endif
-
-#include <QDesktopWidget>
-#include <QRect>
 
 /**
  * Support Class for main.cpp
@@ -66,6 +53,17 @@ class TupApplication : public TApplication
         ~TupApplication();
 
     public slots:
+        /**
+         * @if english
+         * Open a settings wizard the first time Tupi is launched
+         * @endif
+         * @if spanish
+         * Lanza un wizard de configuracion la primera vez que se inicia la aplicacion
+         * @endif
+         * @return true/false if the application has the settings file created
+         */
+         virtual bool firstRun();
+
         /**
          * @if english
          * Create a cache directory with the path defined at cacheDir variable

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,35 +36,18 @@
 #ifndef TUPCRASHHANDLER_H
 #define TUPCRASHHANDLER_H
 
-#ifdef K_DEBUG
-
 #include "tapplicationproperties.h"
-#include "tdebug.h"
-
-extern "C"
-{
-#include <sys/types.h> //pid_t
-#include <sys/wait.h>  //waitpid
-#include <unistd.h>    //write, getpid
-#include <stdio.h>
-}
 
 #include <QString>
 #include <QMap>
 #include <QColor>
 #include <QPair>
 #include <QImage>
-#include <QApplication>
-#include <QDomDocument>
-#include <QFile>
-#include <QTemporaryFile>
-#include <QProcess>
-#include <QTranslator>
-#include <QDesktopWidget>
 #include <csignal>
-#include <cstdio>
 
 class TupCrashHandler;
+
+#ifdef Q_OS_UNIX
 
 class TupCrashHandler
 {
@@ -110,10 +93,11 @@ class TupCrashHandler
         static TupCrashHandler *m_instance; // Singleton
         QString m_program;
         QString m_imagePath;
-        // bool m_verbose;
+        bool m_verbose;
 };
 
 #define CHANDLER TupCrashHandler::instance()
 
-#endif
+#endif // Q_OS_UNIX
+
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,12 +36,9 @@
 #ifndef TUPREQUESTPARSER_H
 #define TUPREQUESTPARSER_H
 
-#include "tglobal.h"
 #include "tupxmlparserbase.h"
 #include "tupprojectrequest.h"
-
-#include <QXmlSimpleReader>
-#include <QXmlInputSource>
+#include "tupglobal_store.h"
 
 class TupProjectResponse;
 
@@ -49,7 +46,7 @@ class TupProjectResponse;
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupRequestParser : public TupXmlParserBase
+class STORE_EXPORT TupRequestParser : public TupXmlParserBase
 {
     public:
         TupRequestParser();

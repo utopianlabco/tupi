@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -32,18 +32,15 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
+#ifndef TupSVG2QT_H
+#define TupSVG2QT_H
 
-#ifndef TUPSVG2QT_H
-#define TUPSVG2QT_H
-
-#include "tglobal.h"
-
-#include <cmath>
 #include <QString>
 #include <QPainterPath>
 #include <QPen>
 #include <QXmlAttributes>
 #include <QBrush>
+#include "tupglobal.h"
 
 /**
  * @author David Cuadrado
@@ -64,7 +61,6 @@ class TUPI_EXPORT TupSvg2Qt
         static bool parseBrush(QBrush &brush, const QXmlAttributes &attributes);
         
         static QList<qreal> parseNumbersList(QString::const_iterator &itr);
-        static QList<int> parseIntList(QString::const_iterator &itr);
 };
 
 #endif

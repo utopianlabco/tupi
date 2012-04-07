@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,26 +34,48 @@
  ***************************************************************************/
 
 #include "tupexposureheader.h"
-#include "tconfig.h"
+
+#include <QHeaderView>
+#include <QPainter>
+#include <QStyleOptionButton>
+#include <QMap>
+#include <QVector>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QMenu>
+
+#include "tdebug.h"
+#include <tupglobal.h>
+
+/*
+struct LayerItem
+{
+    QString title;
+    int lastFrame;
+    bool isVisible;
+    bool isLocked;
+};
+*/
 
 /**
  * @author Jorge Cuadrado
  */
 
-TupExposureHeader::TupExposureHeader(QWidget * parent) : QHeaderView(Qt::Horizontal, parent), m_editedSection(-1), m_sectionOnMotion(false)
+TupExposureHeader::TupExposureHeader(QWidget * parent) : QHeaderView(Qt::Horizontal, parent), m_sectionEdited(-1),
+                                                       m_blockSectionMoved(false)
 {
-    setSectionsClickable(true);
-    setSectionsMovable(true);
+    setClickable(true);
 
-    TCONFIG->beginGroup("General");
-    themeName = TCONFIG->value("Theme", "Light").toString();
+    //SQA: Disabled while layers movability is enhanced 
+    //setMovable(true);
 
-    connect(this, SIGNAL(sectionDoubleClicked(int)), this, SLOT(showTitleEditor(int)));
+    connect(this, SIGNAL(sectionDoubleClicked(int)), this, SLOT(showEditorName(int)));
 
     m_editor = new QLineEdit(this);
     m_editor->setFocusPolicy(Qt::ClickFocus);
     m_editor->setInputMask("");
-    connect(m_editor, SIGNAL(editingFinished()), this, SLOT(hideTitleEditor()));
+    connect(m_editor, SIGNAL(editingFinished()), this, SLOT(hideEditorName()));
     m_editor->hide();
 }
 
@@ -61,136 +83,111 @@ TupExposureHeader::~TupExposureHeader()
 {
 }
 
-void TupExposureHeader::notifyVisibilityChange(int section)
+void TupExposureHeader::emitVisibilityChanged(int section)
 {
-   emit visibilityChanged(visualIndex(section), !m_sections[section].isVisible);
+   emit visibilityChanged(visualIndex(section), !m_layers[section].isVisible);
 }
 
-void TupExposureHeader::setSectionVisibility(int section, bool visibility)
+void TupExposureHeader::setVisibilityChanged(int layerIndex, bool visibility)
 {
     // Q_UNUSED(visibility);
-    // FIXME: in tupexpousertable.cpp visibility or !m_sections[logicalndex].isVisible
-    // m_sections[logicalndex].isVisible = !m_sections[logicalndex].isVisible;
+    // FIXME: in ktexpousertable.cpp visibility or !m_layers[logicalndex].isVisible
+    // m_layers[logicalndex].isVisible = !m_layers[logicalndex].isVisible;
 
-    m_sections[section].isVisible = visibility;
-    updateSection(section);
+    m_layers[layerIndex].isVisible = visibility;
+    updateSection(layerIndex);
 }
 
-void TupExposureHeader::showTitleEditor(int section)
+void TupExposureHeader::showEditorName(int section)
 {
     if (section >= 0) {
-        QFont font = this->font();
-        font.setPointSize(8);
+        QFont font("Arial", 8, QFont::Normal, false);
         m_editor->setFont(font);
 
         int x = sectionViewportPosition(section);
         m_editor->setGeometry(x, 0, sectionSize(section), height());
-        m_editedSection = section;
-        m_editor->setText(m_sections[section].title);
+        m_sectionEdited = section;
+        m_editor->setText(m_layers[section].title);
         m_editor->show();
         m_editor->setFocus();
     }
 }
 
-void TupExposureHeader::hideTitleEditor()
+void TupExposureHeader::hideEditorName()
 {
     m_editor->hide();
 
-    if (m_editedSection != -1 && m_editor->isModified())
-        emit nameChanged(m_editedSection, m_editor->text());
+    if (m_sectionEdited != -1 && m_editor->isModified())
+        emit changedName(m_sectionEdited, m_editor->text());
 
-    m_editedSection = -1;
+    m_sectionEdited = -1;
 }
 
-void TupExposureHeader::insertSection(int section, const QString &text)
+void TupExposureHeader::insertLayer(int layerIndex, const QString &text)
 {
-    ExposureLayerItem layer;
+    LayerItem layer;
     layer.title = text;
     layer.lastFrame = 0;
     layer.isVisible = true;
     layer.isLocked = false;
-
-    m_sections.insert(section, layer);
+    m_layers.insert(layerIndex, layer);
 }
 
-void TupExposureHeader::setSectionTitle(int section, const QString &text)
+void TupExposureHeader::setLayerName(int layerIndex, const QString &text)
 {
-    m_sections[section].title = text;
-    updateSection(section);
+    m_layers[layerIndex].title = text;
+    updateSection(layerIndex);
 }
 
-bool TupExposureHeader::sectionIsMoving()
+bool TupExposureHeader::signalMovedBlocked()
 {
-    return m_sectionOnMotion;
+    return m_blockSectionMoved;
 }
 
-void TupExposureHeader::setLockFlag(int logicalndex, bool lock)
+void TupExposureHeader::setLockLayer(int logicalndex, bool lock)
 {
-    m_sections[logicalndex].isLocked = lock;
+    m_layers[logicalndex].isLocked = lock;
     updateSection(logicalndex);
 }
 
-void TupExposureHeader::moveHeaderSection(int position, int newPosition, bool isLocalRequest)
+void TupExposureHeader::moveLayer(int position, int newPosition)
 {
-    if (isLocalRequest) {
-        m_sectionOnMotion = true;
-        moveSection(visualIndex(position), visualIndex(newPosition));
-        m_sections.swap(position, newPosition);
-        m_sectionOnMotion = false;
-    } else {
-        m_sections.swap(position, newPosition);
-    }
+    m_blockSectionMoved = true;
+    moveSection(position, newPosition);
+    m_blockSectionMoved = false;
 }
 
-int TupExposureHeader::lastFrame(int section)
+int TupExposureHeader::lastFrame(int layerIndex)
 {
-    return m_sections[section].lastFrame;
+    return m_layers[layerIndex].lastFrame;
 }
 
-void TupExposureHeader::removeSection(int section)
+void TupExposureHeader::removeLayer(int layerIndex)
 {
-    m_sections.removeAt(section);
+    m_layers.remove(layerIndex);
 }
 
-void TupExposureHeader::setLastFrame(int section, int num)
+void TupExposureHeader::setLastFrame(int layerIndex, int num)
 {
-    m_sections[section].lastFrame = num;
+    m_layers[layerIndex].lastFrame = num;
 }
 
-void TupExposureHeader::mousePressEvent(QMouseEvent *event)
+void TupExposureHeader::mousePressEvent(QMouseEvent * event)
 {
     int section = logicalIndexAt(event->pos());
-    if (section > -1 && section < count()) {
-        int x = sectionViewportPosition(section) + 3;
-        QFont font = this->font();
-        font.setPointSize(8);
-        QFontMetrics fm(font);
-        QString text = m_sections[section].title;
-        int w = fm.width(text);
-        int limit = sectionSize(section)/2 - w/2;
+    int x = sectionViewportPosition(section) + 3;
 
-        QRect rect(x + limit - 12, 3, 12, height()-3);
-        if (rect.contains(event->pos())) {
-            notifyVisibilityChange(section);
-        } else {
-            if (m_currentSection != section)
-                emit headerSelectionChanged(section);
-
-            QHeaderView::mousePressEvent(event);
-        }
+    QRect rect(x+3, 3, height()-3, height()-3);
+    if (rect.contains(event->pos())) {
+        emitVisibilityChanged(section);
     } else {
-        #ifdef K_DEBUG
-            QString msg = "TupExposureHeader::mousePressEvent() - Fatal Error: Section index is invalid -> " + QString::number(section);
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
-        #endif
+        if (currentCol != section)
+            emit selectionChanged(section);
+        QHeaderView::mousePressEvent(event);
     }
 }
 
-void TupExposureHeader::paintSection(QPainter *painter, const QRect & rect, int section) const
+void TupExposureHeader::paintSection(QPainter * painter, const QRect & rect, int layerIndex) const
 {
     if (!rect.isValid()) 
         return;
@@ -211,28 +208,31 @@ void TupExposureHeader::paintSection(QPainter *painter, const QRect & rect, int 
 
     style()->drawControl(QStyle::CE_HeaderSection, &headerOption, painter);
 
-    QString text = m_sections[section].title;
-    QFont font = this->font();
-    font.setPointSize(8);
+    QString text = m_layers[layerIndex].title;
+    QFont font("Arial", 8, QFont::Normal, false);
     QFontMetrics fm(font);
-
-    if (((section == m_currentSection) || (m_sections.size() == 1)) && m_sections[section].isVisible) { // Header selected
-        QColor color(0, 136, 0, 40);
-        if (themeName.compare("Dark") == 0)
-            color = QColor(200, 220, 200);
-
-        painter->fillRect(rect.normalized().adjusted(0, 0, 0, -1), color);
-    }
 
     QStyleOptionButton buttonOption;
 
-    if (m_sections[section].isVisible) {
-        buttonOption.palette.setBrush(QPalette::Button, QColor(0, 136, 0, 255));
+    if (m_layers[layerIndex].isVisible) {
+        buttonOption.palette.setBrush(QPalette::Button, Qt::green);
     } else {
         buttonOption.palette.setBrush(QPalette::Button, Qt::red);
         buttonOption.state |= QStyle::State_Sunken;
         QColor color(255, 0, 0, 40);
-        painter->fillRect(rect.normalized().adjusted(0, 0, 0, -1), color);
+        painter->fillRect(rect.normalized().adjusted(0, 1, 0, -1), color);
+    }
+
+    if ((layerIndex == currentCol) || (m_layers.size() == 1)) {
+        QColor color(250, 209, 132, 80);
+        painter->fillRect(rect.normalized().adjusted(0, 1, 0, -1), color);
+        if (m_layers[layerIndex].isVisible) {
+            painter->setPen(QPen(QColor(250, 209, 132, 255), 2, Qt::SolidLine)); // Header selected
+            painter->drawRect(rect.normalized().adjusted(0, 1, 0, -1));
+        } else { 
+            painter->setPen(QPen(QColor(255, 0, 0, 70), 2, Qt::SolidLine)); // Header locked
+            painter->drawRect(rect.normalized().adjusted(0, 1, 0, -1));
+        }
     }
 
     int buttonWidth = 12;
@@ -245,24 +245,19 @@ void TupExposureHeader::paintSection(QPainter *painter, const QRect & rect, int 
     painter->drawText(x, y, text);
 
     buttonOption.rect = QRect(rect.x() + width - 4, rect.y() + ((rect.normalized().height()-buttonWidth)/2) + 1, buttonWidth, buttonWidth);
-
+  
     style()->drawControl(QStyle::CE_PushButton, &buttonOption, painter);
 }
 
-void TupExposureHeader::updateSelection(int section)
+void TupExposureHeader::updateSelection(int col)
 {
-    m_currentSection = section;
-    updateSection(section);
+    currentCol = col;
+    updateSection(col);
 }
 
-int TupExposureHeader::sectionsTotal()
+int TupExposureHeader::layersTotal()
 {
-    return m_sections.size();
+    return m_layers.size();
 }
 
-int TupExposureHeader::currentSectionIndex()
-{
-    return m_currentSection;
-}
-
-//#include "tupexposuretable.moc"
+//#include "ktexposuretable.moc"

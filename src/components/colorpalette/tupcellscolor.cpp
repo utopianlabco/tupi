@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,15 @@
  ***************************************************************************/
 
 #include "tupcellscolor.h"
+#include "tdebug.h"
+#include "tuppalettedocument.h"
+
+#include <QFile>
+#include <QDragEnterEvent>
+#include <QMouseEvent>
+#include <QDrag>
+#include <QApplication>
+#include <QPainter>
 
 struct TupCellsColor::Private
 {
@@ -129,9 +138,9 @@ void TupCellsColor::dragEnterEvent(QDragEnterEvent *event)
 void TupCellsColor::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasColor()) {
-        // QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
+        QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
 
-        // SQA: crear item in tupcellscolor.cpp
+        // TODO: crear item in ktcellscolor.cpp
 
         if (event->source() == this) {
             event->setDropAction(Qt::MoveAction);

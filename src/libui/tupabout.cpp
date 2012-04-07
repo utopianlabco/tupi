@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,18 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupabout.h"
-#include "tanimwidget.h"
-#include "tapplicationproperties.h"
-
-#include <QTextBrowser>
-#include <QLabel>
-#include <QPixmap>
 #include <QFile>
 #include <QDomDocument>
 #include <QTextStream>
+#include <QImage>
+
+#include <QPixmap>
+#include <QLabel>
 #include <QScrollArea>
-#include <QDir>
+#include <QTextBrowser>
+
+#include "tupabout.h"
+#include "tglobal.h"
+#include "timageeffect.h"
+
+#include "tdebug.h"
+
+#define DEBUG_ABOUT 1
 
 /**
  * This class defines the About dialog of Tupi.
@@ -54,20 +59,9 @@
 
 TupAbout::TupAbout(QWidget *parent) : TabDialog(Cancel, parent)
 {
-    // SQA: Check if these instructions are doing something for real
-    setWindowIcon(QIcon(THEME_DIR + "icons/about.png"));
-    setWindowTitle(tr("About Tupi"));    
+    setWindowTitle(tr("About") + QString(" Tupi"));
     setFixedSize(525, 458);
 
-    QStringList path;
-#ifdef Q_OS_WIN
-    QString resources = SHARE_DIR + "help/";
-#else
-    QString resources = SHARE_DIR + "data/help/";
-#endif
-    path << resources + "css";
-    path << resources + "images";
-	
     QString lang = "en";
     if (QString(QLocale::system().name()).length() > 1)
         lang = QString(QLocale::system().name()).left(2);
@@ -77,34 +71,33 @@ TupAbout::TupAbout(QWidget *parent) : TabDialog(Cancel, parent)
     flags |= Qt::CustomizeWindowHint;
     setWindowFlags(flags);
 
-    // Credits Tab
+    //1: Credits
+    /*
+    QFile creditsFile(DATA_DIR + "credits.txt");
+    QString creditsText;
+    if (creditsFile.open(QIODevice::ReadOnly)) {
+        QTextStream stream(&creditsFile);
+        while (!stream.atEnd()) {
+               QString line = stream.readLine();
+               creditsText += line + "\n";
+        }
+        creditsFile.close();
+    } else {
+        #ifdef K_DEBUG
+               tError() << "Error while trying to read " << creditsFile.fileName();
+        #endif
+    }
+    */
 
     QDomDocument doc;
     QString creditsFile = DATA_DIR + "credits.xml";
     QFile file(creditsFile);
     QString creditsText;
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        #ifdef K_DEBUG
-            QString msg = "TupAbout::TupAbout() - Fatal Error: Can't open \"credits.xml\" file";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+    if (!file.open(QIODevice::ReadOnly))
         return;
-    }
 
     if (!doc.setContent(&file)) {
-        #ifdef K_DEBUG
-            QString msg = "TupAbout::TupAbout() - Fatal Error: File \"credits.xml\" is corrupt!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
         file.close();
         return;
     }
@@ -122,66 +115,61 @@ TupAbout::TupAbout(QWidget *parent) : TabDialog(Cancel, parent)
            n = n.nextSibling();
     }
 
-    TAnimWidget *credits = new TAnimWidget(QPixmap(THEME_DIR + "/images/credits.png"), creditsText);
-    addTab(credits, tr("Credits"));
+    QImage credits = QImage(THEME_DIR + "/images/credits.png");
 
-    QPalette palette = credits->palette();
-    palette.setColor(QPalette::Foreground, QColor(50, 50, 50, 255));
-    credits->setPalette(palette);
+    TImageEffect::fade(credits,0.25, palette().background().color());
 
-    /*
-    int size = 24;
-    #ifdef Q_OS_MAC
-        size = 46;
-    #endif
-    credits->setFont(QFont("verdana", size));
-    */
+    m_credits = new TAnimWidget(QPixmap::fromImage(credits), creditsText);
+    addTab(m_credits, tr("Credits"));
 
-    // Acknowledgment Tab 
+    QPalette pal = m_credits->palette();
+    pal.setColor(QPalette::Foreground, QColor(50, 50, 50, 255));
 
-    QString sponsorFile = QString() + "help/" + lang + "/thanks.html";
-#ifdef Q_OS_WIN
-    QString sponsorPath = SHARE_DIR + sponsorFile;
-#else
-    QString sponsorPath = SHARE_DIR + "data/" + sponsorFile;
-#endif
+    m_credits->setPalette(pal);
+    m_credits->setFont(QFont("verdana", 24));
+
+    // 2: Thanks 
+
     QTextBrowser *sponsorsText = new QTextBrowser;
-    sponsorsText->setSearchPaths(path);
     sponsorsText->setOpenExternalLinks(true);
-    sponsorsText->setSource(QUrl::fromLocalFile(sponsorPath));
+
+    sponsorsText->setSource(SHARE_DIR + "data/help/" + lang + "/thanks.html");
     sponsorsText->moveCursor(QTextCursor::Start);
 
     addTab(sponsorsText, tr("Thanks"));
 
-    // Tupi Description Tab 
+    // 3: Tupi 
 
-    QString tupiFile = QString() + "help/" + lang + "/tupi_short.html";
-#ifdef Q_OS_WIN
-    QString tupiPath = SHARE_DIR + tupiFile;
-#else
-    QString tupiPath = SHARE_DIR + "data/" + tupiFile;
-#endif
     QTextBrowser *tupiText = new QTextBrowser;
-    tupiText->setSearchPaths(path);
     tupiText->setOpenExternalLinks(true);
-    tupiText->setSource(QUrl::fromLocalFile(tupiPath));
+
+    tupiText->setSource(SHARE_DIR + "data/help/" + lang + "/tupi_short.html");
     tupiText->moveCursor(QTextCursor::Start);
 
     addTab(tupiText, tr("About"));
 
-    // 4: License Terms Tab
+    // 4: Licence
 
-    QString licenseFile = QString() + "help/" + lang + "/philosophy.html"; 
-#ifdef Q_OS_WIN
-    QString licensePath = SHARE_DIR + licenseFile;
-#else
-    QString licensePath = SHARE_DIR + "data/" + licenseFile;
-#endif
     QTextBrowser *licenseText = new QTextBrowser;
-    licenseText->setSearchPaths(path);
     licenseText->setOpenExternalLinks(true);
-    licenseText->setSource(QUrl::fromLocalFile(licensePath));
+
+    /* QFile licenceFile(DATA_DIR + "/license.html");
+    QFile licenseFile(SHARE_DIR + "data/help/" + lang + "/philosophy.html");
+    QString line = "";
+    if (licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&licenseFile);
+        while (! stream.atEnd()) {
+               line += stream.readLine();
+               //licenceText->append(line);
+        }
+        licenseFile.close();
+    }
+    licenseText->setHtml(line);
+    */
+
+    licenseText->setSource(SHARE_DIR + "data/help/" + lang + "/philosophy.html");
     licenseText->moveCursor(QTextCursor::Start);
+
     addTab(licenseText, tr("License Agreement"));
     setButtonText(Cancel, tr("Close"));
 }

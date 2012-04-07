@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,65 +34,65 @@
  ***************************************************************************/
 
 #include "tuphelpbrowser.h"
+#include "tglobal.h"
+#include "tdebug.h"
+
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QIcon>
+#include <QMouseEvent>
 
 // Help Browser
 
-struct TupHelpBrowser::Private
+TupHelpBrowser::TupHelpBrowser(QWidget *parent) : QWidget(parent)
 {
-    QTextBrowser *browser;
-};
-
-TupHelpBrowser::TupHelpBrowser(const QString &path, QWidget *parent) : QWidget(parent), k(new Private)
-{
-    k->browser = new QTextBrowser(this);
-    k->browser->setOpenExternalLinks(true);
+    setWindowTitle(tr("Help"));
+    setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/help_mode.png")));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(k->browser);
+    layout->setMargin(15);
+    m_separator = new QSplitter(this);
+    layout->addWidget(m_separator);
 
-    setSource(path);
+    m_pageArea = new QTextBrowser(m_separator);
+    m_pageArea->setOpenExternalLinks(true);
+
+    m_document = new QTextDocument(m_pageArea);
+
+    m_pageArea->setDocument(m_document);
 }
 
 TupHelpBrowser::~TupHelpBrowser()
 {
 }
 
+void TupHelpBrowser::setDocument(const QString &doc)
+{
+    m_document->setHtml(doc);
+}
+
 void TupHelpBrowser::setSource(const QString &filePath)
 {
-    QString locale = QString(QLocale::system().name()).left(2);
-    if (locale.length() < 2)
-        locale = "en";
+    m_pageArea->setSource(filePath);
+}
 
-    QStringList path;
-    
-#ifdef Q_OS_WIN
-    QString resources = SHARE_DIR + "help/";
-#else
-    QString resources = SHARE_DIR + "data/help/";
-#endif    
-
-    path << resources + "css";
-    path << resources + "images";
-    k->browser->setSearchPaths(path);
-
-    k->browser->setSource(QUrl::fromLocalFile(filePath));
+void TupHelpBrowser::setDataDirs(const QStringList &dirs)
+{
+    m_pageArea->setSearchPaths(dirs);
 }
 
 // SQA: These methods are just temporary for developing reasons
 
-void TupHelpBrowser::keyPressEvent(QKeyEvent *event) {
+void TupHelpBrowser::keyPressEvent(QKeyEvent * event) {
     switch (event->key()) {
             case (Qt::Key_R):
                   if (event->modifiers() == Qt::ControlModifier)
                       reload();
-            break;
-            case (Qt::Key_Escape):
-                  emit closeDialog();
             break;
     }
 }
 
 void TupHelpBrowser::reload()
 {
-    k->browser->reload();
+    m_pageArea->reload();
 }

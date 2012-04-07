@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,10 +33,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPROJECTRESPONSE_H
-#define TUPPROJECTRESPONSE_H
+#ifndef TupPROJECTRESPONSE_H
+#define TupPROJECTRESPONSE_H
 
-#include "tglobal.h"
+#include "tupglobal_store.h"
 #include "tupprojectrequest.h"
 #include "tupscene.h"
 #include "tuplibraryobject.h"
@@ -46,7 +46,7 @@
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupProjectResponse
+class STORE_EXPORT TupProjectResponse
 {
     public:
         enum Mode
@@ -82,7 +82,7 @@ class TUPI_EXPORT TupProjectResponse
         Private *const k;
 };
 
-class TUPI_EXPORT TupSceneResponse : public TupProjectResponse
+class TupSceneResponse : public TupProjectResponse
 {
     public:
         TupSceneResponse(int part, int action);
@@ -100,7 +100,7 @@ class TUPI_EXPORT TupSceneResponse : public TupProjectResponse
         Scenes m_scenes;
 };
 
-class TUPI_EXPORT TupLayerResponse : public TupSceneResponse
+class TupLayerResponse : public TupSceneResponse
 {
     public:
         TupLayerResponse(int part, int action);
@@ -112,7 +112,7 @@ class TUPI_EXPORT TupLayerResponse : public TupSceneResponse
         int m_layerIndex;
 };
 
-class TUPI_EXPORT TupFrameResponse : public TupLayerResponse
+class TupFrameResponse : public TupLayerResponse
 {
     public:
         TupFrameResponse(int part, int action);
@@ -127,7 +127,7 @@ class TUPI_EXPORT TupFrameResponse : public TupLayerResponse
         bool empty;
 };
 
-class TUPI_EXPORT TupItemResponse : public TupFrameResponse
+class TupItemResponse : public TupFrameResponse
 {
     public:
         TupItemResponse(int part, int action);
@@ -136,7 +136,7 @@ class TUPI_EXPORT TupItemResponse : public TupFrameResponse
         void setItemIndex(int index);
         TupLibraryObject::Type itemType() const;
         void setItemType(TupLibraryObject::Type type);
-        QPointF position() const;
+        QPointF position();
         void setPosX(double coord);
         void setPosY(double coord);
         TupProject::Mode spaceMode();
@@ -153,7 +153,7 @@ class TUPI_EXPORT TupItemResponse : public TupFrameResponse
         bool empty;
 };
 
-class TUPI_EXPORT TupLibraryResponse : public TupFrameResponse
+class TupLibraryResponse : public TupFrameResponse
 {
     public:
         TupLibraryResponse(int part, int action);
@@ -174,7 +174,7 @@ class TUPI_EXPORT TupLibraryResponse : public TupFrameResponse
         bool empty;
 };
 
-class TUPI_EXPORT TupProjectResponseFactory
+class TupProjectResponseFactory
 {
     private:
         TupProjectResponseFactory();

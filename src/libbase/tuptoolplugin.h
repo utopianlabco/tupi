@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,18 +33,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPTOOLPLUGIN_H
-#define TUPTOOLPLUGIN_H
+#ifndef TupTOOLPLUGIN_H
+#define TupTOOLPLUGIN_H
 
-#include "tglobal.h"
 #include "tuptoolinterface.h"
+#include "tupglobal.h"
 #include "tupprojectresponse.h"
 
 #include <QObject>
-#include <QSize>
-#include <QGraphicsView>
-#include <QCursor>
-#include <QMenu>
 
 class TupGraphicsScene;
 class QGraphicsView;
@@ -62,16 +58,11 @@ class TUPI_EXPORT TupToolPlugin : public QObject, public TupToolInterface
     
     public:
 
-        enum MenuIndex { InvalidMenu = -1, BrushesMenu = 0, SelectionMenu, FillMenu, ZoomMenu, TweenerMenu, Arrows, ColorMenu };
-        enum BrushTools { InvalidBrush = -1, PencilTool = 0, InkTool, SchemeTool, EraserTool, PolyLineTool, LineTool, RectangleTool, EllipseTool, TextTool, FrameBack, FrameForward, QuickCopy, Delete };
+        enum MenuIndex { InvalidMenu = -1, BrushesMenu = 0, SelectionMenu, FillMenu, ZoomMenu, TweenerMenu, Arrows };
+        enum BrushTools { InvalidBrush = -1, PencilTool = 0, SchemeTool, InkTool, EraserTool, PolyLineTool, LineTool, RectangleTool, EllipseTool, TextTool, FrameBack, FrameForward, QuickCopy, Delete };
         enum SelectTools { InvalidSelection = -1, NodesTool = 0, ObjectsTool };
         enum FillTools { InvalidFill = -1, InsideTool = 0, ContourTool };
-        // enum ViewTools { InvalidView = -1, ZoomInTool = 0, ZoomOutTool, ShiftTool };
-        // enum ViewTools { InvalidView = -1, ShiftTool };
-        enum ColorTools { InvalidColor = -1, ColorTool = 0 };
-
-        enum Mode { Add = 1, Edit, View };
-        enum EditMode { Selection = 0, Properties, None };
+        enum ViewTools { InvalidView = -1, ViewTool = 0, HandTool };
 
         explicit TupToolPlugin(QObject *parent = 0);
         ~TupToolPlugin();
@@ -110,19 +101,6 @@ class TUPI_EXPORT TupToolPlugin : public QObject, public TupToolInterface
 
         virtual void resizeNodes(qreal factor);
         virtual void updateZoomFactor(qreal factor);
-
-        // virtual void autoZoom();
-        virtual void setProjectSize(const QSize size);
-
-        virtual TupToolPlugin::Mode currentMode();
-        virtual TupToolPlugin::EditMode currentEditMode();
-
-        virtual void setActiveView(const QString &viewID);
-        // virtual void addNewItem(const QString &id);
-        virtual void setCurrentItem(const QString &id);
-
-        virtual void updateWorkSpaceContext();
-        virtual void clearSelection();
         
     signals:
         void requested(const TupProjectRequest *request);

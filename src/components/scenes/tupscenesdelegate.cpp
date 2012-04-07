@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,9 @@
  ***************************************************************************/
 
 #include "tupscenesdelegate.h"
+#include "tdebug.h"
+
+#include <QtGui>
 
 TupScenesDelegate::TupScenesDelegate(QObject *parent)
     : QItemDelegate(parent)
@@ -55,8 +58,6 @@ QWidget *TupScenesDelegate::createEditor(QWidget *parent,
         const QStyleOptionViewItem &option,
         const QModelIndex &index) const
 {
-    Q_UNUSED(option);
-
     QVariant originalValue = index.model()->data(index, Qt::DisplayRole);
     QLineEdit *lineEdit = new QLineEdit(parent);
     lineEdit->setFrame(false);

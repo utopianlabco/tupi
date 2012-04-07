@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,20 +34,27 @@
  ***************************************************************************/
 
 #include "tuplibrarydialog.h"
+#include "tupitempreview.h"
+#include "tformfactory.h"
+
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QToolBox>
+#include <QGraphicsItem>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QMap>
 
 struct TupLibraryDialog::Private
 {
     QToolBox *toolBox;
     QMap<QGraphicsItem *, QLineEdit *> symbolNames;
     QMap<int, QLineEdit *> tabs;
-    TupLibrary *library;
 };
 
-TupLibraryDialog::TupLibraryDialog(TupLibrary *library) : QDialog(), k(new Private)
+TupLibraryDialog::TupLibraryDialog() : QDialog(), k(new Private)
 {
-    k->library = library;
     setWindowTitle(tr("Library Object"));
-    setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/polyline.png")));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -95,22 +102,10 @@ QString TupLibraryDialog::symbolName(QGraphicsItem *item) const
 
 void TupLibraryDialog::checkNames()
 {
-    QList<QString> objects;
     for (int i = 0; i < k->toolBox->count(); i++) {
-         QString name = k->tabs[i]->text();
-         if (name.isEmpty()) {
-             k->toolBox->setCurrentIndex(i);
+         if (k->tabs[i]->text().isEmpty()) {
+             k->toolBox->setCurrentIndex (i);
              k->tabs[i]->setFocus();
-             TOsd::self()->display(tr("Error"), tr("Library object's name is missing!"), TOsd::Error);
-             return;
-         } else {
-             objects << name + ".tobj";
-         }
-    }
-
-    for (int i=0; i<objects.size(); i++) {
-         if (k->library->exists(objects.at(i))) {
-             TOsd::self()->display(tr("Error"), tr("Object's name already exists. Pick a new one!"), TOsd::Error);
              return;
          }
     }

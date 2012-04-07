@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,23 +36,16 @@
 #ifndef TUPTWITTERWIDGET_H
 #define TUPTWITTERWIDGET_H
 
-#include "tglobal.h"
-#include "tuptwitter.h"
-
 #include <QWidget>
 #include <QSplitter>
 #include <QTextBrowser>
 #include <QTextDocument>
-#include <QBoxLayout>
-#include <QIcon>
-#include <QMenu>
-#include <QMouseEvent>
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupTwitterWidget : public QWidget
+class TupTwitterWidget : public QWidget
 {
     Q_OBJECT
 
@@ -60,18 +53,22 @@ class TUPI_EXPORT TupTwitterWidget : public QWidget
         TupTwitterWidget(QWidget *parent);
         ~TupTwitterWidget();
 
-    signals:
-        void newPerspective(int index);
-
     public slots:
+        void setDocument(const QString &doc);
         void setSource(const QString &filePath);
+
+    private slots: 
+        void reload();
 
     protected:
         void keyPressEvent(QKeyEvent *event); 
 
     private:
-        struct Private;
-        Private *const k;
+        void downLoadNews();
+
+        QSplitter *m_separator;
+        QTextBrowser *m_pageArea;
+        QTextDocument *m_document;
 };
 
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,20 +34,23 @@
  ***************************************************************************/
 
 #include "tupsceneslist.h"
+#include "tdebug.h"
+
+#include <QTreeWidgetItem>
+#include <QHeaderView>
 
 // SQA: Add support for renaming and moving objects from the list
 
 struct TupScenesList::Private
 {
-   int scenesCount;
+   int scenesTotal;
 };
 
 TupScenesList::TupScenesList(QWidget *parent) : TreeListWidget(parent), k(new Private)
 {
-    k->scenesCount = 0;
+    k->scenesTotal = 0;
     setHeaderLabels(QStringList() << "");
-    // header()->setResizeMode(QHeaderView::ResizeToContents);
-    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    header()->setResizeMode(QHeaderView::ResizeToContents);
     setColumnCount(1);
 
     setItemDelegate(new TupScenesDelegate(this));
@@ -61,7 +64,7 @@ TupScenesList::~TupScenesList()
 
 void TupScenesList::insertScene(int index, const QString &name)
 {
-    k->scenesCount++;
+    k->scenesTotal++;
     QTreeWidgetItem *newScene = new QTreeWidgetItem(this);
     newScene->setText(0, name);
     newScene->setFlags(newScene->flags() | Qt::ItemIsEditable);
@@ -77,7 +80,7 @@ int TupScenesList::removeCurrentScene()
 
     if (currentItem()) {
         delete currentItem();
-        k->scenesCount--;
+        k->scenesTotal--;
         return index;
     }
 
@@ -86,7 +89,7 @@ int TupScenesList::removeCurrentScene()
 
 void TupScenesList::removeScene(int index)
 {
-    k->scenesCount--;
+    k->scenesTotal--;
     delete topLevelItem(index);
 }
 
@@ -148,7 +151,7 @@ QString TupScenesList::nameCurrentScene()
 
 int TupScenesList::scenesCount()
 {
-    return k->scenesCount;
+    return k->scenesTotal;
 }
 
 void TupScenesList::mouseDoubleClickEvent(QMouseEvent *event)
@@ -178,18 +181,14 @@ bool TupScenesList::nameExists(QString &name)
 void TupScenesList::resetUI()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupScenesList::resetUI()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    // blockSignals(true);
+    blockSignals(true);
     clearSelection();
-    k->scenesCount = 0;
+    k->scenesTotal = 0;
     clear();
-    // blockSignals(false);
+    blockSignals(false);
 }
 
 void TupScenesList::keyPressEvent(QKeyEvent *event)

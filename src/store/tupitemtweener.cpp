@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,15 +35,15 @@
 
 #include "tupitemtweener.h"
 #include "tupsvg2qt.h"
+#include "tdebug.h"
 
-#ifdef K_DEBUG
-    #ifdef Q_OS_UNIX
-        #define VERIFY_STEP(index) if (index > k->frames || k->frames == 0) { \
-                                   tWarning("items") << "Invalid step " << index << " for tweening, maximun step are " \
-                                                     << k->frames << "; In " << __FUNCTION__; \
-                                   return; }
-    #endif
-#endif
+#include <QGraphicsItem>
+#include <QHash>
+
+#define VERIFY_STEP(index) if (index > k->frames || k->frames == 0) { \
+                               tWarning("items") << "Invalid step " << index << " for tweening, maximun step are " \
+                                                 << k->frames << "; In " << __FUNCTION__; \
+                               return; }
 
 #define STEP(index) index / (double)k->frames
 
@@ -54,15 +54,11 @@ struct TupItemTweener::Private
     QString name;
     TupItemTweener::Type type;
     int initFrame;
-    int initLayer;
-    int initScene;
-
     int frames;
     QPointF originPoint;
 
     // Position Tween
     QString path;
-    QString intervals;
 
     // Rotation Tween
     TupItemTweener::RotationType rotationType;
@@ -95,14 +91,13 @@ struct TupItemTweener::Private
     int opacityReverseLoop;
 
     // Color Tween
-    FillType colorFillType;
     QColor initialColor;
     QColor endingColor;
     int colorIterations;
     int colorLoop;
     int colorReverseLoop;
 
-    // Composed Tween
+    // Compound Tween
     int compPositionInitFrame;
     int compPositionFrames;
     int compRotationInitFrame;
@@ -156,14 +151,8 @@ TupItemTweener::Type TupItemTweener::type()
 void TupItemTweener::addStep(const TupTweenerStep &step)
 {
     int counter = step.index();
-  
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::addStep() - counter: " << counter;
-    #else
-        VERIFY_STEP(counter);
-    #endif
-#endif
+    
+    VERIFY_STEP(counter);
     
     if (step.has(TupTweenerStep::Position))
         setPosAt(counter, step.position());
@@ -191,79 +180,38 @@ TupTweenerStep * TupItemTweener::stepAt(int index)
 
 void TupItemTweener::setPosAt(int index, const QPointF &pos)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setPosAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
     k->step(index)->setPosition(pos);
 }
 
 void TupItemTweener::setRotationAt(int index, double angle)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setRotationAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
+    tFatal() << "TupItemTweener::setRotationAt() - Index: " << index << " - Angle: " << angle;
     k->step(index)->setRotation(angle);
 }
 
 void TupItemTweener::setScaleAt(int index, double sx, double sy)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setScaleAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
     k->step(index)->setScale(sx, sy);
 }
 
 void TupItemTweener::setShearAt(int index, double sx, double sy)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setShearAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
     k->step(index)->setShear(sx, sy);
 }
 
 void TupItemTweener::setOpacityAt(int index, double opacity)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setOpacityAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
     k->step(index)->setOpacity(opacity);
 }
 
 void TupItemTweener::setColorAt(int index, const QColor &color)
 {
-#ifdef K_DEBUG
-    #ifdef Q_OS_WIN
-        qWarning() << "TupItemTweener::setColorAt() - index: " << index;
-    #else
-        VERIFY_STEP(index);
-    #endif
-#endif
-
+    VERIFY_STEP(index);
     k->step(index)->setColor(color);
 }
 
@@ -277,19 +225,9 @@ int TupItemTweener::frames() const
     return k->frames;
 }
 
-int TupItemTweener::initFrame()
+int TupItemTweener::startFrame()
 {
     return k->initFrame;
-}
-
-int TupItemTweener::initLayer()
-{
-    return k->initLayer;
-}
-
-int TupItemTweener::initScene()
-{
-    return k->initScene;
 }
 
 QPointF TupItemTweener::transformOriginPoint()
@@ -299,16 +237,8 @@ QPointF TupItemTweener::transformOriginPoint()
 
 void TupItemTweener::fromXml(const QString &xml)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupItemTweener::fromXml() - Tween content: ";
-        #ifdef Q_OS_WIN
-           qWarning() << msg;
-           qWarning() << xml;
-        #else
-           tWarning() << msg;
-           tWarning() << xml;
-        #endif
-    #endif
+    tFatal() << "TupItemTweener::fromXml() - Following the white rabbit!";
+    tFatal() << xml;
     
     QDomDocument doc;
 
@@ -318,10 +248,7 @@ void TupItemTweener::fromXml(const QString &xml)
         k->name = root.attribute("name");
         k->type = TupItemTweener::Type(root.attribute("type").toInt());
 
-        k->initFrame = root.attribute("initFrame").toInt();
-        k->initLayer = root.attribute("initLayer").toInt();
-        k->initScene = root.attribute("initScene").toInt();
-
+        k->initFrame = root.attribute("init").toInt();
         k->frames = root.attribute("frames").toInt();
 
         QString origin = root.attribute("origin"); // [x,y]
@@ -331,7 +258,7 @@ void TupItemTweener::fromXml(const QString &xml)
 
         k->originPoint = QPointF(x, y); 
 
-        if (k->type == TupItemTweener::Composed) {
+        if (k->type == TupItemTweener::Compound) {
             QDomElement settings = root.firstChildElement("settings");
             QDomNode node = settings.firstChild();
 
@@ -340,59 +267,53 @@ void TupItemTweener::fromXml(const QString &xml)
 
                    if (!e.isNull()) {
                        if (e.tagName() == "position") {
-                           // tError() << "TupItemTweener::fromXml() - Processing position settings";
-
+                           tFatal() << "TupItemTweener::fromXml() - Processing position settings";
                            k->tweenList.append(TupItemTweener::Position);
                            k->compPositionInitFrame = e.attribute("init").toInt();
                            k->compPositionFrames = e.attribute("frames").toInt();
 
                            k->path = e.attribute("coords");
-                           k->intervals = e.attribute("intervals");
                        }
                        if (e.tagName() == "rotation") {
-                           // tError() << "TupItemTweener::fromXml() - Processing rotation settings";
-
+                           tFatal() << "TupItemTweener::fromXml() - Processing rotation settings";
                            k->tweenList.append(TupItemTweener::Rotation);
                            k->compRotationInitFrame = e.attribute("init").toInt();
                            k->compRotationFrames = e.attribute("frames").toInt();
 
                            k->rotationType = TupItemTweener::RotationType(root.attribute("rotationType").toInt());
                            k->rotateSpeed = root.attribute("rotateSpeed").toInt();
-                           k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
 
-                           if (k->rotationType == TupItemTweener::Partial) {
-                               k->rotateLoop = root.attribute("rotateLoop").toInt();
-                               k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
-                               k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
-                               k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
+                           if (k->rotationType == TupItemTweener::Continuos) {
+                               k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
+                           } else if (k->rotationType == TupItemTweener::Partial) {
+                                      k->rotateLoop = root.attribute("rotateLoop").toInt();
+                                      k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
+                                      k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
+                                      k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
                            }
                        }
 
                        if (e.tagName() == "scale") {
-                           // tError() << "TupItemTweener::fromXml() - Processing scale settings";
-
+                           tFatal() << "TupItemTweener::fromXml() - Processing scale settings";
                            k->tweenList.append(TupItemTweener::Scale);
                            k->compScaleInitFrame = e.attribute("init").toInt();
                            k->compScaleFrames = e.attribute("frames").toInt();
                        }
                        if (e.tagName() == "shear") {
-                           // tError() << "TupItemTweener::fromXml() - Processing shear settings";
-
+                           tFatal() << "TupItemTweener::fromXml() - Processing shear settings";
                            k->tweenList.append(TupItemTweener::Shear);
                            k->compShearInitFrame = e.attribute("init").toInt();
                            k->compShearFrames = e.attribute("frames").toInt();
                        }
                        if (e.tagName() == "opacity") {
-                           // tError() << "TupItemTweener::fromXml() - Processing opacity settings";
-
+                           tFatal() << "TupItemTweener::fromXml() - Processing opacity settings";
                            k->tweenList.append(TupItemTweener::Opacity);
                            k->compOpacityInitFrame = e.attribute("init").toInt();
                            k->compOpacityFrames = e.attribute("frames").toInt();
                        }
                        if (e.tagName() == "coloring") {
-                           // tError() << "TupItemTweener::fromXml() - Processing coloring settings";
+                           tFatal() << "TupItemTweener::fromXml() - Processing coloring settings";
                            k->tweenList.append(TupItemTweener::Coloring);
-                           k->colorFillType = FillType(e.attribute("fillType").toInt());
                            k->compColoringInitFrame = e.attribute("init").toInt();
                            k->compColoringFrames = e.attribute("frames").toInt();
                        }
@@ -402,21 +323,21 @@ void TupItemTweener::fromXml(const QString &xml)
             }
 
         } else {
-            if (k->type == TupItemTweener::Position) {
+
+            if (k->type == TupItemTweener::Position)
                 k->path = root.attribute("coords");
-                k->intervals = root.attribute("intervals");
-            }
 
             if (k->type == TupItemTweener::Rotation) {
                 k->rotationType = TupItemTweener::RotationType(root.attribute("rotationType").toInt()); 
                 k->rotateSpeed = root.attribute("rotateSpeed").toInt();
-                k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
 
-                if (k->rotationType == TupItemTweener::Partial) {
-                    k->rotateLoop = root.attribute("rotateLoop").toInt();
-                    k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
-                    k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
-                    k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
+                if (k->rotationType == TupItemTweener::Continuos) {
+                    k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
+                } else if (k->rotationType == TupItemTweener::Partial) {
+                           k->rotateLoop = root.attribute("rotateLoop").toInt();
+                           k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
+                           k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
+                           k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
                 }
             }
 
@@ -445,7 +366,6 @@ void TupItemTweener::fromXml(const QString &xml)
             }
 
             if (k->type == TupItemTweener::Coloring) {
-                k->colorFillType = FillType(root.attribute("fillType").toInt());
                 QString colorText = root.attribute("initialColor");
                 QStringList list = colorText.split(",");
                 int red = list.at(0).toInt();
@@ -481,6 +401,7 @@ void TupItemTweener::fromXml(const QString &xml)
 
                        TupTweenerStep *step = new TupTweenerStep(0);
                        step->fromXml(stepDoc);
+
                        addStep(*step);
 
                        delete step;
@@ -494,39 +415,26 @@ void TupItemTweener::fromXml(const QString &xml)
 
 QDomElement TupItemTweener::toXml(QDomDocument &doc) const
 {
-    #ifdef K_DEBUG
-        QString msg1 = "TupItemTweener::toXml() - Saving tween: " + k->name;
-        QString msg2 = "TupItemTweener::toXml() - Type: " + QString::number(k->type);
-        #ifdef Q_OS_WIN
-           qWarning() << msg1;
-           qWarning() << msg2;
-        #else
-           tWarning() << msg1;
-           tWarning() << msg2;
-        #endif
-    #endif
+    tFatal() << "TupItemTweener::toXml() - Saving the whole tween! - Type: " << k->type;
 
     QDomElement root = doc.createElement("tweening");
     root.setAttribute("name", k->name);
     root.setAttribute("type", k->type);
-
-    root.setAttribute("initFrame", QString::number(k->initFrame));
-    root.setAttribute("initLayer", QString::number(k->initLayer));
-    root.setAttribute("initScene", QString::number(k->initScene));
-    root.setAttribute("frames", QString::number(k->frames));
-
+    root.setAttribute("init", k->initFrame);
+    root.setAttribute("frames", k->frames);
     root.setAttribute("origin", QString::number(k->originPoint.x()) + "," + QString::number(k->originPoint.y()));
 
-    if (k->type == TupItemTweener::Composed) {
+    if (k->type == TupItemTweener::Compound) {
+
         QDomElement settings = doc.createElement("settings");
 
         for (int i=0; i < k->tweenList.size(); i++) {
+
              if (k->tweenList.at(i) == TupItemTweener::Position) {
                  QDomElement position = doc.createElement("position");
-                 position.setAttribute("init", QString::number(k->compPositionInitFrame));
-                 position.setAttribute("frames", QString::number(k->compPositionFrames));
+                 position.setAttribute("init", k->compPositionInitFrame);
+                 position.setAttribute("frames", k->compPositionFrames);
                  position.setAttribute("coords", k->path);
-                 position.setAttribute("intervals", k->intervals);
                  settings.appendChild(position);
              }
         }
@@ -534,59 +442,58 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
         root.appendChild(settings); 
 
     } else { 
-        if (k->type == TupItemTweener::Position) {
+
+        if (k->type == TupItemTweener::Position)
             root.setAttribute("coords", k->path);
-            root.setAttribute("intervals", k->intervals);
-        }
 
         if (k->type == TupItemTweener::Rotation) {
             root.setAttribute("rotationType", k->rotationType);
-            root.setAttribute("rotateSpeed", QString::number(k->rotateSpeed));
-            root.setAttribute("rotateDirection", k->rotateDirection);
+            root.setAttribute("rotateSpeed", k->rotateSpeed);
 
-            if (k->rotationType == TupItemTweener::Partial) {
-                root.setAttribute("rotateLoop", QString::number(k->rotateLoop));
-                root.setAttribute("rotateStartDegree", QString::number(k->rotateStartDegree));
-                root.setAttribute("rotateEndDegree", QString::number(k->rotateEndDegree)); 
-                root.setAttribute("rotateReverseLoop", QString::number(k->rotateReverseLoop));
+            if (k->rotationType == TupItemTweener::Continuos) {
+                root.setAttribute("rotateDirection", k->rotateDirection); 
+            } else if (k->rotationType == TupItemTweener::Partial) {
+                       root.setAttribute("rotateLoop", k->rotateLoop);
+                       root.setAttribute("rotateStartDegree", k->rotateStartDegree);
+                       root.setAttribute("rotateEndDegree", k->rotateEndDegree); 
+                       root.setAttribute("rotateReverseLoop", k->rotateReverseLoop);
             }
         }
 
         if (k->type == TupItemTweener::Scale) {
-            root.setAttribute("scaleAxes", QString::number(k->scaleAxes));
-            root.setAttribute("scaleFactor", QString::number(k->scaleFactor));
-            root.setAttribute("scaleIterations", QString::number(k->scaleIterations));
-            root.setAttribute("scaleLoop", QString::number(k->scaleLoop));
-            root.setAttribute("scaleReverseLoop", QString::number(k->scaleReverseLoop));
+            root.setAttribute("scaleAxes", k->scaleAxes);
+            root.setAttribute("scaleFactor", k->scaleFactor);
+            root.setAttribute("scaleIterations", k->scaleIterations);
+            root.setAttribute("scaleLoop", k->scaleLoop);
+            root.setAttribute("scaleReverseLoop", k->scaleReverseLoop);
         }
 
         if (k->type == TupItemTweener::Shear) {
-            root.setAttribute("shearAxes", QString::number(k->shearAxes));
-            root.setAttribute("shearFactor", QString::number(k->shearFactor));
-            root.setAttribute("shearIterations", QString::number(k->shearIterations));
-            root.setAttribute("shearLoop", QString::number(k->shearLoop));
-            root.setAttribute("shearReverseLoop", QString::number(k->shearReverseLoop));
+            root.setAttribute("shearAxes", k->shearAxes);
+            root.setAttribute("shearFactor", k->shearFactor);
+            root.setAttribute("shearIterations", k->shearIterations);
+            root.setAttribute("shearLoop", k->shearLoop);
+            root.setAttribute("shearReverseLoop", k->shearReverseLoop);
         }
 
         if (k->type == TupItemTweener::Opacity) {
-            root.setAttribute("initOpacityFactor", QString::number(k->initOpacityFactor)); 
-            root.setAttribute("endOpacityFactor", QString::number(k->endOpacityFactor)); 
-            root.setAttribute("opacityIterations", QString::number(k->opacityIterations));
-            root.setAttribute("opacityLoop", QString::number(k->opacityLoop));
-            root.setAttribute("opacityReverseLoop", QString::number(k->opacityReverseLoop));
+            root.setAttribute("initOpacityFactor", k->initOpacityFactor); 
+            root.setAttribute("endOpacityFactor", k->endOpacityFactor); 
+            root.setAttribute("opacityIterations", k->opacityIterations);
+            root.setAttribute("opacityLoop", k->opacityLoop);
+            root.setAttribute("opacityReverseLoop", k->opacityReverseLoop);
         } 
 
         if (k->type == TupItemTweener::Coloring) {
-            root.setAttribute("fillType", k->colorFillType);
             QString colorText = QString::number(k->initialColor.red()) + "," + QString::number(k->initialColor.green()) 
                                 + "," + QString::number(k->initialColor.blue());
             root.setAttribute("initialColor", colorText); 
             colorText = QString::number(k->endingColor.red()) + "," + QString::number(k->endingColor.green()) 
                                 + "," + QString::number(k->endingColor.blue());
             root.setAttribute("endingColor", colorText);
-            root.setAttribute("colorIterations", QString::number(k->colorIterations));
-            root.setAttribute("colorLoop", QString::number(k->colorLoop));
-            root.setAttribute("colorReverseLoop", QString::number(k->colorReverseLoop));
+            root.setAttribute("colorIterations", k->colorIterations);
+            root.setAttribute("colorLoop", k->colorLoop);
+            root.setAttribute("colorReverseLoop", k->colorReverseLoop);
         }
  
     }
@@ -606,16 +513,6 @@ QGraphicsPathItem *TupItemTweener::graphicsPath() const
     item->setPath(path);
 
     return item;
-}
-
-QList<int> TupItemTweener::intervals()
-{
-    QList<int> sections;
-    QStringList list = k->intervals.split(",");
-    foreach (QString section, list)
-             sections << section.toInt();
-
-    return sections;
 }
 
 QString TupItemTweener::tweenType()
@@ -640,12 +537,10 @@ QString TupItemTweener::tweenType()
             case TupItemTweener::Coloring :
                  type = QString(tr("Coloring Tween"));
                  break;
-            case TupItemTweener::Composed :
-                 type = QString(tr("Composed Tween"));
+            case TupItemTweener::Compound :
+                 type = QString(tr("Compound Tween"));
                  break;
-            case TupItemTweener::Papagayo :
-                 type = QString(tr("Papagayo Lip-sync"));
-                 break;
+
     }
 
     return type;
@@ -761,11 +656,6 @@ int TupItemTweener::tweenOpacityReverseLoop()
     return k->opacityReverseLoop;
 }
 
-TupItemTweener::FillType TupItemTweener::tweenColorFillType()
-{
-    return k->colorFillType;
-}
-
 QColor TupItemTweener::tweenInitialColor()
 {
     return k->initialColor;
@@ -793,7 +683,10 @@ int TupItemTweener::tweenColorReverseLoop()
 
 bool TupItemTweener::contains(TupItemTweener::Type type)
 {
+    tFatal() << "TupItemTweener::contains() - Type List Size: " << k->tweenList.size();
+
     for (int i=0; i < k->tweenList.size(); i++) {
+         tFatal() << "TupItemTweener::contains() - type: " << k->tweenList.at(i);
          if (k->tweenList.at(i) == type)
              return true;
     }

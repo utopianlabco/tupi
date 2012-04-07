@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "tupconnectpackage.h"
+#include "talgorithm.h"
+#include "tmd5hash.h"
+#include "tdebug.h"
+
+#include <QStringList>
 
 /*
 <user_connect version="0">
@@ -55,12 +60,8 @@ TupConnectPackage::TupConnectPackage(const QString &server, const QString &usern
 
     root.appendChild(createElement("username")).appendChild(createTextNode(username));
 
-    if (server.compare("tupitu.be") != 0) {
-        QCryptographicHash md5(QCryptographicHash::Md5);
-        md5.addData(passwd.toUtf8());
-        QString token = md5.result().toHex();
-        root.appendChild(createElement("password")).appendChild(createTextNode(token));
-
+    if (server.compare("tupitube.com") != 0) {
+        root.appendChild(createElement("password")).appendChild(createTextNode(TMD5Hash::hash(passwd)));
     } else {
         QString salt = TAlgorithm::randomString(15);
 
@@ -69,7 +70,7 @@ TupConnectPackage::TupConnectPackage(const QString &server, const QString &usern
         token.appendChild(createTextNode(salt));
         root.appendChild(token);
 
-        QStringList passwdList = TAlgorithm::header(passwd);
+        QStringList passwdList = TMD5Hash::passwords(passwd);
         for (int i = 0; i < passwdList.size(); ++i) { 
              root.appendChild(createElement("password")).appendChild(createTextNode(passwdList.at(i)));
         }

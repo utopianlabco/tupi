@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "tupgradientviewer.h"
+#include "tdebug.h"
+
+#include <QPainter>
+#include <QMouseEvent>
+#include <QRectF>
 
 class TupGradientViewer::ControlPoint
 {
@@ -147,12 +152,7 @@ void TupGradientViewer::createGradient()
             default:
             {
                 #ifdef K_DEBUG
-                    QString msg = "TupGradientViewer::createGradient() - Fatal Error: the gradient type doesn't exists!";
-                    #ifdef Q_OS_WIN
-                        qDebug() << msg;
-                    #else
-                        tError() << msg;
-                    #endif
+                       tError() << "TupGradientViewer::createGradient() - Fatal Error: the gradient type doesn't exists!";
                 #endif
             }
     }
@@ -205,14 +205,9 @@ QGradient TupGradientViewer::gradient()
             default:
             {
                 #ifdef K_DEBUG
-                    QString msg = "TupGradientViewer::gradient() - Fatal error: the gradient type doesn't exists!";
-                    #ifdef Q_OS_WIN
-                        qDebug() << msg;
-                    #else
-                        tError() << msg;
-                    #endif
+                       tError() << "TupGradientViewer::gradient() - Fatal error: the gradient type doesn't exists!";
                 #endif
-}
+            }
     }
 
     gradientNormalized.setStops(m_gradientStops);
@@ -279,14 +274,9 @@ void TupGradientViewer::setGradient(const QGradient* gradient)
                  break;
             }
             default:
-            { 
+            {
                  #ifdef K_DEBUG
-                     QString msg = "TupGradientViewer::setGradient() - Fatal Error: the gradient type doesn't exists!";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupGradientViewer::setGradient() - Fatal Error: the gradient type doesn't exists!";
                  #endif
             }
     }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -41,24 +41,6 @@
 #include "twizard.h"
 #include "txyspinbox.h"
 
-#ifdef K_DEBUG
-
-#ifdef Q_OS_WIN
-#include <QDebug>
-#else
-#include "tdebug.h"
-#endif
-
-#endif
-
-#include <QLineEdit>
-#include <QPlainTextEdit>
-#include <QCheckBox>
-#include <QColorDialog>
-#include <QStyleOptionButton>
-#include <QComboBox>
-#include <QLineEdit>
-
 class TupProjectManagerParams;
 
 /**
@@ -72,12 +54,10 @@ class TupNewProject : public TabDialog
     public:
 
         enum Format { FREE = 0, 
-                      FORMAT_520,
-                      FORMAT_640,
-                      FORMAT_480,
-                      FORMAT_576,
-                      FORMAT_720,
-                      FORMAT_1080
+                      FORMAT_480P,
+                      FORMAT_576P,
+                      FORMAT_720P,
+                      FORMAT_1280P
                     };
 
         TupNewProject(QWidget *parent = 0);
@@ -96,7 +76,6 @@ class TupNewProject : public TabDialog
     private slots:
         void setBgColor();
         void setPresets(int index);
-        void updateFormatCombo();
 
     public slots:
         void enableNetOptions(bool isEnabled);

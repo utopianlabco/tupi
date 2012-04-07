@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,14 +34,16 @@
  ***************************************************************************/
 
 #include "tupitemgroup.h"
+#include "tdebug.h"
+
 #include "tupserializer.h"
 
 struct TupItemGroup::Private
 {
-    QList<QGraphicsItem *> children;
+    QList<QGraphicsItem *> childs;
 };
 
-TupItemGroup::TupItemGroup(QGraphicsItem *parent) : QGraphicsItemGroup(parent), k(new Private)
+TupItemGroup::TupItemGroup(QGraphicsItem *parent , QGraphicsScene *scene) : QGraphicsItemGroup(parent, scene), k(new Private)
 {
 }
 
@@ -50,30 +52,35 @@ TupItemGroup::~TupItemGroup()
     delete k;
 }
 
-void TupItemGroup::addToGroup(QGraphicsItem *item)
+QVariant TupItemGroup::itemChange ( GraphicsItemChange change, const QVariant & value )
 {
-    k->children << item;
-    QGraphicsItemGroup::addToGroup(item);
+    if (change == QGraphicsItem::ItemChildRemovedChange) {
+        // k->childs.removeAll( qvariant_cast<QGraphicsItem *>(value) );
+    } else if ( change == QGraphicsItem::ItemChildAddedChange ) {
+        if (!k->childs.contains(qvariant_cast<QGraphicsItem *>(value))) {
+            k->childs << qvariant_cast<QGraphicsItem *>(value);
+        }
+    }
+    
+    return QGraphicsItemGroup::itemChange(change, value);
 }
 
 void TupItemGroup::recoverChilds()
 {
-    int total = k->children.count();
-    for(int i=0; i<total; i++) {
-        QGraphicsItem *item = k->children.at(i);
-        item->setZValue(i);
-
-        if (TupItemGroup *child = qgraphicsitem_cast<TupItemGroup *>(item))
+    foreach (QGraphicsItem *item, k->childs) {
+        if (TupItemGroup *child = qgraphicsitem_cast<TupItemGroup *>(item)) {
             child->recoverChilds();
+        }
         
-        if (item->parentItem() != this)
+        if (item->parentItem() != this) {
             item->setParentItem(this);
+        }
     }
 }
 
-QList<QGraphicsItem *> TupItemGroup::childItems()
+QList<QGraphicsItem *> TupItemGroup::childs()
 {
-    return k->children;
+    return k->childs;
 }
 
 void TupItemGroup::fromXml(const QString &)
@@ -83,17 +90,12 @@ void TupItemGroup::fromXml(const QString &)
 QDomElement TupItemGroup::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("group");
-    int total = k->children.count();
-    for(int i=0; i<total; i++) {
-        QGraphicsItem *item = k->children.at(i);
-        root.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(doc));
+    
+    root.appendChild( TupSerializer::properties( this, doc));
+    
+    foreach (QGraphicsItem *item, children()) {
+             root.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml( doc ));
     }
-
-    QPointF point = this->scenePos();
-    QString pos = "(" + QString::number(point.x()) + ", " + QString::number(point.y()) + ")";
-    root.setAttribute("pos", pos);
-
-    root.appendChild(TupSerializer::properties(this, doc));
     
     return root;
 }

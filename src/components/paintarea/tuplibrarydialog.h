@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,35 +33,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLIBRARYDIALOG_H
-#define TUPLIBRARYDIALOG_H
-
-#include "tglobal.h"
-#include "tupitempreview.h"
-#include "tformfactory.h"
-#include "tapplicationproperties.h"
-#include "tuplibrary.h"
-#include "tosd.h"
+#ifndef TupLIBRARYDIALOG_H
+#define TupLIBRARYDIALOG_H
 
 #include <QDialog>
-#include <QVBoxLayout>
-#include <QDialogButtonBox>
-#include <QToolBox>
-#include <QGraphicsItem>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QMap>
+class QGraphicsItem;
 
 /**
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupLibraryDialog : public QDialog
+class TupLibraryDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        TupLibraryDialog(TupLibrary *library);
+        TupLibraryDialog();
         ~TupLibraryDialog();
 
         void addItem(QGraphicsItem *item);

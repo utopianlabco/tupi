@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,26 +33,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPHELPWIDGET_H
-#define TUPHELPWIDGET_H
-
-#include "tglobal.h"
+#ifndef TupHELPWIDGET_H
+#define TupHELPWIDGET_H
 
 #include <QWidget>
 #include <QMap>
+
 #include <QTreeWidget>
-#include <QDir>
-#include <QLocale>
-#include <QBoxLayout>
-#include <QHeaderView>
-#include <QDomDocument>
-#include <QKeyEvent>
+#include <qdir.h>
+
+#include "tupmodulewidgetbase.h"
+
+class KHelpWidgetManager;
 
 /**
  * @author David Alejandro Cuadrado Cabrera
 */
 
-class TUPI_EXPORT TupHelpWidget : public QWidget
+class TupHelpWidget : public TupModuleWidgetBase
 {
     Q_OBJECT
 
@@ -67,14 +65,10 @@ class TUPI_EXPORT TupHelpWidget : public QWidget
 
     signals:
         void pageLoaded(const QString &content);
-        void closeDialog();
-
-    protected:
-        void keyPressEvent(QKeyEvent *event);
 
     private:
-        struct Private;
-        Private *const k;
+        QDir *m_helpPath;
+        QMap<QTreeWidgetItem *, QString> m_files;
 };
 
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,17 +36,37 @@
 #include "tupstoryboardexportpackage.h"
 
 // <project_storyboard version="0">
-//   <scene> number </scene>
+//     <storyboard scenes="0, 1, 2, N" />
+//         <title>Storyboard Title</title>
+//         <topics>Storyboard Topics</topics>
+//         <description>Storyboard Description</description>          
+//     </storyboard>
 // </project_storyboard>
 
-TupStoryboardExportPackage::TupStoryboardExportPackage(int sceneIndex): QDomDocument()
+TupStoryboardExportPackage::TupStoryboardExportPackage(const QString &title, const QString &topics, const QString &description, const QList<int> sceneIndexes): QDomDocument()
 {
     QDomElement root = createElement("project_storyboard");
     root.setAttribute("version", "0");
     appendChild(root);
+    
+    QString indexes = "";
+    for (int i=0; i < sceneIndexes.size(); i++)
+         indexes += QString::number(sceneIndexes.at(i)) + ","; 
 
-    QDomText sceneDom = createTextNode(QString::number(sceneIndex));
-    root.appendChild(createElement("sceneIndex")).appendChild(sceneDom);
+    indexes.remove(indexes.length() - 1, 1);
+
+    QDomElement story = createElement("storyboard");
+    story.setAttribute("scenes", indexes);
+
+    QDomText titleDom = createTextNode(title);
+    QDomText topicDom = createTextNode(topics);
+    QDomText descDom = createTextNode(description);
+
+    story.appendChild(createElement("title")).appendChild(titleDom);
+    story.appendChild(createElement("topics")).appendChild(topicDom);
+    story.appendChild(createElement("description")).appendChild(descDom);
+    
+    root.appendChild(story);
 }
 
 TupStoryboardExportPackage::~TupStoryboardExportPackage()

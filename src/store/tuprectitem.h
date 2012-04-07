@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,27 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPRECTITEM_H
-#define TUPRECTITEM_H
+#ifndef TupRECTITEM_H
+#define TupRECTITEM_H
 
-#include "tglobal.h"
 #include "tupabstractserializable.h"
+#include "tupglobal_store.h"
 
 #include <QGraphicsRectItem>
-#include <QGraphicsSceneDragDropEvent>
-#include <QMimeData>
-#include <QBrush>
-#include <QGraphicsScene>
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupRectItem : public QGraphicsRectItem, public TupAbstractSerializable
+class STORE_EXPORT TupRectItem : public QGraphicsRectItem, public TupAbstractSerializable
 {
     public:
-        TupRectItem(QGraphicsItem * parent = 0);
-        TupRectItem(const QRectF& rect, QGraphicsItem * parent = 0);
+        TupRectItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupRectItem(const QRectF& rect, QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
         ~TupRectItem();
         bool contains(const QPointF & point) const;
         

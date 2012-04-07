@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,70 +35,55 @@
 
 #include "tuplayer.h"
 #include "tupscene.h"
+#include "tdebug.h"
 #include "tupprojectloader.h"
 
 struct TupLayer::Private
 {
-    TupScene *scene;
     Frames frames;
-    Frames undoFrames;
-    Mouths lipsyncList;
     bool isVisible;
     QString name;
-    int framesCounter;
+    int framesCount;
     bool isLocked;
     int index;
-    double opacity;
-
-    QList<TupGraphicObject *> tweeningGraphicObjects;
-    QList<TupSvgItem *> tweeningSvgObjects;
+    //int zLevelBase;
 };
 
-TupLayer::TupLayer(TupScene *scene, int index) : k(new Private)
+TupLayer::TupLayer(TupScene *parent, int index) : QObject(parent), k(new Private)
 {
-    k->scene = scene;
     k->index = index;
     k->isVisible = true;
     k->name = tr("Layer");
-    k->framesCounter = 0;
+    k->framesCount = 0;
     k->isLocked = false;
-    k->opacity = 1.0;
 }
 
 TupLayer::~TupLayer()
 {
-    k->frames.clear();
-    k->lipsyncList.clear();
-    k->tweeningGraphicObjects.clear();
-    k->tweeningSvgObjects.clear();
-
+    k->frames.clear(true);
     delete k;
 }
 
 Frames TupLayer::frames()
 {
+   /*
+    tFatal() << "";
+    tFatal() << "TupLayer::frames - LAYER NAME: " << k->name;
+    tFatal() << "";
+    */
+
     return k->frames;
 }
 
 void TupLayer::setFrames(const Frames &frames)
 {
     k->frames = frames;
-    k->framesCounter = frames.count();
-}
-
-void TupLayer::setFrame(int index, TupFrame *frame)
-{
-    k->frames.insert(index, frame);
+    k->framesCount = frames.count();
 }
 
 void TupLayer::setLayerName(const QString &name)
 {
     k->name = name;
-}
-
-QString TupLayer::layerName() const
-{
-    return k->name;
 }
 
 void TupLayer::setLocked(bool isLocked)
@@ -114,21 +99,17 @@ bool TupLayer::isLocked() const
 void TupLayer::setVisible(bool isVisible)
 {
     k->isVisible = isVisible;
+    // emit visibilityChanged(isVisible);
+}
+
+QString TupLayer::layerName() const
+{
+    return k->name;
 }
 
 bool TupLayer::isVisible() const
 {
     return k->isVisible;
-}
-
-void TupLayer::setOpacity(double opacity)
-{
-    k->opacity = opacity; 
-}
-
-double TupLayer::opacity()
-{
-    return k->opacity;
 }
 
 TupFrame *TupLayer::createFrame(QString name, int position, bool loaded)
@@ -144,86 +125,34 @@ TupFrame *TupLayer::createFrame(QString name, int position, bool loaded)
         return 0;
 
     TupFrame *frame = new TupFrame(this);
-    k->framesCounter++;
+    k->framesCount++;
     frame->setFrameName(name);
     k->frames.insert(position, frame);
 
     if (loaded)
-        TupProjectLoader::createFrame(scene()->objectIndex(), objectIndex(), position, name, project());
+        TupProjectLoader::createFrame(scene()->objectIndex(), objectIndex(), position, frame->frameName(), project());
 
     return frame;
 }
 
-TupLipSync *TupLayer::createLipSync(const QString &name, const QString &soundFile, int initFrame)
-{
-    TupLipSync *lipsync = new TupLipSync(name, soundFile, initFrame);
-    k->lipsyncList << lipsync;
-
-    return lipsync;
-}
-
-void TupLayer::addLipSync(TupLipSync *lipsync)
-{
-    if (lipsync)
-        k->lipsyncList << lipsync;
-}
-
-int TupLayer::lipSyncCount()
-{
-     return k->lipsyncList.count();
-}
-
-Mouths TupLayer::lipSyncList()
-{
-     return k->lipsyncList;
-}
-
-bool TupLayer::restoreFrame(int index)
-{
-    if (k->undoFrames.count() > 0) {
-        TupFrame *frame = k->undoFrames.takeLast();
-        if (frame) {
-            k->frames.insert(index, frame);
-            k->framesCounter++;
-            return true;
-        }
-        return false;
-    }
-
-    return false;
-}
-
 bool TupLayer::removeFrame(int position)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLayer::removeFrame()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    TupFrame *toRemove = frameAt(position);
+    TupFrame *toRemove = frame(position);
 
     if (toRemove) {
-        k->undoFrames << k->frames.takeAt(position);
-        k->framesCounter--;
+        k->frames.removeObject(position);
+        toRemove->setRepeat(toRemove->repeat()-1);
+
+        /*
+        if (toRemove->repeat() < 1) {
+            tFatal() << "TupLayer::removeFrame -> Deleting pointer!";
+            delete toRemove;
+        }
+        */
+
+        k->framesCount--;
 
         return true;
-    }
-
-    return false;
-}
-
-bool TupLayer::removeLipSync(const QString &name)
-{
-    int size = k->lipsyncList.size();
-    for (int i = 0; i < size; i++) {
-         TupLipSync *lipsync = k->lipsyncList.at(i);
-         if (lipsync->name().compare(name) == 0) {
-             k->lipsyncList.removeAt(i);
-             return true;
-         }
     }
 
     return false;
@@ -231,32 +160,17 @@ bool TupLayer::removeLipSync(const QString &name)
 
 bool TupLayer::resetFrame(int position)
 {
-    TupFrame *toReset = frameAt(position);
+    TupFrame *toReset = frame(position);
 
     if (toReset) {
+        QString label = toReset->frameName();
         TupFrame *frame = new TupFrame(this); 
-        frame->setFrameName(tr("Frame"));
+        frame->setFrameName(label);
         k->frames.insert(position, frame);
         return true;
     }
 
     return false;
-}
-
-void TupLayer::clear()
-{
-    for (int i=0; i<k->frames.count(); i++) {
-         TupFrame *frame = k->frames.takeAt(i);
-         frame->clear();
-         delete frame;
-         frame = NULL;
-    }
-    
-    k->name = "";
-    k->framesCounter = 0;
-    k->lipsyncList.clear();
-    k->tweeningGraphicObjects.clear();
-    k->tweeningSvgObjects.clear();
 }
 
 bool TupLayer::moveFrame(int from, int to)
@@ -285,19 +199,10 @@ bool TupLayer::moveFrame(int from, int to)
 
 bool TupLayer::exchangeFrame(int from, int to)
 {
-    if (from < 0 || from >= k->frames.count() || to < 0 || to >= k->frames.count()) {
-        #ifdef K_DEBUG
-            QString msg = "TupLayer::exchangeFrame() - Fatal Error: frame indexes are invalid -> from: " + QString::number(from) + " / to: " + QString::number(to);
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+    if (from < 0 || from >= k->frames.count() || to < 0 || to > k->frames.count())
         return false;
-    }
 
-    k->frames.swap(from, to);
+    k->frames.exchangeObject(from, to);
 
     return true;
 }
@@ -307,11 +212,10 @@ bool TupLayer::expandFrame(int position, int size)
     if (position < 0 || position >= k->frames.count())
         return false;
 
-    TupFrame *toExpand = frameAt(position);
+    TupFrame *toExpand = frame(position);
+
     if (toExpand) {
-        int limit = position + size;
-        for (int i = position + 1; i <= limit; i++)
-             k->frames.insert(i, toExpand);
+        k->frames.expandValue(position, size);
         return true;
     }
 
@@ -319,21 +223,13 @@ bool TupLayer::expandFrame(int position, int size)
 }
 
 
-TupFrame *TupLayer::frameAt(int position) const
+TupFrame *TupLayer::frame(int position) const
 {
-    if (position < 0 || position >= k->frames.count()) {        
+    if (position < 0 || position >= k->frames.count()) {
         #ifdef K_DEBUG
-            QString msg1 = "TupLayer::frameAt() - Fatal Error: frame index out of bound : " + QString::number(position);
-            QString msg2 = "TupLayer::frameAt() - Fatal Error: index limit : " + QString::number(k->frames.count()-1);
-            #ifdef Q_OS_WIN
-                qDebug() << msg1;
-                qDebug() << msg2;
-            #else
-                tError() << msg1;
-                tError() << msg2;
-            #endif
-        #endif    
-
+               T_FUNCINFO << " FATAL ERROR: index out of bound (TupLayer) : " << position;
+               T_FUNCINFO << " FATAL ERROR: index limit : " << k->frames.count()-1;
+        #endif
         return 0;
     }
 
@@ -343,49 +239,37 @@ TupFrame *TupLayer::frameAt(int position) const
 
 void TupLayer::fromXml(const QString &xml)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLayer::fromXml()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     QDomDocument document;
-    if (!document.setContent(xml))
+
+    if (! document.setContent(xml))
         return;
 
     QDomElement root = document.documentElement();
+
     setLayerName(root.attribute("name", layerName()));
-    setOpacity(root.attribute("opacity", "1.0").toDouble());
-    setVisible(root.attribute("visible", "1").toInt());
+
     QDomNode n = root.firstChild();
 
     while (!n.isNull()) {
            QDomElement e = n.toElement();
+
            if (!e.isNull()) {
                if (e.tagName() == "frame") {
                    TupFrame *frame = createFrame(e.attribute("name"), k->frames.count(), true);
+
                    if (frame) {
                        QString newDoc;
+
                        {
                          QTextStream ts(&newDoc);
                          ts << n;
                        }
+
                        frame->fromXml(newDoc);
                    }
-               } else if (e.tagName() == "lipsync") {
-                          TupLipSync *lipsync = createLipSync(e.attribute("name"), e.attribute("soundFile"), e.attribute("initFrame").toInt()); 
-                          if (lipsync) {
-                              QString newDoc;
-                              {
-                                QTextStream ts(&newDoc);
-                                ts << n;
-                              }
-                              lipsync->fromXml(newDoc);
-                          }
                }
            }
+
            n = n.nextSibling();
     }
 }
@@ -394,29 +278,17 @@ QDomElement TupLayer::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("layer");
     root.setAttribute("name", k->name);
-    root.setAttribute("opacity", QString::number(k->opacity));
-    root.setAttribute("visible", QString::number(k->isVisible)); 
-
     doc.appendChild(root);
-    int framesCounter = k->frames.size();
-    for (int i = 0; i < framesCounter; i++) {
-         TupFrame *frame = k->frames.at(i);
-         root.appendChild(frame->toXml(doc));
-    }
 
-    int lipsyncTotal = k->lipsyncList.size();
-    for (int i = 0; i < lipsyncTotal; i++) {
-         TupLipSync *lipSync = k->lipsyncList.at(i);
-         root.appendChild(lipSync->toXml(doc));
-    }
+    foreach (TupFrame *frame, k->frames.values())
+             root.appendChild(frame->toXml(doc));
 
     return root;
 }
 
 TupScene *TupLayer::scene() const
 {
-    return k->scene;
-    // return static_cast<TupScene *>(parent());
+    return static_cast<TupScene *>(parent());
 }
 
 TupProject *TupLayer::project() const
@@ -424,158 +296,36 @@ TupProject *TupLayer::project() const
     return scene()->project();
 }
 
-void TupLayer::updateLayerIndex(int index)
-{
-    k->index = index;
-}
-
 int TupLayer::layerIndex()
 {
     return k->index;
 }
 
+/*
+int TupLayer::logicalIndexOf(TupFrame *frame) const
+{
+    return k->frames.logicalIndex(frame);
+}
+*/
+
 int TupLayer::visualIndexOf(TupFrame *frame) const
 {
-    return k->frames.indexOf(frame);
+    return k->frames.objectIndex(frame);
 }
+
+/*
+int TupLayer::logicalIndex() const
+{
+    return scene()->logicalIndexOf(const_cast<TupLayer *>(this));
+}
+*/
 
 int TupLayer::objectIndex() const
 {
     return scene()->visualIndexOf(const_cast<TupLayer *>(this));
 }
 
-int TupLayer::framesCount() const
+int TupLayer::framesTotal() const
 {
-    return k->framesCounter;
+    return k->framesCount;
 }
-
-void TupLayer::addTweenObject(TupGraphicObject *object)
-{
-    k->tweeningGraphicObjects << object;
-}
-
-void TupLayer::addTweenObject(TupSvgItem *object)
-{
-    k->tweeningSvgObjects << object;
-}
-
-void TupLayer::updateTweenObject(int index, TupGraphicObject *object)
-{
-    k->tweeningGraphicObjects.replace(index, object);
-}
-
-void TupLayer::updateTweenObject(int index, TupSvgItem *object)
-{
-    k->tweeningSvgObjects.replace(index, object);
-}
-
-void TupLayer::removeTweenObject(TupGraphicObject *object)
-{
-    if (k->tweeningGraphicObjects.size() > 0)
-        k->tweeningGraphicObjects.removeAll(object);
-}
-
-void TupLayer::removeTweenObject(TupSvgItem *object)
-{
-    if (k->tweeningSvgObjects.size() > 0)
-        k->tweeningSvgObjects.removeAll(object);
-}
-
-QList<TupGraphicObject *> TupLayer::tweeningGraphicObjects() const
-{
-    return k->tweeningGraphicObjects;
-}
-
-QList<TupSvgItem *> TupLayer::tweeningSvgObjects() const
-{
-    return k->tweeningSvgObjects;
-}
-
-bool TupLayer::tweenExists(const QString &name, TupItemTweener::Type type)
-{
-    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
-             if (TupItemTweener *tween = object->tween()) {
-                 if ((tween->name().compare(name) == 0) && (tween->type() == type))
-                     return true;
-             }
-    }
-
-    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
-             if (TupItemTweener *tween = object->tween()) {
-                 if ((tween->name().compare(name) == 0) && (tween->type() == type))
-                     return true;
-             }
-    }
-
-    return false;
-}
-
-bool TupLayer::removeTween(const QString &name, TupItemTweener::Type type)
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLayer::removeTween()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
-             if (TupItemTweener *tween = object->tween()) {
-                 if ((tween->name().compare(name) == 0) && (tween->type() == type)) {
-                     object->removeTween();
-                     removeTweenObject(object);
-                     return true;
-                 }
-             }
-    }
-
-    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
-             if (TupItemTweener *tween = object->tween()) {
-                 if ((tween->name().compare(name) == 0) && (tween->type() == type)) {
-                     object->removeTween();
-                     removeTweenObject(object);
-                     return true;
-                 }
-             }
-    }
-
-    return false;
-}
-
-void TupLayer::removeAllTweens()
-{
-    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
-             object->removeTween();
-             removeTweenObject(object);
-    }
-
-    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
-             object->removeTween();
-             removeTweenObject(object);
-    }
-}
-
-void TupLayer::removeTweensFromFrame(int frameIndex)
-{
-    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
-             if (object->frame()->index() == frameIndex) {
-                 object->removeTween();
-                 removeTweenObject(object);
-             }
-    }
-
-    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
-             if (object->frame()->index() == frameIndex) {
-                 object->removeTween();
-                 removeTweenObject(object);
-             }
-    }
-}
-
-/*
-int TupLayer::tweensCount()
-{
-    return k->tweeningGraphicObjects.count() + k->tweeningSvgObjects.count();
-}
-*/

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,25 +33,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPAINTAREACOMMAND_H
-#define TUPPAINTAREACOMMAND_H
-
-#include "tglobal.h"
-#include "tuppaintarea.h"
-#include "tuppaintareaevent.h"
-#include "tupbrushmanager.h"
+#ifndef TupPAINTAREACOMMAND_H
+#define TupPAINTAREACOMMAND_H
 
 #include <QUndoCommand>
-#include <QVariant>
 
-// class TupPaintArea;
-// class TupPaintAreaEvent;
+class TupPaintArea;
+class TupPaintAreaEvent;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupPaintAreaCommand : public QUndoCommand
+class TupPaintAreaCommand : public QUndoCommand
 {
     public:
         TupPaintAreaCommand(TupPaintArea *area, const TupPaintAreaEvent *event);

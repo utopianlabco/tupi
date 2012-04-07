@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,24 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tuptwitter.h"
-#include "tconfig.h"
-#include "talgorithm.h"
-
-#include <QDomDocument>
-#include <QNetworkReply>
+#include <QtGui>
+#include <QtNetwork>
 #include <QNetworkRequest>
-#include <QNetworkAccessManager>
-#include <QFile>
+#include <QNetworkReply>
+#include <QDomDocument>
+#include <QEventLoop>
 
-QString TupTwitter::NEWS_HOST = QString("http://www.maefloresta.com");
-QString TupTwitter::IS_HOST_UP_URL = QString("/updates/test.xml");
-QString TupTwitter::USER_TIMELINE_URL = QString("/updates/tweets.html");
-QString TupTwitter::TUPI_VERSION_URL = QString("/updates/current_version.xml");
-QString TupTwitter::TUPI_WEB_MSG = QString("/updates/web_msg.");
-QString TupTwitter::BROWSER_FINGERPRINT = QString("Tupi_Browser 1.0");
+#include "tuptwitter.h"
+#include "tdebug.h"
 
-struct TupTwitter::Private
+QString Tupwitter::TWITTER_HOST = QString("http://twitter.com");
+QString Tupwitter::IS_TWITTER_UP_URL = QString("/help/test.xml");
+QString Tupwitter::USER_TIMELINE_URL = QString("/statuses/user_timeline/maefloresta.xml");
+QString Tupwitter::TUPI_VERSION_URL = QString("http://www.maefloresta.com/updates/current_version.xml");
+QString Tupwitter::BROWSER_FINGERPRINT = QString("Tupi_Browser 1.0");
+
+struct Tupwitter::Private
 {
     QNetworkAccessManager *manager;
     QNetworkRequest request;
@@ -60,205 +59,108 @@ struct TupTwitter::Private
     QString revision;
     QString codeName;
     QString word;
+    QString reference;
     QString url;
-    QString webMsg;
+    QString meaning;
     bool update;
-    QString themeName;
-    QString locale;
 };
 
-TupTwitter::TupTwitter(QWidget *parent) : QWidget(parent), k(new Private)
+Tupwitter::Tupwitter(QWidget *parent) : QWidget(parent), k(new Private)
 {
     k->update = false;
-    TCONFIG->beginGroup("General");
-    k->themeName = TCONFIG->value("Theme", "Light").toString();
-
-    k->locale = QString(QLocale::system().name()).left(2);
-    if (k->locale.length() < 2) {
-        k->locale = "en";
-    } else {
-        QList<QString> localeSupport;
-        localeSupport << "en" << "es" << "pt";
-        if (!localeSupport.contains(k->locale))
-            k->locale = "en";
-    }
 }
 
-void TupTwitter::start()
+void Tupwitter::start()
 {
-    QString url = NEWS_HOST + IS_HOST_UP_URL;
-
-    #ifdef K_DEBUG
-        QString msg = "TupTwitter::start() - Getting news updates...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
+    loadTwitterMeaning();
+    QString url = TWITTER_HOST + IS_TWITTER_UP_URL;
 
     k->manager = new QNetworkAccessManager(this);
-    connect(k->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(closeRequest(QNetworkReply*)));
+    connect(k->manager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(closeRequest(QNetworkReply*)));
 
     k->request.setUrl(QUrl(url));
-    k->request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toLatin1());
+    k->request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
 
     k->reply = k->manager->get(k->request);
-    connect(k->reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
+    connect(k->reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(slotError(QNetworkReply::NetworkError)));
 }
 
-TupTwitter::~TupTwitter()
+Tupwitter::~Tupwitter()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupTwitter()]";
-        #else
-            TEND;
-        #endif
+           TEND;
     #endif
 
-    delete k->manager;
-    k->manager = NULL;
-    delete k->reply;
-    k->reply = NULL;
     delete k;
 }
 
-void TupTwitter::requestFile(const QString &target)
+void Tupwitter::requestFile(QString target)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupTwitter::requestFile() - Requesting url -> " + target;
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
-
     k->request.setUrl(QUrl(target));
-    k->request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toLatin1());
+    k->request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
     k->reply = k->manager->get(k->request);
 }
 
-void TupTwitter::closeRequest(QNetworkReply *reply)
+void Tupwitter::closeRequest(QNetworkReply *reply)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupTwitter::closeRequest() - Closing request...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
-
     QByteArray array = reply->readAll();
     QString answer(array);
-    answer.chop(1);
 
     if (answer.length() > 0) {
-        if (answer.compare("<ok>true</ok>") == 0) { // The webserver data is available! 
-            requestFile(NEWS_HOST + TUPI_VERSION_URL);
+        if (answer.compare("<ok>true</ok>") == 0) {
+            requestFile(TUPI_VERSION_URL);
         } else {
-            if (answer.startsWith("<version>")) { // Processing Tupi versioning data
+            if (answer.contains("branch", Qt::CaseSensitive)) {
                 checkSoftwareUpdates(array);
-
-                TCONFIG->beginGroup("General");
-                QString id = TCONFIG->value("ClientID", "0").toString();
-                if (id.compare("0") == 0) {
-                    id = TAlgorithm::randomString(20); 
-                    TCONFIG->setValue("ClientID", id);
-                }
-
-                QString os = "unknown" ;
-                #ifdef Q_OS_LINUX
-                    os = "linux";
-                #elif defined(Q_OS_MAC)
-                    os = "osx";
-                #elif defined(Q_OS_WIN)
-                    os = "win";
-                #endif
-
-                requestFile(NEWS_HOST + USER_TIMELINE_URL + "?id=" + id + "&os=" + os + "&v=" + kAppProp->codeName());
+                requestFile(TWITTER_HOST +  USER_TIMELINE_URL);
             } else {
-                if (answer.startsWith("<div")) { // Getting Twitter records 
+                if (answer.contains("status", Qt::CaseSensitive) && (!answer.contains("Twitter is over capacity") 
+                    && !answer.contains("whale_error.gif") && !answer.contains("503 Error"))) {
                     formatStatus(array);
-                    requestFile(NEWS_HOST + TUPI_WEB_MSG + k->locale + ".html");
                 } else {
-                    if (answer.startsWith("<webmsg>")) { // Getting web msg
-                        saveWebMsg(answer);
-                    } else {
-                        #ifdef K_DEBUG
-                            QString msg = "TupTwitter::closeRequest() - Network Error: Invalid data!";
-                            #ifdef Q_OS_WIN
-                                qDebug() << msg;
-                            #else
-                                tError() << msg;
-                            #endif
-                        #endif
-                    }
+                    #ifdef K_DEBUG
+                           tError() << "Tupwitter::closeRequest() - Network Error: Invalid data!";
+                    #endif
                 }
             }
         }
     } else {
         #ifdef K_DEBUG
-            QString msg = "TupTwitter::closeRequest() - Network Error: Gosh! No Internet? :S";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "Tupwitter::closeRequest() - Network Error: Gosh! No Internet? :S";
         #endif
     } 
 }
 
-void TupTwitter::slotError(QNetworkReply::NetworkError error)
+void Tupwitter::slotError(QNetworkReply::NetworkError error)
 {
     switch (error) {
             case QNetworkReply::HostNotFoundError:
                  { 
                  #ifdef K_DEBUG
-                     QString msg = "TupTwitter::slotError() - Network Error: Host not found";
-                     #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                     #else
-                            tError() << msg;
-                     #endif
+                        tError() << "Tupwitter::slotError() - Network Error: Host not found";
                  #endif
                  }
             break;
             case QNetworkReply::TimeoutError:
                  {
                  #ifdef K_DEBUG
-                     QString msg = "TupTwitter::slotError() - Network Error: Time out!";
-                     #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                     #else
-                            tError() << msg;
-                     #endif
+                        tError() << "Tupwitter::slotError() - Network Error: Time out!";
                  #endif
                  }
             break;
             case QNetworkReply::ConnectionRefusedError:
                  {
                  #ifdef K_DEBUG
-                     QString msg = "TupTwitter::slotError() - Network Error: Connection Refused!";
-                     #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                     #else
-                            tError() << msg;
-                     #endif
+                        tError() << "Tupwitter::slotError() - Network Error: Connection Refused!";
                  #endif
                  }
             break;
             case QNetworkReply::ContentNotFoundError:
                  {
                  #ifdef K_DEBUG
-                     QString msg = "TupTwitter::slotError() - Network Error: Content not found!";
-                     #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                     #else
-                            tError() << msg;
-                     #endif
+                        tError() << "Tupwitter::slotError() - Network Error: Content not found!";
                  #endif
                  }
             break;
@@ -266,32 +168,19 @@ void TupTwitter::slotError(QNetworkReply::NetworkError error)
             default:
                  {
                  #ifdef K_DEBUG
-                     QString msg = "TupTwitter::slotError() - Network Error: Unknown Network error!";
-                     #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                     #else
-                            tError() << msg;
-                     #endif
+                        tError() << "Tupwitter::slotError() - Network Error: Unknown Network error!";
                  #endif
                  }
             break;
     }
 }
 
-void TupTwitter::checkSoftwareUpdates(QByteArray array)
+void Tupwitter::checkSoftwareUpdates(QByteArray array)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupTwitter::checkSoftwareUpdates() - Processing updates file...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
-
     QDomDocument doc;
 
     if (doc.setContent(array)) {
+
         QDomElement root = doc.documentElement();
         QDomNode n = root.firstChild();
 
@@ -303,11 +192,11 @@ void TupTwitter::checkSoftwareUpdates(QByteArray array)
                        if (k->version.compare(kAppProp->version())!=0)
                            k->update = true;
                    } else if (e.tagName() == "rev") {
-                              k->revision = e.text();
-                              if (k->revision.compare(kAppProp->revision())!=0)
-                                  k->update = true;
+                       k->revision = e.text();
+                       if (k->revision.compare(kAppProp->revision())!=0)
+                           k->update = true;
                    } else if (e.tagName() == "codeName") {
-                              k->codeName = e.text();
+                       k->codeName = e.text();
                    }
                }
                n = n.nextSibling();
@@ -315,86 +204,222 @@ void TupTwitter::checkSoftwareUpdates(QByteArray array)
     }
 }
 
-void TupTwitter::formatStatus(QByteArray array)
+void Tupwitter::formatStatus(QByteArray array)
 {
-    #ifdef K_DEBUG
-        QString msg = "TupTwitter::formatStatus() - Formatting news file...";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
+    QString output = "";
+    QString name = "";
+    QString description = "";
+    QString website = "";
+    QString followers = "";
+    QString image = "";
 
-    QString tweets = QString(array);
-    QString html = "";
+    QDomDocument doc;
 
-    html += "<html>\n";
-    html += "<head>\n";
-    html += "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
-    html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:tupi.css\">\n";
-    html += "</head>\n";
+    if (doc.setContent(array)) {
 
-    if (k->themeName.compare("Dark") == 0) {
-        html += "<body class=\"twitter_gray\">\n";
-        html += "<div class=\"tupi_background5\">";
-    } else {
-        html += "<body class=\"twitter_white\">\n";
-        html += "<div class=\"tupi_background1\">";
-    }
+        QDomElement root = doc.documentElement();
+        QDomNode n = root.firstChild();
+        int counter = 0;
 
-    html += "<center><img src=\"file:maefloresta.png\" alt=\"maefloresta\"/></center>\n";
-    html += "<div class=\"twitter_headline\"><center>&nbsp;&nbsp;@maefloresta</center></div></div>\n";
-    QString css = "twitter_tupi_version";  
-    if (k->update)
-        css = "twitter_tupi_update"; 
+        while (!n.isNull()) {
+               QDomElement e = n.toElement();
 
-    html += "<div class=\"" + css + "\"><center>\n";
-    html += tr("Latest version") + ": <b>" + k->version + "</b> &nbsp;&nbsp;&nbsp;"; 
-    html += tr("Revision") + ": <b>" + k->revision + "</b> &nbsp;&nbsp;&nbsp;";
-    html += tr("Code Name") + ": <b>" + k->codeName + "</b>";
+               if (!e.isNull()) {
+                   if (e.tagName() == "status") {
+                       QDomNode n1 = e.firstChild();
+                       QString date = "";
+                       QString text = "";
+                       while (!n1.isNull()) {
+                              QDomElement e1 = n1.toElement();
+                              if (!e1.isNull()) {
+                                  if (e1.tagName() == "created_at") {
+                                      QString data = e1.text(); 
+                                      QStringList list1 = data.split(" ");
+                                      for (int i=0; i<3; i++)
+                                           date += list1.at(i) + " ";
+                                           date += list1.at(3);
+                                  } else {
+                                      if (e1.tagName() == "text") {
+                                          text = e1.text();
+                                          int init = text.indexOf("http://");
+                                          if (init >= 0) {
+                                              int end = text.indexOf(" ", init);
+                                              if (end < 0)
+                                                  end = text.length();
+                                              QString www = text.mid(init, end-init);
+                                              QString link = "<a href=\"" + www + "\">";
+                                              text.insert(end, "</a>");
+                                              text.insert(init, link);
+                                          }
+                                      } else {
+                                          if (counter == 0) {
+                                              if (e1.tagName() == "user") {
+                                                  QDomNode n2 = e1.firstChild();
+                                                  while (!n2.isNull()) {
+                                                         QDomElement e2 = n2.toElement();
+                                                         if (!e2.isNull()) {
+                                                             if (e2.tagName() == "name") {
+                                                                 name = e2.text(); 
+                                                             } else if (e2.tagName() == "description") {
+                                                                        description = e2.text();
+                                                                        description.replace("-", "<br/>-");
+                                                             } else if (e2.tagName() == "profile_image_url") {
+                                                                        image = e2.text();
+                                                             } else if (e2.tagName() == "url") {
+                                                                        website = "<a href=\"" + e2.text() + "\">";
+                                                                        website += e2.text(); 
+                                                                        website += "</a>";
+                                                             } else if (e2.tagName() == "followers_count") {
+                                                                        followers = e2.text();
+                                                             }
+                                                         }
+                                                         n2 = n2.nextSibling();
+                                                  }
+                                                  counter = 1;
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
 
-    if (k->update)
-        html += "&nbsp;&nbsp;&nbsp;<b>[</b> <a href=\"http://www.maefloresta.com\">" + tr("It's time to upgrade! Click here!") + "</a>  <b>]</b>"; 
+                              n1 = n1.nextSibling();
+                       }
 
-    html += "</center></div>\n";
-    html += "<div class=\"twitter_tupi_donation\"><center>\n";
-    html += "<a href=\"http://www.maefloresta.com/portal/donations\">" + tr("Want to help us to make a better project? Click here!") + "</a>";
-    html += "</center></div>\n";
-    html += tweets;
-    html += "</body>\n";
-    html += "</html>";
+                       output += "       <p class=\"status\">\n";
+                       output += "       <div class=\"date\">[ " + date + " ]</div><br/>\n";
+                       output += "       <b>MaeFloresta:</b> ";
+                       output += text + "\n";
+                       output += "       <p/>\n";
+                   }
+               }
 
-    QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
-    QFile file(twitterPath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << html;
-        file.close();
-    }
+               n = n.nextSibling();
+        }
+     }
 
-    #ifdef K_DEBUG
-        msg = "TupTwitter::formatStatus() - Saving file -> " + twitterPath;
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
+     QString html = "";
 
-    emit pageReady();
+     html += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+     html += "<html>\n";
+     html += "<head>\n";
+     html += "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
+     html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + QString::fromLocal8Bit(::getenv("TUPI_SHARE")) \
+             + "/data/help/css/tupi.css\">\n";
+     html += "</head>\n";
+     html += "<body class=\"tupi_background1\">\n";
+     html += " <table class=\"twitter_base\">\n";
+     html += "  <tr>\n";
+     html += "  <td class=\"twitter_status\">\n";
+     html += "    <table class=\"status_table\">\n";
+     html += "     <tr>\n";
+     html += "     <td>\n";
+     html += "      &nbsp;&nbsp;\n";
+     html += "      <img class=\"twitter_logo\" src=\"" + QString::fromLocal8Bit(::getenv("TUPI_SHARE")) \
+             + "/data/help/images/twitter01.png\" alt=\"maefloresta\"/>\n";
+     html += "      <font class=\"twitter_headline\" >&nbsp;&nbsp;maefloresta</font>\n";
+     html += "      <br/>\n";
+     html += "     </td>\n";
+     html += "     </tr>\n";
+     html += "     <tr>\n";
+
+     QString css = "tupi_version";  
+     if (k->update)
+         css = "tupi_update"; 
+
+     html += "     <td class=\"" + css + "\">\n";
+     html += "       <center>" + tr("Latest version") + ": <b>" + k->version + "</b> &nbsp;&nbsp;&nbsp;" + tr("Revision") + ": <b>" + k->revision + "</b> &nbsp;&nbsp;&nbsp;" + tr("Code Name") + ": <b>" + k->codeName + "</b>";
+
+     if (k->update)
+         html += "<br/><b>[</b> <a href=\"http://www.maefloresta.com\">" + tr("Update here!") + "</a>  <b>]</b>"; 
+
+     html += "</center>\n";
+
+     html += "     </td>\n";
+     html += "     </tr>\n";
+     html += "     <tr>\n";
+     html += "     <td>\n";
+     html += "     <b>" + tr("This is what's happening") + ":</b>\n";
+     html += "     </td>\n";
+     html += "     </tr>\n";
+     html += "     <tr>\n";
+     html += "     <td>\n";
+
+     html += output;
+
+     html += "     </td>\n";
+     html += "     </tr>\n";
+     html += "    </table>\n";
+     html += "  </td>\n";
+     html += "  <td class=\"twitter_desc\">\n";
+     html += "    <table class=\"desc_table\">\n";
+     html += "     <tr><td>\n";
+     html += "          <b>" + tr("Name") + ":</b> " + name + "<br/>\n";
+     html += "          <b>" + tr("Description") + ":</b> " + description + "<br/>\n";
+     html += "          <b>" + tr("Website") + ":</b> " +  website + "<br/>\n";
+     html += "          <b>" + tr("Followers") + ":</b> " + followers + "<br/>\n";
+     html += "     </td></tr>\n";
+     html += "     </table>\n";
+     html += "    <table class=\"twitter_slang\">\n";
+     html += "     <tr><td>\n";
+     html += "         <p class=\"twitter_slang_td\">\n";
+     html += "         &nbsp;<br/>\n";
+     html += "          <b><a href=\"" + k->url.simplified() + "\">" + k->reference + "</a></b><br/>\n";
+     html += "          <b>" + k->word + ":</b> " + k->meaning + "<br/>\n";
+     html += "         </p>";
+     html += "     </td></tr>\n";
+     html += "     </table>\n";
+     html += "  </td>\n";
+     html += "  </tr>\n";
+     html += "</table>\n";
+     html += "</body>\n";
+     html += "</html>";
+
+     QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
+     QFile file(twitterPath);
+     file.open(QIODevice::WriteOnly);
+
+     QByteArray data = html.toUtf8();
+     file.write(data, qstrlen(data));
+     file.close();
+
+     // FIXME: This class doesn't close its network request correctly / refactoring required  
+     // delete k->reply;
+     // delete k->manager;
+
+     emit pageReady();
 }
 
-void TupTwitter::saveWebMsg(const QString &answer)
+void Tupwitter::loadTwitterMeaning()
 {
-    QString msgPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/webmsg.html";
-    QFile file(msgPath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << answer;
+    QDomDocument doc;
+    QString twitterFile = DATA_DIR + "twitter.xml";
+    QFile file(twitterFile);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    if (!doc.setContent(&file)) {
         file.close();
+        return;
+    }
+    file.close();
+
+    QDomElement docElem = doc.documentElement();
+    QDomNode n = docElem.firstChild();
+
+    while (!n.isNull()) {
+           QDomElement e = n.toElement();
+           if (!e.isNull()) {
+               if (e.tagName() == "word")
+                   k->word = e.text();
+               else if (e.tagName() == "ref")
+                   k->reference = e.text();
+               else if (e.tagName() == "url")
+                   k->url = e.text();
+               else if (e.tagName() == "meaning")
+                   k->meaning = e.text();
+           }
+           n = n.nextSibling();
     }
 
-    k->reply->deleteLater();
-    k->manager->deleteLater();
 }

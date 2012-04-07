@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,23 +33,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPGRAPHICSSCENE_H
-#define TUPGRAPHICSSCENE_H
+#ifndef TupGRAPHICSSCENE_H
+#define TupGRAPHICSSCENE_H
 
-#include "tglobal.h"
+#include "tupglobal.h"
 #include "tupsvgitem.h"
 #include "tupproject.h"
 #include "tupprojectresponse.h"
-#include "tupinputdeviceinformation.h"
 
 #include <QGraphicsScene>
-#include <QGraphicsItem>
-#include <QSvgRenderer>
-#include <QGraphicsView>
-#include <QStyleOptionGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QKeyEvent>
-#include <QDesktopWidget>
 
 /**
  * @author David Cuadrado
@@ -69,7 +61,7 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        enum Context { Current = 1, Previous, Next };
+        enum Context { Current = 1, Preview, Next };
 
         TupGraphicsScene();
         ~TupGraphicsScene();
@@ -79,8 +71,8 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         void setCurrentScene(TupScene *scene);
         void drawCurrentPhotogram();
         
-        void drawPhotogram(int photogram, bool drawContext);
-        void drawSceneBackground(int photogram);
+        void drawPhotogram(int photogram);
+        void drawBackground();
 
         void cleanWorkSpace();
         void removeScene();
@@ -90,8 +82,8 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         
         void setNextOnionSkinCount(int n);
         void setPreviousOnionSkinCount(int n);
-
-        void updateLayerVisibility(int layerIndex, bool visible);
+        
+        void setLayerVisible(int layerIndex, bool visible);
         
         TupScene *scene() const;
         
@@ -112,43 +104,23 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         void mouseMoved(QGraphicsSceneMouseEvent *event);
         void mouseReleased(QGraphicsSceneMouseEvent *event);
 
-        void setSelectionRange();
-        void enableItemsForSelection();
+        virtual void aboutToMousePress();
 
-        void includeObject(QGraphicsItem *object, bool isPolyLine = false);
+        void includeObject(QGraphicsItem *object);
 
-        TupProject::Mode spaceContext();
+        TupProject::Mode spaceMode();
         void setSpaceMode(TupProject::Mode mode);
 
         void setOnionFactor(double opacity);
-        double opacity();
 
-        int framesCount();
-
-        void setLibrary(TupLibrary *library);
-        void resetCurrentTool(); 
-        TupInputDeviceInformation * inputDeviceInformation();
-
-        void updateLoadingFlag(bool flag);
-
-    // private slots:
-    //  void updateObjectInformation(const QString &value);
-    //  void showInfoWidget();
-    //  void updateAliveObject();
-
-    signals:
-        void showInfoWidget();
+        int framesTotal();
 
     private:
         void addFrame(TupFrame *frame, double opacity = 1.0, Context mode = Current);
-        void addGraphicObject(TupGraphicObject *object, TupFrame::FrameType frameType, double opacity = 1.0, bool tweenInAdvance = false);
-        void processNativeObject(TupGraphicObject *object, TupFrame::FrameType frameType, double opacity, Context mode);
-        void processSVGObject(TupSvgItem *svg, TupFrame::FrameType frameType, double opacity, Context mode);
-
-        void addSvgObject(TupSvgItem *svgItem, TupFrame::FrameType frameType, double opacity = 1.0, bool tweenInAdvance = false);
-        void addTweeningObjects(int indexLayer, int photogram);
-        void addSvgTweeningObjects(int indexLayer, int photogram);
-        void addLipSyncObjects(TupLayer *layer, int photogram, int zLevel);
+        void addGraphicObject(TupGraphicObject *object, double opacity = 1.0);
+        void addSvgObject(TupSvgItem *svgItem, double opacity = 1.0);
+        void addTweeningObjects(int photogram);
+        void addSvgTweeningObjects(int photogram);
 
     protected:
         virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);

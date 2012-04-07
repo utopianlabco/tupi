@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,6 +36,8 @@
 #include "tuplibrary.h"
 #include "tupproject.h"
 
+#include "tdebug.h"
+
 TupLibrary::TupLibrary(const QString &id, TupProject *parent) : TupLibraryFolder(id, parent)
 {
 }
@@ -47,11 +49,13 @@ TupLibrary::~TupLibrary()
 void TupLibrary::fromXml(const QString &xml)
 {
     QDomDocument document;
-    if (!document.setContent(xml))
+    
+    if (! document.setContent(xml))
         return;
     
     QDomElement root = document.documentElement();
     QDomNode n = root.firstChild();
+    
     while (!n.isNull()) {
            QDomElement e = n.toElement();
         
@@ -62,19 +66,21 @@ void TupLibrary::fromXml(const QString &xml)
                        QTextStream ts(&doc);
                        ts << n;
                    }
+
                    TupLibraryFolder::fromXml(doc);
                }
 
                // SQA: Check why this weird if :S
                /*
                if (e.tagName() == "library") {
-
+                
                } else if (e.tagName() == "folder") {
                           QString doc;
                           {
                              QTextStream ts(&doc);
                              ts << n;
                           }
+                
                           TupLibraryFolder::fromXml(doc);
               }
               */
@@ -86,6 +92,8 @@ void TupLibrary::fromXml(const QString &xml)
 QDomElement TupLibrary::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("library");
+    
     root.appendChild(TupLibraryFolder::toXml(doc));
+    
     return root;
 }

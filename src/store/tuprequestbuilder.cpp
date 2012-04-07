@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,8 +34,11 @@
  ***************************************************************************/
 
 #include "tuprequestbuilder.h"
+#include "tdebug.h"
 #include "tupprojectrequest.h"
 #include "tupprojectresponse.h"
+
+#include <QDomDocument>
 
 TupRequestBuilder::TupRequestBuilder()
 {
@@ -68,10 +71,8 @@ TupProjectRequest TupRequestBuilder::createItemRequest(int sceneIndex, int layer
     objectType.setAttribute("id", type);
 
     QDomElement position = doc.createElement("position");
-    double px = point.x(); 
-    double py = point.y();
-    position.setAttribute("x", QString::number(px));
-    position.setAttribute("y", QString::number(py));
+    position.setAttribute("x", point.x());
+    position.setAttribute("y", point.y());
 
     QDomElement space = doc.createElement("spaceMode");
     space.setAttribute("current", spaceMode);
@@ -276,12 +277,7 @@ TupProjectRequest TupRequestBuilder::fromResponse(TupProjectResponse *response)
             default:
                  {
                     #ifdef K_DEBUG
-                        QString msg = "TupRequestBuilder::fromResponse() - Error: wOw! Unknown response! O_o";
-                        #ifdef Q_OS_WIN
-                            qWarning() << msg;
-                        #else
-                            tWarning() << msg;
-                        #endif
+                           tWarning() << "wOw! Unknown response! O_o";
                     #endif
                  }
     }

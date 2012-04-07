@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,18 +33,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPSAVEPACKAGE_H
-#define TUPSAVEPACKAGE_H
+#ifndef TupSAVEPACKAGE_H
+#define TupSAVEPACKAGE_H
 
-#include "tglobal.h"
+/**
+ * @author Gustav Gonzalez  
+*/
 
 #include <QDomDocument>
 
-/**
- * @author Gustav Gonzalez
-*/
-
-class TUPI_EXPORT TupSavePackage: public QDomDocument
+class TupSavePackage: public QDomDocument
 {
     public:
         TupSavePackage(bool exitFlag);

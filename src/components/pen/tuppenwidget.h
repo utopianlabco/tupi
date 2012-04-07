@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,22 +33,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPENWIDGET_H
-#define TUPPENWIDGET_H
+#ifndef TupPENWIDGET_H
+#define TupPENWIDGET_H
 
-#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
 #include "teditspinbox.h"
-#include "tconfig.h"
-#include "tuppaintareaevent.h"
-#include "tuppenthicknesswidget.h"
 
 #include <QPen>
 #include <QListWidgetItem>
 #include <QComboBox>
 #include <QLabel>
-#include <QListWidget>
-#include <QPushButton>
 
 class TupPaintAreaEvent;
 
@@ -56,7 +50,7 @@ class TupPaintAreaEvent;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupPenWidget : public TupModuleWidgetBase
+class TupPenWidget : public TupModuleWidgetBase
 {
     Q_OBJECT
 
@@ -64,32 +58,28 @@ class TUPI_EXPORT TupPenWidget : public TupModuleWidgetBase
         TupPenWidget(QWidget *parent = 0);
         ~TupPenWidget();
         QPen pen() const;
-        void setPenThickness(int thickness);
         
     private:
-        void updatePenProperties();
-        void updateBrushProperties();
+        void emitPenChanged();
+        void emitBrushChanged();
+        // void updatePenParams();
         void addBrushesList();
         
     public slots:
-        void init(int thickness);
-        void setThickness(int thickness);
+        void init();
+        void setThickness(int value);
         void setPenColor(const QColor color);
         void setBrush(const QBrush brush);
         
     private slots:
-        void setStyle(int style);
+        void setStyle(int s);
+        void setJoinStyle(int s);
+        void setCapStyle(int s);
         void setBrushStyle(QListWidgetItem *item);
-
-        void enableRoundCapStyle();
-        void enableSquareCapStyle();
-        void enableFlatCapStyle();
-
-        void enableRoundJoinStyle();
-        void enableMiterJoinStyle();
-        void enableBevelJoinStyle();
         
     signals:
+        void penChanged(const QPen &pen);
+        void brushChanged(const QBrush &brush);
         void paintAreaEventTriggered(const TupPaintAreaEvent *e);
 
     private:

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,27 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPANIMATIONRENDERER_H
-#define TUPANIMATIONRENDERER_H
-
-#include "tglobal.h"
+#ifndef TupANIMATIONRENDERER_H
+#define TupANIMATIONRENDERER_H
 
 #include <QColor>
 #include <QSize>
-#include <QPainter>
 
 class QPainter;
 class TupScene;
-class TupLibrary;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupAnimationRenderer
+class TupAnimationRenderer
 {
     public:
-        TupAnimationRenderer(const QColor color, TupLibrary *library=0);
+        TupAnimationRenderer(const QColor color);
         ~TupAnimationRenderer();
 
         void setScene(TupScene *scene, QSize dimension);

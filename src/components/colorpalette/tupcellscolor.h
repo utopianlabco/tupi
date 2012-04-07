@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,27 +33,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCELLSCOLOR_H
-#define TUPCELLSCOLOR_H
+#ifndef TupCELLSCOLOR_H
+#define TupCELLSCOLOR_H
 
-#include "tglobal.h"
 #include "tcellview.h"
-#include "tuppalettedocument.h"
-
-#include <QFile>
-#include <QDragEnterEvent>
-#include <QMouseEvent>
-#include <QDrag>
-#include <QApplication>
-#include <QPainter>
-#include <QMimeData>
-#include <QTextStream>
 
 /**
  * @author Jorge Cuadrado
 **/
 
-class TUPI_EXPORT TupCellsColor : public TCellView
+class TupCellsColor : public TCellView
 {
     Q_OBJECT
 

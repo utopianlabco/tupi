@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,27 +33,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPAINTAREAEVENT_H
-#define TUPPAINTAREAEVENT_H
+#ifndef TupPAINTAREAEVENT_H
+#define TupPAINTAREAEVENT_H
 
-#include "tglobal.h"
 #include "tupprojectrequest.h"
+#include "tupglobal_store.h"
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupPaintAreaEvent
+class STORE_EXPORT TupPaintAreaEvent
 {
     public:
         enum Action
           {
              None = 0,
              ChangePen,
-             ChangePenColor,
-             ChangePenThickness,
-             ChangeBrush,
-             ChangeBgColor
+             ChangeColorPen,
+             ChangeBrush
           };
 
         TupPaintAreaEvent(Action action, const QVariant &data);

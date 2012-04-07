@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -40,6 +40,11 @@
 #include "tupellipseitem.h"
 #include "tupproxyitem.h"
 #include "tupitemgroup.h"
+
+#include "tdebug.h"
+
+#include <QBrush>
+#include <QPen>
 
 TupItemConverter::TupItemConverter()
 {
@@ -76,11 +81,12 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
     if (!item) 
         return 0;
     
-    TupPathItem *path = new TupPathItem(item->parentItem());
+    TupPathItem *path = new TupPathItem(item->parentItem(), 0);
     
     QPainterPath ppath;
     
     switch (item->type()) {
+
         case TupPathItem::Type:
         {
             ppath = qgraphicsitem_cast<TupPathItem *>(item)->path();
@@ -89,6 +95,7 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
 
         case TupRectItem::Type:
         {
+            tFatal() << "TupItemConverter::convertToPath() - Converting rectangle to path!";
             ppath.addRect(qgraphicsitem_cast<TupRectItem *>(item)->rect());
         }
         break;
@@ -118,13 +125,8 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
         case TupItemGroup::Type:
         {
             #ifdef K_DEBUG
-                QString msg = "TupItemConverter::convertToPath - Error: Group items are not supported";
-                #ifdef Q_OS_WIN
-                    qWarning() << msg;
-                #else
-                    tWarning() << msg;
-                #endif
-            #endif	
+                tWarning() << "TupItemConverter::convertToPath no support groups";
+            #endif
             delete path;
             return 0;
         }
@@ -133,13 +135,8 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
         default:
         {
             #ifdef K_DEBUG
-                QString msg = "TupItemConverter::convertToPath - Using default converter...";
-                #ifdef Q_OS_WIN
-                    qWarning() << msg;
-                #else
-                    tWarning() << msg;
-                #endif
-            #endif			
+                tWarning() << "TupItemConverter::convertToPath use default";
+            #endif
             ppath = item->shape(); // TODO
         }
         break;
@@ -227,3 +224,4 @@ TupLineItem *TupItemConverter::convertToLine(QGraphicsItem *item)
     
     return line;
 }
+

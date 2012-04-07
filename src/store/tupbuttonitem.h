@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,11 +33,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPBUTTONITEM_H
-#define TUPBUTTONITEM_H
+#ifndef TupBUTTONITEM_H
+#define TupBUTTONITEM_H
 
 #include "tupabstractserializable.h"
-#include "tglobal.h"
+#include "tupglobal_store.h"
 
 #include <QGraphicsItem>
 #include <QIcon>
@@ -47,13 +47,12 @@
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupButtonItem : public QObject, public QGraphicsItem, public TupAbstractSerializable
+class STORE_EXPORT TupButtonItem : public QObject, public QGraphicsItem, public TupAbstractSerializable
 {
     Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
 
     public:
-        TupButtonItem(QGraphicsItem *parent = 0);
+        TupButtonItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
         ~TupButtonItem();
         
         virtual void fromXml(const QString &xml);

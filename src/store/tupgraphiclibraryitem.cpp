@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,16 +34,18 @@
  ***************************************************************************/
 
 #include "tupgraphiclibraryitem.h"
+#include "tuplibraryobject.h"
 #include "tupserializer.h"
-#include "tupitemgroup.h"
+
+#include <QGraphicsTextItem>
+
+#include "tdebug.h"
 
 struct TupGraphicLibraryItem::Private
 {
     QString symbolName;
-    QString symbolPath;
     QString svgContent;
-    // QList<QGraphicsItem *> items;
-    TupLibraryObject::Type itemType;
+    QList<QGraphicsItem *> items;
 };
 
 TupGraphicLibraryItem::TupGraphicLibraryItem() : TupProxyItem(), k(new Private)
@@ -53,18 +55,12 @@ TupGraphicLibraryItem::TupGraphicLibraryItem() : TupProxyItem(), k(new Private)
 TupGraphicLibraryItem::TupGraphicLibraryItem(TupLibraryObject *object) : TupProxyItem(), k(new Private)
 {
     setObject(object);
-    k->itemType = object->type();
 }
 
 TupGraphicLibraryItem::~TupGraphicLibraryItem()
 {
-    // qDeleteAll(k->items);
+    qDeleteAll(k->items);
     delete k;
-}
-
-TupLibraryObject::Type TupGraphicLibraryItem::itemType()
-{
-    return k->itemType;
 }
 
 QDomElement TupGraphicLibraryItem::toXml(QDomDocument &doc) const
@@ -85,28 +81,18 @@ void TupGraphicLibraryItem::setObject(TupLibraryObject *object)
 {
     if (!object) {
         #ifdef K_DEBUG
-            QString msg = "TupGraphicLibraryItem::setObject() - Setting null library object";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+            tWarning("library") << "Setting null library object";
         #endif
-
         return;
     }
     
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qWarning() << "TupGraphicLibraryItem::setObject() - object->symbolName(): " << object->symbolName();
-        #else
-            T_FUNCINFOX("library") << object->symbolName();
-        #endif
+        T_FUNCINFOX("library") << object->symbolName();
     #endif
 
     k->symbolName = object->symbolName();
-    k->symbolPath = object->dataPath();
-    switch(object->type()) {
+    switch(object->type())
+    {
         case TupLibraryObject::Item:
         case TupLibraryObject::Text:
         case TupLibraryObject::Image:
@@ -143,9 +129,3 @@ QString TupGraphicLibraryItem::svgContent()
 {
    return k->svgContent;
 }
-
-QString TupGraphicLibraryItem::symbolPath() const
-{
-    return k->symbolPath;
-}
-

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,13 @@
  ***************************************************************************/
 
 #include "tupviewcolorcells.h"
+#include "tdebug.h"
+#include "tglobal.h"
+#include "timagebutton.h"
+#include "tconfig.h"
+
+#include <QScrollArea>
+#include <QGroupBox>
 
 struct TupViewColorCells::Private
 {
@@ -45,29 +52,25 @@ struct TupViewColorCells::Private
     TupCellsColor *customGradientPalette;
     int numColorRecent;
     QBrush currentColor;
-    QTableWidgetItem* currentCell;
-    QVBoxLayout *layout;
 };
 
 TupViewColorCells::TupViewColorCells(QWidget *parent) : QFrame(parent), k(new Private)
 {
     k->numColorRecent = 0;
-    k->currentCell = 0;
-    k->layout = new QVBoxLayout;
-    k->layout->setMargin(0);
-    k->layout->setSpacing(0);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
 
+    setLayout(layout);
     setFrameStyle(QFrame::Box | QFrame::Raised);
     setupForm();
     // setupButtons();
-
-    setLayout(k->layout);
 }
 
 TupViewColorCells::~TupViewColorCells()
 {
     TCONFIG->beginGroup("ColorPalette");
-    TCONFIG->setValue("LastPalette", k->chooserPalette->currentIndex());
+    TCONFIG->setValue("LastPalette", k->chooserPalette->currentIndex());;
 
     QDir brushesDir(CONFIG_DIR + "palettes");
 
@@ -75,12 +78,7 @@ TupViewColorCells::~TupViewColorCells()
         brushesDir.mkdir(brushesDir.path());
 
     #ifdef K_DEBUG
-        QString msg = "TupViewColorCells::~TupViewColorCells() - Saving color palettes in: " + brushesDir.path();
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning("palette") << msg;
-        #endif
+           tWarning("palette") << "TupViewColorCells::~TupViewColorCells() - Saving color palettes in: " << brushesDir.path();
     #endif
 
     for (int i = 0; i < k->containerPalette->count(); i++) {
@@ -91,87 +89,70 @@ TupViewColorCells::~TupViewColorCells()
          }
     }
 
-    // delete k;
+    delete k;
 	
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupViewColorCells()]";
-        #else
-            TEND;
-        #endif
+          TEND;
     #endif
 }
 
 void TupViewColorCells::setupForm()
 {
     k->chooserPalette = new QComboBox(this);
-    k->chooserPalette->setStyleSheet("combobox-popup: 0;");
 
     k->containerPalette = new QStackedWidget(this);
-    k->layout->addWidget(k->chooserPalette);
-    k->layout->addWidget(k->containerPalette);
+    layout()->addWidget(k->chooserPalette);
+    layout()->addWidget(k->containerPalette);
 
     // Default Palette
     k->defaultPalette = new TupCellsColor(k->containerPalette);
     k->defaultPalette->setName(tr("Default Palette"));
-    k->defaultPalette->setReadOnly(true);
-    // fillDefaultColors();
+    k->defaultPalette->setReadOnly( true);
+
+    fillDefaultColors();
     addPalette(k->defaultPalette);
 
     //Named Colors
     k->qtColorPalette = new TupCellsColor(k->containerPalette);
     k->qtColorPalette->setReadOnly(true);
     k->qtColorPalette->setName(tr("Named Colors"));
-    fillNamedColor();
     addPalette(k->qtColorPalette);
 
+    fillNamedColor();
+
     //Custom Color Palette
-    // SQA: This palette must be implemented
     k->customColorPalette = new TupCellsColor(k->containerPalette);
     k->customColorPalette->setName(tr("Custom Color Palette"));
     addPalette(k->customColorPalette);
 
     //Custom Gradient Palette
-    // SQA: This palette must be implemented
     k->customGradientPalette = new TupCellsColor(k->containerPalette);
     k->customGradientPalette->setName(tr("Custom Gradient Palette"));
     k->customGradientPalette->setType(TupCellsColor::Gradient);
     addPalette(k->customGradientPalette);
 
-#ifdef Q_OS_WIN
-    QString palettesPath = SHARE_DIR + "palettes";
-#else
-    QString palettesPath = SHARE_DIR + "data/palettes";
-#endif
-    readPalettes(palettesPath); // Pre-installed
-    readPalettes(CONFIG_DIR + "palettes"); // Locals
-
-    connect(k->chooserPalette, SIGNAL(activated(int)), k->containerPalette, SLOT(setCurrentIndex(int)));
+    connect(k->chooserPalette, SIGNAL(activated(int )), k->containerPalette, SLOT(setCurrentIndex(int )));
 
     TCONFIG->beginGroup("ColorPalette");
     int lastIndex = TCONFIG->value("LastPalette").toInt();
 
-    if (lastIndex < 0)
-        lastIndex = 0;
-
-    k->chooserPalette->setCurrentIndex(lastIndex);
-    k->containerPalette->setCurrentIndex(lastIndex);
+    if (lastIndex > 0) {
+        k->chooserPalette->setCurrentIndex(lastIndex);
+        k->containerPalette->setCurrentIndex(lastIndex);
+    }
+	
+    readPalettes(SHARE_DIR + "data/palettes"); // Pre-installed
+    readPalettes(CONFIG_DIR + "palettes"); // Locals
 }
 
 void TupViewColorCells::readPalettes(const QString &paletteDir)
 {
     #ifdef K_DEBUG
-        QString msg = "TupViewColorCells::readPalettes() - Reading palettes from: " + paletteDir;
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning("palette") << msg;
-        #endif
+           tDebug("palette") << "Reading palettes from: " << paletteDir;
     #endif
-
     QDir dir(paletteDir);
 
-    if (dir.exists()) {
+    if (dir.exists ()) {
         QStringList files = dir.entryList(QStringList() << "*.tpal");
         QStringList::ConstIterator it = files.begin();
 
@@ -179,63 +160,32 @@ void TupViewColorCells::readPalettes(const QString &paletteDir)
                readPaletteFile(dir.path() + "/" + *it);
                ++it;
         }
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupViewColorCells::readPalettes() - Error: Invalid path -> " + paletteDir;
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError("palette") << msg;
-            #endif
-        #endif	
-	}
+    }
 }
 
-void TupViewColorCells::readPaletteFile(const QString &paletteFile)
+void TupViewColorCells::readPaletteFile(const QString &file)
 {
     TupPaletteParser parser;
-    QFile file(paletteFile);
-    if (parser.parse(&file)) {
+    QFile f(file);
+    if (parser.parse(&f)) {
         QList<QBrush> brushes = parser.brushes();
         QString name = parser.paletteName();
         bool editable = parser.paletteIsEditable();
-        addPalette(name, brushes, editable);
+        addPalette(name,brushes,editable );
     } else {
         #ifdef K_DEBUG
-            QString msg = "TupViewColorCells::readPaletteFile() - Fatal error while parsing palette file: " + paletteFile;
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "Error while parse palette file: " << file;
         #endif
     }
 }
 
-void TupViewColorCells::addPalette(const QString & name, const QList<QBrush> & brushes, bool editable)
+void TupViewColorCells::addPalette(const QString & name, const QList<QBrush> & brushes, bool editable )
 {
-    /*
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupViewColorCells::addPalette()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-    */
-
-    if (name == "Default Palette") {
+    if (name == k->customColorPalette->name()) {
         QList<QBrush>::ConstIterator it = brushes.begin();
 
         while (it != brushes.end()) {
-               k->defaultPalette->addItem(*it);
-               ++it;
-        }
-    } else if (name == k->customColorPalette->name()) {
-        QList<QBrush>::ConstIterator it = brushes.begin();
-
-        while (it != brushes.end()) {
-               k->customColorPalette->addItem(*it);
+               k->customColorPalette->addItem( *it);
                ++it;
         }
     } else if (name == k->customGradientPalette->name()) {
@@ -268,35 +218,69 @@ void TupViewColorCells::addPalette(TupCellsColor *palette)
     k->containerPalette->addWidget(palette);
 }
 
+
 void TupViewColorCells::changeColor(QTableWidgetItem* item)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupViewColorCells::changeColor()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    if (item) {
-        if (k->currentCell) {
-            QColor currentColor = k->currentCell->background().color();
-            QColor newColor = item->background().color(); 
-            if (newColor != currentColor) {
-                k->currentCell = item;
-                emit colorSelected(item->background());
-            }
-        } else {
-            k->currentCell = item;
-            emit colorSelected(item->background());
-        }
-    }
+    if (item)
+        emit selectColor(item->background());
 }
 
-void TupViewColorCells::clearSelection()
+void TupViewColorCells::fillDefaultColors()
 {
-    if (k->currentCell)
-        k->currentCell->setSelected(false);
+    int i;
+    int j;
+    j = 0;
+    //First column, first 6 rows, a gray scale
+    for (i = 0; i <= 5; i++)
+         k->defaultPalette->addItem(QColor(i * 51, i * 51, i * 51));
+
+    //First column, last 6 rows, basic colors
+    k->defaultPalette->addItem(QColor(255, 0, 0));
+    k->defaultPalette->addItem(QColor(0, 255, 0));
+    k->defaultPalette->addItem(QColor(0, 0, 255));
+    k->defaultPalette->addItem(QColor(255, 255, 0));
+    k->defaultPalette->addItem(QColor(0, 255, 255));
+    k->defaultPalette->addItem(QColor(255, 0, 255));
+
+    //Segment from column 1 to 6 and row 0 to 5
+    for (i = 0; i <= 5; i++) {
+         for (j = 1; j <= 6; j++)
+              k->defaultPalette->addItem(QColor(0, (j - 1) * 51, i * 51));
+    }
+
+    //Segment from column 1 to 6 and row 6 to 11
+    for (i = 6; i <= 11; i++) {
+         for (j = 1; j <= 6; j++)
+              k->defaultPalette->addItem(QColor(153, (j - 1) * 51, (i - 6) * 51));
+    }
+
+    //Segment from column 7 to 12 and row 0 to 5
+    for (i = 0; i <= 5; i++) {
+         for (j = 7; j <= 12; j++) 
+              k->defaultPalette->addItem(QColor(51, (j - 7) * 51, i * 51));
+    }
+
+    //Segment from column 7 to 12 and row 6 to 11
+    for (i = 6; i <= 11; i++) {
+         for (j = 7; j <= 12; j++)
+              k->defaultPalette->addItem(QColor(204, (j - 7) * 51, (i - 6) * 51));
+    }
+
+    //Segment from column 13 to 18 and row 0 to 5
+    for (i = 0; i <= 5; i++) {
+         for (j = 13; j <= 18; j++)
+              k->defaultPalette->addItem(QColor(102, (j - 13) * 51, i * 51));
+    }
+
+    //Segment from column 13 to 18 and row 6 to 11
+    for (i = 6; i <= 11; i++) {
+         for (j = 13; j <= 18; j++)
+              k->defaultPalette->addItem(QColor(255, (j - 13) * 51, (i - 6) * 51));
+    }
 }
 
 void TupViewColorCells::fillNamedColor()
@@ -322,7 +306,7 @@ void TupViewColorCells::addCurrentColor()
             || (k->currentColor.color().isValid() && palette->type() == TupCellsColor::Gradient)) {
             if (15 <= k->currentColor.style() && k->currentColor.style() < 18) {
                 palette = k->customGradientPalette;
-                k->chooserPalette->setCurrentIndex(k->chooserPalette->findText(k->customGradientPalette->name()));
+                k->chooserPalette->setCurrentIndex( k->chooserPalette->findText ( k->customGradientPalette->name()));
                 k->containerPalette->setCurrentWidget(k->customGradientPalette);
             } else {
                 palette = k->customColorPalette;
@@ -370,7 +354,7 @@ void TupViewColorCells::setupButtons()
     layout()->addWidget(containerButtons);
 }
 
-void TupViewColorCells::setColor(const QBrush& brush)
+void TupViewColorCells::setColor(const QBrush& b)
 {
-    k->currentColor = brush;
+    k->currentColor = b;
 }

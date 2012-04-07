@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,11 @@
  ***************************************************************************/
 
 #include "tuptoolstatus.h"
+#include "tdebug.h"
+#include "tconfig.h"
+
+#include <QLabel>
+#include <QHBoxLayout>
 
 TupToolStatus::TupToolStatus()
 {
@@ -42,15 +47,14 @@ TupToolStatus::TupToolStatus()
     layout->setSpacing(2);
 
     tool = new QLabel("");
-    QPixmap pic(THEME_DIR + "icons/pencil.png");
+    QPixmap pix(THEME_DIR + "icons/pencil.png");
     tool->setToolTip(tr("Current Tool"));
-    tool->setPixmap(pic);
+    tool->setPixmap(pix);
+    // tool->setMaximumSize(20, 20);
 
     QLabel *label = new QLabel(tr("Current Tool"));
-    QFont font = this->font();
-    font.setPointSize(8);
+    QFont font("Helvetica", 8, QFont::Normal);
     label->setFont(font);
-
     layout->addWidget(label);
     layout->addSpacing(3);
     layout->addWidget(tool);

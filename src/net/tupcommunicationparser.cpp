@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,7 +39,6 @@ struct TupCommunicationParser::Private
 {
     QString message;
     QString login;
-    int state;
 };
 
 TupCommunicationParser::TupCommunicationParser() : TupXmlParserBase(), k(new Private())
@@ -54,15 +53,10 @@ TupCommunicationParser::~TupCommunicationParser()
 
 bool TupCommunicationParser::startTag(const QString &tag, const QXmlAttributes &atts)
 {
-    if (root() == "communication_chat" || root() == "communication_wall") {
+    if (root() == "communication_chat" || root() == "communication_notice" || root() == "communication_wall") {
         if (tag == "message") {
             k->message = atts.value("text");
             k->login = atts.value("from");
-        }
-    } else if (root() == "communication_notice") {
-        if (tag == "notice") {
-            k->login = atts.value("login");
-            k->state = atts.value("state").toInt();
         }
     }
     
@@ -87,9 +81,3 @@ QString TupCommunicationParser::login() const
 {
     return k->login;
 }
-
-int TupCommunicationParser::state()
-{
-    return k->state;
-}
-

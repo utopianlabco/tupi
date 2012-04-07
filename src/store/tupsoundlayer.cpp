@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,10 +34,12 @@
  ***************************************************************************/
 
 #include "tupsoundlayer.h"
-// #include "taudioplayer.h"
+#include "taudioplayer.h"
 #include "tuplibrary.h"
 #include "tupproject.h"
 #include "tuplibraryobject.h"
+
+#include <QFileInfo>
 
 struct TupSoundLayer::Private
 {
@@ -45,7 +47,8 @@ struct TupSoundLayer::Private
     int playerId;
 };
 
-TupSoundLayer::TupSoundLayer(TupScene *parent) : TupLayer(parent), k(new Private)
+TupSoundLayer::TupSoundLayer(TupScene *parent)
+ : TupLayer(parent), k(new Private)
 {
 }
 
@@ -58,11 +61,11 @@ void TupSoundLayer::fromSymbol(const QString &symbolName)
 {
     TupLibrary *library = project()->library();
     
-    if (TupLibraryObject *object = library->getObject(symbolName)) {
+    if (TupLibraryObject *object = library->findObject(symbolName)) {
         if (object->type() == TupLibraryObject::Sound) {
             k->symbolName = symbolName;
             k->filePath = object->dataPath();
-            // k->playerId = TAudioPlayer::instance()->load(k->filePath);
+            k->playerId = TAudioPlayer::instance()->load(k->filePath);
         }
     }
 }
@@ -74,14 +77,14 @@ QString TupSoundLayer::filePath() const
 
 void TupSoundLayer::play()
 {
-    // TAudioPlayer::instance()->setCurrentPlayer(k->playerId);
-    // TAudioPlayer::instance()->play();
+    TAudioPlayer::instance()->setCurrentPlayer(k->playerId);
+    TAudioPlayer::instance()->play();
 }
 
 void TupSoundLayer::stop()
 {
-    // TAudioPlayer::instance()->setCurrentPlayer(k->playerId);
-    // TAudioPlayer::instance()->stop();
+    TAudioPlayer::instance()->setCurrentPlayer(k->playerId);
+    TAudioPlayer::instance()->stop();
 }
 
 void TupSoundLayer::fromXml(const QString &xml)

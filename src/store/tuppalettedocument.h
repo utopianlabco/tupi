@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,14 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPALETTEDOCUMENT_H
-#define TUPPALETTEDOCUMENT_H
-
-#include "tglobal.h"
+#ifndef TupPALETTEDOCUMENT_H
+#define TupPALETTEDOCUMENT_H
 
 #include <QDomDocument>
 #include <QBrush>
 #include <QList>
+#include "tupglobal_store.h"
 
 /**
  * Esta clase se utiliza para guardar las paletas
@@ -48,7 +47,7 @@
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupPaletteDocument : public QDomDocument
+class STORE_EXPORT TupPaletteDocument : public QDomDocument
 {
     public:
         /**

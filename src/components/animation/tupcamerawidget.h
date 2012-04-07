@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,76 +33,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCAMERAWIDGET_H
-#define TUPCAMERAWIDGET_H
+#ifndef TupCAMERAWIDGET_H
+#define TupCAMERAWIDGET_H
 
-#include "tglobal.h"
-#include "tupexportwidget.h"
-#include "tseparator.h"
-#include "tupprojectrequest.h"
-#include "tupprojectresponse.h"
-#include "tuprequestbuilder.h"
-#include "tcirclebuttonbar.h"
-#include "tvhbox.h"
-#include "tupscreen.h"
-#include "tupcamerabar.h"
-#include "tupcamerastatus.h"
+#include <tupmodulewidgetbase.h>
 
-#include <QMainWindow>
-#include <QFrame>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QProgressBar>
-
-class TupProjectResponse;
-class QCheckBox;
-class TupCameraStatus;
+class TupProject;
+class TupViewCamera;
+class QSpinBox;
 
 /**
  * @author David Cuadrado 
+ * @todo:
+ * @li
+ * - range of frames
+ * - aspect ratio
 */
 
-class TUPI_EXPORT TupCameraWidget : public QFrame
+// SQA: This class is not used anymore. Please, remove it! 
+
+class TupCameraWidget : public TupModuleWidgetBase
 {
     Q_OBJECT
 
     public:
-        TupCameraWidget(TupProject *work, bool isNetworked = false, QWidget *parent = 0);
+        TupCameraWidget(TupProject *project, QWidget *parent = 0);
         ~TupCameraWidget();
-
-        void updateFirstFrame();
-        QSize sizeHint() const;
-        void updateScenes(int sceneIndex);
-
-    private slots:
-        void setLoop();
-        void selectScene(int index);
-        void updateProgressBar(int advance);
+        TupViewCamera *viewCamera();
 
     public slots:
-        bool handleProjectResponse(TupProjectResponse *event);
         void setFPS(int fps);
-        void setStatusFPS(int fps);
-        void updateFramesTotal(int sceneIndex);
-        void exportDialog();
-        void postDialog();
-        void doPlay();
-        void doPlayBack();
-        void doStop();
-        void nextFrame();
-        void previousFrame();
-
-    signals:
-        void requestTriggered(const TupProjectRequest *event);
-        void requestForExportVideoToServer(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> indexes);
-        // void requestForExportStoryboardToServer(const QString &title, const QString &topics, const QString &description, const QList<int> indexes);
 
     private:
-        void setDimensionLabel(const QSize dimension);
-        struct Private;
-        Private *const k;
+        TupViewCamera *m_viewCamera;
+        QSpinBox *m_fps;
 };
 
 #endif

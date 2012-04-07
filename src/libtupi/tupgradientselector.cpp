@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,16 +34,18 @@
  ***************************************************************************/
 
 #include "tupgradientselector.h"
+#include "tdebug.h"
+#include "timageeffect.h"
+
+#include <qdrawutil.h>
+#include <QMatrix>
+#include <QPolygon>
 
 TupGradientSelector::TupGradientSelector(QWidget *parent) 
     : QAbstractSlider(parent), m_currentArrowIndex(0), m_gradient(0,0,1,1), m_update(true), m_maxArrows(10), m_currentColor(Qt::black)
-{	
-	#ifdef K_DEBUG
-		#ifdef Q_OS_WIN
-            qDebug() << "[TupGradientSelector()]";
-        #else
-            TINIT;
-        #endif
+{
+    #ifdef K_DEBUG
+           TINIT;
     #endif
 
     _orientation = Qt::Horizontal;
@@ -73,11 +75,7 @@ void TupGradientSelector::init()
 TupGradientSelector::~TupGradientSelector()
 {
     #ifdef K_DEBUG
-	    #ifdef Q_OS_WIN
-            qDebug() << "[~TupGradientSelector()]";
-        #else
-            TEND;
-        #endif
+           TEND;
     #endif
 }
 

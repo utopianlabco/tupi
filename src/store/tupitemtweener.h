@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,18 +33,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPITEMTWEENER_H
-#define TUPITEMTWEENER_H
-
-#include "tglobal.h"
-#include "tuptweenerstep.h"
+#ifndef TupITEMTWEENER_H
+#define TupITEMTWEENER_H
 
 #include <QObject>
 #include <QMatrix>
 #include <QPointF>
 #include <QColor>
-#include <QGraphicsItem>
-#include <QHash>
+
+#include "tuptweenerstep.h"
+#include "tupglobal_store.h"
 
 class QGraphicsItem;
 class QGraphicsPathItem;
@@ -54,7 +52,7 @@ class QGraphicsPathItem;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupItemTweener : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
  
@@ -66,14 +64,11 @@ class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializabl
              Shear = 3,
              Opacity = 4,
              Coloring = 5,
-             Composed = 6, 
-             Papagayo = 7
+             Compound = 6 
         };
-
         enum RotationType { Continuos = 0, Partial };
         enum RotateDirection { Clockwise = 0, Counterclockwise };
         enum TransformAxes { XY = 0, X, Y };
-        enum FillType { Line = 0, Internal, FillAll};
 
         TupItemTweener();
         ~TupItemTweener();
@@ -94,9 +89,7 @@ class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializabl
         void setFrames(int frames);
 
         int frames() const;
-        int initFrame();
-        int initLayer();
-        int initScene();
+        int startFrame();
         QPointF transformOriginPoint();
         
         void setStep(int step);
@@ -105,7 +98,6 @@ class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializabl
         QDomElement toXml(QDomDocument &doc) const;
 
         QGraphicsPathItem *graphicsPath() const;
-        QList<int> intervals();
         QString tweenType();
 
         TupItemTweener::RotationType tweenRotationType();
@@ -134,7 +126,6 @@ class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializabl
         int tweenOpacityLoop();       
         int tweenOpacityReverseLoop();
 
-        TupItemTweener::FillType tweenColorFillType();
         QColor tweenInitialColor();
         QColor tweenEndingColor();
         int tweenColorIterations();

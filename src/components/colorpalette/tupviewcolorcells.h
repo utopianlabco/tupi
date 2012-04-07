@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,29 +33,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPVIEWCOLORCELLS_H
-#define TUPVIEWCOLORCELLS_H
-
-#include "tglobal.h"
-#include "tconfig.h"
-#include "timagebutton.h"
-#include "tupcellscolor.h"
-#include "tuppaletteparser.h"
-#include "tapplicationproperties.h"
+#ifndef TupVIEWCOLORCELLS_H
+#define TupVIEWCOLORCELLS_H
 
 #include <QFrame>
 #include <QComboBox>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QBrush>
-#include <QScrollArea>
-#include <QGroupBox>
+
+#include "tupcellscolor.h"
+#include "tuppaletteparser.h"
+#include "tapplicationproperties.h"
 
 /**
     @author Jorge Cuadrado
 **/
 
-class TUPI_EXPORT TupViewColorCells : public QFrame
+class TupViewColorCells : public QFrame
 {
     Q_OBJECT
 
@@ -63,8 +58,7 @@ class TUPI_EXPORT TupViewColorCells : public QFrame
         TupViewColorCells(QWidget *parent = 0);
         virtual ~TupViewColorCells();
         void readPaletteFile(const QString &file);
-        void setColor(const QBrush & brush);
-        void clearSelection();
+        void setColor(const QBrush & b);
 
     private:
         struct Private;
@@ -73,16 +67,16 @@ class TUPI_EXPORT TupViewColorCells : public QFrame
     private:
         void setupForm();
         void setupButtons();
+        void fillDefaultColors();
         void addDefaultColor(int i, int j, const QColor &);
         void fillNamedColor();
         void readPalettes(const QString &paletteDir);
         void addPalette(TupCellsColor *palette);
 
-    // protected:
-    //     QSize sizeHint() const;
+    protected:
 
     signals:
-        void colorSelected(const QBrush &);
+        void selectColor(const QBrush &);
 
     public slots:
         virtual void addCurrentColor();

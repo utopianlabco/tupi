@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,19 +36,17 @@
 #ifndef TUPMODULEWIDGETBASE_H
 #define TUPMODULEWIDGETBASE_H
 
-#include "tglobal.h"
 #include "tosd.h"
 #include "tupprojectresponse.h"
 #include "tupabstractprojectresponsehandler.h"
+#include "tupglobal.h"
 
 #include <QLayout>
 #include <QSizePolicy> 
 #include <QObject>
 #include <QEvent>
-#include <QDockWidget>
-#include <QEvent>
 #include <QBoxLayout>
-#include <QDialog>
+#include <QDockWidget>
 
 /**
  * @author Jorge Cuadrado

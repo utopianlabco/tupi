@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -40,7 +40,8 @@
 #include <QFocusEvent>
 #include <QTimer>
 
-TupTextItem::TupTextItem(QGraphicsItem *parent) : QGraphicsTextItem(parent), m_flags(flags()), m_isEditable(false)
+TupTextItem::TupTextItem(QGraphicsItem * parent, QGraphicsScene * scene)
+    : QGraphicsTextItem(parent, scene), m_flags(flags()), m_isEditable(false)
 {
     setOpenExternalLinks(true);
     setEditable(false);
@@ -52,12 +53,12 @@ TupTextItem::~TupTextItem()
 
 void TupTextItem::fromXml(const QString &xml)
 {
-    Q_UNUSED(xml);
 }
 
 QDomElement TupTextItem::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("text");
+    
     QDomText text = doc.createTextNode(toHtml());
     root.appendChild(text);
     
@@ -100,8 +101,7 @@ void TupTextItem::focusOutEvent(QFocusEvent * event)
     }
 }
 
-void TupTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void TupTextItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 {
-    Q_UNUSED(event);
     setEditable(true);
 }

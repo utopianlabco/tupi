@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,12 @@
  ***************************************************************************/
 
 #include "tupnetsocket.h"
+#include "tupnetprojectmanagerhandler.h"
+#include "tupcompress.h"
+#include "tdebug.h"
+
+#include <QTextStream>
+#include <QDataStream>
 
 TupNetSocket::TupNetSocket(TupNetProjectManagerHandler *handler) : TupSocketBase(handler), m_handler(handler)
 {
@@ -46,14 +52,8 @@ TupNetSocket::~TupNetSocket()
 void TupNetSocket::readed(const QString &readed)
 {
     #ifdef K_DEBUG
-        QString msg = "TupNetSocket::readed() - PACKAGE ARRIVING: ";
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-            qWarning()  << readed;
-        #else
-            tWarning() << msg;
-            tWarning("net")  << readed;
-        #endif
+        tDebug("net") << "TupNetSocket::readed() - PACKAGE ARRIVING: ";
+        tWarning("net")  << readed;
     #endif
 
     QDomDocument doc;
@@ -63,12 +63,8 @@ void TupNetSocket::readed(const QString &readed)
         m_handler->handlePackage(root, readed);
     } else {
         #ifdef K_DEBUG
-            QString msg = "TupNetSocket::readed() - Error: Package isn't a DOM document";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "TupNetSocket::readed() - Error: Package isn't a DOM document";
         #endif
     }
 }
+

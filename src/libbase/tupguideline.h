@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,18 +33,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLINEGUIDE_H
-#define TUPLINEGUIDE_H
+#ifndef TupLINEGUIDE_H
+#define TupLINEGUIDE_H
 
-#include "tglobal.h"
-
+#include "tupglobal.h"
 #include <QGraphicsItem>
-#include <QGraphicsScene>
-#include <QPainter>
-#include <QCursor>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsView>
-#include <QApplication>
 
 /**
  * @author Jorge Cuadrado
@@ -53,7 +46,7 @@
 class TUPI_EXPORT TupLineGuide : public QGraphicsItem
 {
     public:
-        TupLineGuide(Qt::Orientation orientation);
+        TupLineGuide(Qt::Orientation o, QGraphicsScene *scene);
         ~TupLineGuide();
         
         QRectF boundingRect() const;

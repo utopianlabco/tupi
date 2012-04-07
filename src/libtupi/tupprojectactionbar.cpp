@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,17 @@
  ***************************************************************************/
 
 #include "tupprojectactionbar.h"
+#include "tupglobal.h"
+#include "tdebug.h"
+#include "tseparator.h"
+#include "tconfig.h"
+#include "toptionaldialog.h"
+#include "timagebutton.h"
+
+#include <QVBoxLayout>
+#include <QVariant>
+#include <QSpacerItem>
+#include <QDesktopWidget>
 
 struct TupProjectActionBar::Private
 {
@@ -87,45 +98,86 @@ void TupProjectActionBar::setup(Actions actions)
     
     k->buttonLayout->setSpacing(1);
     k->buttonLayout->setMargin(1);
+    
     k->buttonLayout->addStretch();
+    
     int size = 16;
 
+   if (actions & InsertLayer) {
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/add_layer.png"), size);
+        button->setToolTip(tr("Insert a layer"));
+        button->setShortcut(QKeySequence(tr("F5")));
+        //button->setEnabled(false);
+
+        k->actions.addButton(button, InsertLayer);
+
+        k->buttonLayout->addWidget(button);
+        button->setAnimated(k->isAnimated);
+    }
+
+    if (actions & RemoveLayer) {
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_layer.png"), size);
+        button->setToolTip(tr("Remove the layer"));
+        button->setShortcut(QKeySequence(tr("F6")));
+        //button->setEnabled(false);
+
+        k->actions.addButton(button, RemoveLayer);
+
+        k->buttonLayout->addWidget(button);
+        button->setAnimated(k->isAnimated);
+    }
+
+    if (actions & MoveLayerUp) {
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/move_layer_up.png"), size);
+        button->setToolTip(tr("Move layer up"));
+        button->setShortcut(QKeySequence(tr("F9")));
+
+        k->actions.addButton(button, MoveLayerUp);
+
+        k->buttonLayout->addWidget(button);
+        button->setAnimated(true);
+    }
+    
+    if (actions & MoveLayerDown) {
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/move_layer_down.png" ), size);
+        button->setToolTip(tr("Move layer down"));
+        button->setShortcut(QKeySequence(tr("F10")));
+
+        k->actions.addButton(button, MoveLayerDown);
+
+        k->buttonLayout->addWidget(button);
+        button->setAnimated(k->isAnimated);
+    }
+
+    if (actions & Separator) {
+        k->buttonLayout->addSpacing(5);
+        k->buttonLayout->addWidget(new TSeparator(Qt::Vertical));
+    }
+    
     if (actions & InsertFrame) {
         TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/add_frame.png"), size);
         button->setToolTip(tr("Insert frame"));
-        // SQA: This short-cut has been moved to Zoom In feature
-        button->setShortcut(QKeySequence(Qt::Key_9));
+        button->setShortcut(QKeySequence(Qt::Key_Plus));
+        
         k->actions.addButton(button, InsertFrame);
         
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
     }
-
-    if (actions & ExtendFrame) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/extend_frame.png"), size);
-        button->setToolTip(tr("Extend frame"));
-        // button->setShortcut(QKeySequence());
-
-        k->actions.addButton(button, ExtendFrame);
-
-        k->buttonLayout->addWidget(button);
-        button->setAnimated(k->isAnimated);
-    }
-
+    
     if (actions & RemoveFrame) {
         TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_frame.png"), size);
-        button->setToolTip(tr("Remove frame"));
-        // SQA: This short-cut has been moved to Zoom Out feature
-        button->setShortcut(QKeySequence(Qt::Key_0));
+        button->setToolTip(tr("Remove the frame"));
+        button->setShortcut(QKeySequence(Qt::Key_Minus));
         
         k->actions.addButton(button, RemoveFrame);
         
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
     }
-
-    if (actions & MoveFrameBackward) {
-        TImageButton *button = 0;
+     
+    if (actions & MoveFrameUp) {
+        TImageButton *button;
         if (k->container.compare("Exposure") == 0) {
             button = new TImageButton(QIcon(THEME_DIR + "icons/move_frame_up.png"), size);
         } else {
@@ -133,17 +185,17 @@ void TupProjectActionBar::setup(Actions actions)
                 button = new TImageButton(QIcon(THEME_DIR + "icons/move_frame_backward.png"), size);
         }
         
-        button->setToolTip(tr("Move frame backward"));
+        button->setToolTip(tr("Move frame up"));
         button->setShortcut(QKeySequence(tr("F8")));
 
-        k->actions.addButton(button, MoveFrameBackward);
+        k->actions.addButton(button, MoveFrameUp);
         
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
     }
     
-    if (actions & MoveFrameForward) {
-        TImageButton *button = 0;
+    if (actions & MoveFrameDown) {
+        TImageButton *button;
 
         if (k->container.compare("Exposure") == 0) {
             button = new TImageButton(QIcon(THEME_DIR + "icons/move_frame_down.png"), size);
@@ -152,10 +204,10 @@ void TupProjectActionBar::setup(Actions actions)
                 button = new TImageButton(QIcon(THEME_DIR + "icons/move_frame_forward.png"), size);
         }
  
-        button->setToolTip(tr("Move frame forward"));
+        button->setToolTip(tr("Move frame down"));
         button->setShortcut(QKeySequence(tr("F9")));
         
-        k->actions.addButton(button, MoveFrameForward);
+        k->actions.addButton(button, MoveFrameDown);
         
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
@@ -182,63 +234,9 @@ void TupProjectActionBar::setup(Actions actions)
         button->setAnimated(k->isAnimated);
     }
 
-    if (actions & Separator) {
-        k->buttonLayout->addSpacing(5);
-        k->buttonLayout->addWidget(new TSeparator(Qt::Vertical));
-    }
-
-    if (actions & InsertLayer) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/add_layer.png"), size);
-        button->setToolTip(tr("Insert layer"));
-        button->setShortcut(QKeySequence(tr("F5")));
-
-        k->actions.addButton(button, InsertLayer);
-
-        k->buttonLayout->addWidget(button);
-        button->setAnimated(k->isAnimated);
-    }
-
-    if (actions & RemoveLayer) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_layer.png"), size);
-        button->setToolTip(tr("Remove layer"));
-        button->setShortcut(QKeySequence(tr("F6")));
-
-        k->actions.addButton(button, RemoveLayer);
-
-        k->buttonLayout->addWidget(button);
-        button->setAnimated(k->isAnimated);
-    }
-
-    if (actions & MoveLayerUp) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/move_layer_up.png"), size);
-        button->setToolTip(tr("Move layer up"));
-        button->setShortcut(QKeySequence(tr("F9")));
-
-        k->actions.addButton(button, MoveLayerUp);
-
-        k->buttonLayout->addWidget(button);
-        button->setAnimated(true);
-    }
-
-    if (actions & MoveLayerDown) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/move_layer_down.png" ), size);
-        button->setToolTip(tr("Move layer down"));
-        button->setShortcut(QKeySequence(tr("F10")));
-
-        k->actions.addButton(button, MoveLayerDown);
-
-        k->buttonLayout->addWidget(button);
-        button->setAnimated(k->isAnimated);
-    }
-
-    if (actions & Separator) {
-        k->buttonLayout->addSpacing(5);
-        k->buttonLayout->addWidget(new TSeparator(Qt::Vertical));
-    }
-
     if (actions & InsertScene) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/add_scene.png"), size); 
-        button->setToolTip(tr("Insert scene"));
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/add_scene.png"), size);  // TODO
+        button->setToolTip(tr("Insert a scene"));
         
         k->actions.addButton(button, InsertScene);
         
@@ -247,8 +245,8 @@ void TupProjectActionBar::setup(Actions actions)
     }
      
     if (actions & RemoveScene) {
-        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_scene.png"), size);
-        button->setToolTip(tr("Remove scene"));
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_scene.png"), size);  // TODO
+        button->setToolTip(tr("Remove the scene"));
 
         k->actions.addButton(button, RemoveScene);
         
@@ -293,12 +291,12 @@ void TupProjectActionBar::setup(Actions actions)
     mainLayout->addWidget(new TSeparator(Qt::Horizontal));
 }
 
-// SQA: Check why this function do nothing :S
+// TODO: Check why this function do nothing :S
 
 void TupProjectActionBar::insertSeparator(int position)
 {
-    /*
     Qt::Orientation sepOrientation = Qt::Vertical;
+    
     switch (k->orientation) {
             case Qt::Vertical:
             {
@@ -311,15 +309,14 @@ void TupProjectActionBar::insertSeparator(int position)
             }
             break;
     }
-    */
 
     k->buttonLayout->insertWidget(position + 1, new TSeparator(Qt::Vertical), 1, Qt::AlignCenter);
 }
 
 void TupProjectActionBar::insertBlankSpace(int position)
 {
-    /*
     Qt::Orientation sepOrientation = Qt::Vertical;
+   
     switch (k->orientation) {
             case Qt::Vertical:
             {
@@ -332,7 +329,6 @@ void TupProjectActionBar::insertBlankSpace(int position)
             }
             break;
     }
-    */
 
     QWidget *widget = new QWidget();
     widget->setFixedSize(5,5);
@@ -351,11 +347,11 @@ void TupProjectActionBar::emitActionSelected(int action)
     {
         case RemoveFrame:
         {
-            TCONFIG->beginGroup("General");
-            bool ask = TCONFIG->value("ConfirmRemoveFrame", true).toBool();
+            TCONFIG->beginGroup("ExposureSheet");
+            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveWithoutAskFrame", false));
 
-            if (ask) {
-                TOptionalDialog dialog(tr("Do you want to remove this frame?"), tr("Confirmation"), this);
+            if (! noAsk) {
+                TOptionalDialog dialog(tr("Do you want to remove this frame?"), tr("Remove?"), this);
                 dialog.setModal(true);
                 QDesktopWidget desktop;
                 dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
@@ -364,19 +360,19 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("General");
-                TCONFIG->setValue("ConfirmRemoveFrame", dialog.shownAgain());
+                TCONFIG->beginGroup("ExposureSheet");
+                TCONFIG->setValue("RemoveWithoutAskFrame", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }
         break;
         case RemoveLayer:
         {
-            TCONFIG->beginGroup("General");
-            bool ask = TCONFIG->value("ConfirmRemoveLayer", true).toBool();
+            TCONFIG->beginGroup("ExposureSheet");
+            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveWithoutAskLayer", false));
 
-            if (ask) {
-                TOptionalDialog dialog(tr("Do you want to remove this layer?"), tr("Confirmation"), this);
+            if (! noAsk) {
+                TOptionalDialog dialog(tr("Do you want to remove this layer?"), tr("Remove?"), this);
                 QDesktopWidget desktop;
                 dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
                             (int) (desktop.screenGeometry().height() - dialog.sizeHint().height())/2);
@@ -384,19 +380,19 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("General");
-                TCONFIG->setValue("ConfirmRemoveLayer", dialog.shownAgain());
+                TCONFIG->beginGroup("ExposureSheet");
+                TCONFIG->setValue("RemoveWithoutAskLayer", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }
         break;
         case RemoveScene:
         {
-            TCONFIG->beginGroup("General");
-            bool ask = TCONFIG->value("ConfirmRemoveScene", true).toBool();
+            TCONFIG->beginGroup("ExposureSheet");
+            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveWithoutAskScene", false));
 
-            if (ask) {
-                TOptionalDialog dialog(tr("Do you want to remove this scene?"), tr("Confirmation"), this);
+            if (! noAsk) {
+                TOptionalDialog dialog(tr("Do you want to remove this scene?"), tr("Remove?"), this);
                 QDesktopWidget desktop;
                 dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
                             (int) (desktop.screenGeometry().height() - dialog.sizeHint().height())/2);
@@ -404,8 +400,8 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("General");
-                TCONFIG->setValue("ConfirmRemoveScene", dialog.shownAgain());
+                TCONFIG->beginGroup("ExposureSheet");
+                TCONFIG->setValue("RemoveWithoutAskScene", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }

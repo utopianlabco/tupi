@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,23 +35,27 @@
 
 #include "tuplibraryfolder.h"
 #include "tuplibraryobject.h"
+#include "tdebug.h"
 #include "tupprojectloader.h"
 #include "tupproject.h"
+
+#include <QFileInfo>
+#include <QFile>
+#include <QDir>
 
 struct TupLibraryFolder::Private
 {
     QString id;
     Folders folders;
     LibraryObjects objects;
+    
     TupProject *project;
-    bool loadingProject;
 };
 
 TupLibraryFolder::TupLibraryFolder(const QString &id, TupProject *project, QObject *parent) : QObject(parent), k(new Private)
 {
     k->id = id;
     k->project = project;
-    k->loadingProject = false;
 }
 
 TupLibraryFolder::~TupLibraryFolder()
@@ -60,42 +64,20 @@ TupLibraryFolder::~TupLibraryFolder()
 }
 
 TupLibraryObject *TupLibraryFolder::createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data, 
-                                                 const QString &folder, bool loaded)
+                                               const QString &folder, bool loaded)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLibraryFolder::createSymbol()]";
-        #else
-            T_FUNCINFO;
-            tWarning() << " - Creating symbol -> " << name;
-            tWarning() << " - type -> " << type;
-            tWarning() << " - size -> " << data.size();
+    if (data.isEmpty()) {
+        #ifdef K_DEBUG
+               tError() << "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is empty!";
         #endif
-    #endif
+        return false;
+    }
 
     if (data.isNull()) {
         #ifdef K_DEBUG
-            QString msg = "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is null!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is null!";
         #endif
-
-        return 0;
-    }
-
-    if (data.isEmpty()) {
-        #ifdef K_DEBUG
-            QString msg = "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is empty!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-        return 0;
+        return false;
     }
 
     TupLibraryObject *object = new TupLibraryObject(this);
@@ -105,12 +87,7 @@ TupLibraryObject *TupLibraryFolder::createSymbol(TupLibraryObject::Type type, co
 
     if (!object->loadRawData(data)) {
         #ifdef K_DEBUG
-            QString msg = "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Object have no data raw!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Object have no data raw!";
         #endif
 
         delete object;
@@ -124,24 +101,12 @@ TupLibraryObject *TupLibraryFolder::createSymbol(TupLibraryObject::Type type, co
     else
         ret = addObject(folder, object);
 
-    bool success = object->saveData(k->project->dataDir());
-    if (success) {
-        if (loaded && ret)
-            TupProjectLoader::createSymbol(type, name, id(), data, k->project);
+    object->saveData(k->project->dataDir());
 
-        return object;
-    }
+    if (loaded && ret)
+        TupProjectLoader::createSymbol(type, name, id(), data, k->project);
 
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Object couldn't be saved!";
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
-
-    return 0;
+    return object;
 }
 
 bool TupLibraryFolder::addObject(TupLibraryObject *object)
@@ -169,29 +134,6 @@ bool TupLibraryFolder::addObject(const QString &folderName, TupLibraryObject *ob
     return false;
 }
 
-bool TupLibraryFolder::reloadObject(const QString &id)
-{
-    foreach (QString oid, k->objects.keys()) {
-             if (oid.compare(id) == 0) {
-                 QString path = k->objects[id]->dataPath();
-                 if (QFile::exists(path)) {  
-                     return k->objects[id]->loadData(path);
-                 }
-             }
-    }
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::reloadObject() - [ Fatal Error ] - Object ID wasn't found -> " + id;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
-
-    return false;
-}
-
 bool TupLibraryFolder::addFolder(TupLibraryFolder *folder)
 {
     if (!k->folders.contains(folder->id())) {
@@ -207,29 +149,22 @@ bool TupLibraryFolder::removeObject(const QString &id, bool absolute)
     foreach (QString oid, k->objects.keys()) {
              if (oid.compare(id) == 0) {
                  QString path = k->objects[id]->dataPath();
+
                  if (absolute) {
                      QFileInfo finfo(path);
                      if (finfo.isFile())
                          QFile::remove(path);
                  }
+
                  return k->objects.remove(id);
              }
     }
 
     foreach (TupLibraryFolder *folder, k->folders) {
-             TupLibraryObject *object = folder->getObject(id);
+             TupLibraryObject *object = folder->findObject(id);
              if (object)
                  return folder->removeObject(id, absolute);
     }
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::removeObject() - [ Fatal Error ] - Object ID wasn't found -> " + id;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
 
     return false;
 }
@@ -237,37 +172,25 @@ bool TupLibraryFolder::removeObject(const QString &id, bool absolute)
 bool TupLibraryFolder::removeFolder(const QString &id)
 {
     if (k->folders.contains(id)) {
-        TupLibraryFolder *folder = getFolder(id);
+        TupLibraryFolder *folder = findFolder(id);
         LibraryObjects objects = folder->objects();
         foreach (QString oid, objects.keys()) {
                  if (folder->removeObject(oid, true)) {
                      TupLibraryObject::Type extension = static_cast<TupLibraryObject::Type>(objects[oid]->type());
-                     if (extension != TupLibraryObject::Item) {
-                         if (!k->project->removeSymbolFromFrame(oid, extension))
-                             return false;
-                     }
+                     if (!k->project->removeSymbolFromProject(oid, extension))
+                         return false;
                  }
         }
-
-        bool result = k->folders.remove(id); 
-        return result;
+    
+        return k->folders.remove(id);
     }
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::removeFolder() - [ Fatal Error ] - Folder wasn't found -> " + id;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
 
     return false;
 }
 
 bool TupLibraryFolder::moveObject(const QString &id, const QString &target)
 {
-    TupLibraryObject *object = getObject(id);
+    TupLibraryObject *object = findObject(id);
     if (object) {
         if (removeObject(id, false))
             foreach (TupLibraryFolder *folder, k->folders) {
@@ -284,7 +207,7 @@ bool TupLibraryFolder::moveObject(const QString &id, const QString &target)
 
 bool TupLibraryFolder::moveObjectToRoot(const QString &id)
 {
-    TupLibraryObject *object = getObject(id);
+    TupLibraryObject *object = findObject(id);
     if (object) {
         if (removeObject(id, false)) {
             addObject(object);
@@ -306,77 +229,35 @@ QString TupLibraryFolder::id() const
     return k->id;
 }
 
-bool TupLibraryFolder::exists(const QString &id)
-{
-    foreach (QString oid, k->objects.keys()) {
-             if (oid.compare(id) == 0)
-                 return true;
-    }
-
-    foreach (TupLibraryFolder *folder, k->folders) {
-             if (folder->exists(id))
-                 return true;
-    }
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::exists() - [ Fatal Error ] - Object doesn't exist -> " + id;
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
-    #endif
-
-    return false;
-}
-
-TupLibraryObject *TupLibraryFolder::getObject(const QString &id) const
+TupLibraryObject *TupLibraryFolder::findObject(const QString &id) const
 {
     foreach (QString oid, k->objects.keys()) {
              if (oid.compare(id) == 0) 
                  return k->objects[oid];
     }
-
+    
     foreach (TupLibraryFolder *folder, k->folders) {
-             TupLibraryObject *object = folder->getObject(id);
+             TupLibraryObject *object = folder->findObject(id);
              if (object)
                  return object;
     }
     
     #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::getObject() - [ Fatal Error ] - Can't get object with id -> " + id;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
+           tError() << "TupLibraryFolder::findObject() - [ Fatal Error ] - Can't find object with id -> " << id;
     #endif
     
     return 0;
 }
 
-TupLibraryFolder *TupLibraryFolder::getFolder(const QString &id) const
+TupLibraryFolder *TupLibraryFolder::findFolder(const QString &id) const
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLibraryFolder::getFolder()]";
-        #else
-            T_FUNCINFO << "folder id -> " << id;
-        #endif
-    #endif
-
     foreach (TupLibraryFolder *folder, k->folders) {
-             if (folder->id().compare(id) == 0)
+             if (folder->id().compare(id) == 0) 
                  return folder;
     }
-
+   
     #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::getFolder() - [ Fatal Error ] - Can't find folder with id -> " + id;
-        #ifdef Q_OS_WIN
-           qDebug() << msg;
-        #else
-           tError() << msg;
-        #endif
+           tError() << "TupLibraryFolder::findFolder() - [ Fatal Error ] - Can't find folder with id -> " << id;
     #endif
    
     return 0;
@@ -390,12 +271,7 @@ bool TupLibraryFolder::folderExists(const QString &id) const
     }
   
     #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::getFolder() - [ Fatal Error ] - Can't find folder with id -> " + id;
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning() << msg;
-        #endif
+           tError() << "TupLibraryFolder::folderExists() - [ Fatal Error ] - Can't find folder with id -> " << id;
     #endif
   
     return false;
@@ -403,7 +279,7 @@ bool TupLibraryFolder::folderExists(const QString &id) const
 
 bool TupLibraryFolder::renameObject(const QString &folder, const QString &oldId, const QString &newId)
 {
-    TupLibraryObject *object = getObject(oldId);
+    TupLibraryObject *object = findObject(oldId);
 
     if (object) {
         removeObject(oldId, false);
@@ -414,38 +290,23 @@ bool TupLibraryFolder::renameObject(const QString &folder, const QString &oldId,
         else
             return addObject(object);
        
-    } 
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::renameObject() - [ Fatal Error ] - Object not found -> " + oldId;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
+    } else {
+        #ifdef K_DEBUG
+               tError() << "TupLibraryFolder::renameObject() - [ Fatal Error ] - Object not found -> " << oldId;
         #endif
-    #endif
-
+    }
 
     return false;
 }
 
 bool TupLibraryFolder::renameFolder(const QString &oldId, const QString &newId)
 {
-    TupLibraryFolder *folder = getFolder(oldId);
+    TupLibraryFolder *folder = findFolder(oldId);
 
     if (folder) {
         k->folders[oldId]->setId(newId);
         return true;
     } 
-
-    #ifdef K_DEBUG
-        QString msg = "TupLibraryFolder::renameFolder() - [ Fatal Error ] - Folder not found -> " + oldId;
-        #ifdef Q_OS_WIN
-            qDebug() << msg;
-        #else
-            tError() << msg;
-        #endif
-    #endif
 
     return false;
 }
@@ -477,17 +338,8 @@ LibraryObjects TupLibraryFolder::objects() const
 
 void TupLibraryFolder::fromXml(const QString &xml)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLibraryFolder::fromXml()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    k->loadingProject = true;
-
     QDomDocument document;
+
     if (! document.setContent(xml))
         return;
     
@@ -498,6 +350,7 @@ void TupLibraryFolder::fromXml(const QString &xml)
            QDomElement e = domNode.toElement();
         
            if (!e.isNull()) {
+
                if (e.tagName() == "object") {
                    loadItem(id(), domNode);
                } else if (e.tagName() == "folder") {
@@ -507,8 +360,8 @@ void TupLibraryFolder::fromXml(const QString &xml)
                        TupLibraryFolder *folder = new TupLibraryFolder(e.attribute("id"), k->project, this);
                        addFolder(folder);
 
-                       TupProjectLoader::createSymbol(TupLibraryObject::Folder, e.attribute("id"), QString(), 
-                                                      "FOLDER",  k->project);
+                       TupProjectLoader::createSymbol(TupLibraryObject::Folder,
+                                                     e.attribute("id"), QString(), "FOLDER",  k->project);
 
                        // Loading the objects inside this folder
                        loadObjects(e.attribute("id"), folderDocument.toString(0));
@@ -518,8 +371,6 @@ void TupLibraryFolder::fromXml(const QString &xml)
 
            domNode = domNode.nextSibling();
     }
-
-    k->loadingProject = false;
 }
 
 void TupLibraryFolder::loadObjects(const QString &folder, const QString &xml)
@@ -545,14 +396,6 @@ void TupLibraryFolder::loadObjects(const QString &folder, const QString &xml)
 
 void TupLibraryFolder::loadItem(const QString &folder, QDomNode xml)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLibraryFolder::loadItem()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     QDomDocument objectDocument;
     objectDocument.appendChild(objectDocument.importNode(xml, true));
 
@@ -562,13 +405,10 @@ void TupLibraryFolder::loadItem(const QString &folder, QDomNode xml)
     switch (object->type()) {
             case TupLibraryObject::Image:
             case TupLibraryObject::Svg:
-            case TupLibraryObject::Item:
             case TupLibraryObject::Sound:
             {
                  object->loadDataFromPath(k->project->dataDir());
             }
-            break;
-            default:
             break;
     }
 
@@ -586,7 +426,7 @@ void TupLibraryFolder::loadItem(const QString &folder, QDomNode xml)
     }
 
     TupProjectLoader::createSymbol(TupLibraryObject::Type(object->type()),
-                                   object->symbolName(), folder, data.toLocal8Bit(), k->project);
+                                  object->symbolName(), folder, data.toLocal8Bit(), k->project);
 }
 
 QDomElement TupLibraryFolder::toXml(QDomDocument &doc) const
@@ -618,16 +458,13 @@ void TupLibraryFolder::updatePaths(const QString &newPath)
              QString path = "";
 
              if (k->objects[oid]->type() == TupLibraryObject::Image)
-                 path = newPath + "/images/" + filename; 
+                 path = newPath + QDir::separator() + "images" + QDir::separator() + filename; 
 
              if (k->objects[oid]->type() == TupLibraryObject::Svg)
-                 path = newPath + "/svg/" + filename;
+                 path = newPath + QDir::separator() + "svg" + QDir::separator() + filename;
 
              if (k->objects[oid]->type() == TupLibraryObject::Sound)
-                 path = newPath + "/audio/" + filename;
-
-             if (k->objects[oid]->type() == TupLibraryObject::Item)
-                 path = newPath + "/obj/" + filename;
+                 path = newPath + QDir::separator() + "audio" + QDir::separator() + filename;
 
              k->objects[oid]->setDataPath(path);
 
@@ -635,9 +472,4 @@ void TupLibraryFolder::updatePaths(const QString &newPath)
 
     foreach (TupLibraryFolder *folder, k->folders)
              folder->updatePaths(newPath);    
-}
-
-bool TupLibraryFolder::loadingProject()
-{
-    return k->loadingProject;
 }

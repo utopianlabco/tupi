@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tuppaletteparser.h"
+#include "tdebug.h"
 
 struct TupPaletteParser::Private
 {
@@ -53,14 +54,17 @@ struct TupPaletteParser::Private
 
 TupPaletteParser::TupPaletteParser(): TXmlParserBase(), k(new Private)
 {
+     // TINIT;
      k->paletteName = "";
      k->isEditable = false;
      k->gradient = 0;
 }
 
+
 TupPaletteParser::~TupPaletteParser()
 {
      delete k;
+     //	TEND;
 }
 
 bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
@@ -79,14 +83,9 @@ bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
                    if (c.isValid()) {
                        k->brushes << c;
                    } else {
-                   #ifdef K_DEBUG
-                       QString msg = "TupPaletteParser::startTag() - Error: Invalid color!";
-                       #ifdef Q_OS_WIN
-                           qDebug() << msg;
-                       #else
-                           tError() << msg;
-                       #endif
-                   #endif 					
+                    #ifdef K_DEBUG
+		           tError() << "Invalid Color";
+                    #endif
                    }
         } else if (tag == "Gradient") {
                    if (k->gradient) 
@@ -122,12 +121,7 @@ bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
                            default:
                              {
                                #ifdef K_DEBUG
-                                   QString msg = "TupPaletteParser::startTag() - No gradient type: " + QString::number(type);
-                                   #ifdef Q_OS_WIN
-                                       qDebug() << msg;
-                                   #else
-                                       tFatal() << msg;
-                                   #endif
+                                      tFatal() << "No gradient type: " << type;
                                #endif
                              }
                            break;

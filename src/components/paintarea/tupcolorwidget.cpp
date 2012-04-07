@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,21 +34,15 @@
  ***************************************************************************/
 
 #include "tupcolorwidget.h"
+#include "tdebug.h"
+
+#include <QPainter>
 
 /**
  * This class defines the options panel in the bottom of the paint area.
  * Controls for Rotation, Antialising and OpenGL
  * @author David Cuadrado
 */
-
-TupColorWidget::TupColorWidget(const QBrush color) : m_brush(color)
-{
-    setFixedSize(20, 20);
-}
-
-TupColorWidget::~TupColorWidget()
-{
-}
 
 QSize TupColorWidget::sizeHint() const
 {
@@ -62,22 +56,14 @@ void TupColorWidget::setBrush(const QBrush &brush)
     update();
 }
 
-void TupColorWidget::paintEvent(QPaintEvent *event)
+void TupColorWidget::paintEvent(QPaintEvent *)
 {
-    Q_UNUSED(event);
-
     QPainter painter(this);
     painter.fillRect(rect(), m_brush);
-    QColor color = Qt::black;
-    if (m_brush.color() == Qt::black)
-        color = Qt::white;
-    painter.setPen(QPen(color));
-    painter.drawRect(0, 0, 20, 20);
 }
 
 void TupColorWidget::mousePressEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
     emit clicked();
 }
 

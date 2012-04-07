@@ -1,5 +1,4 @@
 /***************************************************************************
-
  *   Project TUPI: Magia 2D                                                *
  *   Project Contact: info@maefloresta.com                                 *
  *   Project Website: http://www.maefloresta.com                           *
@@ -22,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -38,6 +37,12 @@
 #include "tupbrushmanager.h"
 #include "tupinputdeviceinformation.h"
 #include "tupgraphicsscene.h"
+
+#include "tdebug.h"
+
+#include <QGraphicsView>
+#include <QCursor>
+#include <QMenu>
 
 struct TupToolPlugin::Private
 {
@@ -75,26 +80,12 @@ QString TupToolPlugin::name() const
 
 void TupToolPlugin::begin()
 {
-#ifdef K_DEBUG
-    QString msg = "TupToolPlugin::begin() - Begin: " + k->currentTool;
-    #ifdef Q_OS_WIN
-        qWarning() << msg;
-    #else
-        tWarning() << msg;
-    #endif
-#endif
+    tDebug("tools") << "Begin: " << k->currentTool;
 }
 
 void TupToolPlugin::end()
 {
-#ifdef K_DEBUG
-    QString msg = "TupToolPlugin::end() - End: " + k->currentTool;
-    #ifdef Q_OS_WIN
-        qWarning() << msg;
-    #else
-        tWarning("tools") << msg;
-    #endif
-#endif
+    tDebug("tools") << "End: " << k->currentTool;
 }
 
 void TupToolPlugin::sceneResponse(const TupSceneResponse *event)
@@ -166,17 +157,6 @@ void TupToolPlugin::updateZoomFactor(qreal factor)
     Q_UNUSED(factor);
 }
 
-/*
-void TupToolPlugin::autoZoom()
-{
-}
-*/
-
-void TupToolPlugin::setProjectSize(const QSize size)
-{
-    Q_UNUSED(size);
-}
-
 QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modifiers)
 {
     TupToolPlugin::MenuIndex menu = TupToolPlugin::BrushesMenu;
@@ -184,19 +164,18 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
 
     switch (key) {
             case Qt::Key_P:
-                 if (modifiers == Qt::ShiftModifier) {
-                     menu = TupToolPlugin::ColorMenu;
-                     tool = TupToolPlugin::ColorTool;
-                 } else {
-                     tool = TupToolPlugin::PencilTool;
-                 }
+                 tool = TupToolPlugin::PencilTool;
             break;
 
+            case Qt::Key_M:
+                 tool = TupToolPlugin::SchemeTool;
+            break;
+
+            /* SQA: Temporarily disabled
             case Qt::Key_K:
                  tool = TupToolPlugin::InkTool;
             break;
 
-            /*
             case Qt::Key_E:
                  tool = TupToolPlugin::EraserTool;
             break;
@@ -244,20 +223,15 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
                  tool = TupToolPlugin::ContourTool;
             break;
 
-            /*
             case Qt::Key_Z:
                  menu = TupToolPlugin::ZoomMenu;
-                 if (modifiers == Qt::ShiftModifier)
-                     tool = TupToolPlugin::ZoomOutTool;
-                 else
-                     tool = TupToolPlugin::ZoomInTool;
+                 tool = TupToolPlugin::ViewTool;
             break;
 
             case Qt::Key_H:
                  menu = TupToolPlugin::ZoomMenu;
-                 tool = TupToolPlugin::ShiftTool;
+                 tool = TupToolPlugin::HandTool;
             break;
-            */
 
             case Qt::Key_Right:
                  menu = TupToolPlugin::Arrows;
@@ -291,37 +265,6 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
     return flags;
 }
 
-TupToolPlugin::Mode TupToolPlugin::currentMode()
-{
-    return TupToolPlugin::View;
-}
 
-TupToolPlugin::EditMode TupToolPlugin::currentEditMode()
-{
-    return TupToolPlugin::None;
-}
 
-void TupToolPlugin::setActiveView(const QString &viewID)
-{
-    Q_UNUSED(viewID);
-}
 
-/*
-void TupToolPlugin::addNewItem(const QString &id)
-{
-    Q_UNUSED(id);
-}
-*/
-
-void TupToolPlugin::setCurrentItem(const QString &id)
-{
-    Q_UNUSED(id);
-}
-
-void TupToolPlugin::updateWorkSpaceContext()
-{
-}
-
-void TupToolPlugin::clearSelection()
-{
-}

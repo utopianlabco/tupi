@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,6 +35,10 @@
 
 #include "tupserializer.h"
 #include "tupsvg2qt.h"
+#include "tdebug.h"
+
+#include <QGraphicsItem>
+#include <QFont>
 
 TupSerializer::TupSerializer()
 {
@@ -73,29 +77,30 @@ void TupSerializer::loadProperties(QGraphicsItem *item, const QXmlAttributes &at
     TupSvg2Qt::svgmatrix2qtmatrix(atts.value("transform"), matrix);
     QTransform transform(matrix);
     item->setTransform(transform);
-
+        
     QPointF pos;
     TupSvg2Qt::parsePointF(atts.value("pos"), pos);
-
     item->setPos(pos);
+        
     item->setEnabled(atts.value("pos") != "0"); // default true
     item->setFlags(QGraphicsItem::GraphicsItemFlags(atts.value("flags").toInt()));
 }
 
-void TupSerializer::loadProperties(QGraphicsItem *item, const QDomElement &element)
+void TupSerializer::loadProperties(QGraphicsItem *item, const QDomElement &e)
 {
-    if (element.tagName() == "properties") {
+    if (e.tagName() == "properties") {
+
         QMatrix matrix;
-        TupSvg2Qt::svgmatrix2qtmatrix(element.attribute("transform"), matrix);
+        TupSvg2Qt::svgmatrix2qtmatrix(e.attribute("transform"), matrix);
         QTransform transform(matrix);
         item->setTransform(transform); 
 
         QPointF pos;
-        TupSvg2Qt::parsePointF(element.attribute("pos"), pos);
+        TupSvg2Qt::parsePointF(e.attribute("pos"), pos);
         item->setPos(pos);
         
-        item->setEnabled(element.attribute("pos") != "0");
-        item->setFlags(QGraphicsItem::GraphicsItemFlags(element.attribute("flags").toInt()));
+        item->setEnabled(e.attribute("pos") != "0");
+        item->setFlags(QGraphicsItem::GraphicsItemFlags(e.attribute("flags").toInt()));
     }
 }
 
@@ -155,7 +160,7 @@ QDomElement TupSerializer::gradient(const QGradient *gradient, QDomDocument &doc
 
 QGradient * TupSerializer::createGradient(const QXmlAttributes &atts)
 {
-    QGradient *result = 0;
+    QGradient *result;
 
     switch (atts.value("type").toInt()) {
         case QGradient::LinearGradient:
@@ -231,8 +236,6 @@ void TupSerializer::loadBrush(QBrush &brush, const QXmlAttributes &atts)
         QColor color(atts.value("color"));
         color.setAlpha(atts.value("alpha").toInt());
         brush.setColor(color);
-    } else {
-        brush.setColor(Qt::transparent);
     }
     
     QMatrix matrix;
@@ -240,20 +243,18 @@ void TupSerializer::loadBrush(QBrush &brush, const QXmlAttributes &atts)
     brush.setMatrix(matrix);
 }
 
-void TupSerializer::loadBrush(QBrush &brush, const QDomElement &element)
+void TupSerializer::loadBrush(QBrush &brush, const QDomElement &e)
 {
-    brush.setStyle(Qt::BrushStyle(element.attribute("style").toInt()));
+    brush.setStyle(Qt::BrushStyle(e.attribute("style").toInt()));
 
-    if (!element.attribute("color").isEmpty()) {
-        QColor color(element.attribute("color"));
-        color.setAlpha(element.attribute("alpha").toInt());
-        brush.setColor(color);
+    if (!e.attribute("color").isEmpty()) {
+        brush.setColor(QColor(e.attribute("color")));
     } else {
-        brush.setColor(Qt::transparent);
+        
     }
 
     QMatrix matrix;
-    TupSvg2Qt::svgmatrix2qtmatrix(element.attribute("transform"), matrix);
+    TupSvg2Qt::svgmatrix2qtmatrix(e.attribute("transform"), matrix);
     brush.setMatrix(matrix);
 }
 
@@ -282,34 +283,16 @@ void TupSerializer::loadPen(QPen &pen, const QXmlAttributes &atts)
     pen.setJoinStyle(Qt::PenJoinStyle(atts.value("joinStyle").toInt()));
     pen.setWidthF(atts.value("width").toDouble());
     pen.setMiterLimit(atts.value("miterLimit").toInt());
-   
-    QColor color; 
-    QString colorName = atts.value("color");
-    if (!colorName.isEmpty()) {
-        color = QColor(colorName);
+    
+    if (!atts.value("color").isEmpty()) {
+        QColor color(atts.value("color"));
         color.setAlpha(atts.value("alpha").toInt());
-    } else {
-        color = QColor(Qt::transparent);
     }
-
-    pen.setColor(color);
 }
 
-void TupSerializer::loadPen(QPen &pen, const QDomElement &element)
+void TupSerializer::loadPen(QPen &pen, const QDomElement &e)
 {
-    pen.setCapStyle(Qt::PenCapStyle(element.attribute("capStyle").toInt()));
-    pen.setStyle(Qt::PenStyle(element.attribute("style").toInt()));
-    pen.setJoinStyle(Qt::PenJoinStyle(element.attribute("joinStyle").toInt()));
-    pen.setWidthF(element.attribute("width").toDouble());
-    pen.setMiterLimit(element.attribute("miterLimit").toInt());
-
-    QDomNode node = element.firstChild();
-    QDomElement brushElement = node.toElement();
-    QBrush brush; 
-    loadBrush(brush, brushElement);
-
-    // pen.setColor(color);
-    pen.setBrush(brush);
+    
 }
 
 QDomElement TupSerializer::font(const QFont *font, QDomDocument &doc)

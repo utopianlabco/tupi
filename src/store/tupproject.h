@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,20 +33,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPROJECT_H
-#define TUPPROJECT_H
+#ifndef TupPROJECT_H
+#define TupPROJECT_H
 
-#include "tglobal.h"
 #include "tupabstractserializable.h"
+#include "tupglobal.h"
 #include "tapplicationproperties.h"
+#include "tupinthash.h"
+#include "tupglobal_store.h"
 #include "tuplibraryobject.h"
 
 #include <QObject>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QSize>
-#include <QDir>
-#include <QGraphicsView>
 
 class TupScene;
 class TupLayer;
@@ -56,7 +56,7 @@ class TupProjectResponse;
 class QGraphicsItem;
 class TupLibrary;
 
-typedef QList<TupScene *> Scenes;
+typedef TupIntHash<TupScene *> Scenes;
 
 /**
  * This class contains the project data structure including scenes.
@@ -64,7 +64,7 @@ typedef QList<TupScene *> Scenes;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
 
@@ -72,10 +72,9 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
 
         enum Mode 
         {
-            FRAMES_EDITION = 0,
-            STATIC_BACKGROUND_EDITION,
-            DYNAMIC_BACKGROUND_EDITION,
-            NONE
+            NONE = 0,
+            FRAMES_EDITION,
+            BACKGROUND_EDITION 
         };
 
         TupProject(QObject *parent = 0);
@@ -99,39 +98,32 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
         void setDataDir(const QString &path);
         QString dataDir() const;
 
-        TupScene *sceneAt(int position) const;
+        TupScene *scene(int position) const;
 
         int visualIndexOf(TupScene *scene) const;
+        //int logicalIndexOf(TupScene *scene) const;
 
         Scenes scenes() const;
 
         TupScene *createScene(QString name, int position, bool loaded = false);
         void updateScene(int position, TupScene *scene);
-        bool restoreScene(int position);
         bool removeScene(int position);
         bool moveScene(int position, int newPosition);
 
         bool createSymbol(int type, const QString &name, const QByteArray &data, const QString &folder = QString());
-/*
-        bool removeSymbol(const QString &name, TupLibraryObject::Type type, TupProject::Mode spaceMode, 
+        bool removeSymbol(const QString &name, TupLibraryObject::Type symbolType, TupProject::Mode spaceMode, 
                           int sceneIndex, int layerIndex, int frameIndex);
-*/
+        bool removeSymbol(const QString &name);
 
-        bool removeSymbol(const QString &name, TupLibraryObject::Type type);
-        bool addFolder(const QString &name);
-        bool removeFolder(const QString &name);
-
-        bool removeSound(const QString &name);
-
-        bool insertSymbolIntoFrame(TupProject::Mode spaceMode, const QString &name, int scene, int layer, int frame);
-        bool removeSymbolFromFrame(const QString &name, TupLibraryObject::Type type);
+        bool addSymbolToProject(TupProject::Mode spaceMode, const QString &name, int scene, int layer, int frame);
+        bool removeSymbolFromProject(const QString &name, TupLibraryObject::Type type);
 
         bool updateSymbolId(TupLibraryObject::Type type, const QString &oldId, const QString &newId);
-        void reloadLibraryItem(TupLibraryObject::Type type, const QString &id, TupLibraryObject *object);
 
         void clear();
         void loadLibrary(const QString &filename);
 
+        //TupLibrary *library() const;
         TupLibrary *library();
         void emitResponse(TupProjectResponse *response);
 
@@ -140,7 +132,7 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
 
         void setOpen(bool open);
         bool isOpen();
-        int scenesCount() const;
+        int scenesTotal() const;
 
         void updateSpaceContext(TupProject::Mode mode);
         TupProject::Mode spaceContext();

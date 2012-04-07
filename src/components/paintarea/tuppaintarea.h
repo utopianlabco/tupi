@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,48 +33,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPAINTAREA_H
-#define TUPPAINTAREA_H
+#ifndef TupPAINTAREA_H
+#define TupPAINTAREA_H
 
-#include "tglobal.h"
 #include "tuppaintareabase.h"
 #include "tupabstractprojectresponsehandler.h"
 #include "tupgraphicsscene.h"
-#include "tupbrushmanager.h"
-#include "tupinputdeviceinformation.h"
-#include "tuppaintareaevent.h"
-#include "tuppaintarearotator.h"
-#include "tupimagedevice.h"
-#include "tupgraphicsscene.h"
-#include "tconfig.h"
-#include "tapplication.h"
-#include "tuptextitem.h"
-#include "tuplibrarydialog.h"
-#include "tuplibraryobject.h"
-#include "tuprequestbuilder.h"
-#include "tupprojectrequest.h"
-#include "tupprojectresponse.h"
-#include "tupscene.h"
-#include "tuplayer.h"
-#include "tupsvgitem.h"
-#include "tuppixmapitem.h"
-#include "node.h"
-#include "tcontrolnode.h"
-#include "tupproject.h"
-#include "tosd.h"
-#include "tupitemgroup.h"
 
-#include <QGraphicsScene>
-#include <QMouseEvent>
-#include <QGraphicsRectItem>
-#include <QPolygon>
-#include <QApplication>
-// #include <QTimer>
-#include <QStyleOptionGraphicsItem>
-#include <QClipboard>
-#include <QMenu>
-
-// class QGraphicsRectItem;
+class QGraphicsRectItem;
 class TupBrushManager;
 class TupInputDeviceInformation;
 class TupProject;
@@ -85,11 +51,13 @@ class TupPaintAreaRotator;
  * @author Jorge Cuadrado - David Cuadrado
 */
 
-class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseHandler
+class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseHandler
 {
     Q_OBJECT
 
     public:
+        enum MoveItemType { MoveBack, MoveFront, MoveBackwards, MoveForwards };
+
         TupPaintArea(TupProject *project, QWidget * parent = 0);
         ~TupPaintArea();
 
@@ -99,20 +67,12 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void paintBackground();
         void updateSpaceContext();
         virtual void keyPressEvent(QKeyEvent *event);
-        // virtual void keyReleaseEvent(QKeyEvent *event);
+        virtual void keyReleaseEvent(QKeyEvent *event);
         void goOneFrameBack();
         void goOneFrameForward();
-        void goToFrame(int frameIndex, int layerIndex, int sceneIndex);
-        void goToScene(int sceneIndex);
         void copyCurrentFrame();
-        void pasteCurrentFrame();
-        void copyFrameForward();
-        void removeCurrentFrame();
-        int currentSceneIndex();
-        int currentLayerIndex();
-        int currentFrameIndex();
-        void resetWorkSpaceCenter(const QSize projectSize);
-        void updateLoadingFlag(bool flag);
+        void pasteDataOnCurrentFrame();
+        void quickCopy();
 
     public slots:
         void setNextFramesOnionSkinCount(int n);
@@ -121,47 +81,35 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
 
     signals:
         void requestTriggered(const TupProjectRequest *event);
-        void localRequestTriggered(const TupProjectRequest *event);
         void itemAddedOnSelection(TupGraphicsScene *);
         void frameChanged(int);
         void closePolyLine();
-        void closeLine();
-        void zoomIn();
-        void zoomOut();
-        void newPerspective(int index);
+        void updateStatusBgColor(const QColor color);
 
     public slots:
         void deleteItems();
-        // void ungroupItems();
+        void groupItems();
+        void ungroupItems();
         void copyItems();
         void pasteItems();
-        void pasteNextFive();
-        void pasteNextTen();
-        void pasteNextTwenty();
-        void pasteNextFifty();
-        void pasteNextHundred();
-
         void cutItems();
 
         void addSelectedItemsToLibrary();
-        void requestItemMovement(QAction *action);
+        void requestMoveSelectedItems(QAction *action);
         void goToFrame(int index);
 
     protected:
         void mousePressEvent(QMouseEvent *event);
-        // void tabletEvent(QTabletEvent *event);
-
-        void frameResponse(TupFrameResponse *response);
-        void layerResponse(TupLayerResponse *response);
-        void sceneResponse(TupSceneResponse *response);
-        void itemResponse(TupItemResponse *response);
-        void libraryResponse(TupLibraryResponse *response);
-        void projectResponse(TupProjectResponse *response);
+        void frameResponse(TupFrameResponse *event);
+        void layerResponse(TupLayerResponse *event);
+        void sceneResponse(TupSceneResponse *event);
+        void itemResponse(TupItemResponse *event);
+        void libraryResponse(TupLibraryResponse *request);
+        void projectResponse(TupProjectResponse *projectResponse);
 
         bool canPaint() const;
 
     private:
-        void multipasteObject(int pasteTotal);
         struct Private;
         Private *const k;
 };

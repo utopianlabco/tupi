@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,10 @@
  ***************************************************************************/
 
 #include "tupgradientcreator.h"
+#include "tdebug.h"
+#include "tapplication.h"
+
+#include <QBoxLayout>
 
 struct TupGradientCreator::Private
 {
@@ -109,13 +113,8 @@ TupGradientCreator::~TupGradientCreator()
 
 void TupGradientCreator::setCurrentColor(const QColor &color)
 {
-    Q_UNUSED(color);
-
-    // SQA: This code has been disabled temporarily 
-    /*
     k->selector->setCurrentColor(color);
     k->viewer->createGradient();
-    */
 
     // emit gradientChanged(QBrush(k->viewer->gradient()));
 }
@@ -167,12 +166,7 @@ void TupGradientCreator::setGradient(const QBrush & brush)
         }
     } else {
         #ifdef K_DEBUG
-		    QString msg = "TupGradientCreator::setGradient() - Error: Brush has no gradient (null)";
-		    #ifdef Q_OS_WIN
-               qDebug() << msg;
-            #else
-               tError() << msg;
-            #endif
+               tError() << "TupGradientCreator::setGradient() - Error: Brush has no gradient (null)";
         #endif
     }
 }

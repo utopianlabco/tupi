@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -37,25 +37,27 @@
 #define TUPMAINWINDOW_H
 
 #include "tactionmanager.h"
-#include "tupdocumentview.h"
+#include "tupviewdocument.h"
 #include "tupanimationspace.h"
-#include "tuppreferencesdialog.h"
-#include "tuphelpdialog.h"
+#include "tuppreferences.h"
 
 // modules
 #include "tupexposuresheet.h"
-// #include "kinaswidget.h"
+#include "kinaswidget.h"
 #include "tuppenwidget.h"
+#include "tupcamerawidget.h"
 #include "tupcolorpalette.h"
 #include "tupsceneswidget.h"
 #include "tuplibrarywidget.h"
 #include "tuptimeline.h"
-#include "tupcamerawidget.h"
+#include "tupdebugwidget.h"
+#include "tupviewcamera.h"
 #include "tuphelpwidget.h"
 #include "tuphelpbrowser.h"
 #include "tuptwitterwidget.h"
 #include "tupexportwidget.h"
 
+#include "tupviewdocument.h"
 #include "tabbedmainwindow.h"
 #include "tupstatusbar.h"
 #include "tosd.h"
@@ -64,20 +66,7 @@
 // Including headers about projects management
 #include "tupprojectmanager.h"
 #include "tupnetprojectmanagerhandler.h"
-
-#ifdef K_DEBUG
-#ifdef Q_OS_WIN
-  #include <QDebug>
-#else
-  #include "tdebug.h"
-#endif
-#endif
-
-#ifdef K_DEBUG
-#ifdef Q_OS_LINUX
-  #include "tupdebugwidget.h"
-#endif
-#endif
+#include "tupsplash.h"
 
 #include <QMainWindow>
 #include <QMenu>
@@ -86,10 +75,6 @@
 #include <QResizeEvent>
 #include <QCloseEvent>
 #include <QUndoStack>
-#include <QKeySequence>
-#include <QTextBrowser>
-#include <QToolBar>
-#include <QDesktopWidget>
 
 class TupProjectManagerParams;
 class TupNetProjectManagerParams;
@@ -109,9 +94,9 @@ class TupMainWindow : public TabbedMainWindow
         enum Perspective {
              Animation = 0x01,
              Player = 0x02,
-             News = 0x04,
-             // Play = 0x08,
-             All = Animation | Player | News
+             Help = 0x04,
+             News = 0x08,
+             All = Animation | Player | Help | News
         };
 
         enum RequestType {
@@ -123,186 +108,176 @@ class TupMainWindow : public TabbedMainWindow
              ImportProjectToNet
         };
 
-        TupMainWindow();
+        TupMainWindow(TupSplash *splash = 0, int parameters = 1);
         ~TupMainWindow();
 
     private:
         /**
          * Creates the file action 
          */
-        void setupFileActions();
-        void setPreferencesAction();
-        // void setupWindowActions();
-        // void setupInsertActions();
+         void setupFileActions();
+         void setupSettingsActions();
+         // void setupWindowActions();
+         void setupInsertActions();
 
         /**
          * Sets up the actions in the toolbar
          */
-        void setupToolBar();
+         void setupToolBar();
 
         /**
          * Sets up he actions in the menu
          */
-        void setupMenu();
+         void setupMenu();
 
-        void setupHelpActions();
-        // void setupActions();
-        void setMenuItemsContext(bool flag);
+         void setupHelpActions();
+         void setupActions();
+         void setMenuItemsContext(bool flag);
 
-        void connectWidgetToManager(QWidget *widget);
-        void disconnectWidgetToManager(QWidget *widget);
-        void connectWidgetToPaintArea(QWidget *widget);
-        void connectWidgetToLocalManager(QWidget *widget);
+         void connectWidgetToManager(QWidget *widget);
+         void connectWidgetToPaintArea(QWidget *widget);
+         void connectWidgetToLocalManager(QWidget *widget);
 
-        void setupNetworkProject();
-        void setupNetworkProject(TupProjectManagerParams *params);
-        void setupLocalProject(TupProjectManagerParams *params);
-        void setUndoRedoActions();
-        void resetUI();
-        void updateRecentProjectList();
-        void saveDefaultPath(const QString &dir);
+         void setupNetworkProject();
+         void setupNetworkProject(TupProjectManagerParams *params);
+         void setupLocalProject(TupProjectManagerParams *params);
+         void setUndoRedoActions();
+         void resetUI();
 
     protected:
-        /**
-         *  Event for main window closing control
-         *
-         * Reimplemented from QWidget.
-         * @param close_event The input event
-         */
-        void closeEvent(QCloseEvent *event);
+         /**
+          *  Event for main window closing control
+          *
+          * Reimplemented from QWidget.
+          * @param close_event The input event
+          */
+          void closeEvent(QCloseEvent *event);
 
-        /**
-         *  Creates the application GUI according to the information from the data classes
-         */
-        virtual void createGUI();
+         /**
+          *  Creates the application GUI according to the information from the data classes
+          */
+          virtual void createGUI();
 
-        /**
-         *  Updates the open recent menu item names according to the @a recent_names list of file names
-         */
-        void updateOpenRecentMenu(QMenu *menu, QStringList recents);
+         /**
+          *  Updates the open recent menu item names according to the @a recent_names list of file names
+          */
+          void updateOpenRecentMenu(QMenu *menu, QStringList recents);
 
     public slots:
-        void openProject(const QString &path);
-        void updatePenColor(const QColor &color);
-        void updatePenThickness(int thickness);
+          void openProject(const QString &path);
 
     private slots:
-        void addTwitterPage();
-        void setWorkSpace(const QStringList &users = QStringList());
-        void createNewLocalProject();
-        void newProject();
-        bool closeProject();
-        void unexpectedClose();
-        void openProject();
-        void openProjectFromServer();
-        void importProjectToServer();
-        void exportProject();
-        void saveAs();
-        void saveProject();
+          void setWorkSpace();
+          void createNewLocalProject();
+          void newProject();
+          bool closeProject();
+          void unexpectedClose();
+          void openProject();
+          void openProjectFromServer();
+          void importProjectToServer();
+          void exportProject();
 
-        void showAnimationMenu(const QPoint &p);
+          void save();
+          void saveAs();
 
-        void changePerspective(QAction *a);
-        void changePerspective(int index);
+          void showHelpPage(const QString &document);
+          void showWidgetPage();
 
-        void addPage(QWidget *widget);
-        void updateCurrentTab(int index);
+          void showAnimationMenu(const QPoint &p);
 
-        void requestProject();
-        void createNewNetProject(const QString &title, const QStringList &users);
-        void netProjectSaved();
-        void updatePlayer();
-        void updatePlayer(bool removeAction);
+          void changePerspective(QAction *a);
+          void setHelpPerspective();
 
-        void resizeProjectDimension(const QSize size);
+          void addPage(QWidget *widget);
+          void updateCurrentTab(int index);
+
+          void requestProject();
+          void createNewNetProject(const QString &title);
+          void netProjectSaved();
+          void updatePlayer(bool remove);
 
     private slots:
-        void preferences();
-        void showHelp();
-        void aboutTupi();
-        void showTipDialog();
-        void importPalettes();
-        void openRecentProject();
-        void createPaintCommand(const TupPaintAreaEvent *event);
-        void callSave();
-        void expandExposureView(TupProject::Mode contextMode);
-        void resetMousePointer();
-        void updateUsersOnLine(const QString &login, int state);
-        void importPapagayoLipSync();
-        void hideTopPanels();
-        void showWebMessage();
+          void messageToStatus(const QString &);
+          void preferences();
+          void aboutTupi();
+          void showTipDialog();
+          void importPalettes();
+          void connectToDisplays(const QWidget *widget);
+          void saveProject();
+          void openRecentProject();
+          void createCommand(const TupPaintAreaEvent *event);
+          void callSave();
+          void expandExposureView(int index);
+          void expandColorView();
+          void postVideo(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> sceneIndexes);
+          void postStoryboard(const QString &title, const QString &topics, const QString &description, const QList<int> sceneIndexes);
+          void resetMousePointer();
 
     private:
-        TupProjectManager *m_projectManager;
-        // Tupi::RenderType m_renderType;
-        QString m_fileName;
-        bool lastSave;
+          TupProjectManager *m_projectManager;
+          Tupi::RenderType m_renderType;
+          QString m_fileName;
+          bool lastSave;
 
     private:
-        TupDocumentView *animationTab;
-        TupAnimationspace *playerTab;
-        // TupHelpBrowser *helpTab;
-        TupTwitterWidget *newsTab;
-        TupStatusBar *m_statusBar;
-        TActionManager *m_actionManager;
-        QMenu *m_fileMenu;
-        QMenu *m_settingsMenu;
-        QMenu *m_viewMenu;
-        QMenu *m_insertMenu;
-        QMenu *m_toolsMenu; 
-        QMenu *m_windowMenu;
-        QMenu *m_helpMenu;
+          TupViewDocument *drawingTab;
+          TupAnimationspace *animationTab;
+          TupHelpBrowser *helpTab;
+          TupTwitterWidget *newsTab;
+          TupStatusBar *m_statusBar;
+          TActionManager *m_actionManager;
+          QMenu *m_fileMenu;
+          QMenu *m_settingsMenu;
+          QMenu *m_viewMenu;
+          QMenu *m_insertMenu;
+          QMenu *m_toolsMenu; 
+          QMenu *m_windowMenu;
+          QMenu *m_helpMenu;
 
-        QStringList m_recentProjects;
-        QMenu *m_recentProjectsMenu;
+          QStringList m_recentProjects;
+          QMenu *m_recentProjectsMenu;
 
     // Network variables
     private:
-        TupNetProjectManagerHandler *netProjectManager;
-        bool isNetworked;
-        ToolView *m_viewChat;
+          TupNetProjectManagerHandler *netProjectManagerHandler;
+          bool isNetworked;
+          ToolView *m_viewChat;
 
     // Components
     private:
-        QToolBar *mainToolBar;
-        QToolBar *alternativeToolBar;
-        TupExposureSheet *m_exposureSheet;
-        TupScenesWidget *m_scenes;
-        TupTimeLine *m_timeLine;
+          TupExposureSheet *m_exposureSheet;
+          TupScenesWidget *m_scenes;
+          TupTimeLine *m_timeLine;
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
-        TupDebugWidget *m_debug;
+#if defined(QT_GUI_LIB) && defined(K_DEBUG)
+          TupDebugWidget *m_debug;
 #endif
-        // TupHelpWidget *m_helper;
-        TupLibraryWidget *m_libraryWidget;
-        TupColorPalette *m_colorPalette;
-        TupPenWidget *m_penWidget;
-        ToolView *exposureView;
-        ToolView *colorView;
-        ToolView *penView;
-        ToolView *libraryView;
-        ToolView *scenesView;  
-        ToolView *helpView;
-        ToolView *timeView;
-        ToolView *debugView;
-        ToolView *exportView;
-        TupExportWidget *exportWidget;
-
-        TupCameraWidget *cameraWidget;
-        bool isSaveDialogOpen; 
-        bool internetOn;
-        int lastTab;
-        TupProject::Mode contextMode;
-        TupMainWindow::RequestType requestType; 
-        QString projectName;
-        QString author;
-        QString netUser;
-        QString webContent;
-        QSize webMsgSize;
+          TupHelpWidget *m_helper;
+          TupLibraryWidget *m_libraryWidget;
+          TupColorPalette *m_colorPalette;
+          TupPenWidget *m_penWidget;
+          ToolView *exposureView;
+          ToolView *colorView;
+          ToolView *penView;
+          ToolView *libraryView;
+          ToolView *scenesView;  
+          ToolView *helpView;
+          ToolView *timeView;
+          ToolView *debugView;
+          ToolView *exportView;
+          TupViewCamera *viewCamera;
+          bool isSaveDialogOpen; 
+          bool internetOn;
+          int lastTab;
+          TupProject::Mode contextMode;
+          TupMainWindow::RequestType requestType; 
+          QString projectName;
+          QString author;
+          QString netUser;
 
     signals:
-        void responsed(TupProjectResponse *);
-        void updateAnimationModule(TupProject *, int, int, int);
+          void responsed(TupProjectResponse *);
+          void updateAnimationModule(TupProject *, int, int, int);
 };
 
 #endif

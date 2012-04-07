@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,9 +34,10 @@
  ***************************************************************************/
 
 #include "tupprojectresponse.h"
+#include "tdebug.h"
 
 // This class returns information about data structure of a Tupi project 
-// It is used from signals in the TupProject class to send data to other classes
+// It is used from signals in the TupProject class to send data to anothers classes
 
 class TupProjectResponse::Private
 {
@@ -69,35 +70,19 @@ int TupProjectResponse::part() const
 int TupProjectResponse::action() const
 {
     if (k->mode == Undo) {
+
         switch (k->action) {
                 case TupProjectRequest::Add:
                      {
                         return TupProjectRequest::Remove;
                      }
                 break;
-                case TupProjectRequest::Remove:
+                case TupProjectRequest::AddSymbolToProject:
                      {
-                        return TupProjectRequest::Add;
-                     }
-                break;
-                case TupProjectRequest::Exchange:
-                     {
-                     }
-                break;
-                case TupProjectRequest::InsertSymbolIntoFrame:
-                     {
-                        return TupProjectRequest::RemoveSymbolFromFrame;
+                        return TupProjectRequest::RemoveSymbolFromProject;
                      }
                 break;
                 case TupProjectRequest::EditNodes:
-                     {
-                     }
-                break;
-                case TupProjectRequest::Pen:
-                     {
-                     }
-                break;
-                case TupProjectRequest::Brush:
                      {
                      }
                 break;
@@ -138,6 +123,11 @@ int TupProjectResponse::action() const
                      {
                      }
                 break;
+                case TupProjectRequest::Remove:
+                     {
+                        return TupProjectRequest::Add;
+                     }
+                break;
                 case TupProjectRequest::Group:
                      {
                         return TupProjectRequest::Ungroup;
@@ -149,14 +139,7 @@ int TupProjectResponse::action() const
                 break;
                 default:
                      {
-                        #ifdef K_DEBUG
-                            QString msg = "TupProjectResponse::action() : Fatal Error: Unhandled action -> " + QString::number(k->action);
-                            #ifdef Q_OS_WIN
-                                qDebug() << msg;
-                            #else
-                                tError() << msg;
-                            #endif
-                        #endif
+                        tFatal() << "TupProjectResponse::action() : Unhandled action -> " << k->action;
                      }
                 break;
         }
@@ -325,7 +308,7 @@ void TupItemResponse::setItemType(TupLibraryObject::Type type)
     m_itemType = type;
 }
 
-QPointF TupItemResponse::position() const
+QPointF TupItemResponse::position()
 {
     return QPointF(m_x, m_y);
 }
@@ -405,6 +388,7 @@ bool TupLibraryResponse::frameIsEmpty()
 
 void TupLibraryResponse::setFrameState(bool state)
 {
+    tFatal() << "TupLibraryResponse::setFrameState() - Setting state: " << state;
     empty = state;
 }
 
@@ -446,14 +430,7 @@ TupProjectResponse *TupProjectResponseFactory::create(int part, int action)
             break;
             default:
              {
-                 #ifdef K_DEBUG
-                     QString msg = "TupProjectResponseFactory::create() - Error: Unknown/Unhandled element: " + QString::number(part);
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tFatal() << msg;
-                     #endif
-                 #endif
+                qFatal("Unknown PART"); // TODO: REMOVE ME
              }
             break;
     }

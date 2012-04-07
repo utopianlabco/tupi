@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,16 +33,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLIBRARYOBJECT_H
-#define TUPLIBRARYOBJECT_H
-
-#include "tglobal.h"
-#include "tupabstractserializable.h"
+#ifndef TupLIBRARYOBJECT_H
+#define TupLIBRARYOBJECT_H
 
 #include <QVariant>
 #include <QGraphicsItem>
-#include <QTemporaryFile>
-#include <QDir>
+
+#include "tupabstractserializable.h"
+#include "tupglobal_store.h"
 
 class TupLibraryObject;
 
@@ -50,7 +48,7 @@ class TupLibraryObject;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializable
 {
     public:
         enum Type
@@ -67,8 +65,8 @@ class TUPI_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializa
         TupLibraryObject(QObject *parent = 0);
         ~TupLibraryObject();
         
-        void setType(TupLibraryObject::Type type);
-        TupLibraryObject::Type type() const;
+        void setType(int type);
+        int type() const;
         
         void setData(const QVariant &data);
         QVariant data() const;
@@ -78,15 +76,11 @@ class TUPI_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializa
         
         void setSymbolName(const QString &name);
         QString symbolName() const;
-
-        QString smallId() const;
-        QString extension() const;
         
         bool loadRawData(const QByteArray &data);
         bool loadDataFromPath(const QString &dataDir);
-        bool loadData(const QString &path);
         
-        bool saveData(const QString &dataDir);
+        void saveData(const QString &dataDir);
         
     public:
         virtual void fromXml(const QString &xml);

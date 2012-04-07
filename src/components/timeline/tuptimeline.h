@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,70 +33,62 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPTIMELINE_H
-#define TUPTIMELINE_H
+#ifndef TupTIMELINE_H
+#define TupTIMELINE_H
 
-#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
-#include "tupscenecontainer.h"
-#include "tupprojectrequest.h"
-#include "tuplibraryobject.h"
-#include "tuptimelinetable.h"
-#include "tupprojectactionbar.h"
-#include "tuprequestbuilder.h"
-#include "tupproject.h"
-#include "tuplayer.h"
-#include "tuplibrary.h"
+#include "ttabwidget.h"
 
+#include <QSplitter>
 #include <QStackedWidget>
-#include <QList>
-#include <QHeaderView>
+
+class TupLayerManager;
+class TupFramesTable;
+class TupProjectActionBar;
+class TupFramesTableItem;
+class TupLibrary;
 
 /**
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupTimeLine : public TupModuleWidgetBase
+class TupTimeLine : public TupModuleWidgetBase
 {
     Q_OBJECT
 
     public:
-        TupTimeLine(TupProject *project, QWidget *parent = 0);
+        TupTimeLine(QWidget *parent = 0);
         ~TupTimeLine();
-        void initLayerVisibility();
         void closeAllScenes();
         
+        void setLibrary(const TupLibrary *library);
+        
     private:
-        TupTimeLineTable *framesTable(int sceneIndex);
+        TupLayerManager *layerManager(int sceneIndex);
+        TupFramesTable *framesTable(int sceneIndex);
         
     protected:
-        void sceneResponse(TupSceneResponse *response);
-        void layerResponse(TupLayerResponse *response);
-        void frameResponse(TupFrameResponse *response);
+        void sceneResponse(TupSceneResponse *e);
+        void layerResponse(TupLayerResponse *e);
+        void frameResponse(TupFrameResponse *e);
         void libraryResponse(TupLibraryResponse *response);
-
-    signals:
-        void newPerspective(int);
         
     public slots:
-        void addScene(int sceneIndex, const QString &name);
-        void removeScene(int sceneIndex);
-        // void emitChangeFrameRequest(int sceneIndex, int layerIndex, int frameIndex);
+        void insertScene(int position, const QString &name);
+        void removeScene(int position);
+        void emitRequestChangeFrame(int sceneIndex, int layerIndex, int frameIndex);
 
     private slots:
         void requestCommand(int action);
-        bool requestFrameAction(int action, int frameIndex = -1, int layerIndex = -1, int sceneIndex = -1, const QVariant &arg = QVariant());
-        bool requestLayerAction(int action, int layerIndex = -1, int sceneIndex = -1, const QVariant &arg = QVariant());
-        bool requestSceneAction(int action, int sceneIndex = -1, const QVariant &arg = QVariant());
+        bool requestFrameAction(int action, int framePos = -1, int layerPos = -1, int scenePos = -1, const QVariant &arg = QVariant());
+        bool requestLayerAction(int action, int layerPos = -1, int scenePos = -1, const QVariant &arg = QVariant());
+        bool requestSceneAction(int action, int scenePos = -1, const QVariant &arg = QVariant());
         void selectFrame(int indexLayer, int indexFrame);
-        // void removeFrameCopy(int layerIndex, int frameIndex);
-        void removeFrameCopy();
-        void copyFrameForward(int layerIndex, int frameIndex);
-        void requestLayerMove(int oldLayerIndex, int newLayerIndex);
-
-        void requestLayerVisibilityAction(int layerIndex, bool isVisible);
-        void requestLayerRenameAction(int layerIndex, const QString &name);
-        void requestSceneSelection(int sceneIndex);
+        
+        void emitRequestRenameLayer(int layer, const QString &name);
+        void emitSelectionSignal();
+        void emitLayerVisibility(int sceneIndex, int layerIndex, bool checked);
+        void emitRequestChangeScene(int sceneIndex);
         
     private:
         struct Private;

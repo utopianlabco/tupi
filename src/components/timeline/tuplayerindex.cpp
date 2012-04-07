@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,12 +34,25 @@
  ***************************************************************************/
 
 #include "tuplayerindex.h"
+#include "tuprequestbuilder.h"
 
-// const int LAYER_COLUMN = 0;
+#include <qlabel.h>
+#include <qlayout.h>
+
+#include <QPixmap>
+#include <QHeaderView>
+#include <QPainter>
+#include <QItemDelegate>
+
+#include "tseparator.h"
+#include "tapplication.h"
+#include "tdebug.h"
+
+const int LAYER_COLUMN = 0;
 
 // Header
 
-class TUPI_EXPORT TupLayerIndexHeader : public QHeaderView
+class TupLayerIndexHeader : public QHeaderView
 {
     public:
         TupLayerIndexHeader(QWidget * parent = 0);
@@ -55,7 +68,7 @@ class TUPI_EXPORT TupLayerIndexHeader : public QHeaderView
 
 TupLayerIndexHeader::TupLayerIndexHeader(QWidget * parent) : QHeaderView(Qt::Horizontal , parent)
 {
-    //setClickable(true);
+    setClickable(true);
     setCascadingSectionResizes(true);
     //setMaximumHeight(20);
     setFixedHeight(26);
@@ -89,17 +102,14 @@ void TupLayerIndexHeader::paintSection(QPainter * painter, const QRect & rect, i
     
     QString text = model()->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();;
     
-    // QFontMetrics fm(painter->font());
-    QFont font = this->font();
-    font.setPointSize(9);
-    font.setBold(true);
-    // QFont label("Arial", 9, QFont::Bold, false); 
-    QFontMetrics fm(font);
+    //QFontMetrics fm(painter->font());
+    QFont label("Arial", 9, QFont::Bold, false); 
+    QFontMetrics fm(label);
     
     int x = rect.x() + (sectionSize(logicalIndex) - fm.width( text ))/2;
     //int y = fm.height() + (rect.y() / 2);
     int y = 17;
-    painter->setFont(font); 
+    painter->setFont(label); 
     painter->drawText(x, y, text);
 }
 
@@ -150,11 +160,7 @@ struct TupLayerIndex::Private
 TupLayerIndex::TupLayerIndex(int sceneIndex, QWidget *parent) : QTableWidget(0, 1, parent), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLayerIndex()]";
-        #else
-            TINIT;
-        #endif
+        TINIT;
     #endif
 
     k->sceneIndex = sceneIndex;
@@ -181,11 +187,7 @@ TupLayerIndex::TupLayerIndex(int sceneIndex, QWidget *parent) : QTableWidget(0, 
 TupLayerIndex::~TupLayerIndex()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupLayerIndex()]";
-        #else
-            TEND;
-        #endif
+        TEND;
     #endif
 
     delete k;
@@ -194,12 +196,9 @@ TupLayerIndex::~TupLayerIndex()
 void TupLayerIndex::insertLayer(int position, const QString &name)
 {
     if (position >= 0 && position <= rowCount()) {
-        QTableWidgetItem *newLayer = new QTableWidgetItem(name);
 
-        QFont font = this->font();
-        font.setPointSize(8);
-        newLayer->setFont(font);
-        // newLayer->setFont(QFont("Arial", 8, QFont::Normal, false));
+        QTableWidgetItem *newLayer = new QTableWidgetItem(name);
+        newLayer->setFont(QFont("Arial", 8, QFont::Normal, false));
         newLayer->setTextAlignment(Qt::AlignCenter);
         
         newLayer->setBackgroundColor(palette().background().color());
@@ -279,17 +278,12 @@ void TupLayerIndex::moveLayer(int position, int newPosition)
 
 void TupLayerIndex::lockLayer(int position, bool locked)
 {
-    Q_UNUSED(locked);
-
     if (position < 0 || position >= rowCount()) 
         return;
 }
 
 void TupLayerIndex::setLocalRequest(int layer, int column)
 {
-    Q_UNUSED(layer);
-    Q_UNUSED(column);
-
     emit localRequest();
 }
 

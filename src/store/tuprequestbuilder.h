@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,16 +33,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPREQUESTBUILDER_H
-#define TUPREQUESTBUILDER_H
-
-#include "tglobal.h"
-#include "tuplibraryobject.h"
-#include "tupproject.h"
+#ifndef TupREQUESTBUILDER_H
+#define TupREQUESTBUILDER_H
 
 #include <QString>
 #include <QDomDocument>
 #include <QVariant>
+
+#include "tuplibraryobject.h"
+
+#include "tupglobal_store.h"
+#include "tupproject.h"
 
 class TupProjectRequest;
 class TupProjectResponse;
@@ -51,7 +52,7 @@ class TupProjectResponse;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupRequestBuilder
+class STORE_EXPORT TupRequestBuilder
 {
     protected:
         TupRequestBuilder();
@@ -74,8 +75,8 @@ class TUPI_EXPORT TupRequestBuilder
         
         static TupProjectRequest createSceneRequest(int sceneIndex, int action, const QVariant &arg= QString(), const QByteArray &data = QByteArray());
         
-        static TupProjectRequest createLibraryRequest(int actionId, const QVariant &arg, TupLibraryObject::Type type, TupProject::Mode spaceMode = TupProject::FRAMES_EDITION,
-                                                      const QByteArray &data = QByteArray(), const QString &folder = QString(), int scene = -1, int layer = -1, int frame = -1);
+        static TupProjectRequest createLibraryRequest(int actionId, const QVariant &arg, TupLibraryObject::Type type, TupProject::Mode spaceMode,
+                                                     const QByteArray &data, const QString &folder = QString(), int scene = -1, int layer = -1, int frame = -1);
         
         static TupProjectRequest fromResponse(TupProjectResponse *response);
         

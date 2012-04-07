@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,16 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPAINTAREASTATUS_H
-#define TUPPAINTAREASTATUS_H
-
-#include "tglobal.h"
+#ifndef TupPAINTAREASTATUS_H
+#define TupPAINTAREASTATUS_H
 
 #include <QBrush>
 #include <QSize>
 #include <QPaintEvent>
 #include <QWidget>
-#include <QPainter>
 
 /**
  * This class defines the options panel in the bottom of the paint area.
@@ -50,19 +47,19 @@
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupColorWidget : public QWidget
+class TupColorWidget : public QWidget
 {
     Q_OBJECT
 
     public:
-        TupColorWidget(const QBrush m_brush = Qt::transparent);
-        ~TupColorWidget();
+        TupColorWidget() : m_brush(Qt::transparent) {};
+        ~TupColorWidget() {};
         void setBrush(const QBrush &brush);
         QSize sizeHint() const;
         QColor color();
 
     protected:
-        void paintEvent(QPaintEvent *event);
+        void paintEvent(QPaintEvent *);
         void mousePressEvent(QMouseEvent * event);
 
     signals:

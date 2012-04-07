@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,7 +36,11 @@
 #include "tuplocalprojectmanagerhandler.h"
 #include "tupprojectrequest.h"
 #include "tupprojectcommand.h"
-#include "tupfilemanager.h"
+#include "tupifilemanager.h"
+#include "tdebug.h"
+
+#include <QDomDocument>
+#include <QDomElement>
 
 /**
  * This class handles all the procedures related to the projects local format for Tupi.
@@ -122,11 +126,7 @@ bool TupLocalProjectManagerHandler::isUndoCommand(const QString &xml)
 void TupLocalProjectManagerHandler::handleProjectRequest(const TupProjectRequest *request)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupLocalProjectManagerHandler::handleProjectRequest()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     if (request->isValid()) {
@@ -134,12 +134,7 @@ void TupLocalProjectManagerHandler::handleProjectRequest(const TupProjectRequest
         //emit sendCommand(request, isUndoCommand(request->xml()));
     } else {
         #ifdef K_DEBUG
-            QString msg = "TupLocalProjectManagerHandler::handleProjectRequest() - INVALID REQUEST! ID: " + QString::number(request->id());
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tfDebug << "TupLocalProjectManagerHandler::handleProjectRequest() - INVALID REQUEST! ID: " << request->id();
         #endif
     }
 }
@@ -152,7 +147,7 @@ bool TupLocalProjectManagerHandler::saveProject(const QString &fileName, TupProj
     if (!fileName.endsWith(".tup"))
         file += ".tup";
 
-    TupFileManager *manager = new TupFileManager;
+    TupiFileManager *manager = new TupiFileManager;
     result = manager->save(file, project);
     delete manager;
 
@@ -163,7 +158,7 @@ bool TupLocalProjectManagerHandler::loadProject(const QString &fileName, TupProj
 {
     bool result = false;
 
-    TupFileManager *manager = new TupFileManager;
+    TupiFileManager *manager = new TupiFileManager;
     result = manager->load(fileName, project);
     delete manager;
 

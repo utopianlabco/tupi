@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,13 +33,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLAYERINDEX_H
-#define TUPLAYERINDEX_H
+#ifndef TupLAYERINDEX_H
+#define TupLAYERINDEX_H
 
-#include "tglobal.h"
-#include "tuprequestbuilder.h"
-#include "tseparator.h"
-#include "tapplication.h"
 #include "timagebutton.h"
 #include "tupprojectrequest.h"
 
@@ -49,17 +45,12 @@
 #include <QScrollBar>
 #include <QButtonGroup>
 #include <QTableWidget>
-#include <QLayout>
-#include <QPixmap>
-#include <QHeaderView>
-#include <QPainter>
-#include <QItemDelegate>
 
 /**
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupLayerIndex : public QTableWidget
+class TupLayerIndex : public QTableWidget
 {
     Q_OBJECT
     

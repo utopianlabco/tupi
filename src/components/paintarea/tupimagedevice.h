@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,21 +33,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPIMAGEDEVICE_H
-#define TUPIMAGEDEVICE_H
+#ifndef TupIMAGEDEVICE_H
+#define TupIMAGEDEVICE_H
 
-#include "tglobal.h"
-
-#include <QWidget>
+#include <qwidget.h>
 #include <QImage>
-#include <QPainter>
-#include <QPaintEngine>
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupImageDevice : public QWidget
+class TupImageDevice : public QWidget
 {
     Q_OBJECT
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,26 +36,11 @@
 #ifndef TUPCRASHWIDGET_H
 #define TUPCRASHWIDGET_H
 
-#ifdef K_DEBUG
-
-#include "tupcrashhandler.h"
-#include "tconfig.h"
-#include "tdebug.h"
-
-#include <unistd.h>
 #include <QDialog>
 #include <QImage>
 #include <QVBoxLayout>
+
 #include <QTabWidget>
-#include <QPainter>
-#include <QPushButton>
-#include <QApplication>
-#include <QFile>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QTextBrowser>
-#include <QProcess>
-#include <signal.h>
 
 class TupCrashWidget : public QDialog
 {
@@ -80,5 +65,4 @@ class TupCrashWidget : public QDialog
         QTabWidget *m_tabber;
 };
 
-#endif
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,33 +33,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPDEBUGWIDGET_H
-#define TUPDEBUGWIDGET_H
+#ifndef TupDEBUGWIDGET_H
+#define TupDEBUGWIDGET_H
 
-#ifdef K_DEBUG
-
-#include "tglobal.h"
-#include "tupmodulewidgetbase.h"
-#include "tupdebugterm.h"
-
-#include <QIcon>
+#include <tupmodulewidgetbase.h>
 
 /**
  * @author Gustav Gonzalez <info@maefloresta.com>
 */
-
-class TUPI_EXPORT TupDebugWidget : public TupModuleWidgetBase
+class TupDebugWidget : public TupModuleWidgetBase
 {
     Q_OBJECT
-
     public:
         TupDebugWidget(QWidget *parent = 0, int width = 0);
         ~TupDebugWidget();
-        void setProjectStatus(bool status);
-
-    private:
-        TupDebugTerm *term;
 };
 
-#endif
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,19 +36,11 @@
 #ifndef TUPPROJECTACTIONBAR_H
 #define TUPPROJECTACTIONBAR_H
 
-#include "tglobal.h"
+#include "tupglobal.h"
 #include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "tconfig.h"
-#include "toptionaldialog.h"
-#include "timagebutton.h"
 
 #include <QWidget>
 #include <QButtonGroup>
-#include <QVBoxLayout>
-#include <QVariant>
-#include <QSpacerItem>
-#include <QDesktopWidget>
 
 class TImageButton;
 class QBoxLayout;
@@ -68,29 +60,28 @@ class TUPI_EXPORT TupProjectActionBar : public QWidget
             
             InsertFrame = 1 << 1,
             RemoveFrame = 1 << 2,
-            ExtendFrame = 1 << 3, 
-            MoveFrameBackward = 1 << 4,
-            MoveFrameForward = 1 << 5,
-            LockFrame = 1 << 6,
+            MoveFrameUp = 1 << 3,
+            MoveFrameDown = 1 << 4,
+            LockFrame = 1 << 5,
             
-            InsertLayer = 1 << 7,
-            RemoveLayer = 1 << 8,
-            MoveLayerUp = 1 << 9,
-            MoveLayerDown = 1 << 10,
-            LockLayer = 1 << 11,
+            InsertLayer = 1 << 6,
+            RemoveLayer = 1 << 7,
+            MoveLayerUp = 1 << 8,
+            MoveLayerDown = 1 << 9,
+            LockLayer = 1 << 10,
             
-            InsertScene = 1 << 12,
-            RemoveScene = 1 << 13,
-            MoveSceneUp = 1 << 14,
-            MoveSceneDown = 1 << 15,
-            LockScene = 1 << 16,
-            Separator = 1 << 17,
+            InsertScene = 1 << 11,
+            RemoveScene = 1 << 12,
+            MoveSceneUp = 1 << 13,
+            MoveSceneDown = 1 << 14,
+            LockScene = 1 << 15,
+            Separator = 1 << 16,
 
-            AllActions = InsertFrame | RemoveFrame | ExtendFrame | MoveFrameBackward | MoveFrameForward | LockFrame | InsertLayer | RemoveLayer 
+            AllActions = InsertFrame | RemoveFrame | MoveFrameUp | MoveFrameDown | LockFrame | InsertLayer | RemoveLayer 
                                      | MoveLayerUp | MoveLayerDown | InsertScene | RemoveScene | MoveSceneUp | MoveSceneDown,
 
-            FrameActions = InsertFrame | ExtendFrame | RemoveFrame | MoveFrameBackward | MoveFrameForward | LockFrame,
-            LayerActions = InsertLayer | RemoveLayer | MoveLayerUp | MoveLayerDown | LockLayer,
+            FrameActions = InsertFrame | RemoveFrame | MoveFrameUp | MoveFrameDown,
+            LayerActions = InsertLayer | RemoveLayer | MoveLayerUp | MoveLayerDown,
             SceneActions = InsertScene | RemoveScene | MoveSceneUp | MoveSceneDown
         };
         

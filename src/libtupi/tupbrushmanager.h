@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,50 +36,44 @@
 #ifndef TUPBRUSHMANAGER_H
 #define TUPBRUSHMANAGER_H
 
-#include "tglobal.h"
-
 #include <QObject>
 #include <QPen>
 #include <QBrush>
+#include "tupglobal.h"
 
 /**
  * @author David Cuadrado
 */
-
 class TUPI_EXPORT TupBrushManager : public QObject
 {
-    Q_OBJECT
-
+    Q_OBJECT;
     public:
         TupBrushManager(QObject * parent = 0);
         TupBrushManager(const QPen &pen, const QBrush &brush, QObject * parent = 0);
         ~TupBrushManager();
-
-        QPen pen() const;        
+        
         void setPen(const QPen &pen);
+        //void setPenBrush(const QBrush &brush);
         void setPenColor(const QColor &color);
-        void setPenWidth(int width);
-
-        QBrush brush() const; 
+        QPen pen() const;
+        
         void setBrush(const QBrush &brush);
-
-        void initBgColor(const QColor &color);
-        void setBgColor(const QColor &color);
-        QColor bgColor();
+        QBrush brush() const;
         
         int penWidth() const;
         QColor penColor() const;
         QBrush penBrush() const;
+        
         QBrush brushColor() const;
         
     signals:
         void penChanged(const QPen &pen);
         void brushChanged(const QBrush &brush);
-        void bgColorChanged(const QColor color);
         
     private:
         struct Private;
         Private *const k;
+
 };
 
 #endif

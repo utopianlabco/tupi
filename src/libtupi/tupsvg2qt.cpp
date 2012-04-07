@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,10 +34,13 @@
  ***************************************************************************/
 
 #include "tupsvg2qt.h"
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+#include "tdebug.h"
 
 TupSvg2Qt::TupSvg2Qt()
 {
@@ -195,8 +198,9 @@ QList<qreal> TupSvg2Qt::parseNumbersList(QString::const_iterator &itr)
     QList<qreal> points;
     QString temp;
     
-    while ((*itr).isSpace())
-           ++itr;
+    while ((*itr).isSpace()) {
+        ++itr;
+    }
     
     while ((*itr).isNumber() || (*itr) == QLatin1Char('-') 
            || (*itr) == QLatin1Char('+') || (*itr) == QLatin1Char('.')) {
@@ -229,8 +233,9 @@ QList<qreal> TupSvg2Qt::parseNumbersList(QString::const_iterator &itr)
         while ((*itr).isSpace())
                ++itr;
         
-        if ((*itr) == QLatin1Char(','))
+        if ((*itr) == QLatin1Char(',')) {
             ++itr;
+        }
         
         bool ok = false;
         qreal number = temp.toDouble(&ok);
@@ -241,47 +246,9 @@ QList<qreal> TupSvg2Qt::parseNumbersList(QString::const_iterator &itr)
             points.append(0.0f);
         
         // eat the rest of space
-        while ((*itr).isSpace())
+        while ((*itr).isSpace()) {
                ++itr;
-    }
-
-    return points;
-}
-
-QList<int> TupSvg2Qt::parseIntList(QString::const_iterator &itr)
-{
-    QList<int> points;
-    QString temp;
-
-    while ((*itr).isSpace())
-           ++itr;
-
-    while ((*itr).isNumber()) {
-           temp = QString();
-
-           while ((*itr).isDigit())
-                  temp += *itr++;
-
-           while ((*itr).isDigit())
-                  temp += *itr++;
-
-           while ((*itr).isSpace())
-                  ++itr;
-
-           if ((*itr) == QLatin1Char(','))
-               ++itr;
-   
-           bool ok = false;
-           int number = temp.toInt(&ok);
-   
-           if (ok)
-               points.append(number);
-           else
-               points.append(0);
-
-           // eat the rest of space
-           while ((*itr).isSpace())
-                  ++itr;
+        }
     }
 
     return points;
@@ -298,7 +265,7 @@ bool TupSvg2Qt::svgpath2qtpath(const QString &data, QPainterPath &path)
     
     while (itr != data.constEnd()) {
         while ((*itr).isSpace())
-               ++itr;
+            ++itr;
         
         pathElem = *itr;
         ++itr;
@@ -311,7 +278,7 @@ bool TupSvg2Qt::svgpath2qtpath(const QString &data, QPainterPath &path)
                qreal offsetX = x;        // correction offsets
                qreal offsetY = y;        // for relative commands
 
-               switch (pathElem.toLatin1()) {
+               switch (pathElem.toAscii()) {
                        case 'm': 
                        {
                            x = x0 = arg[0] + offsetX;
@@ -533,7 +500,7 @@ bool TupSvg2Qt::svgpath2qtpath(const QString &data, QPainterPath &path)
                        break;
             }
 
-            lastMode = pathElem.toLatin1();
+            lastMode = pathElem.toAscii();
         }
     }
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,21 +33,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLIBRARYFOLDER_H
-#define TUPLIBRARYFOLDER_H
+#ifndef TupLIBRARYFOLDER_H
+#define TupLIBRARYFOLDER_H
 
-#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tuplibraryobject.h"
+#include "tupglobal_store.h"
 
 #include <QObject>
 #include <QHash>
 #include <QMap>
 #include <QByteArray>
-#include <QTextStream>
-#include <QFileInfo>
-#include <QFile>
-#include <QDir>
 
 class TupProject;
 class TupLibraryFolder;
@@ -56,11 +52,14 @@ class TupLibraryObject;
 typedef QMap<QString, TupLibraryFolder *> Folders;
 typedef QMap<QString, TupLibraryObject *> LibraryObjects;
 
+//typedef QHash<QString, TupLibraryObject *> LibraryObjects;
+//typedef QMap<QString, TupLibraryFolder *> Folders;
+
 /**
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
     
@@ -71,12 +70,10 @@ class TUPI_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializa
         void setId(const QString &id);
         QString id() const;
         
-        TupLibraryObject *createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data = QByteArray(), const QString &folder = QString(), bool loaded = false);
+        TupLibraryObject *createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data, const QString &folder = QString(), bool loaded = false);
         
         bool addObject(TupLibraryObject *object); 
         bool addObject(const QString &folderName, TupLibraryObject *object);
-
-        bool reloadObject(const QString &id);
 
         bool addFolder(TupLibraryFolder *folder);
 
@@ -89,10 +86,8 @@ class TUPI_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializa
         
         bool moveObject(const QString &id, const QString &folder);
         bool moveObjectToRoot(const QString &id);
-
-        bool exists(const QString &id);
         
-        TupLibraryObject *getObject(const QString &id) const;
+        TupLibraryObject *findObject(const QString &id) const;
         
         Folders folders() const;
         LibraryObjects objects() const;
@@ -103,12 +98,10 @@ class TUPI_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializa
         TupProject *project() const;
         void reset();
 
-        TupLibraryFolder *getFolder(const QString &id) const;
+        TupLibraryFolder *findFolder(const QString &id) const;
         bool folderExists(const QString &id) const;
 
         void updatePaths(const QString &newPath);
-
-        bool loadingProject();
         
     public:
         virtual void fromXml(const QString &xml);

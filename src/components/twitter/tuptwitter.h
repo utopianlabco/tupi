@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,23 +33,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPTWITTER_H
-#define TUPTWITTER_H
+#ifndef TupWITTER_H
+#define TupWITTER_H
 
-#include "tglobal.h"
 #include "tapplicationproperties.h"
 
 #include <QWidget>
-#include <QtNetwork>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QFile>
 #include <QByteArray>
 
-class TUPI_EXPORT TupTwitter : public QWidget
+class Tupwitter : public QWidget
 {
     Q_OBJECT
 
     public:
-        TupTwitter(QWidget *parent=0);
-        ~TupTwitter();
+        Tupwitter(QWidget *parent=0);
+        ~Tupwitter();
         void start();
 
     private slots:
@@ -60,17 +62,16 @@ class TUPI_EXPORT TupTwitter : public QWidget
         void pageReady();
 
     private:
-        void requestFile(const QString &target);
+        void requestFile(QString target);
         void checkSoftwareUpdates(QByteArray array);
         void formatStatus(QByteArray array);
-        void saveWebMsg(const QString &answer);
+        void loadTwitterMeaning();
 
-        static QString NEWS_HOST;
-        static QString IS_HOST_UP_URL;
+        static QString TWITTER_HOST;
+        static QString IS_TWITTER_UP_URL;
         static QString USER_TIMELINE_URL;
         static QString TUPI_VERSION_URL;
         static QString BROWSER_FINGERPRINT;
-        static QString TUPI_WEB_MSG;
 
         struct Private;
         Private *const k;

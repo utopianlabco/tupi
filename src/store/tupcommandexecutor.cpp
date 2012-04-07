@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,6 +39,7 @@
 #include "tuprequestbuilder.h"
 #include "tupprojectrequest.h"
 #include "tupprojectresponse.h"
+#include "tdebug.h"
 
 TupCommandExecutor::TupCommandExecutor(TupProject *project) : QObject(project), m_project(project)
 {
@@ -57,68 +58,69 @@ void TupCommandExecutor::getScenes(TupSceneResponse *response)
 bool TupCommandExecutor::createScene(TupSceneResponse *response)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupCommandExecutor::createScene()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     int position = response->sceneIndex();
     QString name = response->arg().toString();
+    
+    // if (position < 0 || position > m_project->scenes().count())
     if (position < 0)
         return false;
-
-    if (response->mode() == TupProjectResponse::Do) {
-        TupScene *scene = m_project->createScene(name, position);
-        if (!scene) 
-            return false;
-    }
-
-    if (response->mode() == TupProjectResponse::Redo || response->mode() == TupProjectResponse::Undo) { 
-        bool success = m_project->restoreScene(position);
-        if (!success)
-            return false;
-    }
-
+    
+    TupScene *scene = m_project->createScene(name, position);
+    if (!scene) 
+        return false;
+   
+    /* 
+    if (!name.isEmpty())
+        scene->setSceneName(name);
+    else
+        response->setArg(scene->sceneName());
+    */
+    
     emit responsed(response);
+   
+    /* SQA: Check if this code is really necessary 
+    QString state =  response->state();
+    
+    if (! state.isEmpty()) {
+        scene->fromXml(state);
+        response->setArg(scene->sceneName());
+    }
+    */
+    
     return true;
 }
 
 bool TupCommandExecutor::removeScene(TupSceneResponse *response)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupCommandExecutor::removeScene()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif	
+           T_FUNCINFO;
+    #endif    
 
     int position = response->sceneIndex();
-    // int scenesCount = m_project->scenesCount();
+    int scenesTotal = m_project->scenesTotal();
 
-    TupScene *toRemove = m_project->sceneAt(position);
-
+    TupScene *toRemove = m_project->scene(position);
+    
     if (toRemove) {
         QDomDocument document;
         document.appendChild(toRemove->toXml(document));
+        
         response->setState(document.toString());
         response->setArg(toRemove->sceneName());
         
         if (m_project->removeScene(position)) {
+
+            if (position+1 < scenesTotal) {
+                for (int i = position + 1; i < scenesTotal; i++)
+                     m_project->moveScene(i, i-1);
+            }
+
             emit responsed(response);
             return true;
-        } 
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupCommandExecutor::removeScene() - Scene index doesn't exist -> " + QString::number(position);
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError("library") << msg;
-            #endif
-        #endif
+        }
     }
     
     return false;
@@ -142,15 +144,10 @@ bool TupCommandExecutor::lockScene(TupSceneResponse *response)
     bool lock = response->arg().toBool();
 
     #ifdef K_DEBUG
-        QString msg = "TupCommandExecutor::lockScene() - Scene is locked: " + QString::number(lock);
-        #ifdef Q_OS_WIN
-            qWarning() << msg;
-        #else
-            tWarning("library") << msg;
-        #endif
-    #endif  
+        tWarning() << "Lock scene: " << lock;
+    #endif    
 
-    TupScene *scene = m_project->sceneAt(position);
+    TupScene *scene = m_project->scene(position);
     
     if (!scene)
         return false;
@@ -166,7 +163,7 @@ bool TupCommandExecutor::renameScene(TupSceneResponse *response)
 {
     int position = response->sceneIndex();
     QString newName = response->arg().toString();
-    TupScene *scene = m_project->sceneAt(position);
+    TupScene *scene = m_project->scene(position);
 
     if (!scene)
         return false;
@@ -190,12 +187,13 @@ bool TupCommandExecutor::setSceneVisibility(TupSceneResponse *response)
     int position = response->sceneIndex();
     bool view = response->arg().toBool();
     
-    TupScene *scene = m_project->sceneAt(position);
+    TupScene *scene = m_project->scene(position);
     
     if (!scene)
         return false;
     
     scene->setVisible(view);
+    
     emit responsed(response);
     
     return true;
@@ -205,12 +203,13 @@ bool TupCommandExecutor::resetScene(TupSceneResponse *response)
 {
     int position = response->sceneIndex();
     QString name = response->arg().toString();
-    TupScene *scene = m_project->sceneAt(position);
+    TupScene *scene = m_project->scene(position);
 
     if (!scene)
         return false;
 
     scene->reset(name);
+
     emit responsed(response);
 
     return true;

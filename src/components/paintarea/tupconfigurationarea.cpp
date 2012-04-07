@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,21 @@
  ***************************************************************************/
 
 #include "tupconfigurationarea.h"
+#include "tdebug.h"
+
+#include <QLabel>
+#include <QTextBrowser>
+#include <QMainWindow>
+#include <QMouseEvent>
+#include <QApplication>
+#include <QPushButton>
+#include <QToolTip>
+#include <QPainter>
+#include <QPainterPath>
+#include <QStyle>
+#include <QStyleOptionButton>
+#include <QTimer>
+//#include <QVBoxLayout>
 
 struct TupConfigurationArea::Private
 {
@@ -97,22 +112,13 @@ void TupConfigurationArea::toggleLock()
 void TupConfigurationArea::shrink()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupConfigurationArea::shrink()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     QMainWindow *mainWindow = dynamic_cast<QMainWindow *>(parentWidget());
     if (!mainWindow || !widget()) {
         #ifdef K_DEBUG
-            QString msg = "TupConfigurationArea::shrink() - Fatal error!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
+               tError() << "TupConfigurationArea::shrink() - Fatal error!";
         #endif
         return;
     }
@@ -192,16 +198,8 @@ void TupConfigurationArea::shrink()
                      QPoint(x2, y2),
                      Qt::LeftButton, 0, 0);
 
-    if (! QApplication::sendEvent(mainWindow, &move)) {
-        #ifdef K_DEBUG
-            QString msg = "TupConfigurationArea::shrink() - Error while moving!";
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
-        #endif
-    }
+    if (! QApplication::sendEvent(mainWindow, &move))
+        qWarning("Fail moving");
 
     qApp->processEvents();
 
@@ -209,16 +207,8 @@ void TupConfigurationArea::shrink()
                         QPoint(xRelease, yRelease),
                         Qt::LeftButton, 0, 0);
 
-    if (! QApplication::sendEvent(mainWindow, &release)) {
-        #ifdef K_DEBUG
-            QString msg = "TupConfigurationArea::shrink() - Error while releasing!";
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
-        #endif
-    }
+    if (! QApplication::sendEvent(mainWindow, &release))
+        qWarning("Fail releasing");
 
     qApp->processEvents();
     mainWindow->setMouseTracking(hmt);
@@ -226,8 +216,6 @@ void TupConfigurationArea::shrink()
 
 void TupConfigurationArea::enterEvent(QEvent *event)
 {
-    Q_UNUSED(event);
-
     if (k->locker.isActive()) 
         k->locker.stop();
 
@@ -239,8 +227,6 @@ void TupConfigurationArea::enterEvent(QEvent *event)
 
 void TupConfigurationArea::leaveEvent(QEvent *event)
 {
-    Q_UNUSED(event);
-
     if (k->shower.isActive())
         k->shower.stop();
 

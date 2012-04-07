@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,9 @@
  ***************************************************************************/
 
 #include "tupsplash.h"
+#include "timageeffect.h"
+#include "tdebug.h"
+#include "tglobal.h"
 
 #include <QPixmap>
 #include <QBitmap>
@@ -117,16 +120,14 @@ void TupSplash::drawContents(QPainter * painter)
     painter->setPen(QColor(0, 0, 0));
 
     // Draw version number
-    // QRect rect(209, 38, 70, 20);
-    QRect rect(200, 36, 80, 20);
+    QRect rect(209, 38, 70, 20);
 
     QFont forig = painter->font();
     painter->setFont(QFont("helvetica", 10, QFont::Normal, false));
     painter->drawText(rect, Qt::AlignRight, version);
 
     // Draw project name's code 
-    // QRect code(209, 51, 48, 20);
-    QRect code(218, 51, 48, 20);
+    QRect code(209, 51, 48, 20);
     painter->setFont(QFont("helvetica", 12, QFont::Bold, false));
     painter->drawText(code, Qt::AlignRight, kAppProp->codeName());
 

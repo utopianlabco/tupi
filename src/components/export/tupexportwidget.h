@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,32 +33,42 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPEXPORTWIDGET_H
-#define TUPEXPORTWIDGET_H
+#ifndef TupEXPORTWIDGET_H
+#define TupEXPORTWIDGET_H
 
-#include "tglobal.h"
+#include "tupmodulewidgetbase.h"
 #include "tupproject.h"
-#include "tupexportwizard.h"
-#include "tuppluginmanager.h"
-#include "tosd.h"
+#include "tupexportpluginobject.h"
+#include "texportwizard.h"
+
+#include <QListWidget>
+#include <QHash>
+
+class QButtonGroup;
+class QLineEdit;
+class SelectPlugin;
+class SelectScenes;
+class ExportTo;
+class VideoProperties;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupExportWidget : public TupExportWizard
+class TupExportWidget : public TExportWizard
 {
     Q_OBJECT
 
     public:
-        enum OutputFormat { Animation = 0, ImagesArray, AnimatedImage };
-        TupExportWidget(TupProject *project, QWidget *parent = 0, bool isLocal = true);
+        enum Format { Video = 0, Storyboard };
+        TupExportWidget(const TupProject *project, QWidget *parent = 0, bool isLocal = true);
         ~TupExportWidget();
         QString videoTitle() const;
         QString videoTopics() const;
         QString videoDescription() const;
         QList<int> videoScenes() const;
         bool isComplete();
+        TupExportWidget::Format workType();
 
     private slots:
         void setExporter(const QString &plugin);
@@ -67,8 +77,14 @@ class TUPI_EXPORT TupExportWidget : public TupExportWizard
         void loadPlugins();
 		
     private:
-        struct Private;
-        Private *const k;
+        SelectPlugin *m_pluginSelectionPage;
+        SelectScenes *m_scenesSelectionPage;
+        ExportTo *m_exportToPage;
+        ExportTo *m_exportImages;
+        VideoProperties *videoProperties;
+        const TupProject *m_project;
+        QHash<QString, TupExportInterface *> m_plugins;
+        const QString tag;
 };
 
 #endif

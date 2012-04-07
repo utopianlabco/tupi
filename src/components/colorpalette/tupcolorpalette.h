@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,39 +33,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCOLORPALETTE_H
-#define TUPCOLORPALETTE_H
+#ifndef TupCOLORPALETTE_H
+#define TupCOLORPALETTE_H
 
-#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
+#include "tdualcolorbutton.h"
 #include "ticon.h"
-#include "timagebutton.h"
-#include "tcolorcell.h"
-#include "tconfig.h"
-#include "tuppaintareaevent.h"
-#include "tupcolorform.h"
-#include "tupviewcolorcells.h"
-#include "tupcolorpicker.h"
-#include "tslider.h"
-#include "tupgradientcreator.h"
-#include "tvhbox.h"
 
-#include <QBoxLayout>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QFrame>
-#include <QToolTip>
-#include <QComboBox>
-#include <QGroupBox>
-#include <QSplitter>
-#include <QMenu>
-#include <QTabWidget>
+class TupColorPalette;
 
 /**
  * @author Jorge Cuadrado
 */
 
-class TUPI_EXPORT TupColorPalette : public TupModuleWidgetBase
+class TupColorPalette : public TupModuleWidgetBase
 {
     Q_OBJECT
 
@@ -75,45 +56,46 @@ class TUPI_EXPORT TupColorPalette : public TupModuleWidgetBase
         TupColorPalette(QWidget *parent = 0);
         ~TupColorPalette();
 
-        // SQA: change this for QBrush
+        //SQA: change this for QBrush
         QPair<QColor, QColor> color();
         void parsePaletteFile(const QString &file);
-        void setBgColor(const QColor &color);
-
-    public slots:
         void init();
-        void updateContourColor(const QColor &color);
-        void updateFillColor(const QColor &color);
-        void updateBgColor(const QColor &color);
+
+    private:
+        struct Private;
+        Private *const k;
+
+    private:
+        void setupButtons();
+        void setupDisplayColor();
+        void setupMainPalette();
+        void setupChooserTypeColor();
+        void setupGradientManager();
+        void setGlobalColors(const QBrush &brush);
+        QIcon setComboColor(const QColor &color) const;
+
+    // protected:
+    //    void mousePressEvent(QMouseEvent * e);
 
     private slots:
-        void updateColorMode(TColorCell::FillType flag);
-        void initBg();
-        void setColorOnAppFromHTML(const QBrush &brush);
-        void updateColorFromHTML();
-        void updateBgColorFromHTML();
-        void syncColor(const QColor &color);
+        void setColor(const QBrush &brush);
+        // void setFG(const QBrush &brush);
+        // void setBG(const QBrush &brush);
+        void updateColor();
+        // void changeTypeColor(TDualColorButton::ColorSpace s);
+        void syncHsv(int h, int s, int v);
         void setHS(int h, int s);
+        void setColorSpace(int type);
         void updateColorFromPalette(const QBrush& brush);
         void updateColorFromDisplay(const QBrush& brush);
+        void updateColorSpace(TDualColorButton::ColorSpace space);
         void updateGradientColor(const QBrush &brush);
         void switchColors();
+        void resetColors();
         void updateColorType(int index);
 		
     signals:
         void paintAreaEventTriggered(const TupPaintAreaEvent *event);
-
-    private:
-        void setupButtons();
-        void setupColorDisplay();
-        void setupMainPalette();
-        void setupColorChooser();
-        void setupGradientManager();
-        void setGlobalColors(const QBrush &brush);
-        void updateLuminancePicker(const QColor &color);
-
-        struct Private;
-        Private *const k;
 };
 
 #endif

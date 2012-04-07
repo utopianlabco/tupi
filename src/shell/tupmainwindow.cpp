@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tupmainwindow.h"
-#include "tuptwitter.h"
 #include "tupnewproject.h"
 #include "tupabout.h"
 #include "tuppackagehandler.h"
@@ -44,9 +43,10 @@
 
 // Tupi Framework
 #include "tipdialog.h"
-#include "tupmsgdialog.h"
+#include "tdebug.h"
 #include "tosd.h"
-// #include "taudioplayer.h"
+#include "timageeffect.h"
+#include "taudioplayer.h"
 
 #include "tupapplication.h"
 #include "tuppluginmanager.h"
@@ -83,6 +83,15 @@
  * @author David Cuadrado
 */
 
+class SleeperThread : public QThread
+{
+    public:
+        static void msleep(unsigned long msecs)
+        {
+            QThread::msleep(msecs);
+        }
+};
+
 /**
  * @if english
  * This is the constructor method for this class.
@@ -93,129 +102,79 @@
  * @return 
 */
 
-TupMainWindow::TupMainWindow() : TabbedMainWindow(), m_projectManager(0), animationTab(0), playerTab(0), 
-               m_viewChat(0), m_exposureSheet(0), m_scenes(0), isSaveDialogOpen(false), internetOn(false)
+TupMainWindow::TupMainWindow(TupSplash *splash, int parameters) : 
+              TabbedMainWindow(), m_projectManager(0), drawingTab(0), animationTab(0), 
+              m_viewChat(0), m_exposureSheet(0), m_scenes(0), isSaveDialogOpen(false), internetOn(false)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow()]";
-        #else
-            TINIT;
-        #endif
+           TINIT;
     #endif
+
+    // Loading audio player plugin
+    TAudioPlayer::instance()->loadEngine("gstreamer"); // FIXME: Move this to the settings 
+    setObjectName("TupMainWindow_");
+
+    // Defining the status bar
+    m_statusBar = new TupStatusBar(this);
+    setStatusBar(m_statusBar);
 
     // Naming the main frame...
     setWindowTitle(tr("Tupi: 2D Magic"));
     setWindowIcon(QIcon(THEME_DIR + "icons/about.png"));
-    setObjectName("TupMainWindow_");
-
-    isNetworked = false;
-    exportWidget = NULL;
-
-    QFile file(THEME_DIR + "config/ui.qss");
-    if (file.exists()) {
-        file.open(QFile::ReadOnly);
-        QString styleSheet = QLatin1String(file.readAll());
-        if (styleSheet.length() > 0)
-            setStyleSheet(styleSheet);
-        file.close();
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupMainWindow::TupMainWindow() - theme file doesn't exist -> " + QString(THEME_DIR + "config/ui.qss"); 
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-    }
-        
-    // Loading audio player plugin
-    // TAudioPlayer::instance()->loadEngine("gstreamer"); // FIXME: Move this to the settings 
 
     // Defining the render type for the drawings
-    // m_renderType = Tupi::RenderType(TCONFIG->value("RenderType").toInt());
+    m_renderType = Tupi::RenderType(TCONFIG->value("RenderType").toInt());
 
     // Calling out the project manager
     m_projectManager = new TupProjectManager(this);
 
+    splash->setMessage(tr("Setting up the project manager"));
+    SleeperThread::msleep(500);
+
     // Calling out the events/actions manager
+    splash->setMessage(tr("Loading action manager..."));
     m_actionManager = new TActionManager(this);
 
+    // Defining the menu bar
+    splash->setMessage(tr("Creating menu bar..."));
+    SleeperThread::msleep(500);
+
+    setupActions();
+	
+    splash->setMessage(tr("Creating GUI..."));
+    SleeperThread::msleep(500);
+	
     // Setting up all the GUI...
     createGUI(); // This method is called from the tupmainwindow_gui class
     setupMenu();
     setupToolBar();
 
-    // SQA: Web announcement comes here
-    QString webMsgPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/webmsg.html";
-    QFile webMsgFile(webMsgPath);
-    QString fileContent = "";
-    if (webMsgFile.exists()) {
-        if (webMsgFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream in(&webMsgFile);
-            while (!in.atEnd())
-                   fileContent += in.readLine();
-        }
-    }
+    // Check if user wants to see a Tupi tip for every time he launches the program
+    TCONFIG->beginGroup("TipOfDay");
+    //bool showTips = qvariant_cast<bool>(TCONFIG->value("ShowOnStart", true));
+    bool showTips = TCONFIG->value("ShowOnStart", true).toBool();
 
-    // Processing web msg content
-    bool showWebMsg = false;
-    webContent = "";
-    if (!fileContent.isEmpty()) {
-        QDomDocument doc;
-        if (doc.setContent(fileContent)) {
-            QDomElement root = doc.documentElement();
-            QDomNode n = root.firstChild();
-            while (!n.isNull()) {
-                   QDomElement e = n.toElement();
-                   if (e.tagName() == "show") {
-                       QString flag = e.text();
-                       if (flag.compare("true") == 0)
-                           showWebMsg = true;
-                       else
-                           break;
-                   } else if (e.tagName() == "size") {
-                       QStringList numbers = e.text().split(",");
-                       if (numbers.size() == 2) {
-                           webMsgSize = QSize(numbers.at(0).toInt(), numbers.at(1).toInt());
-                       }
-                   } else if (e.tagName() == "text") {
-                       webContent = e.text();
-                   }
-                   n = n.nextSibling();
-            }
-        }
-    }
-
-    if (showWebMsg) {
-        QTimer::singleShot(0, this, SLOT(showWebMessage()));
-    } else {
-        // Check if user wants to see a Tupi tip for every time he launches the program
-        TCONFIG->beginGroup("General");
-        bool showTips = TCONFIG->value("ShowTipOfDay", true).toBool();
-        // If option is enabled, then, show a little dialog with a nice tip
-        if (showTips)
-            QTimer::singleShot(0, this, SLOT(showTipDialog()));
-    }
+    // If option is enabled, then, show a little dialog with a nice tip
+    if (showTips)
+        QTimer::singleShot(0, this, SLOT(showTipDialog()));
 
     // Time to load plugins... 
     TupPluginManager::instance()->loadPlugins();
 
-    // Defining the Animation view, as the first interface to show up   
+    // Defining the Animation view, as the first interface to show up	
     setCurrentPerspective(Animation);
 
+    TCONFIG->beginGroup("General");
+    // check if into the config file, user always wants to start opening his last project 
+    // created
+    bool openLast = TCONFIG->value("OpenLastProject").toBool();
+
+    if (openLast && parameters == 1)
+        openProject(TCONFIG->value("LastProject").toString());
+
     if (TCONFIG->firstTime()) {
-        TCONFIG->beginGroup("General");
-        TCONFIG->setValue("OpenLastProject", false);
-        TCONFIG->setValue("ShowTipOfDay", true);
-        TCONFIG->setValue("ConfirmRemoveFrame", true); 
-        TCONFIG->setValue("ConfirmRemoveLayer", true); 
-        TCONFIG->setValue("ConfirmRemoveScene", true); 
-        TCONFIG->setValue("ConfirmRemoveObject", true); 
-        TCONFIG->beginGroup("PaintArea");
-        TCONFIG->setValue("GridColor", "#0000b4");
-        TCONFIG->setValue("GridSeparation", 10);
+        TCONFIG->setValue("OpenLastProject", openLast);
+        TCONFIG->setValue("AutoSave", 2);
     }
 
     TupMainWindow::requestType = None;
@@ -233,11 +192,7 @@ TupMainWindow::TupMainWindow() : TabbedMainWindow(), m_projectManager(0), animat
 TupMainWindow::~TupMainWindow()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupMainWindow()]";
-        #else
-            TEND;
-        #endif
+           TEND;
     #endif
 
     QClipboard *clipboard = QApplication::clipboard();
@@ -261,15 +216,8 @@ TupMainWindow::~TupMainWindow()
 
 void TupMainWindow::createNewLocalProject()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::createNewLocalProject()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     TupMainWindow::requestType = NewLocalProject;
+
     m_projectManager->setupNewProject();
     m_projectManager->setOpen(true);
  
@@ -279,7 +227,7 @@ void TupMainWindow::createNewLocalProject()
     setWorkSpace();
 }
 
-void TupMainWindow::createNewNetProject(const QString &title, const QStringList &users)
+void TupMainWindow::createNewNetProject(const QString &title)
 {
     isNetworked = true;
     projectName = title;
@@ -290,15 +238,15 @@ void TupMainWindow::createNewNetProject(const QString &title, const QStringList 
         delete m_viewChat;
     }
 
-    m_viewChat = addToolView(netProjectManager->communicationWidget(), Qt::BottomDockWidgetArea, All, "Chat");
+    m_viewChat = addToolView(netProjectManagerHandler->communicationWidget(), Qt::BottomDockWidgetArea, All, "Chat");
     m_viewChat->setVisible(false);
 
     enableToolViews(true);
     setMenuItemsContext(true);
-    m_exposureSheet->updateFramesState();
+    m_exposureSheet->updateFramesState(m_projectManager->project());
     m_projectManager->setOpen(true);
 
-    setWorkSpace(users);
+    setWorkSpace();
 }
 
 /**
@@ -310,26 +258,14 @@ void TupMainWindow::createNewNetProject(const QString &title, const QStringList 
  * @endif
 */
 
-void TupMainWindow::setWorkSpace(const QStringList &users)
+void TupMainWindow::setWorkSpace()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::setWorkSpace()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
-    TCONFIG->beginGroup("General");
-    bool getNews = TCONFIG->value("GetNews", true).toBool();
-    if (getNews) {
-        // Downloading maefloresta Twitter status
-        TupTwitter *twitter = new TupTwitter();
-        twitter->start();
-        connect(twitter, SIGNAL(pageReady()), this, SLOT(addTwitterPage()));
-    }
-
     if (m_projectManager->isOpen()) {
+
         if (TupMainWindow::requestType == NewLocalProject || TupMainWindow::requestType == NewNetProject)
             TOsd::self()->display(tr("Information"), tr("Opening a new document..."));
 
@@ -338,131 +274,125 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         // Setting undo/redo actions
         setUndoRedoActions();
 
-        animationTab = new TupDocumentView(m_projectManager->project(), this, isNetworked, users);
+        drawingTab = new TupViewDocument(m_projectManager->project(), this, isNetworked ? false : true);
 
         TCONFIG->beginGroup("Network");
         QString server = TCONFIG->value("Server").toString();
-        if (isNetworked && server.compare("tupitu.be") == 0) {
-            connect(animationTab, SIGNAL(requestExportImageToServer(int, int, const QString &, const QString &, const QString &)),                         
-                    netProjectManager, SLOT(sendExportImageRequest(int, int, const QString &, const QString &, const QString &)));
-            connect(animationTab, SIGNAL(updateStoryboard(TupStoryboard *, int)), netProjectManager, SLOT(updateStoryboardRequest(TupStoryboard *, int)));
-            connect(animationTab, SIGNAL(postStoryboard(int)), netProjectManager, SLOT(postStoryboardRequest(int))); 
+        if (isNetworked && server.compare("tupitube.com") == 0) {
+            connect(drawingTab, SIGNAL(requestExportImageToServer(int, int, const QString &, const QString &, const QString &)),                         
+                    netProjectManagerHandler, SLOT(sendExportImageRequestToServer(int, int, const QString &, const QString &, const QString &)));
         }
 
-        animationTab->setWindowTitle(tr("Animation"));
-        addWidget(animationTab);
+        drawingTab->setWindowTitle(tr("Animation"));
+        addWidget(drawingTab);
 
-        connectWidgetToManager(animationTab);
-        connectWidgetToLocalManager(animationTab);
-        connect(animationTab, SIGNAL(modeHasChanged(TupProject::Mode)), this, SLOT(expandExposureView(TupProject::Mode))); 
-        connect(animationTab, SIGNAL(colorChangedFromFullScreen(const QColor &)), this, SLOT(updatePenColor(const QColor &)));
-        connect(animationTab, SIGNAL(projectSizeHasChanged(const QSize)), this, SLOT(resizeProjectDimension(const QSize))); 
-        connect(animationTab, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
-        connect(animationTab, SIGNAL(contourColorChanged(const QColor &)), m_colorPalette, SLOT(updateContourColor(const QColor &))); 
-        connect(animationTab, SIGNAL(fillColorChanged(const QColor &)), m_colorPalette, SLOT(updateFillColor(const QColor &)));
-        connect(animationTab, SIGNAL(bgColorChanged(const QColor &)), m_colorPalette, SLOT(updateBgColor(const QColor &)));
-        connect(animationTab, SIGNAL(penWidthChanged(int)), this, SLOT(updatePenThickness(int)));
+        connectToDisplays(drawingTab);
+        connectWidgetToManager(drawingTab);
+        connectWidgetToLocalManager(drawingTab);
+        connect(drawingTab, SIGNAL(modeHasChanged(int)), this, SLOT(expandExposureView(int))); 
+        connect(drawingTab, SIGNAL(expandColorPanel()), this, SLOT(expandColorView()));
+      
+        drawingTab->setAntialiasing(true);
 
-        animationTab->setAntialiasing(true);
+        int width = drawingTab->workSpaceSize().width();
+        int height = drawingTab->workSpaceSize().height();
+        int pWidth = m_projectManager->project()->dimension().width();
+        int pHeight = m_projectManager->project()->dimension().height();
 
-        int width = animationTab->workSpaceSize().width();
-        int height = animationTab->workSpaceSize().height();
-        animationTab->setWorkSpaceSize(width, height);
-
-        TupProject *project = m_projectManager->project();
-        int pWidth = project->dimension().width();
-        int pHeight = project->dimension().height();
+        /*
+        tError() << "W: " << width;
+        tError() << "H: " << height;
+        tError() << "Pw: " << pWidth;
+        tError() << "Ph: " << pHeight;
+        */
 
         double proportion = 1;
+
         if (pWidth > pHeight)
             proportion = (double) width / (double) pWidth;
         else
             proportion = (double) height / (double) pHeight;
 
-        if (proportion <= 0.5) {
-            animationTab->setZoomPercent("20");
-        } else if (proportion > 0.5 && proportion <= 0.75) {
-                   animationTab->setZoomPercent("25");
+        if (proportion <= 0.3) {
+            drawingTab->setZoomView("15");
+        } else if (proportion > 0.3 && proportion <= 0.75) {
+                   drawingTab->setZoomView("25");
         } else if (proportion > 0.75 && proportion <= 1.5) {
-                   animationTab->setZoomPercent("50");
+                   drawingTab->setZoomView("50");
         } else if (proportion > 1.5 && proportion < 2) {
-                   animationTab->setZoomPercent("75");
+                   drawingTab->setZoomView("75");
         }
 
-        // TupCamera Widget
-        cameraWidget = new TupCameraWidget(m_projectManager->project(), isNetworked);
-        connectWidgetToManager(cameraWidget);
+        // TupViewCamera *
+        viewCamera = new TupViewCamera(m_projectManager->project(), isNetworked);
+        connectWidgetToManager(viewCamera);
 
         m_libraryWidget->setNetworking(isNetworked);
 
         if (isNetworked) {
-            connect(cameraWidget, SIGNAL(requestForExportVideoToServer(const QString &, const QString &, const QString &, int, const QList<int>)), 
-                    netProjectManager, SLOT(sendVideoRequest(const QString &, const QString &, const QString &, int, const QList<int>)));
+            connect(viewCamera, SIGNAL(requestForExportVideoToServer(const QString &, const QString &, const QString &, int, const QList<int>)), 
+                    this, SLOT(postVideo(const QString &, const QString &, const QString &, int, const QList<int>)));
+            connect(viewCamera, SIGNAL(requestForExportStoryboardToServer(const QString &, const QString &, const QString &, const QList<int>)),
+                    this, SLOT(postStoryboard(const QString &, const QString &, const QString &, const QList<int>)));
         } else {
-            connect(animationTab, SIGNAL(autoSave()), this, SLOT(callSave()));
+            connect(drawingTab, SIGNAL(autoSave()), this, SLOT(callSave()));
         }
 
-        playerTab = new TupAnimationspace(cameraWidget);
-        playerTab->setWindowIcon(QIcon(THEME_DIR + "icons/play_small.png"));
-        playerTab->setWindowTitle(tr("Player"));
-        connect(playerTab, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
-        addWidget(playerTab);
-        connect(animationTab, SIGNAL(updateFPS(int)), cameraWidget, SLOT(setStatusFPS(int)));
+        animationTab = new TupAnimationspace(viewCamera);
+        animationTab->setWindowIcon(QIcon(THEME_DIR + "icons/play.png"));
+        animationTab->setWindowTitle(tr("Player"));
+        addWidget(animationTab);
+
+        helpTab = new TupHelpBrowser(this);
+        helpTab->setDataDirs(QStringList() << m_helper->helpPath());
+
+        QString lang = (QLocale::system().name()).left(2);
+        if (lang.length() < 2)  
+            lang = "en";
+
+        QString helpPath = SHARE_DIR + "data/help/" + QString(lang + "/cover.html");
+
+        QFile file(helpPath);
+        if (!file.exists())
+            helpPath = SHARE_DIR + "data/help/" + QString("en/cover.html");
+
+        helpTab->setSource(helpPath);
+
+        addWidget(helpTab);
+
+        QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() 
+                              + "/twitter.html";
+
+        if (QFile::exists(twitterPath)) {
+            internetOn = true;
+            newsTab = new TupTwitterWidget(this); 
+            newsTab->setSource(twitterPath);
+            addWidget(newsTab);
+        } 
+
+        connect(this, SIGNAL(tabHasChanged(int)), this, SLOT(updateCurrentTab(int)));
 
         exposureView->expandDock(true);
 
-        // SQA: Code useful for future features
-        // if (!isNetworked) 
-        //     connect(animationTab, SIGNAL(autoSave()), this, SLOT(callSave()));
+        // if (!isNetworked)
+        //     connect(drawingTab, SIGNAL(autoSave()), this, SLOT(callSave()));
 
         m_projectManager->undoModified();
+
+        // SQA: Check if this instruction is really required
         m_colorPalette->init();
-        m_colorPalette->setBgColor(project->bgColor());
 
         TCONFIG->beginGroup("PenParameters");
-        int thickness = TCONFIG->value("Thickness", 3).toInt();
-        m_penWidget->init(thickness);
-        // m_penWidget->setThickness(thickness);
+        int thicknessValue = TCONFIG->value("Thickness", -1).toInt();
+        m_penWidget->init();
+        m_penWidget->setThickness(thicknessValue);
 
         if (TupMainWindow::requestType == OpenLocalProject || TupMainWindow::requestType == OpenNetProject)
             TOsd::self()->display(tr("Information"), tr("Project <b>%1</b> opened!").arg(m_projectManager->project()->projectName()));
 
+        connect(m_projectManager, SIGNAL(modified(bool)), this, SLOT(updatePlayer(bool)));
+
         m_exposureSheet->setScene(0);
-        connect(this, SIGNAL(tabHasChanged(int)), this, SLOT(updateCurrentTab(int)));
-
-        m_projectManager->clearUndoStack();
-    }
-}
-
-void TupMainWindow::addTwitterPage()
-{
-    if (tabCount() == 2) {
-        QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
-        if (QFile::exists(twitterPath)) {
-            #ifdef K_DEBUG
-                QString msg = "TupMainWindow::addTwitterPage() - Loading page -> " + twitterPath;
-                #ifdef Q_OS_WIN
-                    qWarning() << msg;
-                #else
-                    tWarning() << msg;
-                #endif
-            #endif
-
-            internetOn = true;
-            newsTab = new TupTwitterWidget(this);
-            newsTab->setSource(twitterPath);
-            connect(newsTab, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
-            addWidget(newsTab);
-        } else {
-            #ifdef K_DEBUG
-                QString msg = "TupMainWindow::addTwitterPage() - Warning: Couldn't load page -> " + twitterPath;
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tWarning() << msg;
-                #endif
-            #endif
-        }
     }
 }
 
@@ -478,12 +408,7 @@ void TupMainWindow::addTwitterPage()
 void TupMainWindow::newProject()
 {
     #ifdef K_DEBUG
-        QString msg = "Creating new project...";
-        #ifdef Q_OS_WIN
-           qWarning() << msg;
-        #else
-           tWarning() << msg;
-        #endif
+           tWarning() << "Creating new project...";
     #endif
 
     TupNewProject *wizard = new TupNewProject(this);
@@ -502,9 +427,6 @@ void TupMainWindow::newProject()
             setupLocalProject(wizard->parameters());
             createNewLocalProject();
         }
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
-    m_debug->setProjectStatus(true); 
-#endif
     }
 
     delete wizard;
@@ -523,20 +445,14 @@ void TupMainWindow::newProject()
 bool TupMainWindow::closeProject()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::closeProject()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
-
-    if (!mainToolBar->isVisible())
-        hideTopPanels();
 
     if (!m_projectManager->isOpen())
         return true;
 
     if (m_projectManager->isModified()) {
+
         QDesktopWidget desktop;
 
         QMessageBox msgBox;
@@ -568,6 +484,7 @@ bool TupMainWindow::closeProject()
         }
 
     }
+
     resetUI();
 
     return true;
@@ -576,81 +493,100 @@ bool TupMainWindow::closeProject()
 void TupMainWindow::resetUI()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::resetUI()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     setCurrentTab(0);
 
-    colorView->expandDock(false);
-    penView->expandDock(false);
-    libraryView->expandDock(false);
-    scenesView->expandDock(false);
-    timeView->expandDock(false);
+    // if (colorView->isExpanded())
+        colorView->expandDock(false);
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
-    debugView->expandDock(false);
+    // if (penView->isExpanded())
+        penView->expandDock(false);
+
+    // if (libraryView->isExpanded())
+        libraryView->expandDock(false);
+
+    //if (helpView->isExpanded())
+        helpView->expandDock(false);
+
+    //if (scenesView->isExpanded())
+        scenesView->expandDock(false);
+    
+    //if (timeView->isExpanded())
+        timeView->expandDock(false);
+
+#if defined(QT_GUI_LIB) && defined(K_DEBUG)
+    //if (debugView->isExpanded())
+        debugView->expandDock(false);
 #endif
 
     setUpdatesEnabled(false);
     setMenuItemsContext(false);
-    updateOpenRecentMenu(m_recentProjectsMenu, m_recentProjects);
 
-    if (animationTab)
-        animationTab->closeArea();
+    if (drawingTab)
+        drawingTab->closeArea();
 
     if (lastTab == 0) {
+
         if (internetOn)
             removeWidget(newsTab, true);
 
-        removeWidget(playerTab, true);
+        removeWidget(helpTab, true);
         removeWidget(animationTab, true);
+        removeWidget(drawingTab, true);
+
     } else {
-        if (lastTab == 1) {
-            if (internetOn)
-                removeWidget(newsTab, true);
+      if (lastTab == 1) {
 
-            removeWidget(animationTab, true);
-            removeWidget(playerTab, true);
-        } else if (lastTab == 2) {
-                   removeWidget(animationTab, true);
-                   removeWidget(playerTab, true);   
+          if (internetOn)
+              removeWidget(newsTab, true);
 
-                   if (internetOn)
-                       removeWidget(newsTab, true);
-        } else if (lastTab == 3) {
-                   removeWidget(animationTab, true);
-                   removeWidget(playerTab, true);
+          removeWidget(helpTab, true);
+          removeWidget(drawingTab, true);
+          removeWidget(animationTab, true);
 
-                   if (internetOn)
-                       removeWidget(newsTab, true);
-        }
+      } else if (lastTab == 2) {
+
+                 removeWidget(drawingTab, true);
+                 removeWidget(animationTab, true);   
+
+                 if (internetOn)
+                     removeWidget(newsTab, true);
+
+                 removeWidget(helpTab, true);
+
+      } else if (lastTab == 3) {
+
+                 removeWidget(drawingTab, true);
+                 removeWidget(animationTab, true);
+                 removeWidget(helpTab, true);
+
+                 if (internetOn)
+                     removeWidget(newsTab, true);
+
+      }
     }
 
     if (internetOn) { 
         delete newsTab;
-        newsTab = NULL;
+        newsTab = 0;
     }
 
-    if (playerTab) {
-        delete playerTab;
-        playerTab = NULL;
-    }
+    delete helpTab;
+    helpTab = 0;
 
-    if (animationTab) {
-        delete animationTab;
-        animationTab = NULL;
-    }
+    delete animationTab;
+    animationTab = 0;
 
-    if (exportWidget) {
-        delete exportWidget; 
-        exportWidget = NULL;
-    }
+    delete drawingTab;
+    drawingTab = 0;
 
+    // Cleaning widgets
+    m_exposureSheet->blockSignals(true);
     m_exposureSheet->closeAllScenes();
+    m_exposureSheet->blockSignals(false);
+
     m_timeLine->closeAllScenes();
     m_scenes->closeAllScenes();
     m_libraryWidget->resetGUI();
@@ -662,23 +598,20 @@ void TupMainWindow::resetUI()
     if (exposureView->isExpanded())
         exposureView->expandDock(false);
 
+    m_statusBar->setStatus(tr(""));
+    // projectSaved = false;
+
     setUpdatesEnabled(true);
 
     setWindowTitle(tr("Tupi: 2D Magic"));
 
     if (isNetworked) { 
         m_viewChat->expandDock(false);
-        // netProjectManager->closeProject();
+        // netProjectManagerHandler->closeProject();
     }
 
+    disconnect(m_projectManager, SIGNAL(modified(bool)), this, SLOT(updatePlayer(bool)));
     m_projectManager->closeProject();
-    m_projectManager->removeProjectPath(CACHE_DIR + projectName);
-
-    resetMousePointer();
-
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
-    m_debug->setProjectStatus(false);
-#endif
 }
 
 /**
@@ -726,16 +659,14 @@ void TupMainWindow::setupNetworkProject()
 void TupMainWindow::setupNetworkProject(TupProjectManagerParams *params)
 {
     if (closeProject()) {
-        netProjectManager =  new TupNetProjectManagerHandler;
-        connect(netProjectManager, SIGNAL(authenticationSuccessful()), this, SLOT(requestProject()));
-        connect(netProjectManager, SIGNAL(openNewArea(const QString &, const QStringList &)), 
-                this, SLOT(createNewNetProject(const QString &, const QStringList &)));
-        connect(netProjectManager, SIGNAL(updateUsersList(const QString &, int)), this, SLOT(updateUsersOnLine(const QString &, int)));
-        connect(netProjectManager, SIGNAL(connectionHasBeenLost()), this, SLOT(unexpectedClose()));
-        connect(netProjectManager, SIGNAL(savingSuccessful()), this, SLOT(netProjectSaved()));
-        connect(netProjectManager, SIGNAL(postOperationDone()), this, SLOT(resetMousePointer()));
+        netProjectManagerHandler =  new TupNetProjectManagerHandler;
+        connect(netProjectManagerHandler, SIGNAL(authenticationSuccessful()), this, SLOT(requestProject()));
+        connect(netProjectManagerHandler, SIGNAL(openNewArea(const QString&)), this, SLOT(createNewNetProject(const QString&)));
+        connect(netProjectManagerHandler, SIGNAL(connectionHasBeenLost()), this, SLOT(unexpectedClose()));
+        connect(netProjectManagerHandler, SIGNAL(savingSuccessful()), this, SLOT(netProjectSaved()));
+        connect(netProjectManagerHandler, SIGNAL(postOperationDone()), this, SLOT(resetMousePointer()));
 
-        m_projectManager->setHandler(netProjectManager, true);
+        m_projectManager->setHandler(netProjectManagerHandler, true);
         m_projectManager->setParams(params);
         author = params->author();
     }
@@ -753,14 +684,6 @@ void TupMainWindow::setupNetworkProject(TupProjectManagerParams *params)
 
 void TupMainWindow::setupLocalProject(TupProjectManagerParams *params)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::setupLocalProject()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     if (closeProject()) {
         isNetworked = false;
         m_projectManager->setHandler(new TupLocalProjectManagerHandler, false);
@@ -782,16 +705,17 @@ void TupMainWindow::setupLocalProject(TupProjectManagerParams *params)
 
 void TupMainWindow::openProject()
 {
-    TCONFIG->beginGroup("General");
-    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
+    const char *home = getenv("HOME");
 
-    QString package = QFileDialog::getOpenFileName(this, tr("Open Tupi project"), path,
+    QString package = QFileDialog::getOpenFileName(this, tr("Open Tupi project"), home,
                       tr("Tupi Project Package (*.tup)"));
 
     if (package.isEmpty() || !package.endsWith(".tup")) 
         return;
 
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor)); 
     openProject(package);
+    QApplication::restoreOverrideCursor();
 }
 
 /**
@@ -806,12 +730,7 @@ void TupMainWindow::openProject()
 void TupMainWindow::openProject(const QString &path)
 {
     #ifdef K_DEBUG
-        QString msg = "TupMainWindow::openProject() - Opening project: " + path;
-        #ifdef Q_OS_WIN
-           qWarning() << msg;
-        #else
-           tWarning() << msg;
-        #endif
+           tWarning() << "TupMainWindow::openProject() - Opening project: " << path;
     #endif
 
     if (path.isEmpty() || !path.endsWith(".tup"))
@@ -820,62 +739,49 @@ void TupMainWindow::openProject(const QString &path)
     m_projectManager->setHandler(new TupLocalProjectManagerHandler, false);
     isNetworked = false;
 
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-    m_actionManager->enable("open_project", false);
     if (closeProject()) {
         setUpdatesEnabled(false);
-        tabWidget()->setCurrentWidget(animationTab);
+        tabWidget()->setCurrentWidget(drawingTab);
 
         if (m_projectManager->loadProject(path)) {
+
             if (QDir::isRelativePath(path))
-                m_fileName = QDir::currentPath() + "/" + path;
+                m_fileName = QDir::currentPath() + QDir::separator() + path;
             else
                 m_fileName = path;
 
             TupMainWindow::requestType = OpenLocalProject;
             projectName = m_projectManager->project()->projectName();
-            updateRecentProjectList();
+
+            int pos = m_recentProjects.indexOf(m_fileName);
+
+            if (pos == -1) {
+                if (m_recentProjects.count() <= 6)
+                    m_recentProjects << m_fileName;
+                else
+                    m_recentProjects.push_front(m_fileName);
+            } else {
+                m_recentProjects.push_front(m_recentProjects.takeAt(pos));
+            }
+
             updateOpenRecentMenu(m_recentProjectsMenu, m_recentProjects);
 
             enableToolViews(true);
             setMenuItemsContext(true);
             setUpdatesEnabled(true);
 
-            m_exposureSheet->updateFramesState();
+            m_exposureSheet->updateFramesState(m_projectManager->project());
 
             author = m_projectManager->project()->author();
             if (author.length() <= 0)
                 author = "Anonymous";
 
-            setWindowTitle(tr("Tupi: 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
+            setWindowTitle(tr("Tupi: Magia 2D") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
             setWorkSpace();
-
-            m_exposureSheet->updateLayerOpacity(0, 0);
-            m_exposureSheet->initLayerVisibility();
-            m_timeLine->initLayerVisibility();
-
-            int last = path.lastIndexOf("/");
-            QString dir = path.left(last);
-            saveDefaultPath(dir);
         } else {
-            setUpdatesEnabled(true);
-            TOsd::self()->display(tr("Error"), tr("Cannot open project!"), TOsd::Error);
+                 setUpdatesEnabled(true);
+                 TOsd::self()->display(tr("Error"), tr("Cannot open project!"), TOsd::Error);
         }
-    }
-
-    m_actionManager->enable("open_project", true);
-    QApplication::restoreOverrideCursor();
-}
-
-void TupMainWindow::updateRecentProjectList()
-{
-    int pos = m_recentProjects.indexOf(m_fileName);
-    if (pos == -1) {
-        m_recentProjects.push_front(m_fileName);
-        if (m_recentProjects.count() > 5)
-            m_recentProjects.removeLast();
-    } else {
-        m_recentProjects.push_front(m_recentProjects.takeAt(pos));
     }
 }
 
@@ -911,6 +817,23 @@ void TupMainWindow::importProjectToServer()
 
 /**
  * @if english
+ * This method calls the methods required to save the current project.
+ * @endif
+ * @if spanish
+ * Este metodo llama a los metodos requeridos para salvar el proyecto actual.
+ * @endif
+*/
+
+void TupMainWindow::save()
+{
+    #ifdef K_DEBUG
+           tWarning("project") << "TupMainWindow::save() - Saving...";
+    #endif
+    QTimer::singleShot(0, this, SLOT(saveProject()));
+}
+
+/**
+ * @if english
  * This method opens the Tupi preferences dialog.
  * @endif
  * @if spanish
@@ -920,53 +843,18 @@ void TupMainWindow::importProjectToServer()
 
 void TupMainWindow::preferences()
 {
-    TupPreferencesDialog *dialog = new TupPreferencesDialog(this);
-    dialog->show();
+    m_statusBar->setStatus(tr("Preferences Dialog Opened"));
+
+    TupPreferences *preferences = new TupPreferences(this);
+    connect(preferences, SIGNAL(timerChanged()), drawingTab, SLOT(updateTimer()));
+    preferences->show();
 
     QDesktopWidget desktop;
-    dialog->move((int) (desktop.screenGeometry().width() - dialog->width())/2 , 
-                      (int) (desktop.screenGeometry().height() - dialog->height())/2);
+    preferences->move((int) (desktop.screenGeometry().width() - preferences->width())/2 , 
+                      (int) (desktop.screenGeometry().height() - preferences->height())/2);
 
-    if (dialog->exec() == QDialog::Accepted) {
-        if (animationTab)
-            animationTab->updateWorkspace();
-    }
-}
-
-/**
- * @if english
- * This method opens the help dialog.
- * @endif
- * @if spanish
- * Este metodo abre el dialogo de ayuda.
- * @endif
-*/
-
-void TupMainWindow::showHelp()
-{
-    QString lang = (QLocale::system().name()).left(2);
-    if (lang.length() < 2)
-        lang = "en";
-
-    QString cover = QString() + "help/" + lang + "/cover.html";
-
-#ifdef Q_OS_WIN
-    QString helpPath = SHARE_DIR + cover;
-#else
-    QString helpPath = SHARE_DIR + "data/" + cover;
-#endif
-
-    QFile file(helpPath);
-    if (!file.exists()) {
-        #ifdef Q_OS_WIN
-            helpPath = SHARE_DIR + "help/en/cover.html";
-        #else
-            helpPath = SHARE_DIR + "data/help/en/cover.html";
-        #endif
-    }
-
-    TupHelpDialog *dialog = new TupHelpDialog(helpPath);
-    dialog->showMaximized();
+    preferences->exec();
+    delete preferences;
 }
 
 /**
@@ -981,7 +869,9 @@ void TupMainWindow::showHelp()
 void TupMainWindow::aboutTupi()
 {
     TupAbout *about = new TupAbout(this);
-    about->show();
+    about->exec();
+
+    delete about;
 }
 
 /**
@@ -1016,57 +906,22 @@ void TupMainWindow::showTipDialog()
 
 void TupMainWindow::importPalettes()
 {
-    TCONFIG->beginGroup("General");
-    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Import Gimp palettes"), path, tr("Gimp Palette (*.gpl *.txt *.css)"));
+    const char *home = getenv("HOME");
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Import gimp palettes"), home, 
+                                                       tr("Gimp Palette (*.gpl)"));
 
-    if (files.count() > 0) { 
-        QStringList::ConstIterator file = files.begin();
-        bool isOk = true;
-        while (file != files.end()) {
-               TupPaletteImporter importer;
-               bool ok = importer.import(*file, TupPaletteImporter::Gimp);
-               if (ok) {
-                   QString home = getenv("HOME");
-                   QString path = home + "/.tupi/palettes";
-                   ok = importer.saveFile(path);
-                   if (ok) {
-                       m_colorPalette->parsePaletteFile(importer.filePath());
-                   } else {
-                       #ifdef K_DEBUG
-                           QString msg = "TupMainWindow::importPalettes() - Fatal Error: Couldn't import file -> " + QString(*file);
-                           #ifdef Q_OS_WIN
-                               qDebug() << msg;
-                           #else
-                               tError() << msg;
-                           #endif
-                       #endif
-                       isOk = false;
-                   }
-               } else {
-                   #ifdef K_DEBUG
-                       QString msg = "TupMainWindow::importPalettes() - Fatal Error: Couldn't import palette -> " + QString(*file);
-                       #ifdef Q_OS_WIN
-                           qDebug() << msg;
-                       #else
-                           tError() << msg;
-                       #endif
-                   #endif
-                   isOk = false;
-               }
-               file++;
-        }
+    m_statusBar->setStatus(tr("Importing palettes"));
+    QStringList::ConstIterator it = files.begin();
+	
+    //int progress = 1;
+    while (it != files.end()) {
+           TupPaletteImporter importer;
+           importer.import(*it, TupPaletteImporter::Gimp);
+           ++it;
 
-        if (isOk) {
-            path = files.at(0);
-            int last = path.lastIndexOf("/");
-            QString dir = path.left(last);
-            saveDefaultPath(dir);
-
-            TOsd::self()->display(tr("Information"), tr("Gimp palette import was successful"), TOsd::Info);
-        } else {
-            TOsd::self()->display(tr("Error"), tr("Gimp palette import was unsuccessful"), TOsd::Error);
-        }
+           importer.saveFile(SHARE_DIR + "data/palettes");
+           m_colorPalette->parsePaletteFile( importer.filePath());
+           //m_statusBar->advance(progress++, files.count());
     }
 }
 
@@ -1087,32 +942,8 @@ void TupMainWindow::connectWidgetToManager(QWidget *widget)
     connect(m_projectManager, SIGNAL(responsed(TupProjectResponse*)), widget, 
             SLOT(handleProjectResponse(TupProjectResponse *)));
 
-    // SQA: Pending for revision
+    // PENDING TO CHECK
     //connect(widget, SIGNAL(postPage(QWidget *)), this, SLOT(addPage(QWidget *)));
-}
-
-/**
- * @if english
- * This method defines the events handlers for the local requests.
- * @endif
- * @if spanish
- * Este metodo define los manejadores de eventos para las solicitudes locales.
- * @endif
-*/
-
-void TupMainWindow::connectWidgetToLocalManager(QWidget *widget)
-{
-    connect(widget, SIGNAL(localRequestTriggered(const TupProjectRequest *)),
-            m_projectManager, SLOT(handleLocalRequest(const TupProjectRequest *)));
-}
-
-void TupMainWindow::disconnectWidgetToManager(QWidget *widget)
-{
-    disconnect(widget, SIGNAL(requestTriggered(const TupProjectRequest *)), m_projectManager,
-            SLOT(handleProjectRequest(const TupProjectRequest *)));
-
-    disconnect(m_projectManager, SIGNAL(responsed(TupProjectResponse*)), widget,
-            SLOT(handleProjectResponse(TupProjectResponse *)));
 }
 
 /**
@@ -1126,8 +957,53 @@ void TupMainWindow::disconnectWidgetToManager(QWidget *widget)
 
 void TupMainWindow::connectWidgetToPaintArea(QWidget *widget)
 {
-    connect(widget, SIGNAL(paintAreaEventTriggered(const TupPaintAreaEvent *)), 
-            this, SLOT(createPaintCommand(const TupPaintAreaEvent *)));
+    connect(widget, SIGNAL(paintAreaEventTriggered(const TupPaintAreaEvent *)), this, 
+            SLOT(createCommand(const TupPaintAreaEvent *)));
+}
+
+/**
+ * @if english
+ * This method defines the events handlers for the local requests.
+ * @endif
+ * @if spanish
+ * Este metodo define los manejadores de eventos para las solicitudes locales.
+ * @endif
+*/
+
+void TupMainWindow::connectWidgetToLocalManager(QWidget *widget)
+{
+    connect(widget, SIGNAL(localRequestTriggered(const TupProjectRequest *)), 
+            m_projectManager, SLOT(handleLocalRequest(const TupProjectRequest *)));
+}
+
+/**
+ * @if english
+ * This method sets a message into the status bar.
+ * @endif
+ * @if spanish
+ * Este metodo asigna un mensaje a la barra de estados.
+ * @endif
+ */
+
+void TupMainWindow::messageToStatus(const QString &msg)
+{
+    m_statusBar->setStatus(msg);
+}
+
+/**
+ * @if english
+ * This method display a help page.
+ * @endif
+ * @if spanish
+ * Este metodo despliega una pagina de ayuda.
+ * @endif
+*/
+
+//void TupMainWindow::showHelpPage(const QString &title, const QString &filePath)
+
+void TupMainWindow::showHelpPage(const QString &filePath)
+{
+    helpTab->setSource(filePath);
 }
 
 /**
@@ -1141,27 +1017,21 @@ void TupMainWindow::connectWidgetToPaintArea(QWidget *widget)
 
 void TupMainWindow::saveAs()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::saveAs()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
+    QString home = getenv("HOME");
+    home.append(QDir::separator() + projectName);
 
-    TCONFIG->beginGroup("General");
-    QString home = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
-    home.append("/" + projectName);
     isSaveDialogOpen = true;
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Project As"), home,
                        tr("Tupi Project Package (*.tup)"));
+
     if (fileName.isEmpty()) {
         isSaveDialogOpen = false;
         return;
     }
 
     isSaveDialogOpen = false;
+
     int indexPath = fileName.lastIndexOf("/");
     int indexFile = fileName.length() - indexPath;
     QString name = fileName.right(indexFile - 1);
@@ -1169,22 +1039,13 @@ void TupMainWindow::saveAs()
 
     QDir directory(path);
     if (!directory.exists()) {
-        TOsd::self()->display(tr("Error"), tr("Directory does not exist! Please, choose another path."), TOsd::Error);
-        #ifdef K_DEBUG
-            QString file = path.toLocal8Bit();
-            QString msg = "TupMainWindow::saveAs() - Fatal Error: Directory doesn't exist! -> " + file;
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        TOsd::self()->display(tr("Error"), tr("Directory \"" + path.toLocal8Bit() + "\" does not exist! Please, choose another path."), TOsd::Error);
         return;
     } else {
         QFile file(directory.filePath(name));
         if (!file.open(QIODevice::ReadWrite)) {
             file.remove();
-            TOsd::self()->display(tr("Error"), tr("Insufficient permissions. Please, pick another path."), TOsd::Error);
+            TOsd::self()->display(tr("Error"), tr("You have no permission to create this file. Please, choose another path."), TOsd::Error);
             return;
         }
         file.remove();
@@ -1201,7 +1062,7 @@ void TupMainWindow::saveAs()
         setWindowTitle(tr("Tupi: 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
     }
 
-    saveProject();
+    save();
 }
 
 /**
@@ -1215,14 +1076,6 @@ void TupMainWindow::saveAs()
 
 void TupMainWindow::saveProject()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::saveProject()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     if (!isNetworked) {
         if (isSaveDialogOpen)
             return;
@@ -1232,13 +1085,7 @@ void TupMainWindow::saveProject()
             return;
         }
 
-        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-        m_actionManager->enable("save_project", false);
-        m_actionManager->enable("save_project_as", false);
-
         if (m_projectManager->saveProject(m_fileName)) {  
-            updateRecentProjectList();
-            
             TOsd::self()->display(tr("Information"), tr("Project <b>%1</b> saved").arg(projectName));
             // projectSaved = true;
             int indexPath = m_fileName.lastIndexOf("/");
@@ -1248,22 +1095,16 @@ void TupMainWindow::saveProject()
             name = name.left(indexDot);
 
             setWindowTitle(tr("Tupi: 2D Magic") +  " - " + name + " [ " + tr("by") +  " " +  author + " ]");
-
-            int last = m_fileName.lastIndexOf("/");
-            QString dir = m_fileName.left(last);
-            saveDefaultPath(dir);
         } else {
             TOsd::self()->display(tr("Error"), tr("Cannot save the project!"), TOsd::Error);
         }
-        m_actionManager->enable("save_project", true);
-        m_actionManager->enable("save_project_as", true);
-        QApplication::restoreOverrideCursor();
 
         if (isSaveDialogOpen)
             isSaveDialogOpen = false;
     } else {
+
         TupSavePackage package(lastSave);
-        netProjectManager->sendPackage(package);
+        netProjectManagerHandler->sendPackage(package);
 
         if (!lastSave)
             QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -1296,10 +1137,10 @@ void TupMainWindow::openRecentProject()
  * Este metodo muestra el menu del modulo de Animacion.
  * @endif
 */
-// SQA: Check if this method is still used for something
+
 void TupMainWindow::showAnimationMenu(const QPoint &p)
 {
-    QMenu *menu = new QMenu(tr("Animation"), playerTab);
+    QMenu *menu = new QMenu(tr("Animation"), animationTab);
     menu->addAction(tr("New camera"), this, SLOT(newViewCamera()));
     menu->exec(p);
     delete menu;
@@ -1330,7 +1171,7 @@ void TupMainWindow::closeEvent(QCloseEvent *event)
     }
 
     TCONFIG->beginGroup("General");
-    // TCONFIG->setValue("LastProject", lastProject);
+    TCONFIG->setValue("LastProject", lastProject);
     TCONFIG->setValue("Recents", m_recentProjects);
 
     TMainWindow::closeEvent(event);
@@ -1345,69 +1186,33 @@ void TupMainWindow::closeEvent(QCloseEvent *event)
  * @endif
 */
 
-void TupMainWindow::createPaintCommand(const TupPaintAreaEvent *event)
+void TupMainWindow::createCommand(const TupPaintAreaEvent *event)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::createPaintCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    if (!animationTab) {
+    if (!drawingTab) {
         #ifdef K_DEBUG
-            QString msg = "TupMainWindow::createPaintCommand() - No animation tab... aborting!"; 
-            #ifdef Q_OS_WIN
-               qDebug() << msg;
-            #else
-               tFatal() << msg;
-            #endif
+               tFatal() << "TupMainWindow::createCommand() - No drawingTab... Aborting!";
         #endif
         return;
     }
 
-    TupPaintAreaCommand *command = animationTab->createPaintCommand(event);
+    TupPaintAreaCommand *command = drawingTab->createCommand(event);
 
     if (command) { 
-        // SQA: Implement Undo procedure for "Color" actions 
-        m_projectManager->createCommand((TupProjectCommand *)command);
+        // tFatal() << "TupMainWindow::createCommand() - Paint command is valid!";
+        m_projectManager->undoHistory()->push(command);
 
-        // Updating color on the Pen module interface
-        if (event->action() == TupPaintAreaEvent::ChangePenColor)
+        // if (event->action() == 2) {
+        if (event->action() == TupPaintAreaEvent::ChangeColorPen) {
+            // tFatal() << "TupMainWindow::createCommand() - event action == ChangeColorPen";
             m_penWidget->setPenColor(qvariant_cast<QColor>(event->data()));
-
-        if (event->action() == TupPaintAreaEvent::ChangePenThickness)
-            m_penWidget->setPenThickness(qvariant_cast<int>(event->data()));
-    } 
-}
-
-void TupMainWindow::updatePenColor(const QColor &color)
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::updatePenColor()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    TupPaintAreaEvent *event = new TupPaintAreaEvent(TupPaintAreaEvent::ChangePenColor, color);
-    createPaintCommand(event);
-}
-
-void TupMainWindow::updatePenThickness(int thickness)
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::updatePenThickness()]";
-        #else
-            T_FUNCINFO << "thickness: " << thickness;
-        #endif
-    #endif
-
-    TupPaintAreaEvent *event = new TupPaintAreaEvent(TupPaintAreaEvent::ChangePenThickness, thickness);
-    createPaintCommand(event);
+        } else if (event->action() == TupPaintAreaEvent::ChangeBrush) {
+                   // tFatal() << "TupMainWindow::createCommand() - event action == ChangeBrush";
+                   // tFatal() << "TupMainWindow::createCommand() - action: " << event->action();
+                   // m_penWidget->setBrush(qvariant_cast<QBrush>(event->data()));
+        }
+    } else {
+        // tFatal() << "TupMainWindow::createCommand() - Paint command is NULL!";
+    }
 }
 
 /**
@@ -1429,33 +1234,45 @@ void TupMainWindow::updateCurrentTab(int index)
     // SQA: Check/Test the content of this method
 
     if (index == 1) {  // Player mode 
+        if (lastTab == 2)
+            helpView->expandDock(false);
         lastTab = 1;
-        updatePlayer();
-        cameraWidget->updateFirstFrame();
-        cameraWidget->setFocus();
+        viewCamera->updateFirstFrame();
+        viewCamera->setFocus();
     } else {
         if (index == 0) { // Animation mode
-            animationTab->updatePerspective(); // Just for Papagayo UI
-
             if (lastTab == 1)
-                cameraWidget->doStop();
+                viewCamera->doStop();
 
-            if (scenesView->isExpanded())
+            if (scenesView->isExpanded()) {
+                helpView->expandDock(false);
                 scenesView->expandDock(true);
+            }     
 
             if (contextMode == TupProject::FRAMES_EDITION) {
-                if (!exposureView->isExpanded())
+                if (exposureView->isExpanded()) {
+                    helpView->expandDock(false);
                     exposureView->expandDock(true);
+                } 
             } else {
                 exposureView->expandDock(false);
                 exposureView->enableButton(false);
             }
 
-            animationTab->updatePaintArea();
+            if (lastTab == 2)
+                helpView->expandDock(false);
+
+            drawingTab->updatePaintArea();
+
             lastTab = 0;
         } else {
-            if (index == 3)
-                lastTab = 3;
+            if (index == 2) { // Help mode
+                helpView->expandDock(true);
+                lastTab = 2;
+            } else if (index == 3) { // News mode
+                helpView->expandDock(false);
+                lastTab = 3;   
+            }
         }
     }
 }
@@ -1473,13 +1290,12 @@ void TupMainWindow::exportProject()
 {
     QDesktopWidget desktop;
 
-    exportWidget = new TupExportWidget(m_projectManager->project(), this);
-    connect(exportWidget, SIGNAL(isDone()), animationTab, SLOT(updatePaintArea()));
-    exportWidget->show();
-    exportWidget->move((int) (desktop.screenGeometry().width() - exportWidget->width())/2, 
-                      (int) (desktop.screenGeometry().height() - exportWidget->height())/2);
+    TupExportWidget exportWidget(m_projectManager->project(), this);
+    exportWidget.show();
+    exportWidget.move((int) (desktop.screenGeometry().width() - exportWidget.width())/2, 
+                      (int) (desktop.screenGeometry().height() - exportWidget.height())/2);
 
-    exportWidget->exec();
+    exportWidget.exec();
 }
 
 void TupMainWindow::callSave()
@@ -1488,9 +1304,10 @@ void TupMainWindow::callSave()
         saveProject();
 }
 
-void TupMainWindow::expandExposureView(TupProject::Mode mode) 
+void TupMainWindow::expandExposureView(int index) 
 {
-    contextMode = mode;
+    contextMode = TupProject::Mode(index);
+
     if (contextMode == TupProject::FRAMES_EDITION) {
         exposureView->expandDock(true);
         exposureView->enableButton(true);
@@ -1500,13 +1317,21 @@ void TupMainWindow::expandExposureView(TupProject::Mode mode)
     }
 }
 
+void TupMainWindow::expandColorView() 
+{
+    if (colorView->isExpanded())
+        colorView->expandDock(false); 
+    else
+        colorView->expandDock(true);
+}
+
 void TupMainWindow::requestProject()
 {
     if (TupMainWindow::requestType == NewNetProject) {
         m_projectManager->setupNewProject();
     } else if (TupMainWindow::requestType == OpenNetProject) {
                TupListProjectsPackage package;
-               netProjectManager->sendPackage(package);
+               netProjectManagerHandler->sendPackage(package);
     } else if (TupMainWindow::requestType == ImportProjectToNet) {
                const char *home = getenv("HOME");
                QString file = QFileDialog::getOpenFileName(this, tr("Import project package"),
@@ -1516,17 +1341,17 @@ void TupMainWindow::requestProject()
                    if (project.exists()) {
                        if (project.size() > 0) {
                            TupImportProjectPackage package(file);
-                           netProjectManager->sendPackage(package);
+                           netProjectManagerHandler->sendPackage(package);
                         } else {
                            TOsd::self()->display(tr("Error"), tr("Can't import project. File is empty!"), TOsd::Error);
-                           netProjectManager->closeProject();
+                           netProjectManagerHandler->closeProject();
                         }
                    } else {
                         TOsd::self()->display(tr("Error"), tr("Can't save the project. File doesn't exist!"), TOsd::Error);
-                        netProjectManager->closeProject();
+                        netProjectManagerHandler->closeProject();
                    }
                } else {
-                   netProjectManager->closeProject();
+                   netProjectManagerHandler->closeProject();
                }
     }
 }
@@ -1558,62 +1383,29 @@ void TupMainWindow::netProjectSaved()
     QApplication::restoreOverrideCursor();
 }
 
-void TupMainWindow::updatePlayer(bool removeAction)
+void TupMainWindow::postVideo(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> sceneIndexes)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::updatePlayer()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
-    if (!removeAction)
-        updatePlayer();
+    netProjectManagerHandler->sendVideoRequest(title, topics, description, fps, sceneIndexes);
 }
 
-void TupMainWindow::updatePlayer()
+void TupMainWindow::postStoryboard(const QString &title, const QString &topics, const QString &description, const QList<int> sceneIndexes)
 {
-    if (animationTab) {
-        int sceneIndex = animationTab->currentSceneIndex();
-        cameraWidget->updateScenes(sceneIndex);
-    }
+    netProjectManagerHandler->sendStoryboardRequest(title, topics, description, sceneIndexes);
+}
+
+void TupMainWindow::updatePlayer(bool remove)
+{
+    #ifdef K_DEBUG
+           T_FUNCINFO;
+    #endif
+
+    if (!remove) {
+        int sceneIndex = drawingTab->currentSceneIndex();
+        viewCamera->updateScenes(sceneIndex);
+    } 
 }
 
 void TupMainWindow::resetMousePointer()
 {
     QApplication::restoreOverrideCursor();
-}
-
-void TupMainWindow::updateUsersOnLine(const QString &login, int state)
-{
-    animationTab->updateUsersOnLine(login, state);
-}
-
-void TupMainWindow::resizeProjectDimension(const QSize dimension)
-{
-    m_projectManager->updateProjectDimension(dimension);
-    disconnectWidgetToManager(cameraWidget);
-    delete cameraWidget; 
-    cameraWidget = new TupCameraWidget(m_projectManager->project(), isNetworked);
-    connectWidgetToManager(cameraWidget);
-
-    playerTab->setCameraWidget(cameraWidget);
-}
-
-void TupMainWindow::saveDefaultPath(const QString &dir)
-{
-    TCONFIG->beginGroup("General");
-    TCONFIG->setValue("DefaultPath", dir);
-    TCONFIG->sync();
-}
-
-void TupMainWindow::showWebMessage()
-{
-    TupMsgDialog *msgDialog = new TupMsgDialog(webContent, webMsgSize, this);
-    msgDialog->show();
-
-    QDesktopWidget desktop;
-    msgDialog->move((int) (desktop.screenGeometry().width() - msgDialog->width())/2 ,
-                    (int) (desktop.screenGeometry().height() - msgDialog->height())/2);
 }

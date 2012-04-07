@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,18 @@
  ***************************************************************************/
 
 #include "tupconnectdialog.h"
+#include "tupnetprojectmanagerparams.h"
+#include "tconfig.h"
+#include "tformfactory.h"
+#include "tosd.h"
+
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QSpinBox>
+#include <QDialogButtonBox>
 
 struct TupConnectDialog::Private
 {
@@ -127,7 +139,7 @@ int TupConnectDialog::port() const
 void TupConnectDialog::loadSettings()
 {
     TCONFIG->beginGroup("Network");
-    k->server->setText(TCONFIG->value("Server", "tupitu.be").toString());
+    k->server->setText(TCONFIG->value("Server", "tupitube.com").toString());
     k->port->setValue(TCONFIG->value("Port", 5000).toInt());
     k->login->setText(TCONFIG->value("Login", QString::fromLocal8Bit(::getenv("USER"))).toString());
     k->password->setText(TCONFIG->value("Password", "").toString());

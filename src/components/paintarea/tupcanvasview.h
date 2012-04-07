@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,45 +33,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCANVASVIEW_H
-#define TUPCANVASVIEW_H
-
-#include "tglobal.h"
-#include "tupgraphicsscene.h"
-// #include "tuppaintareabase.h"
+#ifndef TupCANVASVIEW_H
+#define TupCANVASVIEW_H
 
 #include <QGraphicsView>
 #include <QPainter>
 #include <QRectF>
-#include <QMouseEvent>
-#include <QKeyEvent>
-#include <cmath>
 
-class TUPI_EXPORT TupCanvasView : public QGraphicsView
+class TupCanvasView : public QGraphicsView 
 {
     Q_OBJECT
 
     public:
-        TupCanvasView(QWidget *parent=0, TupGraphicsScene *scene=0, const QSize &screenSize = QSize(0, 0), 
-                      const QSize &projectSize = QSize(0, 0), const QColor &bg = QColor(Qt::white));
+        TupCanvasView(QWidget *parent=0, const QSize &screenSize = QSize(0, 0), 
+                     const QSize &projectSize = QSize(0, 0), const QColor &bg = QColor(Qt::white));
         ~TupCanvasView();
+        void stopUpdateTimer();
 
     protected:
         virtual void drawBackground(QPainter *painter, const QRectF &rect);
-        virtual void mousePressEvent(QMouseEvent *event);
-        virtual void mouseMoveEvent(QMouseEvent *event);
-        virtual void keyPressEvent(QKeyEvent *event);
-        virtual void keyReleaseEvent(QKeyEvent *event);
 
-    signals:
-        void rightClick();
-        void zoomIn();
-        void zoomOut();
-        void frameBackward();
-        void frameForward();
+    private slots:
+        void updateCanvas();
 
     private:
-        void updateCenter(const QPoint point);
         struct Private;
         Private *const k;
 };

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,13 +36,7 @@
 #ifndef TUPNETSOCKET_H
 #define TUPNETSOCKET_H
 
-#include "tglobal.h"
-#include "tupnetprojectmanagerhandler.h"
 #include "tupsocketbase.h"
-#include "tupcompress.h"
-
-#include <QTextStream>
-#include <QDataStream>
 
 class TupNetProjectManagerHandler;
 
@@ -50,7 +44,7 @@ class TupNetProjectManagerHandler;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupNetSocket : public TupSocketBase
+class TupNetSocket : public TupSocketBase
 {
     Q_OBJECT
     

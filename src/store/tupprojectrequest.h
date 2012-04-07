@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,10 +33,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPPROJECTREQUEST_H
-#define TUPPROJECTREQUEST_H
+#ifndef TupPROJECTREQUEST_H
+#define TupPROJECTREQUEST_H
 
-#include "tglobal.h"
+#include "tupglobal_store.h"
 
 #include <QObject>
 #include <QString>
@@ -45,7 +45,7 @@
 class TupProjectRequest;
 class TupProjectResponse;
 
-class TUPI_EXPORT TupProjectRequestArgument
+class STORE_EXPORT TupProjectRequestArgument
 {
     public:
         TupProjectRequestArgument();
@@ -68,7 +68,7 @@ class TUPI_EXPORT TupProjectRequestArgument
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupProjectRequest
+class STORE_EXPORT TupProjectRequest
 {
     public:
         enum Action
@@ -118,30 +118,22 @@ class TUPI_EXPORT TupProjectRequest
             Transform = 10,
             Convert = 11,
             EditNodes = 12,
-            Pen = 13,
-            Brush = 14,
-            InsertSymbolIntoFrame = 15,
-            RemoveSymbolFromFrame = 16,
+            AddSymbolToProject = 13,
+            RemoveSymbolFromProject = 14,
 
-            SetTween = 17,
-            UpdateTween = 18,
-            RemoveTween = 19,
+            SetTween = 15,
+            UpdateTween = 16,
+            RemoveTween = 17,
             
             // frames
-            Update = 20,
-            Expand = 21,
-            Copy = 22,
-            Paste = 23,
+            Update = 18,
+            Expand = 19,
+            Copy = 20,
+            Paste = 21,
 
             // scenes
-            GetInfo = 24, 
-            BgColor = 25,
-
-            // layer
-            AddLipSync = 26,
-            UpdateLipSync = 27,
-            RemoveLipSync = 28,
-            UpdateOpacity = 29
+            GetInfo = 22, 
+            BgColor = 23
         };
         
         enum Part

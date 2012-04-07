@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,11 +34,11 @@
  ***************************************************************************/
 
 #include "tupprojectparser.h"
+#include "tdebug.h"
 
 struct TupProjectParser::Private
 {
     QByteArray data;
-    QStringList users; 
 };
 
 TupProjectParser::TupProjectParser(): TupXmlParserBase() , k(new Private())
@@ -51,18 +51,12 @@ TupProjectParser::~TupProjectParser()
 
 bool TupProjectParser::startTag(const QString &tag, const QXmlAttributes &atts)
 {
-    Q_UNUSED(atts);
-
     if (root() == "server_project") {
-        if (tag == "users")
-            setReadText(true);
         if (tag == "data")
             setReadText(true);
-
-        return true;
     }
 
-    return false;
+    return true;
 }
 
 bool TupProjectParser::endTag(const QString &tag)
@@ -73,9 +67,6 @@ bool TupProjectParser::endTag(const QString &tag)
 
 void TupProjectParser::text(const QString &text)
 {
-    if (currentTag() == "users")
-        k->users = text.split(",");
-
     if (currentTag() == "data")
         k->data = QByteArray::fromBase64(text.toLocal8Bit());
 }
@@ -84,9 +75,3 @@ QByteArray TupProjectParser::data()
 {
     return k->data;
 }
-
-QStringList TupProjectParser::partners() const
-{
-    return k->users;
-}
-

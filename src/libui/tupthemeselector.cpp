@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,8 @@
  ***************************************************************************/
 
 #include "tupthemeselector.h"
+#include "tglobal.h"
+#include "tdebug.h"
 #include "tseparator.h"
 #include "tcolorbutton.h"
 #include "tapplication.h"
@@ -171,8 +173,7 @@ void TupThemeSelector::setupChooseColor()
     
     m_allSchemes = new QTreeWidget;
     m_allSchemes->setHeaderLabels(QStringList() << tr("Schema") << tr("Owner") << tr("Date"));
-    // m_allSchemes->header()->setResizeMode(QHeaderView::Stretch);
-    m_allSchemes->header()->setSectionResizeMode(QHeaderView::Stretch);
+    m_allSchemes->header()->setResizeMode(QHeaderView::Stretch);
     
     schemaLayout->addWidget(m_allSchemes);
     
@@ -256,7 +257,7 @@ void TupThemeSelector::loadSchemes()
     
     if (themeDir.exists()) {
         m_allSchemes->clear();
-        QFileInfoList files = themeDir.entryInfoList(QStringList() <<"*.tupt");
+        QFileInfoList files = themeDir.entryInfoList(QStringList() <<"*.ktt");
         
         for (int i = 0; i < files.count(); i++) {
              QFileInfo iterator = files[i];
@@ -281,8 +282,8 @@ void TupThemeSelector::saveSchema()
     
     QString fileName = QInputDialog::getText (this,tr("Name"), tr("Please choose a theme name"));
     
-    if (!fileName.endsWith(".tupt"))
-        fileName += ".tupt";
+    if (!fileName.endsWith(".ktt"))
+        fileName += ".ktt";
     
     QFile file(themeDir.path() + "/" + fileName);
     
@@ -307,12 +308,8 @@ void TupThemeSelector::loadSchemaFromListView(QTreeWidgetItem *item, int)
         
         if (! item->text(0).isEmpty()) {
             #ifdef K_DEBUG
-                #ifdef Q_OS_WIN
-                    qDebug() << "[TupThemeSelector::loadSchemaFromListView()]";
-                #else
-                    T_FUNCINFO;
-                #endif
-            #endif 			
+                T_FUNCINFO;
+            #endif
             TCONFIG->beginGroup("General");
             TCONFIG->setValue("ThemeFile", SHARE_DIR + "themes/" + item->text(0));
             m_lastFile = SHARE_DIR + "themes/" + item->text(0);

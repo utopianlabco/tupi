@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,6 +39,9 @@
 #include "tupframe.h"
 #include "tupscene.h"
 #include "tupgraphicobject.h"
+#include "tdebug.h"
+
+#include <QPainter>
 
 struct TupAnimationRenderer::Private
 {
@@ -48,6 +51,7 @@ struct TupAnimationRenderer::Private
     QColor bgColor;
 
     Private() : scene(0), totalPhotograms(-1), currentPhotogram(0) {}
+
     ~Private() {
          delete scene;
     }
@@ -55,42 +59,30 @@ struct TupAnimationRenderer::Private
     int calculateTotalPhotograms(TupScene *scene);
 };
 
-TupAnimationRenderer::TupAnimationRenderer(const QColor color, TupLibrary *library) : k(new Private)
-{
-    k->bgColor = color;
-    k->scene = new TupGraphicsScene;
-    k->scene->setLibrary(library);
-    k->scene->setBackgroundBrush(k->bgColor);
-}
-
-TupAnimationRenderer::~TupAnimationRenderer()
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupAnimationRenderer()]";
-        #else
-            TEND;
-        #endif
-    #endif
-
-    // SQA: Check why this instruction crashes the application 
-    // delete k;
-}
-
 int TupAnimationRenderer::Private::calculateTotalPhotograms(TupScene *scene)
 {
     Layers layers = scene->layers();
 
     int total = 0;
 
-    int totalLayers = layers.size();
-    for (int i = 0; i < totalLayers; i++) {
-         TupLayer *layer = layers.at(i);
-         if (layer)
-             total = qMax(total, layer->frames().count());
+    foreach (TupLayer *layer, layers.values()) {
+             if (layer)
+                 total = qMax(total, layer->frames().count());
     }
 
     return total;
+}
+
+TupAnimationRenderer::TupAnimationRenderer(const QColor color) : k(new Private)
+{
+    k->bgColor = color;
+    k->scene = new TupGraphicsScene;
+    k->scene->setBackgroundBrush(k->bgColor);
+}
+
+TupAnimationRenderer::~TupAnimationRenderer()
+{
+    delete k;
 }
 
 void TupAnimationRenderer::setScene(TupScene *scene, QSize dimension)
@@ -98,7 +90,7 @@ void TupAnimationRenderer::setScene(TupScene *scene, QSize dimension)
     k->scene->setCurrentScene(scene);
     k->scene->setSceneRect(QRectF(QPointF(0,0), dimension));
 
-    // k->scene->drawPhotogram(0, false); // ### SQA: Why whithout this doesn't work?
+    k->scene->drawPhotogram(0); // ### SQA: Why whithout this doesn't work?
     k->currentPhotogram = -1;
 
     k->totalPhotograms = k->calculateTotalPhotograms(scene);
@@ -114,19 +106,20 @@ bool TupAnimationRenderer::nextPhotogram()
     if (k->currentPhotogram == k->totalPhotograms)
         return false;
 
-    k->scene->drawPhotogram(k->currentPhotogram, false);
+    k->scene->drawPhotogram(k->currentPhotogram);
 
     return true;
 }
 
 void TupAnimationRenderer::renderPhotogram(int index) 
 {
-    k->scene->drawPhotogram(index, false);
+    k->scene->drawPhotogram(index);
 }
 
 void TupAnimationRenderer::render(QPainter *painter)
 {
-    k->scene->render(painter, k->scene->sceneRect().toRect(), k->scene->sceneRect().toRect(), Qt::IgnoreAspectRatio);
+    k->scene->render(painter, QRect(0, 0, painter->device()->width(), painter->device()->height()), 
+                     k->scene->sceneRect().toRect(), Qt::IgnoreAspectRatio);
 }
 
 int TupAnimationRenderer::currentPhotogram() const
@@ -138,3 +131,4 @@ int TupAnimationRenderer::totalPhotograms() const
 {
     return k->totalPhotograms;
 }
+

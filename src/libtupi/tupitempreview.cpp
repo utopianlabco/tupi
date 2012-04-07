@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,50 +34,48 @@
  ***************************************************************************/
 
 #include "tupitempreview.h"
-#include <QGraphicsItemGroup>
+#include "tupproxyitem.h"
+#include "tdebug.h"
+
+#include <QGraphicsItem>
+#include <QGraphicsTextItem>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
+#include <QGraphicsSvgItem>
 
 struct TupItemPreview::Private
 {
     TupProxyItem *proxy;
-    QGraphicsTextItem *item;
 };
 
 TupItemPreview::TupItemPreview(QWidget *parent) : QWidget(parent), k(new Private)
 {
-    k->item = new QGraphicsTextItem;
     reset();
 }
 
 TupItemPreview::~TupItemPreview()
 {
-    if (k->item) {
-        delete k->item;
-        k->item = NULL;
-    }
-
-    if (k->proxy) {
-        delete k->proxy;
-        k->proxy = NULL;
-    }
-
     delete k;
 }
 
 void TupItemPreview::reset()
 {
-    k->proxy = NULL;
-    if (k->item) {
-        delete k->item;
-        k->item = NULL;
-    }
-
-    k->item = new QGraphicsTextItem(tr("Library is empty :("));
-    render(k->item);
+    k->proxy = 0;
+    QGraphicsTextItem *item = new QGraphicsTextItem(tr("Library is empty :("));
+    render(item);
 }
 
 QSize TupItemPreview::sizeHint() const
 {
-    return QWidget::sizeHint().expandedTo(QSize(100, 100));
+    if (k->proxy) {
+        int maxY = k->proxy->boundingRect().size().height();
+        if (maxY < 100)
+            return k->proxy->boundingRect().size().toSize() + QSize(10, 110 - maxY);
+        else
+            return k->proxy->boundingRect().size().toSize() + QSize(10,10);
+    }
+    
+    return QWidget::sizeHint().expandedTo(QSize(100,100));
 }
 
 void TupItemPreview::render(QGraphicsItem *item)
@@ -98,55 +96,43 @@ void TupItemPreview::paintEvent(QPaintEvent *)
     if (k->proxy) {
         QStyleOptionGraphicsItem opt;
         opt.state = QStyle::State_None;
+        
         if (k->proxy->isEnabled())
             opt.state |= QStyle::State_Enabled;
+
         opt.exposedRect = QRectF(QPointF(0,0), k->proxy->boundingRect().size());
         opt.levelOfDetail = 1;
-        opt.palette = palette();
         
         QTransform matrix = k->proxy->sceneTransform();
+        
+        opt.palette = palette();
         painter.setTransform(matrix);
 
         QRectF rectangle(QPointF(0,0), size()); 
         painter.setPen(QPen(Qt::gray, 0.5, Qt::SolidLine));
         painter.drawRect(rectangle);
 
-        int itemWidth = 0;
-        int itemHeight = 0;
-        bool isNative = false;
-        int newPosX = 0;
-        int newPosY = 0;
-
+        // If preview is for a "path" object
         if (QGraphicsPathItem *path = qgraphicsitem_cast<QGraphicsPathItem *>(k->proxy->item())) {
-            isNative = true;
-            itemWidth = path->path().boundingRect().width();
-            itemHeight = path->path().boundingRect().height();
-            newPosX = -path->path().boundingRect().topLeft().x();
-            newPosY = -path->path().boundingRect().topLeft().y();
-        } else if (QGraphicsItemGroup *group = qgraphicsitem_cast<QGraphicsItemGroup *>(k->proxy->item())) {
-                   isNative = true;
-                   itemWidth = group->boundingRect().width();
-                   itemHeight = group->boundingRect().height();
-                   // SQA: These coords don't work if the group has been edited
-                   // A new algorithm must be developed here
-                   newPosX = -group->boundingRect().topLeft().x();
-                   newPosY = -group->boundingRect().topLeft().y();
-        }
 
-        // If preview is for a native object (path or group)
-        if (isNative) {
+            int pathWidth = path->path().boundingRect().width();
+            int pathHeight = path->path().boundingRect().height();
+
             // If object is bigger than canvas, resize
-            if (itemWidth > rect().width() || itemHeight > rect().height()) {
+            if (pathWidth > rect().width() || pathHeight > rect().height()) {
                 float distance = 0;
                 float base = 0;
+                int newPosX = 0;
+                int newPosY = 0;
+
                 float limit = (float) rect().width() / (float) rect().height();
-                float proportion = itemWidth / itemHeight;
+                float proportion = pathWidth / pathHeight;
 
                 if (proportion <= limit) {
-                    distance = itemHeight;
+                    distance = pathHeight;
                     base = rect().height() - 10;
                 } else {
-                    distance = itemWidth;
+                    distance = pathWidth;
                     base = rect().width();
                 }
 
@@ -158,17 +144,23 @@ void TupItemPreview::paintEvent(QPaintEvent *)
 
                 painter.scale(factor, factor);
 
-                int posX = (widthRealLength - itemWidth)/2;  
-                int posY = (heightRealLength - itemHeight)/2;
-                painter.translate(posX + newPosX, posY + newPosY);
-
-                // painter.translate(newPosX, newPosY);
-            } else { // if object is smaller than canvas, just show it
-                painter.translate((rect().width() - itemWidth)/2, (rect().height() - itemHeight)/2);
+                newPosX = (widthRealLength - pathWidth)/2;  
+                newPosY = (heightRealLength - pathHeight)/2;
                 painter.translate(newPosX, newPosY);
+
+                newPosX = -path->path().boundingRect().topLeft().x();
+                newPosY = -path->path().boundingRect().topLeft().y(); 
+                painter.translate(newPosX, newPosY);
+
+            } else { // if object is smaller than canvas, just show it
+
+                painter.translate((rect().width() - pathWidth)/2, (rect().height() - pathHeight)/2);
+                painter.translate(-path->path().boundingRect().topLeft().x(), -path->path().boundingRect().topLeft().y());
+
             }
-        } else { 
-                // if preview is for images or svg objects 
+
+        } else { // if preview is for images or svg objects 
+
                 // if object is bigger than canvas, resize
                 if (opt.exposedRect.width() > rect().width() || opt.exposedRect.height() > rect().height()) {
                     float distance = 0;

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,67 +34,72 @@
  ***************************************************************************/
 
 #include "tuptwitterwidget.h"
+#include "tuptwitter.h"
 
-struct TupTwitterWidget::Private
-{
-    QSplitter *separator;
-    QTextBrowser *pageArea;
-    QTextDocument *document;
-};
+#include "tglobal.h"
+#include "tdebug.h"
 
-TupTwitterWidget::TupTwitterWidget(QWidget *parent) : QWidget(parent), k(new Private)
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QIcon>
+#include <QMenu>
+#include <QMouseEvent>
+
+// Twitter Widget 
+
+TupTwitterWidget::TupTwitterWidget(QWidget *parent) : QWidget(parent)
 {
     setWindowTitle(tr("News!"));
     setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/news_mode.png")));
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(15);
-    k->separator = new QSplitter(this);
-    layout->addWidget(k->separator);
+    m_separator = new QSplitter(this);
+    layout->addWidget(m_separator);
 
-    k->pageArea = new QTextBrowser(k->separator);
-    k->document = new QTextDocument(k->pageArea);
-    k->pageArea->setDocument(k->document);
+    m_pageArea = new QTextBrowser(m_separator);
+    m_pageArea->setOpenExternalLinks(true);
+
+    m_document = new QTextDocument(m_pageArea);
+
+    m_pageArea->setDocument(m_document);
 }
 
 TupTwitterWidget::~TupTwitterWidget()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupTwitterWidget()]";
-        #else
-            TEND;
-        #endif
+           TEND;
     #endif
+}
 
-    delete k;
+void TupTwitterWidget::setDocument(const QString &doc)
+{
+    m_document->setHtml(doc);
 }
 
 void TupTwitterWidget::setSource(const QString &filePath)
 {
-    QStringList path;
-#ifdef Q_OS_WIN
-    QString resources = SHARE_DIR + "help/";
-#else
-    QString resources = SHARE_DIR + "data/help/";
-#endif
-
-    path << resources + "css";
-    path << resources + "images";
-    k->pageArea->setSearchPaths(path);
-    k->pageArea->setOpenExternalLinks(true);
-    k->pageArea->setSource(QUrl::fromLocalFile(filePath));
+    m_pageArea->setSource(filePath);
 }
 
-void TupTwitterWidget::keyPressEvent(QKeyEvent *event) {
+void TupTwitterWidget::keyPressEvent(QKeyEvent * event) {
     switch (event->key()) {
-            case Qt::Key_1:
+            case (Qt::Key_R):
                   if (event->modifiers() == Qt::ControlModifier)
-                      emit newPerspective(0);
-            break;
-            case Qt::Key_2:
-                  if (event->modifiers() == Qt::ControlModifier)
-                      emit newPerspective(1);
+                      downLoadNews();
             break;
     }
+}
+
+void TupTwitterWidget::downLoadNews()
+{
+    // Downloading maefloresta Twitter status
+    Tupwitter *ktwitter = new Tupwitter();
+    connect(ktwitter, SIGNAL(pageReady()), this, SLOT(reload()));
+    ktwitter->start();
+}
+
+void TupTwitterWidget::reload()
+{
+    m_pageArea->reload(); 
 }

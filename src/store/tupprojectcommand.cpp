@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tupprojectcommand.h"
+#include "tdebug.h"
 #include "tupcommandexecutor.h"
 #include "tupprojectrequest.h"
 #include "tuppaintareaevent.h"
@@ -50,40 +51,22 @@ struct TupProjectCommand::Private
 
 TupProjectCommand::TupProjectCommand(TupCommandExecutor *executor, const TupProjectRequest *request) : QUndoCommand(), k(new Private())
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
+    k->executor = executor;
+    k->executed = false;
 
     TupRequestParser parser;
     if (!parser.parse(request->xml())) {
         #ifdef K_DEBUG
-            QString msg = "TupProjectCommand::TupProjectCommand(): - Fatal error: request xml can't be parsed!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
+               tFatal() << "==> TupProjectCommand::TupProjectCommand(): - Parser error!";
         #endif
-        return;
     }
 
-    k->executor = executor;
-    k->executed = false;
     k->response = parser.response();
     k->response->setExternal(request->isExternal());
 
     if (!k->response) {
         #ifdef K_DEBUG
-            QString msg = "TupProjectCommand::TupProjectCommand() - Unparsed response!";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tFatal() << msg;
-            #endif
+               tFatal() << "==> TupProjectCommand::TupProjectCommand() - Unparsed response!";
         #endif
     }
 
@@ -92,14 +75,6 @@ TupProjectCommand::TupProjectCommand(TupCommandExecutor *executor, const TupProj
 
 TupProjectCommand::TupProjectCommand(TupCommandExecutor *executor, TupProjectResponse *response) : QUndoCommand(), k(new Private)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-	
     k->executor = executor;
     k->response = response;
     k->executed = false;
@@ -136,15 +111,10 @@ void TupProjectCommand::initText()
              }
             break;
             default:
-             {				  
+             {
                  #ifdef K_DEBUG
-                     QString msg = "TProjectCommand::initText() - Error: can't handle ID: " + QString::number(k->response->part());
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                #endif
+                        tfDebug << "TProjectCommand::initText() - CAN'T HANDLE ID: " << k->response->part();
+                  #endif
              }
             break;
     }
@@ -189,16 +159,6 @@ QString TupProjectCommand::actionString(int action)
             return QObject::tr("edit node");
         }
         break;
-        case TupProjectRequest::Pen:
-        {
-            return QObject::tr("pen");
-        }
-        break;
-        case TupProjectRequest::Brush:
-        {
-            return QObject::tr("brush");
-        }
-        break;
         case TupProjectRequest::View:
         {
             return QObject::tr("view");
@@ -227,18 +187,10 @@ TupProjectCommand::~TupProjectCommand()
 
 void TupProjectCommand::redo()
 {
-    /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand::redo()] - Executing REDO action...";
-            qDebug() << "[TupProjectCommand::redo()] - k->response->part(): " << k->response->part();
-        #else
-            T_FUNCINFO << "[TupProjectCommand::redo()] - Executing REDO action...";
-            T_FUNCINFO << k->response->part();
-        #endif
-    #endif
-    */
-	
+           T_FUNCINFO << k->response->part();
+    #endif    
+
     if (k->executed) {
         k->response->setMode(TupProjectResponse::Redo);
     } else {
@@ -249,77 +201,8 @@ void TupProjectCommand::redo()
     switch (k->response->part()) {
             case TupProjectRequest::Project:
             {
-                #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::redo() - Error: Project response isn't implemented";
-                     #ifdef Q_OS_WIN
-                         qWarning() << msg;
-                     #else
-                         tWarning() << msg;
-                     #endif
-                #endif
-            }
-            break;
-            case TupProjectRequest::Frame:
-            {
-                 frameCommand();
-            }
-            break;
-            case TupProjectRequest::Layer:
-            {
-                 layerCommand();
-            }
-            break;
-            case TupProjectRequest::Scene:
-            {
-                 sceneCommand();
-            }
-            break;
-            case TupProjectRequest::Item:
-            {
-                 itemCommand();
-            }
-            break;
-            case TupProjectRequest::Library:
-            {
-                 libraryCommand();
-            }
-            break;
-            default:
-            {
-                #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::redo() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                #endif
-            }
-            break;
-    }
-}
-
-void TupProjectCommand::undo()
-{
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand::undo()] - Executing UNDO action...";
-        #else
-            T_FUNCINFO << "[TupProjectCommand::undo()] - Executing UNDO action...";
-        #endif
-    #endif
-
-    k->response->setMode(TupProjectResponse::Undo);
-    switch (k->response->part()) {
-            case TupProjectRequest::Project:
-            {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::undo() - Error: Project response isn't implemented";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tDebug() << "Project response isn't handle";
                  #endif
             }
             break;
@@ -351,12 +234,54 @@ void TupProjectCommand::undo()
             default:
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::undo() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::redo() - Error: Unknown project response";
+                 #endif
+            }
+            break;
+    }
+}
+
+void TupProjectCommand::undo()
+{
+    k->response->setMode(TupProjectResponse::Undo);
+    
+    switch (k->response->part()) {
+            case TupProjectRequest::Project:
+            {
+                 #ifdef K_DEBUG
+                        tDebug() << "Project response isn't handle";
+                 #endif
+            }
+            break;
+            case TupProjectRequest::Frame:
+            {
+                 frameCommand();
+            }
+            break;
+            case TupProjectRequest::Layer:
+            {
+                 layerCommand();
+            }
+            break;
+            case TupProjectRequest::Scene:
+            {
+                 sceneCommand();
+            }
+            break;
+            case TupProjectRequest::Item:
+            {
+                 itemCommand();
+            }
+            break;
+            case TupProjectRequest::Library:
+            {
+                 libraryCommand();
+            }
+            break;
+            default:
+            {
+                 #ifdef K_DEBUG
+                        tError() << "TupProjectCommand::undo() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -366,11 +291,7 @@ void TupProjectCommand::undo()
 void TupProjectCommand::frameCommand()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand::frameCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
+           T_FUNCINFO;
     #endif
 
     TupFrameResponse *response = static_cast<TupFrameResponse *>(k->response);
@@ -434,12 +355,7 @@ void TupProjectCommand::frameCommand()
             default: 
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::frameCommand() - Fatal Error: Unknown project request";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::frameCommand() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -449,31 +365,16 @@ void TupProjectCommand::frameCommand()
 void TupProjectCommand::layerCommand()
 {
     TupLayerResponse *response = static_cast<TupLayerResponse *>(k->response);
-
+    
     switch (response->action()) {
             case TupProjectRequest::Add:
             {
                  k->executor->createLayer(response);
             }
             break;
-            case TupProjectRequest::AddLipSync:
-            {
-                 k->executor->addLipSync(response);
-            }
-            break;
-            case TupProjectRequest::UpdateLipSync:
-            {
-                 k->executor->updateLipSync(response);
-            }
-            break;
             case TupProjectRequest::Remove:
             {
                  k->executor->removeLayer(response);
-            }
-            break;
-            case TupProjectRequest::RemoveLipSync:
-            {
-                 k->executor->removeLipSync(response);
             }
             break;
             case TupProjectRequest::Move:
@@ -504,12 +405,7 @@ void TupProjectCommand::layerCommand()
             default: 
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::layerCommand() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::layerCommand() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -574,12 +470,7 @@ void TupProjectCommand::sceneCommand()
             default: 
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::sceneCommand() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::sceneCommand() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -590,11 +481,7 @@ void TupProjectCommand::itemCommand()
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand::itemCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
+        T_FUNCINFO;
     #endif
     */
 
@@ -634,16 +521,6 @@ void TupProjectCommand::itemCommand()
                  k->executor->setPathItem(response);
             }
             break;
-            case TupProjectRequest::Pen:
-            {
-                 k->executor->setPen(response);
-            }
-            break;
-            case TupProjectRequest::Brush:
-            {
-                 k->executor->setBrush(response);
-            }
-            break;
             case TupProjectRequest::Select:
             {
             }
@@ -675,12 +552,7 @@ void TupProjectCommand::itemCommand()
             default: 
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::itemCommand() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::itemCommand() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -690,11 +562,7 @@ void TupProjectCommand::itemCommand()
 void TupProjectCommand::libraryCommand()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectCommand::libraryCommand()]";
-        #else
-            T_FUNCINFO;
-        #endif
+        T_FUNCINFO;
     #endif
     
     TupLibraryResponse *response = static_cast<TupLibraryResponse *>(k->response);
@@ -712,27 +580,22 @@ void TupProjectCommand::libraryCommand()
             }
             break;
 
-            case TupProjectRequest::InsertSymbolIntoFrame:
+            case TupProjectRequest::AddSymbolToProject:
             {
-                 k->executor->insertSymbolIntoFrame(response);
+                 k->executor->addSymbolToProject(response);
             }
             break;
 
-            case TupProjectRequest::RemoveSymbolFromFrame:
+            case TupProjectRequest::RemoveSymbolFromProject:
             {
-                 k->executor->removeSymbolFromFrame(response);
+                 k->executor->removeSymbolFromProject(response);
             }
             break;
 
             default:
             {
                  #ifdef K_DEBUG
-                     QString msg = "TupProjectCommand::libraryCommand() - Error: Unknown project response";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
+                        tError() << "TupProjectCommand::libraryCommand() - Error: Unknown project response";
                  #endif
             }
             break;
@@ -741,8 +604,11 @@ void TupProjectCommand::libraryCommand()
 
 void TupProjectCommand::paintAreaCommand()
 {
-    // SQA: FIX ME in tupprojectcommand.cpp
-	
+
+    #ifdef K_DEBUG
+           tError() << "TupProjectCommand::paintAreaCommand() - Error: FIX ME in ktprojectcommand.cpp";
+    #endif
+
     /*
      if (redo)
          k->executor->reemitEvent(response);

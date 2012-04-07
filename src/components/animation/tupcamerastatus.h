@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,31 +33,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCAMERASTATUS_H
-#define TUPCAMERASTATUS_H
+#ifndef TupCAMERASTATUS_H
+#define TupCAMERASTATUS_H
 
-#include "tupcamerawidget.h"
-#include "tupexportwidget.h"
-#include "tconfig.h"
-#include "tseparator.h"
+#include "tupviewcamera.h"
 
 #include <QFrame>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>
-#include <QStatusBar>
-#include <QApplication>
-#include <QSpinBox>
 
-class TupCameraWidget;
+class TupViewCamera;
 
-class TUPI_EXPORT TupCameraStatus : public QFrame
+class TupCameraStatus : public QFrame
 {
     Q_OBJECT
 
     public:
-        TupCameraStatus(TupCameraWidget *camera = 0, bool isNetworked = false, QWidget *parent = 0);
+        TupCameraStatus(TupViewCamera *camera = 0, bool isNetworked = false, QWidget *parent = 0);
         ~TupCameraStatus();
 
         void setScenes(TupProject *project);
@@ -69,9 +63,6 @@ class TUPI_EXPORT TupCameraStatus : public QFrame
 
     signals:
         void sceneIndexChanged(int index);
-
-    private slots:
-        void setDuration();
 
     private:
         struct Private;

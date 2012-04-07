@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,12 +33,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPCOMMANDEXECUTOR_H
-#define TUPCOMMANDEXECUTOR_H
+#ifndef TupCOMMANDEXECUTOR_H
+#define TupCOMMANDEXECUTOR_H
 
-#include "tglobal.h"
 #include "tupscene.h"
-
 #include <QObject>
 
 class TupProject;
@@ -54,7 +52,7 @@ class TupLibraryResponse;
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupCommandExecutor : public QObject
+class TupCommandExecutor : public QObject
 {
     Q_OBJECT
 
@@ -65,23 +63,16 @@ class TUPI_EXPORT TupCommandExecutor : public QObject
         void getScenes(TupSceneResponse *response);
         bool createScene(TupSceneResponse *response);
         bool createLayer(TupLayerResponse *response);
-        bool addLipSync(TupLayerResponse *response);
         bool createFrame(TupFrameResponse *response);
         
         bool createItem(TupItemResponse *response);
-
-        bool updateLipSync(TupLayerResponse *response);
         
         bool convertItem(TupItemResponse *response);
         bool transformItem(TupItemResponse *response);
         bool setPathItem(TupItemResponse *response);
-
-        bool setBrush(TupItemResponse *response);
-        bool setPen(TupItemResponse *response);
         
         bool removeScene(TupSceneResponse *response);
         bool removeLayer(TupLayerResponse *response);
-        bool removeLipSync(TupLayerResponse *response);
         bool removeFrame(TupFrameResponse *response);
         bool resetFrame(TupFrameResponse *response);
         
@@ -114,8 +105,8 @@ class TUPI_EXPORT TupCommandExecutor : public QObject
         
         bool createSymbol(TupLibraryResponse *response);
         bool removeSymbol(TupLibraryResponse *response);
-        bool insertSymbolIntoFrame(TupLibraryResponse *response);
-        bool removeSymbolFromFrame(TupLibraryResponse *response);
+        bool addSymbolToProject(TupLibraryResponse *response);
+        bool removeSymbolFromProject(TupLibraryResponse *response);
         
         bool setTween(TupItemResponse *response);
         bool expandFrame(TupFrameResponse *response);

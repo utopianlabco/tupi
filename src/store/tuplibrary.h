@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,14 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLIBRARY_H
-#define TUPLIBRARY_H
-
-#include "tglobal.h"
-#include "tuplibraryfolder.h"
+#ifndef TupLIBRARY_H
+#define TupLIBRARY_H
 
 #include <QObject>
-#include <QTextStream>
+
+#include "tupglobal_store.h"
+#include "tuplibraryfolder.h"
 
 class TupProject;
 
@@ -48,7 +47,7 @@ class TupProject;
  * @author David Cuadrado
 */ 
 
-class TUPI_EXPORT TupLibrary : public TupLibraryFolder
+class STORE_EXPORT TupLibrary : public TupLibraryFolder
 {
     Q_OBJECT;
     
@@ -58,7 +57,6 @@ class TUPI_EXPORT TupLibrary : public TupLibraryFolder
             Symbol = 0x01,
             Folder
         };
-
         TupLibrary(const QString &id, TupProject *parent = 0);
         ~TupLibrary();
         

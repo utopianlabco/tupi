@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -44,11 +44,16 @@
 
 #include "tupgraphicalgorithm.h"
 
+#include <cmath>
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-#define MAXPOINTS 1000 /* The most points you can have */
+#include "tdebug.h"
+#include <QDebug>
+
+#define MAXPOINTS    1000        /* The most points you can have */
 
 class FitVector
 {
@@ -121,6 +126,7 @@ double distance(const QPointF& p1, const QPointF&  p2)
 
     return sqrt( dx*dx + dy*dy );
 }
+
 
 FitVector computeLeftTangent(QPolygonF &points, int end)
 {
@@ -731,15 +737,10 @@ double TupGraphicalAlgorithm::distanceToPoint(const QPointF &pos)
 
 double TupGraphicalAlgorithm::angleForPos(const QPointF &pos, const QPointF &anchor)
 {
-    qreal distance = distanceToPoint(pos - anchor);
-    qreal angle = 0;
+    qreal angle = ::acos((pos.x()-anchor.x()) / distanceToPoint(pos - anchor));
 
-    if (distance != 0) {
-        angle = ::acos((pos.x()-anchor.x()) / distanceToPoint(pos - anchor));
-
-        if (pos.y()-anchor.y() > 0)
-            angle = M_PI * 2.0 - angle;
-    }
+    if (pos.y()-anchor.y() > 0)
+        angle = M_PI * 2.0 - angle;
 
     return angle;
 }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -40,6 +40,15 @@
 #include "tconfig.h"
 #include "tapplication.h"
 #include "tosd.h"
+#include "tdebug.h"
+
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QCheckBox>
+#include <QColorDialog>
+#include <QStyleOptionButton>
+#include <QComboBox>
+#include <QLineEdit>
 
 //SQA: Add a field to define the project description 
 
@@ -53,7 +62,6 @@ struct TupNewProject::Private
     QPushButton *colorButton;
     QSpinBox *fps;
 
-    QComboBox *presets;
     TXYSpinBox *size;
     bool useNetwork;
 
@@ -102,22 +110,16 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     QBoxLayout *presetsLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     QLabel *presetsLabel = new QLabel(tr("Presets") + " ");
 
-    TCONFIG->beginGroup("PaintArea");
-    int presetIndex = TCONFIG->value("DefaultFormat", 3).toInt();
-
-    k->presets = new QComboBox();
-    k->presets->addItem(tr("Free format"));
-    k->presets->addItem(tr("520x380 - 24"));
-    k->presets->addItem(tr("640x480 - 24"));
-    k->presets->addItem(tr("480 (PAL DV/DVD) - 25"));
-    k->presets->addItem(tr("576 (PAL DV/DVD) - 25"));
-    k->presets->addItem(tr("720 (HD) - 24"));
-    k->presets->addItem(tr("1080 (Full HD) - 24"));
-
-    connect(k->presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPresets(int)));
+    QComboBox *presets = new QComboBox();
+    presets->addItem(tr("Free format"));
+    presets->addItem(tr("480p (PAL DV/DVD) - 25"));
+    presets->addItem(tr("576p (PAL DV/DVD) - 25"));
+    presets->addItem(tr("720p (HD) - 25"));
+    presets->addItem(tr("1280p (Full HD) - 25"));
+    connect(presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPresets(int)));
 
     presetsLayout->addWidget(presetsLabel);
-    presetsLayout->addWidget(k->presets);
+    presetsLayout->addWidget(presets);
     layout->addLayout(presetsLayout, 3, 0, 1, 2, Qt::AlignCenter);
 
     QGroupBox *renderAndFps= new QGroupBox(tr("Options"));
@@ -125,14 +127,12 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     QBoxLayout *subLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     renderAndFps->setLayout(subLayout);
 
-    TCONFIG->beginGroup("PaintArea");
-    QString colorName = TCONFIG->value("BackgroundDefaultColor", "#ffffff").toString();
-
-    k->color = QColor(colorName);
+    k->color = QColor("#fff");
     k->colorButton = new QPushButton();
     k->colorButton->setText(tr("Background"));
     k->colorButton->setToolTip(tr("Click here to change background color"));
-    k->colorButton->setStyleSheet("QPushButton { background-color: " + k->color.name() + "; color: black; }");
+    k->colorButton->setPalette(QPalette(k->color));
+    k->colorButton->setAutoFillBackground(true);
 
     connect(k->colorButton, SIGNAL(clicked()), this, SLOT(setBgColor()));
 	
@@ -146,6 +146,7 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     fpsLayout->addWidget(k->fps);
     subLayout->addWidget(k->colorButton);
     subLayout->addLayout(fpsLayout);
+    // subLayout->addSpacing(30);
 
     k->size = new TXYSpinBox(tr("Dimension"), infoContainer);
     k->size->setMinimum(50);
@@ -153,11 +154,10 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     k->size->setX(520);
     k->size->setY(380);
 
-    connect(k->size, SIGNAL(valuesHaveChanged()), this, SLOT(updateFormatCombo()));
-
     QWidget *panel = new QWidget;
     QVBoxLayout *sizeLayout = new QVBoxLayout(panel);
     sizeLayout->addWidget(k->size);
+    // sizeLayout->addWidget(test);
 
     layout->addWidget(panel, 4, 0);
     layout->addWidget(renderAndFps, 4, 1);
@@ -165,8 +165,7 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     QCheckBox *activeNetOptions = new QCheckBox(tr("Tupitube project"));
     connect(activeNetOptions, SIGNAL(toggled(bool)), this, SLOT(enableNetOptions(bool)));
 
-    // SQA: Code temporarily disabled
-    // layout->addWidget(activeNetOptions, 5, 0, 1, 2, Qt::AlignLeft);
+    layout->addWidget(activeNetOptions, 5, 0, 1, 2, Qt::AlignLeft);
 
     addTab(infoContainer, tr("Project info"));
 
@@ -176,12 +175,8 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
 
     setupNetOptions();
 
-    // SQA: Code temporarily disabled
-    // addTab(netContainer, tr("Network"));
+    addTab(netContainer, tr("Network"));
     enableNetOptions(false);
-
-    if (presetIndex >= 0)
-        k->presets->setCurrentIndex(presetIndex);
 }
 
 TupNewProject::~TupNewProject()
@@ -215,8 +210,8 @@ void TupNewProject::setupNetOptions()
 
     TConfig *config = kApp->config("Network");
 
-    k->server->setText(config->value("Server", "tupitu.be").toString());
-    k->port->setValue(config->value("Port", 8080).toInt());
+    k->server->setText(config->value("Server", "tupitube.com").toString());
+    k->port->setValue(config->value("Port", 5000).toInt());
 
     k->login->setText(config->value("Login", "").toString());
     k->password->setText(config->value("Password", "").toString());
@@ -304,11 +299,6 @@ void TupNewProject::ok()
         }
     }
 
-    TCONFIG->beginGroup("PaintArea");
-    TCONFIG->setValue("BackgroundDefaultColor", k->color.name());
-    TCONFIG->setValue("DefaultFormat", k->presets->currentIndex());
-    TCONFIG->sync();
-
     TabDialog::ok();
 }
 
@@ -326,82 +316,73 @@ void TupNewProject::focusProjectLabel()
 
 void TupNewProject::setBgColor()
 {
-     k->color = QColorDialog::getColor(k->color, this);
+     k->color = QColorDialog::getColor(Qt::white, this);
 
      if (k->color.isValid()) {
          k->colorButton->setText(k->color.name());
-         QString text = "white";
-         if (k->color.red() > 50 && k->color.green() > 50 && k->color.blue() > 50)
-             text = "black"; 
-         k->colorButton->setStyleSheet("QPushButton { background-color: " + k->color.name() + "; color: " + text + "; }");
+         k->colorButton->setPalette(QPalette(k->color));
+         k->colorButton->setAutoFillBackground(true);
      } else {
          k->color = QColor("#fff");
          k->colorButton->setText(tr("White"));
-         k->colorButton->setStyleSheet("QPushButton { background-color: #fff }; color: black;");
      }
+
+     k->colorButton->setPalette(QPalette(k->color));
+     k->colorButton->setAutoFillBackground(true);
 }
 
 void TupNewProject::setPresets(int index)
 {
-    k->size->blockSignals(true);
-
     switch(index) {
            case FREE: 
-           case FORMAT_520:
            {
                k->size->setX(520);
                k->size->setY(380);
                k->fps->setValue(24);
+               k->size->setEnabled(true);
+               k->fps->setEnabled(true);
            }
            break;
-           case FORMAT_640:
-           {
-               k->size->setX(640);
-               k->size->setY(480);
-               k->fps->setValue(24);
-           }
-           break;
-           case FORMAT_480:
+           case FORMAT_480P:
            {
                k->size->setX(720);
                k->size->setY(480);
                k->fps->setValue(25);
+               k->size->setEnabled(false);
+               k->fps->setEnabled(false);
            }
            break;
-           case FORMAT_576:
+           case FORMAT_576P:
            {
                k->size->setX(720);
                k->size->setY(576);
                k->fps->setValue(25);
+               k->size->setEnabled(false);
+               k->fps->setEnabled(false);
            }
            break;
-           case FORMAT_720:
+           case FORMAT_720P:
            {
                k->size->setX(1280);
                k->size->setY(720);
-               k->fps->setValue(24);
+               k->fps->setValue(25);
+               k->size->setEnabled(false);
+               k->fps->setEnabled(false);
            }
            break;
-           case FORMAT_1080:
+           case FORMAT_1280P:
            {
                k->size->setX(1920);
-               k->size->setY(1080);
-               k->fps->setValue(24);
+               k->size->setY(1280);
+               k->fps->setValue(25);
+               k->size->setEnabled(false);
+               k->fps->setEnabled(false);
            }
            break;
     }
-
-    k->size->blockSignals(false);
 }
 
 QString TupNewProject::login() const
 {
     return k->login->text();
-}
-
-void TupNewProject::updateFormatCombo()
-{
-    k->presets->blockSignals(true);
-    k->presets->setCurrentIndex(0);
-    k->presets->blockSignals(false);
 }

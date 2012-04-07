@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -35,6 +35,8 @@
 
 #include "tupprojectloader.h"
 #include "tupproject.h"
+#include "tdebug.h"
+
 #include "tupprojectresponse.h"
 #include "tuplibraryobject.h"
 
@@ -50,7 +52,6 @@ void TupProjectLoader::createItem(int scenePosition, int layerPosition, int fram
 {
     TupItemResponse response(TupProjectRequest::Item, TupProjectRequest::Add);
 
-    response.setMode(TupProjectResponse::Do);
     response.setSceneIndex(scenePosition);
     response.setLayerIndex(layerPosition);
     response.setFrameIndex(framePosition);
@@ -67,7 +68,6 @@ void TupProjectLoader::createFrame(int scenePosition, int layerPosition, int fra
 {
     TupFrameResponse response(TupProjectRequest::Frame, TupProjectRequest::Add);
 
-    response.setMode(TupProjectResponse::Do);
     response.setSceneIndex(scenePosition);
     response.setLayerIndex(layerPosition);
     response.setFrameIndex(framePosition);
@@ -76,11 +76,11 @@ void TupProjectLoader::createFrame(int scenePosition, int layerPosition, int fra
     project->emitResponse(&response);
 }
 
+
 void TupProjectLoader::createLayer(int scenePosition, int layerPosition, const QString &name, TupProject *project)
 {
     TupLayerResponse response(TupProjectRequest::Layer, TupProjectRequest::Add);
-   
-    response.setMode(TupProjectResponse::Do); 
+    
     response.setSceneIndex(scenePosition);
     response.setLayerIndex(layerPosition);
     response.setArg(name);
@@ -90,9 +90,8 @@ void TupProjectLoader::createLayer(int scenePosition, int layerPosition, const Q
 
 void TupProjectLoader::createSoundLayer(int scenePosition, int layerPosition, const QString &name, TupProject *project)
 {
-    TupLibraryResponse response(TupProjectRequest::Library, TupProjectRequest::InsertSymbolIntoFrame);
-   
-    response.setMode(TupProjectResponse::Do); 
+    TupLibraryResponse response(TupProjectRequest::Library, TupProjectRequest::AddSymbolToProject);
+    
     response.setSceneIndex(scenePosition);
     response.setLayerIndex(layerPosition);
     response.setArg(name);
@@ -103,17 +102,8 @@ void TupProjectLoader::createSoundLayer(int scenePosition, int layerPosition, co
 
 void TupProjectLoader::createScene(const QString &name, int scenePosition, TupProject *project)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[TupProjectLoader::createScene()]";
-        #else
-            T_FUNCINFO;
-        #endif
-    #endif
-
     TupSceneResponse response(TupProjectRequest::Scene, TupProjectRequest::Add);
 
-    response.setMode(TupProjectResponse::Do);
     response.setSceneIndex(scenePosition);
     response.setArg(name);
     
@@ -123,8 +113,7 @@ void TupProjectLoader::createScene(const QString &name, int scenePosition, TupPr
 void TupProjectLoader::createSymbol(TupLibraryObject::Type type, const QString &name, const QString &parent, const QByteArray &data, TupProject *project)
 {
     TupLibraryResponse response(TupProjectRequest::Library, TupProjectRequest::Add);
-  
-    response.setMode(TupProjectResponse::Do); 
+   
     response.setArg(name);
     response.setData(data);
     response.setSymbolType(type);

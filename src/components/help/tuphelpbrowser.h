@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,10 +33,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPHELPBROWSER_H
-#define TUPHELPBROWSER_H
+#ifndef TupHELPBROWSER_H
+#define TupHELPBROWSER_H
 
-#include "tglobal.h"
 #include "tapplicationproperties.h"
 
 #include <QWidget>
@@ -44,37 +43,32 @@
 #include <QTextBrowser>
 #include <QTextDocument>
 #include <QKeyEvent> 
-#include <QBoxLayout>
-#include <QIcon>
-#include <QMouseEvent>
-#include <QDir>
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupHelpBrowser : public QWidget
+class TupHelpBrowser : public QWidget
 {
     Q_OBJECT
 
     public:
-        TupHelpBrowser(const QString &path, QWidget *parent = 0);
+        TupHelpBrowser(QWidget *parent);
         ~TupHelpBrowser();
 
     public slots:
+        void setDocument(const QString &doc);
         void setSource(const QString &filePath);
+        void setDataDirs(const QStringList &dirs);
 
     protected:
-        void keyPressEvent(QKeyEvent *event);
-
-    signals:
-        void closeDialog();
+        void keyPressEvent(QKeyEvent * event);
 
     private:
         void reload();
-
-        struct Private;
-        Private *const k;
+        QSplitter *m_separator;
+        QTextBrowser *m_pageArea;
+        QTextDocument *m_document;
 };
 
 #endif

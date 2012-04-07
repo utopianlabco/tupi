@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,22 +33,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPLAYER_H
-#define TUPLAYER_H
+#ifndef TupLAYER_H
+#define TupLAYER_H
 
-#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tupframe.h"
-#include "tupgraphicobject.h"
-#include "tuplipsync.h"
+#include "tupinthash.h"
+#include "tupglobal_store.h"
 
 #include <QDomDocument>
 #include <QDomElement>
-#include <QList>
-#include <QTextStream>
 
-typedef QList<TupFrame *> Frames;
-typedef QList<TupLipSync *> Mouths;
+typedef TupIntHash<TupFrame *> Frames;
 
 class TupScene;
 class TupProject;
@@ -58,72 +54,91 @@ class TupProject;
  * @author David Cuadrado 
 */
 
-class TUPI_EXPORT TupLayer : public QObject, public TupAbstractSerializable
+class STORE_EXPORT TupLayer : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
 
     public:
-        TupLayer();
-        TupLayer(TupScene *scene, int index = 0);
+        /**
+         * Default Constructor
+         */
+        TupLayer(TupScene *parent, int index = 0);
+        
+        /**
+         * Destructor
+         */
         ~TupLayer();
         
+        /**
+         * Retorna los frames del layer
+         */
         Frames frames();
-        void setFrames(const Frames &frames);
-        void setFrame(int index, TupFrame *frame);
         
+        /**
+         * Pone la lista de frames, esta funcion reemplaza los frames anteriores
+         */
+        void setFrames(const Frames &frames);
+        
+        /**
+         * Pone el nombre del layer
+         */
         void setLayerName(const QString &name);
+        
+        /**
+         * Bloquea el layer
+         */
+        void setLocked(bool isLocked);
+        
+        /**
+         * Pone la visibilidad del layer
+         */
+        void setVisible(bool isVisible);
+        
+        /**
+         * Retorna el nombre del layer
+         */
         QString layerName() const;
         
-        void setLocked(bool isLocked);
+        /**
+         * Returna verdadero cuando el layer esta bloqueado
+        */
         bool isLocked() const;
-
-        void setVisible(bool isVisible);
+        
+        /**
+         * Retorna verdadero si el layer es visible
+         */
         bool isVisible() const;
-
-        void setOpacity(double opacity);
-        double opacity();
         
         TupFrame *createFrame(QString name, int position, bool loaded = false);
-        bool restoreFrame(int index);
-        bool removeFrame(int position);
-        bool resetFrame(int position);
-        void clear();
 
+        bool removeFrame(int position);
+
+        bool resetFrame(int position);
+        
         bool moveFrame(int from, int to);
+
         bool exchangeFrame(int from, int to);
+        
         bool expandFrame(int position, int size);
         
-        TupFrame *frameAt(int position) const;
-
-        TupLipSync *createLipSync(const QString &name, const QString &soundFile, int initFrame);
-        void addLipSync(TupLipSync *lipsync);
-        int lipSyncCount();
-        Mouths lipSyncList();
-        bool removeLipSync(const QString &name);
+        TupFrame *frame(int position) const;
         
         TupScene *scene() const;
         TupProject *project() const;
 
-        void updateLayerIndex(int index);
         int layerIndex();
+        
+        //int logicalIndexOf(TupFrame *frame) const;
         int visualIndexOf(TupFrame *frame) const;
+        
+        //int logicalIndex() const;
         int objectIndex() const;
-        int framesCount() const;
 
-        void addTweenObject(TupGraphicObject *object);
-        void addTweenObject(TupSvgItem *object);
-        void updateTweenObject(int index, TupGraphicObject *object);
-        void updateTweenObject(int index, TupSvgItem *object);
-        void removeTweenObject(TupGraphicObject *object);
-        void removeTweenObject(TupSvgItem *object);
-        QList<TupGraphicObject *> tweeningGraphicObjects() const;
-        QList<TupSvgItem *> tweeningSvgObjects() const;
-        bool tweenExists(const QString &name, TupItemTweener::Type type);
-        bool removeTween(const QString &name, TupItemTweener::Type type);
-        void removeAllTweens();
-        void removeTweensFromFrame(int frameIndex);
-        // int tweensCount();
+        int framesTotal() const;
 
+        //void setZLevel(int level);
+        //int getZLevel();
+        
     public:
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;

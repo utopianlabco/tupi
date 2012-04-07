@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,38 +33,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPBRUSHSTATUS_H
-#define TUPBRUSHSTATUS_H
+#ifndef TupBRUSHSTATUS_H
+#define TupBRUSHSTATUS_H
 
-#include "tglobal.h"
-#include "tcolorcell.h"
-// #include "tupcolorwidget.h"
-#include "tseparator.h"
+#include "tupcolorwidget.h"
 
 #include <QPixmap>
 #include <QPen>
 #include <QBrush>
 #include <QColor>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QColorDialog>
 
 class TupColorWidget;
 
-class TUPI_EXPORT TupBrushStatus : public QWidget
+class TupBrushStatus : public QWidget
 {
     Q_OBJECT
 
     public:
-        TupBrushStatus(const QString &label, TColorCell::FillType context, const QPixmap &pix);
+        TupBrushStatus(const QString &label, const QPixmap &pix, bool bg);
         ~TupBrushStatus();
 
-        void setColor(const QPen &pen);
-        void setColor(const QBrush &brush);
+        void setForeground(const QPen &pen);
+        void setColor(const QColor &color);
         void setTooltip(const QString &tip);
 
+    signals:
+        void colorRequested();
+        void colorUpdated(const QColor);
+
+    private slots:
+        void updateColour(); 
+
     private:
-        TColorCell *brushCell;
+        TupColorWidget *brush;
+        bool background;
 };
 
 #endif

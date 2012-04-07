@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,17 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPTREEDELEGATE_H
-#define TUPTREEDELEGATE_H
-
-#include "tglobal.h"
+#ifndef TupTREEDELEGATE_H
+#define TupTREEDELEGATE_H
 
 #include <QItemDelegate>
 #include <QRegExp>
-#include <QtGui>
-#include <QLineEdit>
 
-class TUPI_EXPORT TupTreeDelegate : public QItemDelegate
+class TupTreeDelegate : public QItemDelegate
 {
     Q_OBJECT
 

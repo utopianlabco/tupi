@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,7 @@
  ***************************************************************************/
 
 #include "tupxmlparserbase.h"
+#include "tdebug.h"
 
 struct TupXmlParserBase::Private
 {
@@ -110,34 +111,15 @@ bool TupXmlParserBase::characters(const QString & ch)
 
 bool TupXmlParserBase::error(const QXmlParseException & exception)
 {
-#ifdef K_DEBUG	
-    #ifdef Q_OS_WIN
-        QString msg1 = exception.lineNumber() + QString("x") + exception.columnNumber() + QString(": ") + exception.message();
-        qDebug() << msg1;
-    #else
-	    tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;		
-        #endif
-#else
-     Q_UNUSED(exception);
-#endif
+     tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+     tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
      return true;
 }
 
 bool TupXmlParserBase::fatalError(const QXmlParseException & exception)
 {
-#ifdef K_DEBUG	
-    #ifdef Q_OS_WIN
-        QString msg1 = exception.lineNumber() + QString("x") + exception.columnNumber() + QString(": ") + exception.message();
-        qDebug() << msg1;
-    #else
-        tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;	
-    #endif
-#else
-     Q_UNUSED(exception);
-#endif
-
+     tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+     tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
      return true;
 }
 
@@ -157,7 +139,6 @@ QString TupXmlParserBase::currentTag() const
 }
 
 QString TupXmlParserBase::root() const
-
 {
      return k->root;
 }
@@ -177,18 +158,12 @@ bool TupXmlParserBase::parse(const QString &doc)
      return reader.parse(&xmlsource);
 }
 
+
 bool TupXmlParserBase::parse(QFile *file)
 {
      if (!file->isOpen()) {
          if (! file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-#ifdef K_DEBUG
-             QString msg = "TupXmlParserBase::parse() - Cannot open file " + file->fileName();
-             #ifdef Q_OS_WIN
-                 qDebug() << msg;
-             #else
-                 tWarning() << msg;
-             #endif
-#endif
+             tWarning() << "Cannot open file " << file->fileName();
              return false;
          }
      }

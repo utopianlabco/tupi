@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,20 +36,11 @@
 #ifndef TUPPACKAGEHANDLER_H
 #define TUPPACKAGEHANDLER_H
 
-#include "tglobal.h"
-#include "tapplicationproperties.h"
-#include "quazip/quazip.h"
-#include "quazip/quazipfile.h"
-
-// SQA: Pending to enable in the future
-// #include "quazip/JlCompress.h"
+#include "tupglobal.h"
 
 #include <QString>
-#include <QFile>
-#include <QFileInfo>
-#include <QDir>
 
-// class QuaZip;
+class QuaZip;
 
 /**
  * @author David Cuadrado

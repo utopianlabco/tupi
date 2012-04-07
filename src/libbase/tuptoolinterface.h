@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,13 +33,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPTOOLINTERFACE_H
-#define TUPTOOLINTERFACE_H
+#ifndef ATOOLINTERFACE_H
+#define ATOOLINTERFACE_H
 
-#include "tglobal.h"
 #include "tupframe.h"
 #include "taction.h"
 #include "qplugin.h" // Q_EXPORT_PLUGIN
+#include "tupglobal.h"
 
 #include <QStringList>
 #include <QRect>
@@ -69,8 +69,7 @@ class TUPI_EXPORT TupToolInterface
             Fill,
             Selection,
             View,
-            Tweener,
-            LipSync
+            Tweener
         };
         
         virtual ~TupToolInterface() {};
@@ -79,6 +78,6 @@ class TUPI_EXPORT TupToolInterface
         virtual int toolType() const = 0;
 };
 
-Q_DECLARE_INTERFACE( TupToolInterface, "com.maefloresta.tupi.TupToolInterface/0.1" );
+Q_DECLARE_INTERFACE( TupToolInterface, "com.maefloresta.tupi.TupToolInterface/0.2" );
 
 #endif

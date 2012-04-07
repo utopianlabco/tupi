@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,10 @@
  ***************************************************************************/
 
 #include "tupsocketbase.h"
+#include "tdebug.h"
+
+#include <QTextStream>
+#include <QQueue>
 
 struct TupSocketBase::Private
 {
@@ -67,15 +71,13 @@ void TupSocketBase::clearQueue()
     k->queue.clear();
 }
 
-void TupSocketBase::send(const QString &message)
+void TupSocketBase::send(const QString &str)
 {
     if (state() == QAbstractSocket::ConnectedState) {
         QTextStream stream(this);
-        stream.setCodec("UTF-8");
-        // stream << message.toLocal8Bit().toBase64() << "%%" << endl;
-        stream << message.toUtf8().toBase64() << "%%" << endl;
+        stream << str.toLocal8Bit().toBase64() << "%%" << endl;
     } else {
-        k->queue.enqueue(message);
+        k->queue.enqueue(str);
     }
 }
 
@@ -86,18 +88,17 @@ void TupSocketBase::send(const QDomDocument &doc)
 
 void TupSocketBase::readFromServer()
 {
-    QString readed = "";
+    QString readed;
 
     while (this->canReadLine()) {
-           readed += QString::fromUtf8(this->readLine());
+           readed += this->readLine();
            if (readed.endsWith("%%\n"))
                break;
     }
     
     if (!readed.isEmpty()) {
         readed.remove(readed.lastIndexOf("%%"), 2);
-        // readed = QString::fromUtf8(QByteArray::fromBase64(readed.toLocal8Bit()));
-        readed = QString::fromUtf8(QByteArray::fromBase64(readed.toUtf8()));
+        readed = QString::fromLocal8Bit(QByteArray::fromBase64(readed.toLocal8Bit()));
         
         this->readed(readed);
     }

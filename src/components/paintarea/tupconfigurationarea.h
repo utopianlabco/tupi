@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,28 +36,15 @@
 #ifndef TCONFIGURATIONAREA_H
 #define TCONFIGURATIONAREA_H
 
-#include "tglobal.h"
-
 #include <QDockWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QTextBrowser>
-#include <QMainWindow>
-#include <QMouseEvent>
-#include <QApplication>
-#include <QPushButton>
-#include <QToolTip>
-#include <QPainter>
-#include <QPainterPath>
-#include <QStyle>
-#include <QStyleOptionButton>
-#include <QTimer>
+
+class QPushButton;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupConfigurationArea : public QDockWidget
+class TupConfigurationArea : public QDockWidget
 {
     Q_OBJECT
 

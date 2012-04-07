@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,7 +34,12 @@
  ***************************************************************************/
 
 #include "tupapplication.h"
+// Tupi Framework
 #include "tapplicationproperties.h"
+#include "tdebug.h"
+
+#include <QDesktopWidget>
+#include <QRect>
 
 /**
  * Support Class for main.cpp
@@ -50,13 +55,42 @@ TupApplication::TupApplication(int &argc, char **argv) : TApplication(argc, argv
 TupApplication::~TupApplication()
 {
     #ifdef K_DEBUG
-        QString msg = "[Destroying ~TupApplication]";
-        #ifdef Q_OS_WIN
-           qDebug() << msg;
-        #else
-           tDebug() << msg;
-        #endif
+           qDebug("[Destroying ~TupApplication]");
     #endif
+}
+
+bool TupApplication::firstRun()
+{
+    /*
+    QDesktopWidget *screen = QApplication::desktop();
+    int screenW = screen->width();     // returns desktop width
+    int screenH = screen->height();    // returns desktop height
+
+    ConfigWizard *firstDialog = new ConfigWizard();
+    QRect size = firstDialog->frameGeometry();
+    int configH = size.height();
+    int configW = size.width(); 
+    firstDialog->move((screenW-configW)/2, (screenH-configH)/2);
+
+    QApplication::setActiveWindow(firstDialog);
+
+    if (firstDialog->exec() != QDialog::Rejected) {
+        kAppProp->setHomeDir(firstDialog->home());
+        createCache(firstDialog->cache());
+
+        TCONFIG->beginGroup("General");
+        TCONFIG->setValue("Home", HOME_DIR);
+        TCONFIG->setValue("Cache", CACHE_DIR);
+        TCONFIG->sync();
+
+        delete firstDialog;
+
+        return true;
+    }
+    delete firstDialog;
+    */
+
+    return false;
 }
 
 void TupApplication::createCache(const QString &cacheDir)
@@ -64,22 +98,12 @@ void TupApplication::createCache(const QString &cacheDir)
     QDir cache(cacheDir);
     if (!cache.exists()) {
         #ifdef K_DEBUG
-            QString msg = "Initializing repository: " + cacheDir;
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
+               tDebug() << tr("Initializing repository %1").arg(cacheDir);
         #endif
 
        if (!cache.mkdir(cacheDir)) {
            #ifdef K_DEBUG
-               QString msg = "TupApplication::createCache() - Fatal Error: Can't create project repository";
-               #ifdef Q_OS_WIN
-                   qDebug() << msg;
-               #else
-                   tError() << msg;
-               #endif
+                  tError() << tr("Can not create the projects repository");
            #endif
        }
     }
