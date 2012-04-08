@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,27 +36,20 @@
 #ifndef TUPWORKSPACE_H
 #define TUPWORKSPACE_H
 
-#include "tglobal.h"
-#include "tupcamerawidget.h"
-
+#include "tupviewcamera.h"
 #include <QMainWindow>
-#include <QMouseEvent>
-#include <QDropEvent>
-#include <QLinearGradient>
-#include <QBoxLayout>
 
 /**
  * @author David Cuadrado
 **/
 
-class TUPI_EXPORT TupAnimationspace : public QMainWindow
+class TupAnimationspace : public QMainWindow
 {
     Q_OBJECT
 
     public:
-        TupAnimationspace(TupCameraWidget *playerUI, QWidget *parent = 0);
+        TupAnimationspace(TupViewCamera *internal, QWidget *parent = 0);
         ~TupAnimationspace();
-        void setCameraWidget(TupCameraWidget *playerUI);
 
     protected:
         void mousePressEvent(QMouseEvent *event);
@@ -65,12 +58,13 @@ class TUPI_EXPORT TupAnimationspace : public QMainWindow
         void keyPressEvent(QKeyEvent *event);
 
     signals:
-        void contextMenu(const QPoint &point);
-        void newPerspective(int index);
+        void contextMenu(const QPoint &p);
+        // void dropEvent(QDropEvent* e);
+        // void dragEnterEvent(QDragEnterEvent* e);
 
     private:
-        struct Private;
-        Private *const k;
+        TupViewCamera *camera;
+        bool playOn;
 };
 
 #endif

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,12 @@
  ***************************************************************************/
 
 #include "tupanimationspace.h"
+#include "tdebug.h"
+
+#include <QMouseEvent>
+#include <QDropEvent>
+#include <QLinearGradient>
+#include <QBoxLayout>
 
 /**
  * This class defines the space which contains the Animation Mode interface.
@@ -41,48 +47,21 @@
  * @author David Cuadrado
 */
 
-struct TupAnimationspace::Private
-{
-    TupCameraWidget *playerInterface;
-    QWidget *container;
-    bool playOn;
-};
-
-TupAnimationspace::TupAnimationspace(TupCameraWidget *playerUI, QWidget *parent) : QMainWindow(parent), k(new Private)
+TupAnimationspace::TupAnimationspace(TupViewCamera *internal, QWidget *parent) : QMainWindow(parent)
 {
     // TODO: Try a nice dark color for this window
     // setStyleSheet("QMainWindow { background-color: #d0d0d0; }");
-
-    k->playerInterface = playerUI;
-    k->playOn = false;
-    setCameraWidget(k->playerInterface);
+    camera = internal;
+    playOn = false;
+    QWidget *widget = new QWidget();
+    QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, widget);
+    layout->addWidget(camera, 0, Qt::AlignCenter);
+    widget->setLayout(layout);
+    setCentralWidget(widget);
 }
 
 TupAnimationspace::~TupAnimationspace()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupCameraWidget()]";
-        #else
-            TEND;
-        #endif
-    #endif
-
-    delete k->playerInterface;
-    k->playerInterface = NULL;
-    delete k->container;
-    k->container = NULL;
-    delete k;
-}
-
-void TupAnimationspace::setCameraWidget(TupCameraWidget *playerUI) 
-{
-    k->container = new QWidget();
-    QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, k->container);
-    k->playerInterface = playerUI;
-    layout->addWidget(k->playerInterface, 0, Qt::AlignCenter);
-    k->container->setLayout(layout);
-    setCentralWidget(k->container);
 }
 
 void TupAnimationspace::mousePressEvent(QMouseEvent *event)
@@ -93,41 +72,36 @@ void TupAnimationspace::mousePressEvent(QMouseEvent *event)
 
 void TupAnimationspace::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
 }
 
 void TupAnimationspace::mouseReleaseEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event);
 }
 
-void TupAnimationspace::keyPressEvent(QKeyEvent *event) 
-{
+void TupAnimationspace::keyPressEvent(QKeyEvent *event) {
+
     switch (event->key()) {
             case Qt::Key_Space:
                   if (event->modifiers()==Qt::ShiftModifier) {
-                      k->playerInterface->doStop();
-                      k->playerInterface->doPlayBack();
+                      camera->doPlayBack();
                   } else {
-                      if (!k->playOn) {
-                          k->playOn = true;
-                          k->playerInterface->doPlay();
-                          k->playOn = false;
+                      if (!playOn) {
+                          camera->doPlay();
+                          playOn = true;
                       } else {
-                          k->playerInterface->doStop();
-                          k->playOn = false;
+                          camera->doStop();
+                          playOn = false;
                       }
                   }
             break;
             case Qt::Key_Escape:
-                  k->playOn = false;
-                  k->playerInterface->doStop();
+                  camera->doStop();
             break;
             case Qt::Key_Right:
-                  k->playerInterface->nextFrame(); 
+                  camera->nextFrame(); 
             break;
             case Qt::Key_Left:
-                  k->playerInterface->previousFrame();
+                  camera->previousFrame();
             break;
             case Qt::Key_Up:
 
@@ -135,18 +109,32 @@ void TupAnimationspace::keyPressEvent(QKeyEvent *event)
             case Qt::Key_Down:
 
             break;
-            case Qt::Key_Return:
-                  emit newPerspective(0);
-                  k->playOn = false;
-                  k->playerInterface->doStop();
-            break;
-            case Qt::Key_1:
-                  if (event->modifiers() == Qt::ControlModifier)
-                      emit newPerspective(0);
-            break;
-            case Qt::Key_3:
-                  if (event->modifiers() == Qt::ControlModifier)
-                      emit newPerspective(2);
-            break;
     }
 }
+
+/*
+void TupAnimationspace::dropEvent(QDropEvent *event)
+{
+    if (event->mimeData()->hasColor()) {
+        QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
+        QPalette pal = palette();
+        pal.setColor(QPalette::Dark, color);
+ 
+        tDebug() << "Co: " << color;
+        setPalette(pal);
+        event->acceptProposedAction();
+    } else {
+        event->ignore();
+    }
+}
+ 
+void TupAnimationspace::dragEnterEvent(QDragEnterEvent *event)
+{
+    setFocus();
+
+    if (event->mimeData()->hasColor()) 
+        event->acceptProposedAction();
+    else 
+        event->ignore();
+ }
+*/
