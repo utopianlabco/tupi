@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -109,9 +109,7 @@ int main()
         fprintf(stderr,"Could not set encoder flags for --soft-target\n");
 
     if (buf_delay < 0) {
-        int var1 = keyframe_frequency*7>>1;
-        int var2 = 5*video_fps_numerator/video_fps_denominator;
-        if (var1 > var2)
+        if ((keyframe_frequency*7>>1) > 5*video_fps_numerator/video_fps_denominator)
             arg = keyframe_frequency*7>>1;
         else
             arg = 5*video_fps_numerator/video_fps_denominator;

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,37 +36,22 @@
 #ifndef THEORAMOVIEGENERATOR_H
 #define THEORAMOVIEGENERATOR_H
 
-#include "tglobal.h"
 #include "tmoviegenerator.h"
-#include "talgorithm.h"
-
-#ifdef __cplusplus
-extern "C" {
-#include <stdint.h>
-#include <ogg/ogg.h>
-#include <theora/codec.h>
-#include <theora/theoraenc.h>
-}
-#endif
-
-#include <QDir>
-#include <QFile>
-#include <QByteArray>
 
 /**
     @author Gustav Gonzalez 
 */
 
-class TUPI_EXPORT TheoraMovieGenerator : public TMovieGenerator
+class TheoraMovieGenerator : public TMovieGenerator
 {
     public:
         TheoraMovieGenerator(const QSize &size, int fps = 24, double duration = 0, int frames = 0);
         ~TheoraMovieGenerator();
         virtual bool movieHeaderOk();
-        virtual QString getErrorMsg() const;
+        virtual const char* getErrorMsg();
 
     protected:
-        void createMovieFile(const QString &fileName);
+        void __saveMovie(const QString &fileName);
         virtual void handle(const QImage &image);
         virtual bool begin();
         virtual void end();

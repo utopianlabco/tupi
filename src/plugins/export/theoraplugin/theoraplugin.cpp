@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,6 +36,8 @@
 #include "theoraplugin.h"
 
 // Tupi Framework
+#include "tdebug.h"
+#include "tglobal.h"
 #include "theoramoviegenerator.h"
 
 #include "tuplayer.h"
@@ -54,7 +56,7 @@ TheoraPlugin::~TheoraPlugin()
 
 QString TheoraPlugin::key() const
 {
-    return tr("Open Video Format");
+    return "Open Video Format";
 }
 
 TupExportInterface::Formats TheoraPlugin::availableFormats()
@@ -62,34 +64,27 @@ TupExportInterface::Formats TheoraPlugin::availableFormats()
     return TupExportInterface::OGV;
 }
 
-bool TheoraPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, 
-                                  TupExportInterface::Format fmt, const QSize &size, int fps, TupLibrary *library)
+bool TheoraPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format fmt, const QSize &size, int fps)
 {
     Q_UNUSED(fmt);
 
     int frames = 0;
     qreal duration = 0;
     foreach (TupScene *scene, scenes) {
-             duration += (qreal) scene->framesCount() / (qreal) fps;
-             frames += scene->framesCount();
+             duration += (qreal) scene->framesTotal() / (qreal) fps;
+             frames += scene->framesTotal();
     }
 
     TheoraMovieGenerator *generator = 0;
     generator = new TheoraMovieGenerator(size, fps, duration, frames);
 
-    TupAnimationRenderer renderer(color, library);
+    TupAnimationRenderer renderer(color);
     {
          if (!generator->movieHeaderOk()) {
              errorMsg = generator->getErrorMsg();
              #ifdef K_DEBUG
-                    QString msg = "FFMpegPlugin::exportToFormat() - [ Fatal Error ] - Can't create video -> " + filePath;
-                    #ifdef Q_OS_WIN
-                        qDebug() << msg;
-                    #else
-                        tError() << msg;
-                    #endif
+                    tError() << "FFMpegPlugin::exportToFormat() - [ Fatal Error ] - Can't create video -> " << filePath;
              #endif
-
              delete generator;
              return false;
          }
@@ -114,18 +109,21 @@ bool TheoraPlugin::exportToFormat(const QColor color, const QString &filePath, c
     return true;
 }
 
-bool TheoraPlugin::exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size, TupLibrary *library)
+bool TheoraPlugin::exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size)
 {
     Q_UNUSED(frameIndex);
     Q_UNUSED(color);
     Q_UNUSED(filePath);
     Q_UNUSED(scene);
     Q_UNUSED(size);
-    Q_UNUSED(library);
 
     return false;
 }
 
-QString TheoraPlugin::getExceptionMsg() const {
+const char* TheoraPlugin::getExceptionMsg() {
     return errorMsg;
 }
+
+#ifdef HAVE_THEORA
+       Q_EXPORT_PLUGIN( TheoraPlugin );
+#endif

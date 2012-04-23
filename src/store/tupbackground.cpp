@@ -41,7 +41,7 @@ TupBackground::TupBackground(TupScene *parent)
     : QObject(parent)
 {
     landscape = new TupFrame(this);
-    landscape->setFrameName(tr("landscape"));
+    landscape->setFrameName("landscape");
 }
 
 TupBackground::~TupBackground()
@@ -65,7 +65,7 @@ void TupBackground::fromXml(const QString &xml)
         if (e.tagName() == "frame") {
 
             landscape = new TupFrame(this);
-            landscape->setFrameName(tr("landscape"));
+            landscape->setFrameName("landscape");
 
             if (landscape) {
                 QString newDoc;

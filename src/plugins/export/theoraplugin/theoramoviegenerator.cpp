@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,20 @@
  ***************************************************************************/
 
 #include "theoramoviegenerator.h"
+#include "tdebug.h"
+#include "talgorithm.h"
+
+#ifdef __cplusplus
+extern "C" {
+#include <ogg/ogg.h>
+#include <theora/codec.h>
+#include <theora/theoraenc.h>
+}
+#endif
+
+#include <QDir>
+#include <QFile>
+#include <QByteArray>
 
 struct TheoraMovieGenerator::Private
 {
@@ -63,7 +77,7 @@ TheoraMovieGenerator::TheoraMovieGenerator(const QSize &size, int fps, double du
     k->fps = fps;
     k->streamDuration = duration;
     k->frames = frames;
-    k->movieFile = QDir::tempPath() + "/tupi_video_" + TAlgorithm::randomString(12);
+    k->movieFile = QDir::tempPath() + QDir::separator() + "tupi_video_" + TAlgorithm::randomString(12);
     k->movieFile += ".ogv";
     k->framesCounter = 0;
 
@@ -85,28 +99,13 @@ bool TheoraMovieGenerator::begin()
 
     k->ogg_fp = fopen(file, "wb");
     if (!k->ogg_fp) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: couldn't open video file";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-
+        tError() << "TheoraMovieGenerator::begin() - Error: couldn't open video file";
         return false;
     }
 
     srand(time(NULL));
     if (ogg_stream_init(&k->ogg_os, rand())) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: couldn't create ogg stream state";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::begin() - Error: couldn't create ogg stream state";
         return false;
     }
 
@@ -136,73 +135,36 @@ bool TheoraMovieGenerator::begin()
     int ret = th_encode_ctl(k->td, TH_ENCCTL_SET_KEYFRAME_FREQUENCY_FORCE, &keyframe_frequency, sizeof(keyframe_frequency - 1));
 
     if (ret < 0) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: could not set keyframe interval to " + QString::number((int)keyframe_frequency);
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::begin() - Error: could not set keyframe interval to " << (int)keyframe_frequency;
     }
 
     int arg = TH_RATECTL_CAP_UNDERFLOW;
     ret = th_encode_ctl(k->td, TH_ENCCTL_SET_RATE_FLAGS, &arg, sizeof(arg));
-    if (ret < 0) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: could not set encoder flags for soft encoding";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-    }
+    if (ret < 0)
+        tError() << "TheoraMovieGenerator::begin() - Error: could not set encoder flags for soft encoding";
 
     if (buf_delay < 0) {
-        if (((int) keyframe_frequency*7>>1) > 5*k->fps/1)
+        if ((keyframe_frequency*7>>1) > 5*k->fps/1)
             arg = keyframe_frequency*7>>1;
         else
             arg = 5*k->fps;
 
         ret = th_encode_ctl(k->td, TH_ENCCTL_SET_RATE_BUFFER, &arg, sizeof(arg));
-        if (ret < 0) {
-            #ifdef K_DEBUG
-                QString msg = "TheoraMovieGenerator::begin() - Error: Could not set rate control buffer for soft encoding";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
-        }
+        if (ret < 0)
+            tError() << "TheoraMovieGenerator::begin() - Error: Could not set rate control buffer for soft encoding";
     }
 
     if (buf_delay >= 0) {
         ret = th_encode_ctl(k->td, TH_ENCCTL_SET_RATE_BUFFER, &buf_delay, sizeof(buf_delay));
         if (ret < 0) {
-            #ifdef K_DEBUG
-                QString msg = "TheoraMovieGenerator::begin() - Error: could not set desired buffer delay";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
+            tError() << "TheoraMovieGenerator::begin() - Error: could not set desired buffer delay";
         }
     }
 
     th_comment_init(&k->tc);
 
     if (th_encode_flushheader(k->td, &k->tc, &k->op) <= 0){
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: internal Theora library error";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::begin() - Error: internal Theora library error";
         return false;
     }
 
@@ -210,14 +172,7 @@ bool TheoraMovieGenerator::begin()
 
     ogg_stream_packetin(&k->ogg_os, &k->op);
     if (ogg_stream_pageout(&k->ogg_os, &k->og) != 1) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::begin() - Error: internal Ogg library error";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::begin() - Error: internal Ogg library error";
         return false;
     }
     fwrite(k->og.header, 1, k->og.header_len, k->ogg_fp);
@@ -226,14 +181,7 @@ bool TheoraMovieGenerator::begin()
     for(;;) {
         ret = th_encode_flushheader(k->td, &k->tc, &k->op);
         if (ret < 0) {
-            #ifdef K_DEBUG
-                QString msg = "TheoraMovieGenerator::begin() - Error: internal Theora library error";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
+            tError() << "TheoraMovieGenerator::begin() - Error: internal Theora library error";
             return false;
         } else if (!ret)
                    break;
@@ -244,14 +192,7 @@ bool TheoraMovieGenerator::begin()
     for(;;) {
         int result = ogg_stream_flush(&k->ogg_os, &k->og);
         if (result < 0) {
-            #ifdef K_DEBUG
-                QString msg = "TheoraMovieGenerator::begin() - Error: internal Ogg library error";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
+            tError() << "TheoraMovieGenerator::begin() - Error: internal Ogg library error";
             return false;
         }
         if (result == 0)
@@ -269,7 +210,7 @@ bool TheoraMovieGenerator::movieHeaderOk()
     return k->exception;
 }
 
-QString TheoraMovieGenerator::getErrorMsg() const 
+const char* TheoraMovieGenerator::getErrorMsg() 
 {
     return k->errorMsg;
 }
@@ -338,26 +279,12 @@ void TheoraMovieGenerator::writeTheoraFrame(unsigned long w, unsigned long h, un
     }
 
     if (th_encode_ycbcr_in(k->td, ycbcr)) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::theoraWriteFrame() - Error: could not encode frame";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::theoraWriteFrame() - Error: could not encode frame";
         return;
     }
 
     if (!th_encode_packetout(k->td, last, &op)) {
-        #ifdef K_DEBUG
-            QString msg = "TheoraMovieGenerator::theoraWriteFrame() - Error: could not read packets";
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
+        tError() << "TheoraMovieGenerator::theoraWriteFrame() - Error: could not read packets";
         return;
     }
 
@@ -409,12 +336,7 @@ void TheoraMovieGenerator::handle(const QImage &image)
     }
 
     #ifdef K_DEBUG
-        QString msg = "TheoraMovieGenerator::handle() -  Writing theora frame #" + QString::number(k->framesCounter);
-        #ifdef Q_OS_WIN
-            tWarning() << msg;
-        #else
-            qWarning() << msg;
-        #endif
+           tWarning() << "TheoraMovieGenerator::handle() -  Writing theora frame #" + QString::number(k->framesCounter);
     #endif
 
     int last = 0;
@@ -443,7 +365,7 @@ void TheoraMovieGenerator::end()
     ogg_stream_clear(&k->ogg_os);
 }
 
-void TheoraMovieGenerator::createMovieFile(const QString &fileName)
+void TheoraMovieGenerator::__saveMovie(const QString &fileName)
 {
     if (QFile::exists(fileName)) 
         QFile::remove(fileName);
