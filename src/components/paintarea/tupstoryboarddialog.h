@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,61 +36,27 @@
 #ifndef TUPSTORYBOARDDIALOG_H
 #define TUPSTORYBOARDDIALOG_H
 
-#include "tglobal.h"
 #include "tupscene.h"
-#include "tupstoryboard.h"
 #include "tupexportinterface.h"
-#include "tapplicationproperties.h"
-#include "tconfig.h"
-#include "tseparator.h"
-#include "talgorithm.h"
-#include "tosd.h"
 
 #include <QDialog>
 #include <QColor>
 #include <QSize>
 #include <QIcon>
 #include <QListWidgetItem>
-#include <QPrinter>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QPixmap>
-#include <QBoxLayout>
-#include <QListWidget>
-#include <QLabel>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QDir>
-#include <QPushButton>
-#include <QPainter>
-#include <QFileDialog>
-#include <QDesktopWidget>
-#include <QLocale>
-#include <QPrintDialog>
-#include <QTextBrowser>
-#include <QComboBox>
 
-class TUPI_EXPORT TupStoryBoardDialog : public QDialog
+class TupStoryBoardDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        TupStoryBoardDialog(bool isNetworked, TupExportInterface *imagePlugin, const QColor &color, 
-                            const QSize &size, TupScene *scene, int sceneIndex, TupLibrary *library, QWidget *parent);
+        TupStoryBoardDialog(TupExportInterface *imagePlugin, const QColor &color, const QSize &size, TupScene *scene, QWidget *parent);
         ~TupStoryBoardDialog();
-        enum DocType { HTML = 1, PDF };
 
     private slots:
         void updateForm(QListWidgetItem *current, QListWidgetItem *previous);
-        void exportStoyrboard(const QString &type);
-        void postStoryboardAtServer();
-        void closeDialog();
-        void exportAsHTML();
-        void exportAsPDF();
-
-    signals:
-        void updateStoryboard(TupStoryboard *, int sceneIndex);
-        void postStoryboard(int sceneIndex);
+        void saveStoryBoard();
+        void exportStoryBoard();
 
     private:
         void setListComponent();
@@ -100,19 +66,6 @@ class TUPI_EXPORT TupStoryBoardDialog : public QDialog
 
         void thumbnailGenerator();
         void addScene(const QString &label, const QIcon &icon);
-
-        void saveLastComponent();
-
-        QString getStoryTitle() const;
-        QString getStoryAuthor() const;
-        QString getStoryTopics() const;
-        QString getStorySummary() const;
-
-        QString getSceneTitle() const;
-        QString getSceneDuration() const;
-        QString getSceneDescription() const;
-        void createHTMLFiles(const QString &path, DocType type);
-        void cleanDirectory(const QString &path);
  
         struct Private;
         Private *const k;

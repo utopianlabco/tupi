@@ -33,8 +33,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TupPAINTAREA_H
-#define TupPAINTAREA_H
+#ifndef TUPPAINTAREA_H
+#define TUPPAINTAREA_H
 
 #include "tuppaintareabase.h"
 #include "tupabstractprojectresponsehandler.h"
