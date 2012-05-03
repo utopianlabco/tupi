@@ -102,9 +102,7 @@ SOURCES += tuplayer.cpp \
            tuptweenerstep.cpp \
            tupsoundlayer.cpp \
            tupsvgitem.cpp \
-           tupbackground.cpp \
-           tupstoryboard.cpp
-
+           tupbackground.cpp
 *:!macx{
     CONFIG += dll warn_on
 }
