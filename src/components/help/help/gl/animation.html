@@ -1,192 +1,261 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf8">
-  <link rel="stylesheet" type="text/css" href="file:tupi.css">
-</head><body class="tupi_background2">
-<p class="title">Módulo de animación</p>
-<p class="paragraph">
-É neste módulo no que pasarás a maior parte do tempo cando esteas a 
-traballar con  <b>Tupí</b>, sabes por que? aquí é onde constrúes cada 
-fotograma da túa animación e, para seren máis precisos, cada liña de 
-cada personaxe de cada peza do escenario no que queiras contar a túa 
-historia.</br>
-Dito noutras palabras se, por exemplo, queres crear a animación 
-dun personaxe camiñando por unha rúa, é nesta lapela onde deberás 
-deseñar ao personaxe e cada unha das posicións nas que este aparecerá 
-mentres se move: 
-</p>
-<p class="paragraph"></p>
-<center>
-    <img src="file:illustration_shot.png">
-<p class="paragraph"><b>Fig. 13</b> Interface do módulo de animación</p>
-</center>
-<p class="paragraph"><b>Consello:</b> Cada vez que queiras ver o <b>Módulo de animación,</b> só terás que premer a combinación <b>Ctrl + 1</b>.</p>
-<center>
-    <img src="file:illustration_menu.png">
-<p class="paragraph"><b>Fig. 14</b> Menú de <b>Módulos</b>, acceso a <b>Animación</b></p>
-</center>
-<p class="paragraph">Na sección anterior, botámoslle un ollo aos compoñentes máis xerais da interface do <b>Tupí</b>. Vexamos agora, cun pouco máis de detalle, cada un dos recursos </p>
-<p class="paragraph"><b>1.</b> <b>Área de traballo</b></p>
-<p class="paragraph">Pensa na <i>área de traballo</i> como un lenzo en
-branco, o espazo do que dispomos para realizar as ilustracións de cada
-un dos fotogramas que serán parte da animación. Dispón de dúas regras
-de guía nos bordos superior e esquerdo. No centro, ten unha forma
-rectangular de fondo branco que representa as dimensións do fotograma,
-ou se o prefires, a túa «folla de papel», do lado dereito atoparemos un
-panel dinámico que conten as propiedades da ferramenta que estea
-seleccionada nese momento e, na parte inferior, un pequeno grupo de
-controis relacionados coa <i>área de traballo</i>.</p>
-<p class="paragraph">
-  <b>Consello:</b> Aquelo que debuxes fora do fotograma, non será visíbel na animación.</p>
-<center>
-    <img src="file:work_area.png">
+  <meta http-equiv="content-type" content="text/html; charset=us-ascii">
+  <link rel="stylesheet" type="text/css" href="../css/tupi.css">
+</head>
+<body class="tupi_background2">
+  <p class="title">Animation Module</p>
 
-    <p class="paragraph"><b>Fig. 15</b> Área de traballo</p>
+  <p class="paragraph">This is the module you will spend most of
+  your time in when you are working with <b>Tupi</b>. You know why?
+  This is where you will build each frame of your animation; every
+  line of every character and every piece of the scenario for which
+  you want to tell the story.<br>
+  In other words, if you wanted to create an animation of a
+  character walking down a street, this tab is where you will
+  design the character and each of the positions in which it will
+  appear as you move it.</p>
+
+  <center>
+    <img src="./images/illustration_shot.png">
+
+    <p class="paragraph"><b>Fig # 13.</b> Animation Interface
+    Module</p>
   </center>
-<p class="paragraph"><b>2.</b> <b>Panel superior de funcións de edición</b><br>
-  Situado na parte superior esquerda, sobre a <i>área de traballo</i>, este panel ofrece todas as funcionalidades básicas de edición habituais á hora de traballar sobre unha ilustración: <i>Desfacer, Refacer, Copiar, Pegar, Cortar, Eliminar, Agrupar e Desagrupar</i>.<br>
-  Adicionalmente, ofrece dúas opcións complementarias moi útiles: unha <i>Grella de guía</i> para o ilustrador, que pode activarse ou desactivarse a vontade, e o control do <i>Papel cebola</i>,
-funcionalidade que permítenos converter o fotograma actual en
-semi-transparente, coa fin de poder ver os debuxos que temos tanto en
-fotogramas anteriores, como en fotogramas posteriores. Na sección «<a href="chapter2.html">Vexamos un exemplo</a>» afondaremos no uso desta última opción.</p>
-<center>
-    <table>
-      <tbody><tr><td style="vertical-align: top;"><img src="file:edition_panel.png"></td></tr>
-<tr>
-        
 
-        <td><center><img src="file:edition_panel_small.png"></center></td>
-      </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 16</b> Panel superior de funcións de edición</p>
-</center>
-<p class="paragraph"><b>3.</b> <b>Panel de ferramentas</b><br>
-  Este panel, situado no bordo esquerdo da <i>área de traballo</i>fornécenos todas as ferramentas necesarias para debuxar e realizar 
-operacións especiais sobre a nosa ilustración. Cada recurso está agrupado segundo a súa natureza nos seguintes sub-menús: 
-</p>
-<ul class="paragraph">
-  <li><b>Menu de trazo:</b> Este menú inclúe todas as ferramentas de debuxo, entre elas: <i>Lapis, Tinta, Borrador, Rectangulo, Elipse, Liña,
-    Poliliña,</i> e a ferramenta de <i>Texto</i>.</li>
-  <li><b>Menú de selección:</b> Este menú inclúe a opción de <i>Selección de nodo,</i> que permítenos modificar a forma e a traxectoria duna figura a partir dos nodos de edición e a opción de <i>Selección de obxectos</i> que permite mover, rotar ou escalar calquera figura que se seleccione desde a <i>Área de traballo</i>.</li>
-  <li><b>Menú de recheo:</b> Este menú inclúe as ferramentas de <i>Recheo de bordo</i> e <i>Recheo de interior</i> sobre os obxectos seleccionados, a partir da cor que estea definida na <i>Paleta de cores</i> nese momento.</li>
-  <li><b>View Menu:</b> Este menú agrupa a opción de <i>Lupa</i> , para acercar ou afastar a vista do fotograma que está en edición e a ferramenta de <i>Arrastre</i> (máis coñecida como <i>«Man»</i>)), que serve para desprazar o punto de vista dun fotograma cando este está ampliado. </li>
-<li><b>Menú de interpolación:</b> a futura funcionalidade de <i>interpolación</i> (Tweening en inglés)</li>
-</ul>
+  <p class="paragraph"><b>Tip:</b> Whenever you wish to see the
+  <b>animation module,</b> simply press <b>Ctrl + 1.</b></p>
+
+  <center>
+    <img src="./images/illustration_menu.png">
+
+    <p class="paragraph"><b>Fig # 14.</b> Animation Module
+    Shortcut</p>
+  </center>
+
+  <p class="paragraph">In the previous section, we looked at the
+  general components of the <b>Tupi</b> interface. Now let&rsquo;s
+  look in a little more detail at every resource available from
+  this module.</p>
+
+  <p class="paragraph"><b>1.</b> <b>Workspace area</b></p>
+
+  <p class="paragraph">Think of the <i>workspace</i> as a blank
+  canvas, the space available for the design of each of the frames
+  that will be part of the animation. There are two ruler scales,
+  one at the top and one the left. In the centre, there is a
+  rectangular white background, representing the dimensions of the
+  frame, or if you prefer, your &ldquo;paper&rdquo;. On the right
+  side you willfind a dynamic panel that contains the properties of
+  whichever tool is selected at that time and at the bottom, a
+  small set of controls related to the <i>Workspace</i>.<br>
+  <b>Tip:</b> Anything which does not draw into the frame, will not
+  be visible in the animation.</p>
+
+  <center>
+    <img src="./images/work_area.png">
+
+    <p class="paragraph"><b>Fig # 15.</b> Workspace area</p>
+  </center>
+
+  <p class="paragraph"><b>2.</b> <b>Primary Editing Functions
+  Panel</b><br>
+  Located in the upper left of the <i>Workspace</i>, this panel
+  offers all the usual basic editing features when working on an
+  illustration; <i>Re-do, Undo, Copy, Paste, Cut, Delete, Group</i>
+  and <i>Ungroup.</i><br>
+  Additionally, it offers two more very useful options: a
+  <i>Grid</i> to guide the illustrator, which can be activated or
+  deactivated at will and <i>Onion Skin,</i> functionality that
+  allows you to make the current frame semi-transparent in order to
+  see drawings in previous and subsequent frames. We will delve
+  more into the use of the latter in <a href=
+  "chapter2.html">Chapter 2 -Let&rsquo;s make an example!</a></p>
 
   <center>
     <table>
-      <tbody><tr>
-        <td><img src="file:toolbox.png"></td>
+      <tr>
+        <td><img src="./images/edition_panel.png"></td>
 
-        <td><img src="file:toolbox_small.png"></td>
+        <td><img src="./images/edition_panel_small.png"></td>
       </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 17</b> Panel de ferramentas</p>
-</center>
+    </table>
 
-  <p class="paragraph"><b>4.</b> <b>Barra lateral esquerda</b></p>
-<p class="paragraph"><b>Paleta de cores</b><br> Como ben indica o seu
-nome, este é o panel onde escollemos a cor coa que queremos trazar,
-independente da figura ou forma coa que esteamos a traballar. É
-importante ter en conta que mentres non modifiquemos a cor actual,
-absolutamente todo o que debuxemos conservará esa mesma cor, ata que
-seleccionemos unha diferente.</p>
-<center>
-    <table>
-      <tbody><tr>
-        <td><img src="file:color_palette.png"></td>
-
-        <td><img src="file:color_palette_small.png"></td>
-      </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 18</b> Paleta de cores</p>
-</center>
-<p class="paragraph"><b>Consello:</b> Ten presente que ademais de utilizar cores homoxéneas, tamén podes utilizar <i>degradados</i>,
-é dicir, conxuntos de cores que se mesturan de xeito progresivo sobre
-unha mesma figura, como no seguinte exemplo, no que o degradado comeza
-cun verde luminoso e remata en negro:</p>
-<center>
-    <img src="file:gradient.png">
-<p class="paragraph"><b>Fig. 19</b> Exemplo de degradado</p>
-</center>
-<p class="paragraph"><b>Propiedades da pluma</b><br>A <i>pluma</i>
-neste contexto, é o tipo de ferramenta que usas para debuxar. Se
-queres, podes pensar na pluma como o tipo de punta que lle vas a poñer
-ao teu lapis. Este panel permítenos modificar as características da
-pluma, como o grosor, o tipo de bordos para os extremos dos trazos e a
-continuidade da liña (por exemplo, podes facer trazos punteados, se así
-o queres).</p>
-<center>
-    <table>
-      <tbody><tr>
-        <td><img src="file:brush_properties.png"></td>
-
-        <td><img src="file:brush_properties_small.png"></td>
-      </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 20</b> Propiedades da pluma</p>
-</center>
-<p class="paragraph"><b>Biblioteca de obxectos</b><br> A función deste
-compoñente, é permitirnos almacenar unha copia daquelas figuras ou
-imaxes que forman parte do noso proxecto e que nos interesa volver a
-utilizar noutros fotogramas da mesma animación ou doutro proxecto. Este
-recurso é moi útil en animacións onde sabes que algúns dos elementos
-que xa debuxaches van a aparecer unha e outra vez.</p>
-<center>
-    <table>
-      <tbody><tr>
-        <td><img src="file:library.png"></td>
-
-        <td><img src="file:library_small.png"></td>
-      </tr>
-    </tbody></table>
-
-    <p class="paragraph"><b>Fig. 21</b> Biblioteca de obxectos</p>
+    <p class="paragraph"><b>Fig # 16.</b> Primary Editing Functions
+    Panel</p>
   </center>
 
-  <p class="paragraph"><b>5.</b> <b>Barra lateral dereita</b></p>
-<p class="paragraph"><b>Administrador de escenas</b><br> Sabes o que é
-unha escena? Tentaremos dar unha definición sinxela: pensa nun filme ou
-nun anuncio da TV, fixácheste en que sempre se compoñen de pequenos
-fragmentos ordenados de tal xeito que contan unha historia? Estes
-fragmentos adoitan seren recoñecidos doadamente polos cambios na
-posición da cámara ou el punto de vista do espectador, ou sexa, ti.<br>
-Tendo claro este concepto, é doado describir este compoñente: a través
-deste panel vamos a poder crear e eliminar cada unha das escenas que
-queremos incluír no noso proxecto de animación.<br>
-  <b>Consello:</b>
-É moi importante que antes de comezar co teu proxecto de animación,
-teñas moi claro cales son as escenas que vas a desenvolver e en que
-orden as vas a crear. Pon moita atención aos consellos da sección «<a href="first.html">Primeiro o primeiro!</a>».</p>
-<center>
-    <table>
-      <tbody><tr>
-        <td><img src="file:scenes_manager.png"></td>
+  <p class="paragraph"><b>3.</b> <b>Tools Panel</b><br>
+  This panel is located on the left edge of the <i>workspace</i>
+  and provides you with the necessary tools to draw and perform
+  special operations on your illustration. Each resource is grouped
+  by type in the following sub-menus:</p>
 
-        <td><img src="file:scenes_manager_small.png"></td>
-      </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 22</b> Administrador de escenas</p>
-</center>
-<p class="paragraph"><b>Táboa de exposicións</b><br>
-  A <i>Táboa de exposicións</i>
-é un recurso moi importante no momento de ilustrar cada un dos
-«instantes» que forman parte da túa animación. A través dela, podes
-engadir ou eliminar novos fotogramas e novas capas a cada unha das túas
-escenas. Ademais, desde este panel tes o control para seleccionar os
-fotogramas que queiras editar na <i>Área de traballo</i> simplemente premendo nela. Esta funcionalidade sumada á opción de <i>papel cebola</i> do <i>Panel de funcións de edición</i>,
-ofreceranche os elementos necesarios para que as túas animacións sexan
-fluídas. Isto será moito máis doado de entender, despois de que vexas o
-exemplo no <a href="chapter2.html">Capítulo 2</a>.</p>
-<center>
-    <table>
-      <tbody><tr>
-        <td><img src="file:exposure_sheet.png"></td>
+  <ul class="paragraph">
+    <li>Drawing Menu: This menu contains all the drawing tools,
+    including: <i>Pencil, Ink, Eraser, Rectangle, Ellipse, Line,
+    Polyline,</i> and the <i>Text</i> tool.</li>
 
-        <td><img src="file:exposure_sheet_small.png"></td>
+    <li>Selection Menu: This menu includes the tool for <i>Node
+    Selection,</i> which can alter the shape and trajectory of an
+    object by editing of nodes, and the <i>Object Selection</i>
+    tool which lets you move, rotate or scale any object that is
+    selected from the <i>Workspace</i>.</li>
+
+    <li>Fill Menu: This menu contains tools for <i>Contour Fill</i>
+    and <i>Internal Fill</i> of selected objects from the colour
+    that is defined in the <i>Colour Palette</i> at the time.</li>
+
+    <li>View Menu: This menu contains the <i>Magnifying Glass</i>
+    tool to zoom in or out of the frame being worked on and the
+    <i>Drag</i> tool (better known as the
+    <i>&ldquo;Hand&rdquo;</i>), which serves to grab and move the
+    view of a frame when it is zoomed.</li>
+
+    <li>Tweening Menu: TODO should this go in yet? is tweeining
+    released</li>
+  </ul>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/toolbox.png"></td>
+
+        <td><img src="./images/toolbox_small.png"></td>
       </tr>
-    </tbody></table>
-<p class="paragraph"><b>Fig. 23</b> Táboa de exposicións</p>
-</center>
-</body></html>
+    </table>
+
+    <p class="paragraph"><b>Fig # 17.</b> Tools Panel</p>
+  </center>
+
+  <p class="paragraph"><b>4.</b> <b>Left Sidebar</b></p>
+
+  <p class="paragraph"><b>Colour Palette</b><br>
+  As its name implies, this is the panel where you choose the
+  colour that you want to draw with, regardless of the shape or
+  form that you are working with. It is important to note that
+  selecting a new colour will not change the colour of anything
+  you&rsquo;ve already drawn, but everything you draw after selecting it
+  will be in the new colour (until you choose another one).</p>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/color_palette.png"></td>
+
+        <td><img src="./images/color_palette_small.png"></td>
+      </tr>
+    </table>
+
+    <p class="paragraph"><b>Fig # 18.</b> Colour Palette</p>
+  </center>
+
+  <p class="paragraph"><b>Tip:</b> Note that in addition to using
+  single colours, you can also use <i>gradients,</i> i.e.
+  combinations of colours that blend gradually on the same figure
+  as in the following example, where the gradient starts as a light
+  green and ends in black:</p>
+
+  <center>
+    <img src="./images/gradient.png">
+
+    <p class="paragraph"><b>Fig # 19.</b> Gradient Example</p>
+  </center>
+
+  <p class="paragraph"><b>Pen Properties</b><br>
+  The <i>Pen</i> in this context defines the qualities of the tool
+  you&rsquo;ll use to draw, you may want to think of it as the type
+  of pen tip or brush you&rsquo;re going to use. This panel allows
+  you to modify characteristics of the brush, such as its
+  thickness, the shape of the stroke ends and the continuity of the
+  line (for example, you can make different types of dotted line,
+  if you wish).</p>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/brush_properties.png"></td>
+
+        <td><img src="./images/brush_properties_small.png"></td>
+      </tr>
+    </table>
+
+    <p class="paragraph"><b>Fig # 20.</b> Pen Properties</p>
+  </center>
+
+  <p class="paragraph"><b>Object Library</b><br>
+  The function of this component is to store a copy of the figures
+  or images that are part of your project that you want to reuse in
+  other frames of the same animation or even in another project.
+  This resource is useful for animations where you know some of the
+  components that you have drawn will appear again and again.</p>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/library.png"></td>
+
+        <td><img src="./images/library_small.png"></td>
+      </tr>
+    </table>
+
+    <p class="paragraph"><b>Fig # 21.</b> Object Library</p>
+  </center>
+
+  <p class="paragraph"><b>5.</b> <b>Right Sidebar</b></p>
+
+  <p class="paragraph"><b>Scene Manager</b><br>
+  What is a scene? I&rsquo;ll try to give a simple definition: think of a
+  movie or a TV commercial, I&rsquo;m sure you&rsquo;ve noticed that
+  they&rsquo;re always made up of small pieces shot separately and
+  then arranged to tell the story? These fragments are usually
+  easily recognised by changes in the position of the camera or the
+  spectator&rsquo;s point of view.<br>
+  Once this concept is clear, it&rsquo;s easy to explain this
+  component, through this panel you will be able to create, modify
+  or delete each of the scenes that you include in your animation
+  project.<br>
+  <b>Tip:</b> It is important that before you start your animation
+  project, you have very clear idea of what scenes you will develop
+  and in what order you&rsquo;re going to create them. Pay close
+  attention to the advice in &ldquo;<a href="first.html">First
+  things first!</a>&rdquo;.</p>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/scenes_manager.png"></td>
+
+        <td><img src="./images/scenes_manager_small.png"></td>
+      </tr>
+    </table>
+
+    <p class="paragraph"><b>Fig # 22.</b> Scene Manager</p>
+  </center>
+
+  <p class="paragraph"><b>Exposure Sheet</b><br>
+  The <i>Exposure Sheet</i> is a vital resource to illustrate the
+  sequence of the frames that are part of a scene. Through it, you
+  can add or delete new frames and new layers to each of your
+  scenes. Moreover, from this panel you are able to select frames
+  to edit in the <i>Workspace</i> with a single click. This
+  functionality combined with the <i>onion skin</i> feature in the
+  Tools Panel, will offer the necessary elements to make your
+  animations look fluid. This will be much easier to understand,
+  after you review the example in <a href="chapter2.html">Chapter
+  2</a> .</p>
+
+  <center>
+    <table>
+      <tr>
+        <td><img src="./images/exposure_sheet.png"></td>
+
+        <td><img src="./images/exposure_sheet_small.png"></td>
+      </tr>
+    </table>
+
+    <p class="paragraph"><b>Fig # 23.</b> Exposure Sheet</p>
+  </center>
+</body>
+</html>
