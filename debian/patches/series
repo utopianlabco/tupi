@@ -1,3 +1,4 @@
+ruby_to_1.9.patch
 desktop.patch
 desktop-encoding.patch
 build-with-libav-0.8.patch

@@ -2,12 +2,17 @@ Source: tupi
 Section: graphics
 Priority: optional
 Maintainer: Dmitry Smirnov <onlyjob@member.fsf.org>
-Build-Depends: debhelper (>= 9.0), ruby, qt4-qmake (>= 4.7.3),
- libqt4-opengl-dev (>= 4.7.3), libavformat-dev (>= 0.7.3), 
- libaspell-dev (>= 0.60.7~), libavutil51 (>= 0.7.3),
- zlib1g-dev, imagemagick, perl, qt4-linguist-tools
+Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl, qt4-qmake (>= 4.7.3)
+ ,imagemagick
+ ,qt4-linguist-tools,
+ ,libaspell-dev (>= 0.60.7~)
+ ,libavformat-dev (>= 0.7.3)
+ ,libavutil51 (>= 0.7.3),
+ ,libqt4-opengl-dev (>= 4.7.3)
+ ,zlib1g-dev
 Standards-Version: 3.9.3
 Homepage: http://www.maefloresta.com/portal
+DM-Upload-Allowed: yes
 
 Package: tupi
 Architecture: any

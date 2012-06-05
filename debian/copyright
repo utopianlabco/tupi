@@ -3,60 +3,51 @@ Upstream-Name: tupi
 Upstream-Contact: Gustav Gonzalez <info@maefloresta.com>
 Source: http://www.maefloresta.com/
 
-
 Files: debian/*
-Copyright: © 2011-2012 Dmitry Smirnov <onlyjob@member.fsf.org>
+Copyright: 2011-2012 Dmitry Smirnov <onlyjob@member.fsf.org>
 License: GPL-3+
-
 
 Files: *
-Copyright: © 2010-2012 Gustav Gonzalez <info@maefloresta.com>
-           © 2006      David Cuadrado
-           © 2006      Jorge Cuadrado
-           © 2003      Fernado Roldan
-           © 2003      Simena Dinas
+Copyright: 2010-2012 Gustav Gonzalez <info@maefloresta.com>
+           2006      David Cuadrado
+           2006      Jorge Cuadrado
+           2003      Fernado Roldan
+           2003      Simena Dinas
 License: GPL-3+
-
 
 Files: src/framework/tcore/kmd5hash.*
-Copyright: © 2005 Angius Fabrizio
+Copyright: 2005 Angius Fabrizio
 License: GPL-3+
 
-
 Files: src/framework/tgui/kimageeffect.*
-Copyright: © 1998,1999,2001,2002 Daniel M. Duley <mosfet@kde.org>
-           © 1998,1999           Christian Tibirna <ctibirna@total.net>
-           © 1998,1999           Dirk Mueller <mueller@kde.org>
-           © 1999                Geert Jansen <g.t.jansen@stud.tue.nl>
-           © 2000                Josef Weidendorfer <weidendo@in.tum.de>
-           © 2004                Zack Rusin <zack@kde.org>
+Copyright: 1998,1999,2001,2002 Daniel M. Duley <mosfet@kde.org>
+           1998,1999           Christian Tibirna <ctibirna@total.net>
+           1998,1999           Dirk Mueller <mueller@kde.org>
+           1999                Geert Jansen <g.t.jansen@stud.tue.nl>
+           2000                Josef Weidendorfer <weidendo@in.tum.de>
+           2004                Zack Rusin <zack@kde.org>
 License: BSD-2-Clause
-
 
 Files: src/framework/tcore/kcpuinfo.h
-Copyright: © 2003 Fredrik Höglund <fredrik@kde.org>
+Copyright: 2003 Fredrik Höglund <fredrik@kde.org>
 License: BSD-2-Clause
-
 
 Files: tools/change-svn-wc-format.py
 Copyright: unknown
 License: Apache-2.0
 
-
 Files: 3rdparty/potrace/*
-Copyright: © 2001-2005 Peter Selinger
+Copyright: 2001-2005 Peter Selinger
 License: GPL-3+
-
 
 Files: 3rdparty/quazip/*
-Copyright: © 1998-2005 Gilles Vollant
-           ©      2005 Sergey A. Tachenov
+Copyright: 1998-2005 Gilles Vollant
+                2005 Sergey A. Tachenov
 License: GPL-3+
 
-
 Files: 3rdparty/quazip/zip.* 3rdparty/quazip/unzip.* 3rdparty/quazip/crypt.h
-Copyright: © 1998-2005 Gilles Vollant
-Copyright: © 1999-2000 Info-ZIP
+Copyright: 1998-2005 Gilles Vollant
+Copyright: 1999-2000 Info-ZIP
 License:
  This software is provided 'as-is', without any express or implied
  warranty.  In no event will the authors be held liable for any damages
@@ -73,8 +64,6 @@ License:
     misrepresented as being the original software.
  3. This notice may not be removed or altered from any source distribution.
 
-
-
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -88,7 +77,6 @@ License: GPL-3+
  .
  On Debian systems, the complete text of the GNU General
  Public License 3 can be found in "/usr/share/common-licenses/GPL-3".
-
 
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,7 +93,6 @@ License: Apache-2.0
  .
  On Debian systems, the complete text of the Apache License
  version 2.0 can be found in "/usr/share/common-licenses/Apache-2.0".
-
 
 License: BSD-2-Clause
  Redistribution and use in source and binary forms, with or without

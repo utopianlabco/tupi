@@ -1,3 +1,12 @@
+tupi (0.1+git12-6) unstable; urgency=low
+
+  * new patch for ruby1.9 compatibility (Closes: #676121)
+  * removed '©' characters from debian/copyright
+  * debian source compression to '.xz'
+  * DM-Upload-Allowed: yes! (Thanks to Aron Xu)
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 05 Jun 2012 11:48:56 +1000
+
 tupi (0.1+git12-5) unstable; urgency=low
 
   * [patch] desktop icon replaced with smaller one
