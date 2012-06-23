@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,11 +34,11 @@
  ***************************************************************************/
 
 #include "tuppenthicknesswidget.h"
+#include "tdebug.h"
 
 struct TupPenThicknessWidget::Private
 {
     int thickness;
-    double opacity;
     int brush;
     QColor color;
     QBrush currentBrush;
@@ -47,8 +47,6 @@ struct TupPenThicknessWidget::Private
 TupPenThicknessWidget::TupPenThicknessWidget(QWidget *parent) : QWidget(parent), k(new Private)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    k->opacity = 1.0;
-    k->thickness = 100;
 }
 
 TupPenThicknessWidget::~TupPenThicknessWidget()
@@ -61,16 +59,9 @@ void TupPenThicknessWidget::render(int thickness)
     update();
 }
 
-void TupPenThicknessWidget::render(double opacity)
-{
-    k->opacity = opacity;
-    update();
-}
-
 void TupPenThicknessWidget::setColor(const QColor color)
 {
     k->color = color;
-    update();
 }
 
 void TupPenThicknessWidget::setBrush(int index)
@@ -102,7 +93,7 @@ void TupPenThicknessWidget::paintEvent(QPaintEvent *)
      painter.fillRect(0, 0, width(), height(), QColor(255, 255, 255));
 
      QPen border(QColor(0, 0, 0));
-     border.setWidth(1);
+     border.setWidth(0.5);
      painter.setPen(border);
      painter.drawRect(0, 0, width(), height());
 
@@ -121,21 +112,12 @@ void TupPenThicknessWidget::paintEvent(QPaintEvent *)
                  // tFatal() << "TupPenThicknessWidget::paintEvent() - Setting gradient brush";
                  brush = k->currentBrush;
              } else {
-                #ifdef K_DEBUG
-                    QString msg = "TupPenThicknessWidget::paintEvent() - Warning! NO gradient!";
-                    #ifdef Q_OS_WIN
-                        qDebug() << msg;
-                    #else
-                        tError() << msg;
-                    #endif
-                #endif
-                return;
+                 // tFatal() << "TupPenThicknessWidget::paintEvent() - Warning! NO gradient!";
              }
          }
          QPen pen(Qt::NoPen);
          painter.setPen(pen);
          painter.setBrush(brush);
-         painter.setOpacity(k->opacity);
          painter.drawEllipse(-(k->thickness/2), -(k->thickness/2), k->thickness, k->thickness);
      } else {
          QPixmap pixmap(THEME_DIR + "icons/brush_15.png");

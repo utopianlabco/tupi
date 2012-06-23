@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,16 @@
  ***************************************************************************/
 
 #include "tuppendialog.h"
+#include "tdebug.h"
+#include "tapplicationproperties.h"
+#include "tseparator.h"
+#include "tuppenthicknesswidget.h"
+#include "timagebutton.h"
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QDialogButtonBox>
 
 struct TupPenDialog::Private
 {
@@ -62,7 +72,7 @@ TupPenDialog::TupPenDialog(TupBrushManager *brushManager, QWidget *parent) : QDi
     setBrushCanvas();
     setButtonsPanel();
 
-    TImageButton *closeButton = new TImageButton(QPixmap(THEME_DIR + "icons/close_big.png"), 60, this, true);
+    TImageButton *closeButton = new TImageButton(QPixmap(THEME_DIR + "icons/close_big.png"), 40, this, true);
     closeButton->setToolTip(tr("Close"));
     closeButton->setDefault(true);
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -106,12 +116,8 @@ void TupPenDialog::setButtonsPanel()
     connect(minus, SIGNAL(clicked()), this, SLOT(onePointLess()));
 
     k->sizeLabel = new QLabel(QString::number(k->currentSize));
-    k->sizeLabel->setAlignment(Qt::AlignHCenter);
-    QFont font = this->font();
-    font.setPointSize(24);
-    font.setBold(true);
-    k->sizeLabel->setFont(font);
-    k->sizeLabel->setFixedWidth(100);
+    k->sizeLabel->setFont(QFont("Arial", 16, QFont::Bold));
+    k->sizeLabel->setFixedWidth(30);
 
     TImageButton *plus = new TImageButton(QPixmap(THEME_DIR + "icons/plus_sign_medium.png"), 40, this, true);
     plus->setToolTip(tr("+1"));
@@ -133,32 +139,29 @@ void TupPenDialog::setButtonsPanel()
 
 void TupPenDialog::fivePointsLess()
 {
-    modifySize(-5);
+    mofifySize(-5);
 }
 
 void TupPenDialog::onePointLess()
 {
-    modifySize(-1);
+    mofifySize(-1);
 }
 
 void TupPenDialog::onePointMore()
 {
-    modifySize(1);
+    mofifySize(1);
 }
 
 void TupPenDialog::fivePointsMore()
 {
-    modifySize(5);
+    mofifySize(5);
 }
 
-void TupPenDialog::modifySize(int value)
+void TupPenDialog::mofifySize(int value)
 {
     k->currentSize += value;
     if (k->currentSize > 100)
         k->currentSize = 100;
-
-    if (k->currentSize < 1)
-        k->currentSize = 1;
 
     k->thickPreview->render(k->currentSize);
     k->sizeLabel->setText(QString::number(k->currentSize));

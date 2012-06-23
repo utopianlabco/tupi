@@ -74,15 +74,18 @@ class TupCanvas : public QFrame
 
    private slots:
         void colorDialog();
+        void penDialog();
         void oneFrameBack();
         void oneFrameForward();
         void updateThickness(int value);
         void wakeUpPencil();
+        void wakeUpInk();
         void wakeUpCircle();
         void wakeUpSquare();
         void wakeUpPolyline();
         void wakeUpObjectSelection();
         void wakeUpNodeSelection();
+        void wakeUpDeleteSelection();
         void wakeUpZoomIn();
         void wakeUpZoomOut();
         void wakeUpHand();
