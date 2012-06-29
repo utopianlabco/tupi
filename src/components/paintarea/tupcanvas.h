@@ -76,21 +76,19 @@ class TupCanvas : public QFrame
         void colorDialog(const QColor &current);
 
    private slots:
+        void sketchTools();
+        void selectionTools();
+
         void colorDialog();
         void penDialog();
+        void penProperties();
         void exposureDialog();
 
         void oneFrameBack();
         void oneFrameForward();
-        void updateThickness(int value);
-        void wakeUpPencil();
-        void wakeUpInk();
-        void wakeUpEllipse();
-        void wakeUpRectangle();
-        // void wakeUpPolyline();
+        // void updateThickness(int value);
         void wakeUpLibrary();
-        void wakeUpObjectSelection();
-        void wakeUpNodeSelection();
+
         void wakeUpDeleteSelection();
         void wakeUpZoomIn();
         void wakeUpZoomOut();
@@ -99,6 +97,10 @@ class TupCanvas : public QFrame
         void undo();
         void redo();
 
+        void updateSketchMenuState();
+        void updateSelectionMenuState();
+        void updateMenuStates();
+
    signals:
         void requestTriggered(const TupProjectRequest *event);
         void updateColorFromFullScreen(const QColor &color);
@@ -106,6 +108,9 @@ class TupCanvas : public QFrame
         void callAction(int menu, int index);
         void goToFrame(int frame, int layer, int scene);
         void goToScene(int scene);
+        void closeSketchMenu();
+        void closeSelectionMenu();
+        void  closePenPropertiesMenu();
 };
 
 #endif

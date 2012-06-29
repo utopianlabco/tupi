@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,6 +34,13 @@
  ***************************************************************************/
 
 #include "tuptoolsdialog.h"
+#include "tapplicationproperties.h"
+#include "tuptoolplugin.h"
+#include "timagebutton.h"
+#include "tdebug.h"
+
+#include <QHBoxLayout>
+#include <QPixmap>
 
 struct TupToolsDialog::Private
 {
@@ -105,7 +112,7 @@ void TupToolsDialog::setToolsPanel(QList<QString> tools)
 
         if (tools.at(i).compare("NodesTool") == 0) {
             TImageButton *nodes = new TImageButton(QPixmap(THEME_DIR + "icons/nodes_big.png"), 60, this, true);
-            nodes->setToolTip(tr("Nodes Selection"));
+            nodes->setToolTip(tr("Line Selection"));
             connect(nodes, SIGNAL(clicked()), this, SLOT(wakeUpNodeSelection()));
 
             k->layout->addWidget(nodes);
@@ -125,14 +132,6 @@ void TupToolsDialog::setToolsPanel(QList<QString> tools)
             connect(pen, SIGNAL(clicked()), this, SIGNAL(openPenDialog()));
 
             k->layout->addWidget(pen);
-        }
-
-        if (tools.at(i).compare("Opacity") == 0) {
-            TImageButton *opacity = new TImageButton(QPixmap(THEME_DIR + "icons/onion_big.png"), 40, this, true);
-            opacity->setToolTip(tr("Opacity Value"));
-            connect(opacity, SIGNAL(clicked()), this, SIGNAL(openOpacityDialog()));
-
-            k->layout->addWidget(opacity);
         }
     }
 }

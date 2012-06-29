@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,17 +36,10 @@
 #ifndef TUPTOOLSDIALOG_H
 #define TUPTOOLSDIALOG_H 
 
-#include "tglobal.h"
-#include "tapplicationproperties.h"
-#include "tuptoolplugin.h"
-#include "timagebutton.h"
-
 #include <QDialog>
 #include <QList>
-#include <QHBoxLayout>
-#include <QPixmap>
 
-class TUPI_EXPORT TupToolsDialog : public QDialog 
+class TupToolsDialog : public QDialog 
 {
     Q_OBJECT
 
@@ -59,7 +52,6 @@ class TUPI_EXPORT TupToolsDialog : public QDialog
         void isClosed();
         void openColorDialog();
         void openPenDialog();
-        void openOpacityDialog();
 
     private slots:
         void wakeUpPencil();

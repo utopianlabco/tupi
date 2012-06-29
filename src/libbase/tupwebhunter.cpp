@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,40 +33,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupwebhunter.h"
+#include <QtGui>
+#include <QtNetwork>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QDomDocument>
+#include <QEventLoop>
 
+#include "tupwebhunter.h"
+#include "tdebug.h"
+
+QString TupWebHunter::CURRENCY_HOST = QString("http://www.webservicex.net//currencyconvertor.asmx/ConversionRate?FromCurrency=USD&ToCurrency=COP");
 QString TupWebHunter::BROWSER_FINGERPRINT = QString("Tupi_Browser 1.0");
 
-struct TupWebHunter::Private
+TupWebHunter::TupWebHunter()
 {
-    DataType type;
-    QString url;
-    QString currency;
-};
-
-TupWebHunter::TupWebHunter(DataType type, const QString &url, QList<QString> params) : k(new Private)
-{
-    k->type = type;
-    k->url = url;
-
-    if (k->type == Currency) {
-        QString money1 = params.at(0);
-        QString money2 = params.at(1); 
-        k->url.replace("1", money1); 
-        k->url.replace("2", money2);
-        k->currency = money2;
-    }
 }
 
 void TupWebHunter::start()
 {
+    QString url = CURRENCY_HOST;
+
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(closeRequest(QNetworkReply*)));
 
     QNetworkRequest request;
-    request.setUrl(QUrl(k->url));
-    // request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
-    request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toLatin1());
+    request.setUrl(QUrl(url));
+    request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
 
     QNetworkReply *reply = manager->get(request);
     connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
@@ -81,85 +74,43 @@ void TupWebHunter::closeRequest(QNetworkReply *reply)
     QByteArray array = reply->readAll();
     QString answer(array);
 
-    if (k->type == Currency) {
-        answer = answer.mid(answer.indexOf("\n"), answer.length()).trimmed();
+    answer = answer.mid(answer.indexOf("\n"), answer.length()).trimmed();
 
-        QDomDocument doc;
-        if (doc.setContent(answer)) {
-            QDomElement root = doc.documentElement();
-            if (!root.text().isNull())
-                emit dataReady(k->currency + ":" + root.text());
-        }
+    QDomDocument doc;
+    if (doc.setContent(answer)) {
+        QDomElement root = doc.documentElement();
+        if (!root.text().isNull())
+            emit dataReady(root.text());
     }
 }
 
 void TupWebHunter::slotError(QNetworkReply::NetworkError error)
 {
-    if (k->type == Currency)
-        emit dataReady(k->currency + ":UNAVAILABLE");
-    else
-        emit dataReady(tr("Information Temporarily Unavailable"));
-
     switch (error) {
             case QNetworkReply::HostNotFoundError:
                  { 
-                 #ifdef K_DEBUG
-                     QString msg = "TupWebHunter::slotError() - Network Error: Host not found";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+                     tError() << "TupWebHunter::slotError() - Network Error: Host not found";
                  }
             break;
             case QNetworkReply::TimeoutError:
                  {
-                 #ifdef K_DEBUG
-                     QString msg = "TupWebHunter::slotError() - Network Error: Time out!";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+                     tError() << "TupWebHunter::slotError() - Network Error: Time out!";
                  }
             break;
             case QNetworkReply::ConnectionRefusedError:
                  {
-                 #ifdef K_DEBUG
-                     QString msg = "TupWebHunter::slotError() - Network Error: Connection Refused!";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+                     tError() << "TupWebHunter::slotError() - Network Error: Connection Refused!";
                  }
             break;
             case QNetworkReply::ContentNotFoundError:
                  {
-                 #ifdef K_DEBUG
-                     QString msg = "TupWebHunter::slotError() - Network Error: Content not found!";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+                     tError() << "TupWebHunter::slotError() - Network Error: Content not found!";
                  }
             break;
             case QNetworkReply::UnknownNetworkError:
             default:
                  {
-                 #ifdef K_DEBUG
-                     QString msg = "TupWebHunter::slotError() - Network Error: Unknown Network error!";
-                     #ifdef Q_OS_WIN
-                         qDebug() << msg;
-                     #else
-                         tError() << msg;
-                     #endif
-                 #endif
+                     tError() << "TupWebHunter::slotError() - Network Error: Unknown Network error!";
                  }
             break;
     }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,29 +36,22 @@
 #ifndef TUPWEBHUNTER_H
 #define TUPWEBHUNTER_H
 
-#include "tglobal.h"
 #include "tapplicationproperties.h"
 #include "tupsvgitem.h"
 
-#include <QObject>
-#include <QtNetwork>
+#include <QWidget>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QFile>
 #include <QByteArray>
-#include <QList>
-#include <QtGui>
-#include <QDomDocument>
-#include <QEventLoop>
 
-class TUPI_EXPORT TupWebHunter : public QObject
+class TupWebHunter : public QObject
 {
     Q_OBJECT
 
     public:
-        enum DataType { Currency = 0, Image };
-        TupWebHunter(DataType type, const QString &url, QList<QString> params);
+        TupWebHunter();
         ~TupWebHunter();
         void start();
 
@@ -70,9 +63,8 @@ class TUPI_EXPORT TupWebHunter : public QObject
         void dataReady(const QString &);
 
     private:
+        static QString CURRENCY_HOST;
         static QString BROWSER_FINGERPRINT;
-        struct Private;
-        Private *const k;
 };
 
 #endif
