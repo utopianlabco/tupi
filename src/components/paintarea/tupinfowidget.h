@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,28 +36,9 @@
 #ifndef TUPINFOWIDGET_H
 #define TUPINFOWIDGET_H
 
-#include "tglobal.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "timagebutton.h"
-#include "tpushbutton.h"
-#include "tupwebhunter.h"
-
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QDesktopWidget>
-#include <QTableWidget>
-#include <QHeaderView>
-#include <QFileDialog>
 
-class TUPI_EXPORT TupInfoWidget : public QWidget
+class TupInfoWidget : public QWidget
 {
     Q_OBJECT
 
@@ -71,7 +52,6 @@ class TUPI_EXPORT TupInfoWidget : public QWidget
    private slots:
         void updateObjectInformation(const QString &data);
         void setCurrentCurrency(int index);
-        void loadFile();
 
    private:
         void setUIContext();

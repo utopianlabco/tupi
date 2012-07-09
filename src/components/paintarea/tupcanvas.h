@@ -102,6 +102,8 @@ class TupCanvas : public QFrame
         void updateSketchMenuState();
         void updateSelectionMenuState();
         void updateMenuStates();
+        void showInfoWidget();
+        void hideInfoWidget();
 
    signals:
         void requestTriggered(const TupProjectRequest *event);
