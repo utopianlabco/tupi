@@ -47,7 +47,7 @@ License: GPL-3+
 
 Files: 3rdparty/quazip/zip.* 3rdparty/quazip/unzip.* 3rdparty/quazip/crypt.h
 Copyright: 1998-2005 Gilles Vollant
-Copyright: 1999-2000 Info-ZIP
+           1999-2000 Info-ZIP
 License:
  This software is provided 'as-is', without any express or implied
  warranty.  In no event will the authors be held liable for any damages
