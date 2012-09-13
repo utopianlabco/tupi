@@ -1,9 +1,8 @@
-Last-Update: 2012-06-05
+Last-Update: 2012-09-13
 Author: Dmitry Smirnov <onlyjob@member.fsf.org>
 Bug-Debian: http://bugs.debian.org/676121
 Forwarded: no
 Description: update ruby scripts for compatibility with ruby1.9
-
 
 --- a/configure.rb
 +++ b/configure.rb
@@ -25,11 +24,11 @@ Description: update ruby scripts for compatibility with ruby1.9
 @@ -1,10 +1,10 @@
  # encoding: utf-8
  
--require 'qonf/test'
--require 'qonf/config'
--require 'qonf/info'
--require 'qonf/qonfexception'
--require 'qonf/makefile'
+-require './qonf/test'
+-require './qonf/config'
+-require './qonf/info'
+-require './qonf/qonfexception'
+-require './qonf/makefile'
 +require_relative 'test'
 +require_relative 'config'
 +require_relative 'info'

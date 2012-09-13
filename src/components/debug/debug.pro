@@ -3,12 +3,22 @@
 # Subdir relative project main directory: ./src/components/debug
 # Target is a library:  
 
-HEADERS += ktdebugwidget.h \
-           ktdebugterm.h
-SOURCES += ktdebugwidget.cpp \
-           ktdebugterm.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tupdebugwidget.h \
+           tupdebugterm.h
+
+SOURCES += tupdebugwidget.cpp \
+           tupdebugterm.cpp
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = debug
 

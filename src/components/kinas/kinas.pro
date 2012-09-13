@@ -3,14 +3,23 @@
 # Subdir relative project main directory: ./src/components/kinas
 # Target is a library:  
 
-HEADERS += ktseditor.h \
-           ktsfunctionview.h \
-           kinaswidget.h 
-SOURCES += ktseditor.cpp \
-           ktsfunctionview.cpp \
-           kinaswidget.cpp 
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tupseditor.h \
+           tupsfunctionview.h \
+           kinaswidget.h 
+SOURCES += tupseditor.cpp \
+           tupsfunctionview.cpp \
+           kinaswidget.cpp 
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = kinas
 

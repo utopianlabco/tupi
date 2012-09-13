@@ -37,12 +37,12 @@
 #include "tglobal.h"
 #include "tdebug.h"
 #include "tconfig.h"
-#include "ktrectitem.h"
-#include "ktellipseitem.h"
-#include "ktlineitem.h"
-#include "ktscene.h"
-#include "ktinputdeviceinformation.h"
-#include "ktgraphicsscene.h"
+#include "tuprectitem.h"
+#include "tupellipseitem.h"
+#include "tuplineitem.h"
+#include "tupscene.h"
+#include "tupinputdeviceinformation.h"
+#include "tupgraphicsscene.h"
 
 #include <QKeySequence>
 #include <QDebug>
@@ -56,10 +56,12 @@ struct ViewTool::Private
     QGraphicsRectItem *rect;
     bool added;
     QPointF firstPoint;
-    KTGraphicsScene *scene;
+    TupGraphicsScene *scene;
     ZoomConfigurator *configurator;
-    QCursor zoomCursor;
+    QCursor zoomInCursor;
+    QCursor zoomOutCursor;
     QCursor handCursor;
+    QSize projectSize;
 };
 
 ViewTool::ViewTool() : k(new Private)
@@ -75,8 +77,10 @@ ViewTool::~ViewTool()
 {
 }
 
-void ViewTool::init(KTGraphicsScene *scene)
+void ViewTool::init(TupGraphicsScene *scene)
 {
+    k->scene = scene;
+
     foreach (QGraphicsView *view, scene->views()) {
              view->setDragMode(QGraphicsView::NoDrag);
              foreach (QGraphicsItem *item, scene->items()) {
@@ -88,27 +92,34 @@ void ViewTool::init(KTGraphicsScene *scene)
 
 QStringList ViewTool::keys() const
 {
-    return QStringList() << tr("Zoom") << tr("Hand");
+    return QStringList() << tr("Zoom In") << tr("Zoom Out") << tr("Hand");
 }
 
 void ViewTool::setupActions()
 {
-    TAction *zoomAction = new TAction(QIcon(THEME_DIR + "icons/zoom.png"), tr("Zoom"), this);
-    zoomAction->setShortcut(QKeySequence(tr("Z")));
-    k->zoomCursor = QCursor(THEME_DIR + "cursors/zoom.png");
-    zoomAction->setCursor(k->zoomCursor);
+    TAction *zoomIn = new TAction(QIcon(kAppProp->themeDir() + "icons/zoom_in.png"), tr("Zoom In"), this);
+    zoomIn->setShortcut(QKeySequence(tr("Z")));
+    k->zoomInCursor = QCursor(kAppProp->themeDir() + "cursors/zoom.png");
+    zoomIn->setCursor(k->zoomInCursor);
     
-    k->actions.insert(tr("Zoom"), zoomAction);
+    k->actions.insert(tr("Zoom In"), zoomIn);
+
+    TAction *zoomOut = new TAction(QIcon(kAppProp->themeDir() + "icons/zoom_out.png"), tr("Zoom Out"), this);
+    zoomOut->setShortcut(QKeySequence(tr("Shift+Z")));
+    k->zoomOutCursor = QCursor(kAppProp->themeDir() + "cursors/zoom.png");
+    zoomOut->setCursor(k->zoomOutCursor);
+   
+    k->actions.insert(tr("Zoom Out"), zoomOut);
     
-    TAction *handAction = new TAction(QIcon(THEME_DIR + "icons/hand.png"), tr("Hand"), this);
+    TAction *handAction = new TAction(QIcon(kAppProp->themeDir() + "icons/hand.png"), tr("Hand"), this);
     handAction->setShortcut(QKeySequence(tr("H")));
-    k->handCursor = QCursor(THEME_DIR + "cursors/hand.png");
+    k->handCursor = QCursor(kAppProp->themeDir() + "cursors/hand.png");
     handAction->setCursor(k->handCursor);
 
     k->actions.insert(tr("Hand"), handAction);
 }
 
-void ViewTool::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ViewTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
@@ -121,21 +132,21 @@ void ViewTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
     k->firstPoint = input->pos();
 }
 
-void ViewTool::move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ViewTool::move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
 
     foreach (QGraphicsView * view, scene->views()) {
-             if (name() == tr("Zoom"))
+             if (name() == tr("Zoom In") || name() == tr("Zoom Out"))
                  view->setDragMode(QGraphicsView::NoDrag);
-             else if (name() == tr("Hand"))
-                      view->setDragMode(QGraphicsView::ScrollHandDrag);
+             // else if (name() == tr("Hand"))
+             //          view->setDragMode(QGraphicsView::ScrollHandDrag);
     }
 
     if (name() == tr("Hand")) {
-        k->scene = scene;
-    } else if (name() == tr("Zoom") && input->keyModifiers() == Qt::ControlModifier) {
+        k->scene = scene; // <- SQA: Trace this variable
+    } else if (name() == tr("Zoom In") && input->keyModifiers() == Qt::ControlModifier) {
 
                if (!k->added) {
                    scene->addItem(k->rect);
@@ -171,63 +182,103 @@ void ViewTool::move(const KTInputDeviceInformation *input, KTBrushManager *brush
     }
 }
 
-void ViewTool::release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ViewTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(brushManager);
 
-    if (name() == tr("Zoom")) { 
-        // Zoom Square mode
-        if (input->button() == Qt::LeftButton && input->keyModifiers() == Qt::ControlModifier) {    
+    if (name() == tr("Hand")) {
+        qreal initX = k->firstPoint.x();
+        qreal initY = k->firstPoint.y();
+        qreal x = input->pos().x();
+        qreal y = input->pos().y();
 
-            foreach (QGraphicsView *view, scene->views()) {
-                     QRectF rect;
-                     if (k->rect) {
-                         rect = k->rect->rect();
-                     } else {
-                         int xMouse = input->pos().x();
-                         int yMouse = input->pos().y();
-                         int xInit = k->firstPoint.x();
-                         int yInit = k->firstPoint.y();
+        qreal deltaX = initX - x;
+        qreal deltaY = initY - y; 
 
-                         QRectF rect = k->rect->rect();
+        /*
+        if (fabs(deltaX) > 50)
+            deltaX = 50;
 
-                         if (xMouse >= xInit) {
-                             if (yMouse >= yInit)
-                                 rect.setBottomRight(input->pos());
-                             else
-                                 rect.setTopRight(input->pos());
-                         } else {
-                             if (yMouse >= yInit)
-                                 rect.setBottomLeft(input->pos());
-                             else
-                                 rect.setTopLeft(input->pos());
-                         }
-                     }
+        if (fabs(deltaY) > 50)
+            deltaY = 50;
+        */
 
-                     view->fitInView(rect, Qt::KeepAspectRatio);
-            }
+        qreal centerX = initX + deltaX;
+        qreal centerY = initY + deltaY;
 
-        } else { // Normal Zoom
-
-            foreach (QGraphicsView *view, scene->views()) {
-                     if (input->button() == Qt::LeftButton) {
-                         // SQA: the function centerOn is not doing what we really need :S
-                         view->centerOn(input->pos());
-                         view->scale(1 + k->configurator->getFactor(), 1 + k->configurator->getFactor());
-                     } else {
-                         if (input->button() == Qt::RightButton) {
-                             view->centerOn(input->pos());
-                             view->scale(1 - k->configurator->getFactor(), 1 - k->configurator->getFactor());
-                         }
-                     } 
-            }
+        foreach (QGraphicsView *view, scene->views()) {
+                 view->centerOn(QPointF(centerX, centerY));
+                 view->setSceneRect(centerX - (k->projectSize.width()/2), centerY - (k->projectSize.height()/2), 
+                                    k->projectSize.width(), k->projectSize.height());
         }
 
-        if (k->rect) {
-            delete k->rect;
-            k->rect = 0;
-        }
+    } else if (name() == tr("Zoom In") || name() == tr("Zoom Out")) { 
+               // Zoom Square mode
+               if (input->button() == Qt::LeftButton && input->keyModifiers() == Qt::ControlModifier) {    
+
+                   foreach (QGraphicsView *view, scene->views()) {
+                            QRectF rect;
+                            if (k->rect) {
+                                rect = k->rect->rect();
+                            } else {
+                                int xMouse = input->pos().x();
+                                int yMouse = input->pos().y();
+                                int xInit = k->firstPoint.x();
+                                int yInit = k->firstPoint.y();
+
+                                QRectF rect = k->rect->rect();
+
+                                if (xMouse >= xInit) {
+                                    if (yMouse >= yInit)
+                                        rect.setBottomRight(input->pos());
+                                    else
+                                        rect.setTopRight(input->pos());
+                                } else {
+                                    if (yMouse >= yInit)
+                                        rect.setBottomLeft(input->pos());
+                                    else
+                                        rect.setTopLeft(input->pos());
+                                }
+                            }
+
+                            view->fitInView(rect, Qt::KeepAspectRatio);
+                   }
+
+               } else { // Normal Zoom
+
+                    foreach (QGraphicsView *view, scene->views()) {
+                             if (name() == tr("Zoom In")) {
+                                 // SQA: the function centerOn is not doing what we really need :S
+                                 view->centerOn(input->pos());
+                                 view->scale(1 + k->configurator->getFactor(), 1 + k->configurator->getFactor());
+                             } else if (name() == tr("Zoom Out")) {
+                                        view->centerOn(input->pos());
+                                        view->scale(1 - k->configurator->getFactor(), 1 - k->configurator->getFactor());
+                             }
+                    }
+               } 
+
+               if (k->rect) {
+                   delete k->rect;
+                   k->rect = 0;
+               }
     }
+}
+
+void ViewTool::autoZoom() 
+{
+    foreach (QGraphicsView * view, k->scene->views()) {
+             if (name() == tr("Zoom In")) {
+                 view->scale(1 + k->configurator->getFactor(), 1 + k->configurator->getFactor());
+             } else if (name() == tr("Zoom Out")) {
+                        view->scale(1 - k->configurator->getFactor(), 1 - k->configurator->getFactor());
+             }
+    }
+}
+
+void ViewTool::setProjectSize(const QSize size)
+{
+    k->projectSize = size;
 }
 
 QMap<QString, TAction *> ViewTool::actions() const
@@ -237,7 +288,7 @@ QMap<QString, TAction *> ViewTool::actions() const
 
 int ViewTool::toolType() const
 {
-    return KTToolInterface::View;
+    return TupToolInterface::View;
 }
 
 QWidget *ViewTool::configurator()
@@ -248,7 +299,7 @@ QWidget *ViewTool::configurator()
     return k->configurator;
 }
 
-void ViewTool::aboutToChangeScene(KTGraphicsScene *)
+void ViewTool::aboutToChangeScene(TupGraphicsScene *)
 {
 }
 
@@ -276,7 +327,7 @@ void ViewTool::keyPressEvent(QKeyEvent *event)
         emit closeHugeCanvas();
     // } else if (event->modifiers() != Qt::ShiftModifier && event->modifiers() != Qt::ControlModifier) {
     } else {
-        QPair<int, int> flags = KTToolPlugin::setKeyAction(event->key(), event->modifiers());
+        QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
         if (flags.first != -1 && flags.second != -1)
             emit callForPlugin(flags.first, flags.second);
     }
@@ -286,11 +337,13 @@ QCursor ViewTool::cursor() const
 {
    if (name() == tr("Hand")) {
        return k->handCursor;
-   } else if (name() == tr("Zoom")) {
-              return k->zoomCursor;
-   }
+   } else if (name() == tr("Zoom In")) {
+              return k->zoomInCursor;
+   } else if (name() == tr("Zoom Out")) {
+              return k->zoomOutCursor;
+   } 
 
-   return 0;
+   return QCursor(Qt::ArrowCursor);
 }
 
-Q_EXPORT_PLUGIN2(kt_view, ViewTool)
+Q_EXPORT_PLUGIN2(tup_view, ViewTool)

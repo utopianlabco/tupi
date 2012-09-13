@@ -1,4 +1,5 @@
 ## false-positives:
 hardening-no-fortify-functions usr/lib/tupi/bin/tupi.bin
-hardening-no-fortify-functions usr/lib/tupi/libtupi.so.1.0.0
-hardening-no-fortify-functions usr/lib/tupi/libtupifwgui.so.1.0.0
+hardening-no-fortify-functions usr/lib/tupi/libtupifwgui.so.*
+hardening-no-fortify-functions usr/lib/tupi/libquazip.so.*
+hardening-no-fortify-functions usr/lib/tupi/plugins/libffmpegplugin.so

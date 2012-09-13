@@ -44,8 +44,8 @@
 
 #include "tdebug.h"
 #include "nodemanager.h"
-#include "ktgraphicalgorithm.h"
-#include "ktgraphicobject.h"
+#include "tupgraphicalgorithm.h"
+#include "tupgraphicobject.h"
 
 #include <cmath> //atan
 
@@ -70,6 +70,7 @@ struct Node::Private
     ActionNode generalState; 
     QGraphicsItem * parent;
     NodeManager *manager;
+    QSizeF size;
 };
 
 Node::Node(TypeNode node, ActionNode action, const QPointF & pos, NodeManager *manager, QGraphicsItem *parent,
@@ -79,6 +80,8 @@ Node::Node(TypeNode node, ActionNode action, const QPointF & pos, NodeManager *m
     setFlag(ItemIsSelectable, false);
     setFlag(ItemIsMovable, true);
     setFlag(ItemIsFocusable, true);
+
+    k->size = QSizeF(10, 10);
 
     k->generalState = Scale;
     
@@ -108,8 +111,8 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
    
     if (k->typeNode != Center) {
         if (k->action == Rotate) {
-            color = QColor(31, 183, 180);
-            color.setAlpha(150);
+            color = QColor(255, 102, 0);
+            color.setAlpha(180);
         } else {
             color = QColor("green");
             color.setAlpha(200);
@@ -154,8 +157,8 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 QRectF Node::boundingRect() const
 {
-    QSizeF size(8, 8);
-    QRectF rect(QPointF(-size.width()/2, -size.height()/2), size);
+    // k->size = QSizeF(10, 10);
+    QRectF rect(QPointF(-k->size.width()/2, -k->size.height()/2), k->size);
 
     return rect;
 }
@@ -186,7 +189,7 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
     /* 
     #if K_DEBUG
         QRectF r = k->parent->sceneMatrix().inverted().mapRect(k->parent->sceneBoundingRect());
-        scene()->addRect(r, QPen(Qt::magenta), QBrush(QColor(100,100,200,50)));
+        scene()->addRect(r, QPen(Qt::magenta), QBrush(QColor(100, 100, 200, 50)));
         scene()->update(r);
     #endif
     */
@@ -274,7 +277,7 @@ void Node::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
                 QPointF p2 = k->parent->sceneBoundingRect().center();
                 k->manager->setAnchor(k->parent->boundingRect().center());
                 
-                double a = (180 * KTGraphicalAlgorithm::angleForPos(p1, p2)) / M_PI;
+                double a = (180 * TupGraphicalAlgorithm::angleForPos(p1, p2)) / M_PI;
                 k->manager->rotate(a-45);
             // }
         }
@@ -331,4 +334,9 @@ void Node::keyReleaseEvent(QKeyEvent *event)
 {
     Q_UNUSED(event);
     k->manager->setProportion(false);
+}
+
+void Node::resize(qreal factor)
+{
+    setScale(factor);
 }

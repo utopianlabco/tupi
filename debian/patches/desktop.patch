@@ -1,13 +1,12 @@
-Last-Update: 2012-02-23
+Last-Update: 2012-09-13
 Author: Dmitry Smirnov <onlyjob@member.fsf.org>
 Bug-Debian: http://bugs.debian.org/660933
 Forwarded: 2012-02-23
 Description: replace large menu icon with smaller one
 
-
 --- a/src/shell/shell.pro
 +++ b/src/shell/shell.pro
-@@ -28,7 +28,7 @@
+@@ -47,7 +47,7 @@
      desktop.path = /applications/
  
      icons.target = ../../launcher/icons/tupi.png

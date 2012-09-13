@@ -9,26 +9,31 @@ images-en.path = /data/en/images
 images.files += images/es/*.png 
 images.path = /data/es/images/ 
 
-HEADERS += ktthemeselector.h \
-           ktabout.h \
-           ktpreferences.h \
-           ktanimationspace.h \
-           ktpaintareaconfig.h 
-SOURCES += ktthemeselector.cpp \
-           ktabout.cpp \
-           ktpreferences.cpp \
-           ktanimationspace.cpp \
-           ktpaintareaconfig.cpp 
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += plugin warn_on
+}
+
+HEADERS += tupthemeselector.h \
+           tupabout.h \
+           tuppreferences.h \
+           tuppaintareaconfig.h 
+SOURCES += tupthemeselector.cpp \
+           tupabout.cpp \
+           tuppreferences.cpp \
+           tuppaintareaconfig.cpp 
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = ui
 
-STORE_DIR = ../../src/store
-LIBTUPI_DIR = ../../src/libtupi
-ANIMATION_DIR = ../components/animation
-
-INCLUDEPATH += $$ANIMATION_DIR
+STORE_DIR = ../store
+LIBTUPI_DIR = ../libtupi
 
 FRAMEWORK_DIR = "../framework"
 include($$FRAMEWORK_DIR/framework.pri)

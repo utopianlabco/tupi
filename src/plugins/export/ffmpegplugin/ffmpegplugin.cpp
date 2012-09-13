@@ -38,14 +38,13 @@
 // Tupi Framework
 #include "tdebug.h"
 #include "tglobal.h"
-#include "kffmpegmoviegenerator.h"
-// #include "kmoviegeneratorinterface.h"
+#include "tffmpegmoviegenerator.h"
+
+#include "tuplayer.h"
+#include "tupanimationrenderer.h"
 
 #include <QImage>
 #include <QPainter>
-
-#include "ktlayer.h"
-#include "ktanimationrenderer.h"
 
 FFMpegPlugin::FFMpegPlugin()
 {
@@ -60,82 +59,88 @@ QString FFMpegPlugin::key() const
     return "Video Formats";
 }
 
-KTExportInterface::Formats FFMpegPlugin::availableFormats()
+TupExportInterface::Formats FFMpegPlugin::availableFormats()
 {
-    return KTExportInterface::OGV | KTExportInterface::MPEG | KTExportInterface::SWF | KTExportInterface::AVI | KTExportInterface::RM | KTExportInterface::ASF | KTExportInterface::MOV | KTExportInterface::GIF;
+    return TupExportInterface::WEBM | TupExportInterface::OGV | TupExportInterface::MPEG | TupExportInterface::SWF | TupExportInterface::AVI 
+           | TupExportInterface::RM | TupExportInterface::ASF | TupExportInterface::MOV | TupExportInterface::GIF;
 }
 
-KMovieGeneratorInterface::Format FFMpegPlugin::videoFormat(KTExportInterface::Format format)
+TMovieGeneratorInterface::Format FFMpegPlugin::videoFormat(TupExportInterface::Format format)
 {
     switch (format) {
-            case KTExportInterface::OGV:
+            case TupExportInterface::WEBM:
                  {
-                   return KFFMpegMovieGenerator::OGV;
+                   return TFFMpegMovieGenerator::WEBM;
                  }
                  break;
-            case KTExportInterface::SWF:
+            case TupExportInterface::OGV:
                  {
-                   return KFFMpegMovieGenerator::SWF;
+                   return TFFMpegMovieGenerator::OGV;
                  }
                  break;
-            case KTExportInterface::MPEG:
+            case TupExportInterface::SWF:
                  {
-                   return KFFMpegMovieGenerator::MPEG;
+                   return TFFMpegMovieGenerator::SWF;
                  }
                  break;
-            case KTExportInterface::AVI:
+            case TupExportInterface::MPEG:
                  {
-                   return KFFMpegMovieGenerator::AVI;
+                   return TFFMpegMovieGenerator::MPEG;
                  }
                  break;
-            case KTExportInterface::RM:
+            case TupExportInterface::AVI:
                  {
-                   return KFFMpegMovieGenerator::RM;
+                   return TFFMpegMovieGenerator::AVI;
                  }
                  break;
-            case KTExportInterface::MOV:
+            case TupExportInterface::RM:
                  {
-                   return KFFMpegMovieGenerator::MOV;
+                   return TFFMpegMovieGenerator::RM;
                  }
                  break;
-            case KTExportInterface::ASF:
+            case TupExportInterface::MOV:
                  {
-                   return KFFMpegMovieGenerator::ASF;
+                   return TFFMpegMovieGenerator::MOV;
                  }
                  break;
-            case KTExportInterface::GIF:
+            case TupExportInterface::ASF:
                  {
-                   return KFFMpegMovieGenerator::GIF;
+                   return TFFMpegMovieGenerator::ASF;
                  }
                  break;
-            case KTExportInterface::PNG:
-            case KTExportInterface::JPEG:
-            case KTExportInterface::XPM:
-            case KTExportInterface::SMIL:
-            case KTExportInterface::NONE:
+            case TupExportInterface::GIF:
                  {
-                   return KFFMpegMovieGenerator::NONE;
+                   return TFFMpegMovieGenerator::GIF;
+                 }
+                 break;
+            case TupExportInterface::PNG:
+            case TupExportInterface::JPEG:
+            case TupExportInterface::XPM:
+            case TupExportInterface::SMIL:
+            case TupExportInterface::NONE:
+                 {
+                   return TFFMpegMovieGenerator::NONE;
                  }
     }
 
-    return KFFMpegMovieGenerator::NONE;
+    return TFFMpegMovieGenerator::NONE;
 }
 
-bool FFMpegPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<KTScene *> &scenes, KTExportInterface::Format fmt, const QSize &size, int fps)
+bool FFMpegPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format fmt, const QSize &size, int fps)
 {
     qreal duration = 0;
-    foreach (KTScene *scene, scenes)
+    foreach (TupScene *scene, scenes)
              duration += (qreal) scene->framesTotal() / (qreal) fps;
 
-    KFFMpegMovieGenerator *generator = 0;
-    KMovieGeneratorInterface::Format format = videoFormat(fmt);
+    TFFMpegMovieGenerator *generator = 0;
+    TMovieGeneratorInterface::Format format = videoFormat(fmt);
 
-    if (format == KFFMpegMovieGenerator::NONE)
+    if (format == TFFMpegMovieGenerator::NONE)
         return false;
 
-    generator = new KFFMpegMovieGenerator(format, size, fps, duration);
+    generator = new TFFMpegMovieGenerator(format, size, fps, duration);
 
-    KTAnimationRenderer renderer(color);
+    TupAnimationRenderer renderer(color);
     {
          if (!generator->movieHeaderOk()) {
              errorMsg = generator->getErrorMsg();
@@ -149,8 +154,7 @@ bool FFMpegPlugin::exportToFormat(const QColor color, const QString &filePath, c
          QPainter painter(generator);
          painter.setRenderHint(QPainter::Antialiasing, true);
 
-         foreach (KTScene *scene, scenes) {
-                  tWarning() << "FFMpegPlugin::exportToFormat() - Rendering scene: " << scene->sceneName();
+         foreach (TupScene *scene, scenes) {
                   renderer.setScene(scene, size);
 
                   while (renderer.nextPhotogram()) {
@@ -165,6 +169,11 @@ bool FFMpegPlugin::exportToFormat(const QColor color, const QString &filePath, c
     delete generator;
 
     return true;
+}
+
+bool FFMpegPlugin::exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size)
+{
+    return false;
 }
 
 const char* FFMpegPlugin::getExceptionMsg() {

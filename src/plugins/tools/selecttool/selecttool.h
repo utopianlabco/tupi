@@ -36,22 +36,23 @@
 #ifndef SELECTTOOL_H
 #define SELECTTOOL_H
 
-#include "kttoolplugin.h"
-#include "ktpathitem.h"
-#include "ktproject.h"
-#include "ktgraphicsscene.h"
+#include "tuptoolplugin.h"
+#include "tuppathitem.h"
+#include "tupproject.h"
+#include "tupgraphicsscene.h"
 #include "infopanel.h"
+#include "tupprojectresponse.h"
 
 #include <QObject>
 
-class KTItemResponse;
+class TupItemResponse;
 class NodeManager;
 
 /**
  * @author Jorge Cuadrado
 */
 
-class SelectTool : public KTToolPlugin
+class SelectTool : public TupToolPlugin
 {
     Q_OBJECT
     
@@ -59,13 +60,14 @@ class SelectTool : public KTToolPlugin
         SelectTool();
         virtual ~SelectTool();
         
-        virtual void init(KTGraphicsScene *scene);
+        virtual void init(TupGraphicsScene *scene);
         virtual QStringList keys() const;
-        virtual void press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
+        virtual void press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         virtual void keyPressEvent(QKeyEvent *event);
-        
+        virtual void sceneResponse(const TupSceneResponse *event);
+
         virtual QMap<QString, TAction *>actions() const;
         
         int toolType() const;
@@ -73,11 +75,14 @@ class SelectTool : public KTToolPlugin
         virtual QWidget *configurator();
         
         virtual void aboutToChangeTool();
-        void aboutToChangeScene(KTGraphicsScene *scene);
+        void aboutToChangeScene(TupGraphicsScene *scene);
         
-        virtual void itemResponse(const KTItemResponse *event);
+        virtual void itemResponse(const TupItemResponse *event);
         virtual void saveConfig();
         QCursor cursor() const;
+
+        void resizeNodes(qreal scaleFactor);
+        void updateZoomFactor(qreal globalFactor);
 
     signals:
         void closeHugeCanvas();
@@ -86,6 +91,8 @@ class SelectTool : public KTToolPlugin
     private:
         void setupActions();
         void verifyActiveSelection();
+        void updateRealZoomFactor();
+        void reset(TupGraphicsScene *scene);
         
     private:
         struct Private;
@@ -94,7 +101,7 @@ class SelectTool : public KTToolPlugin
         
     private slots:
         void syncNodes();
-        void updateItems(KTGraphicsScene *);
+        void updateItems(TupGraphicsScene *);
         void applyFlip(InfoPanel::Flip flip);
 };
 

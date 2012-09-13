@@ -36,15 +36,15 @@
 #ifndef FFMPEGPLUGIN_H
 #define FFMPEGPLUGIN_H
 
-#include "ktexportpluginobject.h"
-#include "ktexportinterface.h"
-#include "kmoviegeneratorinterface.h"
+#include "tupexportpluginobject.h"
+#include "tupexportinterface.h"
+#include "tmoviegeneratorinterface.h"
 
 /**
  * @author David Cuadrado
 */
 
-class FFMpegPlugin : public KTExportPluginObject
+class FFMpegPlugin : public TupExportPluginObject
 {
     Q_OBJECT
 
@@ -52,14 +52,16 @@ class FFMpegPlugin : public KTExportPluginObject
         FFMpegPlugin();
         virtual ~FFMpegPlugin();
         virtual QString key() const;
-        KTExportInterface::Formats availableFormats();
+        TupExportInterface::Formats availableFormats();
 
-        virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<KTScene *> &scenes, KTExportInterface::Format format, const QSize &size, int fps);
+        virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format format, const QSize &size, int fps);
+        virtual bool exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size);
+
         virtual const char* getExceptionMsg();
         const char *errorMsg;
 
     private:
-        KMovieGeneratorInterface::Format videoFormat(KTExportInterface::Format format);
+        TMovieGeneratorInterface::Format videoFormat(TupExportInterface::Format format);
 };
 
 #endif

@@ -3,20 +3,34 @@
 # Subdir relative project main directory: ./src/components/animation
 # Target is a library: animation 
 
-HEADERS += ktviewcamera.h \
-           ktcamerabar.h \
-           ktanimationarea.h \
-           # ktcamerawidget.h \
-           ktcamerastatus.h
-SOURCES += ktviewcamera.cpp \
-           ktcamerabar.cpp \
-           ktanimationarea.cpp \
-           # ktcamerawidget.cpp \
-           ktcamerastatus.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+     CONFIG += staticlib warn_on
+}
+
+HEADERS += tupviewcamera.h \
+           tupcamerabar.h \
+           tupanimationarea.h \
+           tupcamerastatus.h \
+           tupanimationspace.h
+
+SOURCES += tupviewcamera.cpp \
+           tupcamerabar.cpp \
+           tupanimationarea.cpp \
+           tupcamerastatus.cpp \
+           tupanimationspace.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = animation 
+
+EXPORT_DIR = ../export
+include($$EXPORT_DIR/export.pri)
 
 FRAMEWORK_DIR = "../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

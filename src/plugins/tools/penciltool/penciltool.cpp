@@ -36,14 +36,14 @@
 #include "penciltool.h"
 // #include "penciltool.xpm"
 
-#include "ktinputdeviceinformation.h"
-#include "ktbrushmanager.h"
-#include "ktgraphicalgorithm.h"
-#include "ktgraphicsscene.h"
-#include "ktrequestbuilder.h"
-#include "ktprojectrequest.h"
-#include "ktlibraryobject.h"
-#include "ktellipseitem.h"
+#include "tupinputdeviceinformation.h"
+#include "tupbrushmanager.h"
+#include "tupgraphicalgorithm.h"
+#include "tupgraphicsscene.h"
+#include "tuprequestbuilder.h"
+#include "tupprojectrequest.h"
+#include "tuplibraryobject.h"
+#include "tupellipseitem.h"
 
 #include "taction.h"
 #include "talgorithm.h"
@@ -66,8 +66,9 @@ struct PencilTool::Private
     QPainterPath path;
     ExactnessConfigurator *configurator;
     QMap<QString, TAction *> actions;
-    KTPathItem *item;
+    TupPathItem *item;
     QCursor cursor;
+    TupGraphicsScene *scene;
 };
 
 PencilTool::PencilTool() : k(new Private)
@@ -84,20 +85,23 @@ PencilTool::~PencilTool()
 
 void PencilTool::setupActions()
 {
-    TAction *pencil = new TAction(QPixmap(THEME_DIR + "icons/pencil.png"), tr("Pencil"), this);
+    TAction *pencil = new TAction(QPixmap(kAppProp->themeDir() + "icons/pencil.png"), tr("Pencil"), this);
     pencil->setShortcut(QKeySequence(tr("P")));
-    k->cursor = QCursor(THEME_DIR + "cursors/pencil.png", 0, 16);
+    k->cursor = QCursor(kAppProp->themeDir() + "cursors/pencil.png", 0, 16);
     pencil->setCursor(k->cursor);
 
     k->actions.insert(tr("Pencil"), pencil);
 }
 
-void PencilTool::init(KTGraphicsScene *scene)
+void PencilTool::init(TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFOX("tools");
     #endif
 
+    k->scene = scene;
+
+    /*
     foreach (QGraphicsView *view, scene->views()) {
              view->setDragMode(QGraphicsView::NoDrag);
              Q_CHECK_PTR(view->scene());
@@ -108,6 +112,22 @@ void PencilTool::init(KTGraphicsScene *scene)
                  }
              }
     }
+
+    foreach (QGraphicsItem *item, scene->items()) {
+             item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+             item->setFlag(QGraphicsItem::ItemIsMovable, false);
+    }
+    */
+
+    reset(k->scene);
+}
+
+void PencilTool::reset(TupGraphicsScene *scene)
+{
+    foreach (QGraphicsItem *item, scene->items()) {
+             item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+             item->setFlag(QGraphicsItem::ItemIsMovable, false);
+    }
 }
 
 QStringList PencilTool::keys() const
@@ -115,7 +135,7 @@ QStringList PencilTool::keys() const
     return QStringList() << tr("Pencil");
 }
 
-void PencilTool::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void PencilTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     k->firstPoint = input->pos();
 
@@ -124,16 +144,15 @@ void PencilTool::press(const KTInputDeviceInformation *input, KTBrushManager *br
 
     k->oldPos = input->pos();
 
-    k->item = new KTPathItem();
+    k->item = new TupPathItem();
     k->item->setPen(brushManager->pen());
 
     scene->includeObject(k->item);
 }
 
-void PencilTool::move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void PencilTool::move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(brushManager);
-
     QPointF lastPoint = input->pos();
 
     foreach (QGraphicsView * view, scene->views())
@@ -146,9 +165,9 @@ void PencilTool::move(const KTInputDeviceInformation *input, KTBrushManager *bru
     k->oldPos = lastPoint;
 }
 
-void PencilTool::release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void PencilTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
-    Q_UNUSED(scene);
+    Q_UNUSED(brushManager);
 
     if (!k->item)
         return;
@@ -166,14 +185,14 @@ void PencilTool::release(const KTInputDeviceInformation *input, KTBrushManager *
     k->item->setBrush(brushManager->brush());
     k->item->setPath(k->path);
 
-    // Add KTProjectRequest
+    // Add TupProjectRequest
 
     QDomDocument doc;
     doc.appendChild(k->item->toXml(doc));
 
-    KTProjectRequest request = KTRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(), 
+    TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(), 
                                                                    scene->currentFrame()->graphics().count(), QPointF(), scene->spaceMode(),
-                                                                   KTLibraryObject::Item, KTProjectRequest::Add, doc.toString());
+                                                                   TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
 
     emit requested(&request);
 }
@@ -198,7 +217,7 @@ void PencilTool::smoothPath(QPainterPath &path, double smoothness, int from, int
     }
 
     if (smoothness > 0) {
-        path = KTGraphicalAlgorithm::bezierFit(pol, smoothness, from, to);
+        path = TupGraphicalAlgorithm::bezierFit(pol, smoothness, from, to);
     } else {
         path = QPainterPath();
         path.addPolygon(pol);
@@ -212,7 +231,7 @@ QMap<QString, TAction *> PencilTool::actions() const
 
 int PencilTool::toolType() const
 {
-    return KTToolInterface::Brush;
+    return TupToolInterface::Brush;
 }
 
 QWidget *PencilTool::configurator() 
@@ -242,7 +261,7 @@ void PencilTool::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    QPair<int, int> flags = KTToolPlugin::setKeyAction(event->key(), event->modifiers());
+    QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
     if (flags.first != -1 && flags.second != -1)
         emit callForPlugin(flags.first, flags.second);
 }
@@ -252,4 +271,10 @@ QCursor PencilTool::cursor() const
     return k->cursor;
 }
 
-Q_EXPORT_PLUGIN2(kt_brush, PencilTool);
+void PencilTool::sceneResponse(const TupSceneResponse *event)
+{
+    if (event->action() == TupProjectRequest::Select)
+        reset(k->scene);
+}
+
+Q_EXPORT_PLUGIN2(tup_brush, PencilTool);

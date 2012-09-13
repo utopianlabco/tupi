@@ -3,37 +3,63 @@
 # Subdir relative project main directory: ./src/components/paintarea
 # Target is a library:  paintarea
 
-HEADERS += ktpaintarea.h \
-           ktconfigurationarea.h \
-           ktviewdocument.h \
-           ktdocumentruler.h \
-           ktpaintareastatus.h \
-           ktimagedevice.h \
-           ktpaintareacommand.h \
-           ktlibrarydialog.h \
-           ktcolorwidget.h \
-           ktbrushstatus.h \
-           kttoolstatus.h \
-           ktcanvas.h \
-           ktcanvasview.h \
-           ktimagedialog.h
+INSTALLS += target
+target.path = /lib/
 
-SOURCES += ktpaintarea.cpp \
-           ktconfigurationarea.cpp \
-           ktviewdocument.cpp \
-           ktdocumentruler.cpp \
-           ktpaintareastatus.cpp \
-           ktimagedevice.cpp \
-           ktpaintareacommand.cpp \
-           ktlibrarydialog.cpp \
-           ktcolorwidget.cpp \
-           ktbrushstatus.cpp \
-           kttoolstatus.cpp \
-           ktcanvas.cpp \
-           ktcanvasview.cpp \
-           ktimagedialog.cpp
+macx {
+    CONFIG += staticlib warn_on
+}
 
-CONFIG += static warn_on
+HEADERS += tuppaintarea.h \
+           tupconfigurationarea.h \
+           tupviewdocument.h \
+           # tupdocumentruler.h \
+           tuppaintareastatus.h \
+           tupimagedevice.h \
+           tuppaintareacommand.h \
+           tuplibrarydialog.h \
+           tupcolorwidget.h \
+           tupbrushstatus.h \
+           tuptoolstatus.h \
+           tupcanvas.h \
+           tupcanvasview.h \
+           tupimagedialog.h \
+           tupstoryboarddialog.h \
+           tuppendialog.h \
+           tuponionopacitydialog.h \
+           tupexposuredialog.h \
+           tupexposurescene.h \
+           tuptoolsdialog.h \
+           tupinfowidget.h \
+           tupiruler.h
+
+SOURCES += tuppaintarea.cpp \
+           tupconfigurationarea.cpp \
+           tupviewdocument.cpp \
+           # tupdocumentruler.cpp \
+           tuppaintareastatus.cpp \
+           tupimagedevice.cpp \
+           tuppaintareacommand.cpp \
+           tuplibrarydialog.cpp \
+           tupcolorwidget.cpp \
+           tupbrushstatus.cpp \
+           tuptoolstatus.cpp \
+           tupcanvas.cpp \
+           tupcanvasview.cpp \
+           tupimagedialog.cpp \
+           tupstoryboarddialog.cpp \
+           tuppendialog.cpp \
+           tuponionopacitydialog.cpp \
+           tupexposuredialog.cpp \
+           tupexposurescene.cpp \
+           tuptoolsdialog.cpp \
+           tupinfowidget.cpp \
+           tupiruler.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = paintarea
 

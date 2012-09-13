@@ -1,7 +1,3 @@
 ruby_to_1.9.patch
 desktop.patch
-desktop-encoding.patch
-build-with-libav-0.8.patch
-crashhandler-path2exec.patch
-658422-armel-armhf-FTBFS.patch
-701645-powerpc-ppc64-powerpcspe-FTBFS.patch
+desktop-validate.patch

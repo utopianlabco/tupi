@@ -34,7 +34,7 @@
  ***************************************************************************/
 
 #include "tweenmanager.h"
-#include "kimagebutton.h"
+#include "timagebutton.h"
 #include "tosd.h"
 #include "tdebug.h"
 
@@ -48,7 +48,7 @@ struct TweenManager::Private
 {
     QLineEdit *input;
     QListWidget *tweensList;
-    KImageButton *addButton;
+    TImageButton *addButton;
 
     QString target;
 };
@@ -61,7 +61,7 @@ TweenManager::TweenManager(QWidget *parent) : QWidget(parent), k(new Private)
     setFont(QFont("Arial", 8, QFont::Normal, false));
 
     k->input = new QLineEdit;
-    k->addButton = new KImageButton(QPixmap(THEME_DIR + "icons/plus_sign.png"), 22);
+    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/plus_sign.png"), 22);
     k->addButton->setToolTip(tr("Create a new Tween"));
     connect(k->input, SIGNAL(returnPressed()), this, SLOT(addTween()));
     connect(k->addButton, SIGNAL(clicked()), this, SLOT(addTween()));
@@ -138,6 +138,21 @@ void TweenManager::addTween()
             emit addNewTween(name);
         } else {
             TOsd::self()->display(tr("Error"), tr("Tween name already exists!"), TOsd::Error);
+        }
+    } else {
+        int i = 0;
+        while (true) {
+               QString num = QString::number(i); 
+               if (i < 10)
+                   num = "0" + QString::number(i);
+
+               QString name = "tween" + num; 
+               QList<QListWidgetItem *> items = k->tweensList->findItems(name, Qt::MatchExactly);
+               if (items.count() == 0) {
+                   k->input->setText(name);
+                   break;
+               }
+               i++;
         }
     }
 }

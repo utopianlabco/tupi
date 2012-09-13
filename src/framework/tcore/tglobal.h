@@ -37,21 +37,22 @@
 #define TGLOBAL_H
 
 #if defined(QT_SHARED) || defined(QT_PLUGIN)
-# define K_GUI_EXPORT Q_GUI_EXPORT
-# define K_CORE_EXPORT Q_DECL_EXPORT
-# define K_SOUND_EXPORT Q_DECL_EXPORT
+# define T_GUI_EXPORT Q_GUI_EXPORT
+# define T_CORE_EXPORT Q_DECL_EXPORT
+# define T_SOUND_EXPORT Q_DECL_EXPORT
 #else
-# define K_GUI_EXPORT
-# define K_CORE_EXPORT
-# define K_SOUND_EXPORT
+# define T_GUI_EXPORT
+# define T_CORE_EXPORT
+# define T_SOUND_EXPORT
 #endif
 
 // #include "tapplicationproperties.h"
 
+#define HOME_DIR kAppProp->homeDir()
+#define BIN_DIR kAppProp->binDir()
 #define SHARE_DIR kAppProp->shareDir()
 #define DATA_DIR kAppProp->dataDir()
 #define THEME_DIR kAppProp->themeDir()
-#define HOME_DIR kAppProp->homeDir()
 #define CONFIG_DIR kAppProp->configDir()
 #define PLUGINS_DIR kAppProp->pluginDir()
 #define CACHE_DIR kAppProp->cacheDir()

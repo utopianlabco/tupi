@@ -5,5 +5,9 @@
 # Compulsory line, this is a version 3 file
 version=3
 
-opts=uversionmangle=s/\-git/\+git/ \
-http://download.berlios.de/tupi/ tupi_([\d\-\.git]+)\.tar\.gz
+opts=\
+uversionmangle=s/\-git/\+git/ \
+ http://developer.berlios.de/project/showfiles.php?group_id=12151&release_id=18872/ \
+ .*/tupi_([0-9.\-git]+)\.tar\.(?:gz|bzip2|xz)
+
+#http://sf.net/tupi.berlios/tupi_([0-9.\-git]+)\.tar\.(?:gz|bzip2|xz)

@@ -6,7 +6,7 @@
 SUBDIRS += common \
            penciltool \
            inktool \
-           schemetool \
+           # schemetool \
            selecttool \
            contourselectiontool \
            texttool \
@@ -23,6 +23,5 @@ SUBDIRS += common \
            coloringtool \
            compoundtool
 
-# KDEV_QTVER = 4
-CONFIG += release warn_on
+CONFIG += warn_on
 TEMPLATE = subdirs

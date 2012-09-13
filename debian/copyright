@@ -36,10 +36,6 @@ Files: tools/change-svn-wc-format.py
 Copyright: unknown
 License: Apache-2.0
 
-Files: 3rdparty/potrace/*
-Copyright: 2001-2005 Peter Selinger
-License: GPL-3+
-
 Files: 3rdparty/quazip/*
 Copyright: 1998-2005 Gilles Vollant
                 2005 Sergey A. Tachenov

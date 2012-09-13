@@ -36,16 +36,16 @@
 #include "erasertool.h"
 #include "tglobal.h"
 #include "tdebug.h"
-#include "ktrectitem.h"
-#include "ktellipseitem.h"
-#include "ktlineitem.h"
-#include "ktpathitem.h"
-#include "ktitemconverter.h"
-#include "ktscene.h"
-#include "ktinputdeviceinformation.h"
-#include "ktgraphicsscene.h"
-#include "ktprojectrequest.h"
-#include "ktbrushmanager.h"
+#include "tuprectitem.h"
+#include "tupellipseitem.h"
+#include "tuplineitem.h"
+#include "tuppathitem.h"
+#include "tupitemconverter.h"
+#include "tupscene.h"
+#include "tupinputdeviceinformation.h"
+#include "tupgraphicsscene.h"
+#include "tupprojectrequest.h"
+#include "tupbrushmanager.h"
 
 #include <QGraphicsView>
 #include <QKeySequence>
@@ -69,27 +69,27 @@ QStringList EraserTool::keys() const
 
 void EraserTool::setupActions()
 {
-    TAction *action1 = new TAction(QIcon(THEME_DIR + "icons/eraser.png"), tr("Eraser"), this);
+    TAction *action1 = new TAction(QIcon(kAppProp->themeDir() + "icons/eraser.png"), tr("Eraser"), this);
     action1->setShortcut(QKeySequence(tr("E")));
-    action1->setCursor(QCursor(THEME_DIR + "cursors/eraser.png"));
+    action1->setCursor(QCursor(kAppProp->themeDir() + "cursors/eraser.png"));
     
     m_actions.insert(tr("Eraser"), action1);
    
     /* 
-     TAction *action2 = new TAction(QIcon(THEME_DIR + "icons/ellipse.png"), tr("Ellipse"), this);
+     TAction *action2 = new TAction(QIcon(kAppProp->themeDir() + "icons/ellipse.png"), tr("Ellipse"), this);
      action2->setShortcut(QKeySequence(tr("Ctrl+E")));
-     action2->setCursor(QCursor(THEME_DIR + "cursors/circle.png"));
+     action2->setCursor(QCursor(kAppProp->themeDir() + "cursors/circle.png"));
          
      m_actions.insert(tr("Ellipse"), action2);
          
          
-     TAction *action3 = new TAction( QIcon(THEME_DIR+"/icons/line.png"), tr("Line"), this);
+     TAction *action3 = new TAction( QIcon(kAppProp->themeDir() + "icons/line.png"), tr("Line"), this);
      action3->setShortcut( QKeySequence(tr("Ctrl+L")) );
      m_actions.insert(tr("Line"), action3);
     */
 }
 
-void EraserTool::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void EraserTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     if (input->buttons() == Qt::LeftButton) {
         QPointF pos = input->pos();
@@ -105,11 +105,11 @@ void EraserTool::press(const KTInputDeviceInformation *input, KTBrushManager *br
     }
 }
 
-void EraserTool::move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void EraserTool::move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
 }
 
-void EraserTool::release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void EraserTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
 }
 
@@ -128,7 +128,7 @@ QWidget  *EraserTool::configurator()
     return  0;
 }
 
-void EraserTool::aboutToChangeScene(KTGraphicsScene *scene)
+void EraserTool::aboutToChangeScene(TupGraphicsScene *scene)
 {
 }
 
@@ -136,7 +136,7 @@ void EraserTool::aboutToChangeTool()
 {
 }
 
-void EraserTool::itemPressed(QGraphicsItem *item, const KTBrushManager *brush, const QPointF &pos)
+void EraserTool::itemPressed(QGraphicsItem *item, const TupBrushManager *brush, const QPointF &pos)
 {
     QList<QGraphicsItem *> collides = item->collidingItems();
     
@@ -144,12 +144,12 @@ void EraserTool::itemPressed(QGraphicsItem *item, const KTBrushManager *brush, c
         QRect intersectRect(pos.x() - (brush->pen().width()/2), pos.y() - (brush->pen().width())/2, 
                     brush->pen().width(), brush->pen().width());
         
-        KTPathItem *path = qgraphicsitem_cast<KTPathItem*>(item);
+        TupPathItem *path = qgraphicsitem_cast<TupPathItem*>(item);
         
         if (!path) {
             /*
              QString conv = "<convert type=\"2\" />"; // to path type
-             KTProjectRequest *event = new KTProjectRequest(KTProjectRequest::Convert, 
+             TupProjectRequest *event = new TupProjectRequest(TupProjectRequest::Convert, 
              scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(), 
              scene->currentFrame()->graphics().indexOf(item), conv);
              addProjectRequest(event);
@@ -170,5 +170,5 @@ void EraserTool::keyPressEvent(QKeyEvent *event)
         emit closeHugeCanvas();
 }
 
-Q_EXPORT_PLUGIN2(kt_eraser, EraserTool)
+Q_EXPORT_PLUGIN2(tup_eraser, EraserTool)
 

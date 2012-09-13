@@ -3,10 +3,20 @@
 # Subdir relative project main directory: ./src/components/export
 # Target is a library:  
 
-HEADERS += ktexportwidget.h 
-SOURCES += ktexportwidget.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tupexportwidget.h 
+SOURCES += tupexportwidget.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = export
 

@@ -47,8 +47,6 @@ override_dh_auto_configure: $(QM_FILES)
 override_dh_auto_install:
 	dh_auto_install
 	$(RM) $(PDIR)/usr/share/man/man1/tupi.1.gz
-	mv $(PDIR)/usr/lib/tupi/tupi/plugins/* $(PDIR)/usr/lib/tupi/plugins/ \
-	&& $(RM) -r $(PDIR)/usr/lib/tupi/tupi
 	convert launcher/icons/tupi_32x32.png $(PDIR)/usr/share/pixmaps/tupi_32x32.xpm
 	# patch the launcher for the correct paths
 	mkdir "$(PDIR)/usr/bin" && mv "$(PDIR)/usr/lib/tupi/bin/tupi" "$(PDIR)/usr/bin/"

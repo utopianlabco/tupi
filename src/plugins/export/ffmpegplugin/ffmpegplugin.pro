@@ -3,12 +3,15 @@
 # Subdir relative project main directory: ./src/plugins/export/ffmpegplugin
 # Target is a library:  
 
-target.path = /plugins/ 
 INSTALLS += target
+target.path = /plugins/
 #INSTALL_ROOT = /tmp/test
 
-HEADERS += ffmpegplugin.h
-SOURCES += ffmpegplugin.cpp
+HEADERS += tffmpegmoviegenerator.h \
+           ffmpegplugin.h
+
+SOURCES += tffmpegmoviegenerator.cpp \
+           ffmpegplugin.cpp
 
 CONFIG += plugin warn_on
 TEMPLATE = lib 

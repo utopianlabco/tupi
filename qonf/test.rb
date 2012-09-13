@@ -22,6 +22,7 @@ class Test
     end
     
     def run(config, conf, debug, isLucid)
+
         parser = Parser.new
         parser.os = DetectOS::OS[DetectOS.whatOS].to_s.downcase
         
@@ -54,14 +55,6 @@ class Test
                       ffmpegLib = conf.argumentValue("with-ffmpeg") + "/lib"
                       extraLib += "-L#{ffmpegLib}"
                       extraInclude = conf.argumentValue("with-ffmpeg") + "/include"
-                   end
-                end
-
-                if File.dirname(@rules).end_with?("aspell")
-                   if conf.hasArgument?("with-aspell")
-                      aspellLib = conf.argumentValue("with-aspell") + "/lib"
-                      extraLib += "-L#{aspellLib}"
-                      extraInclude = conf.argumentValue("with-aspell") + "/include"
                    end
                 end
 

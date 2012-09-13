@@ -1,9 +1,17 @@
-tupi (0.1+git12-8) unstable; urgency=medium
+tupi (0.2+git01-1~exp0) experimental; urgency=low
 
-  * New patch to fix FTBFS on powerpc, ppc64 and powerpcspe;
-    thanks to Roland Stigge (Closes: #701645).
+  * New upstream release.
+  * new desktop-validate.patch
+  * dropped obsolete/applied-upstream patches:
+    - 658422-armel-armhf-FTBFS.patch
+    - build-with-libav-0.8.patch
+    - crashhandler-path2exec.patch
+    - desktop-encoding.patch
+  * updated lintian-overrides.
+  * minor cleanup.
+  * debian/watch is updated for new mirror location.
 
- -- Dmitry Smirnov <onlyjob@member.fsf.org>  Thu, 28 Feb 2013 16:01:01 +1100
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Thu, 13 Sep 2012 16:24:13 +1000
 
 tupi (0.1+git12-7) unstable; urgency=low
 
