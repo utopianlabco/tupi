@@ -7,6 +7,9 @@
 		<defines>
 			<define value="HAVE_QUAZIP" />
 		</defines>
+		<libs>
+			<lib path="-lquazip" />
+		</libs>
                 <includes>
                         <include path="/usr/include/quazip/" />
                 </includes>
@@ -14,7 +17,7 @@
 	<solution>
 		<linux package="quazip" url="http://quazip.sourceforge.net/" comment="" >
 			<distribution name="gentoo" package="quazip" url="http://quazip.sourceforge.net/" comment="Try: emerge quazip" />
-			<distribution name="ubuntu" package="quazip" url="http://quazip.sourceforge.net/" comment="Try: apt-get install libquazip0 libquazip0-dev" />
+			<distribution name="ubuntu" package="quazip" url="http://quazip.sourceforge.net/" comment="Try: apt-get install quazip" />
 		</linux>
 		<windows package="quazip" url="http://quazip.sourceforge.net/" comment="" />
 		<macosx package="quazip" url="http://quazip.sourceforge.net/" comment="" />
