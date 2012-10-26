@@ -2,83 +2,49 @@
 
 Name: tupi
 Version: 0.2
-Release: 4%{?dist}
-Summary: 2D vector-based animation environment 
+Release: 1%{?dist}
+Summary: Tupi: Open 2D Magic
 License: GPLv3+
 URL: http://www.maefloresta.com
-Source0: http://www.maefloresta.com/portal/files/%{name}-%{version}.tar.gz
+Source: http://www.maefloresta.com/portal/files/tupi-0.2.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: ruby, zlib-devel, quazip-devel
-BuildRequires: qconf, desktop-file-utils, qt4-devel
-BuildRequires: libtheora-devel, libogg-devel
+BuildRequires: qconf, qt4-devel >= 4.7
 # BuildRequires: ffmpeg, ffmpeg-libs, ffmpeg-devel
+BuildRequires: libtheora-devel, libogg-devel
+# Requires: qt, quazip, libtheora
 
 %description
-2D vector-based animation environment for digital artists
+2D vectorial/animation environment for digital artists
 
 %prep
 %setup -q
 
 %build
-%configure
-make %{?_smp_mflags}
+%configure --prefix=%{buildroot}/usr --bindir=%{buildroot}/%{_bindir} --sharedir=%{buildroot}/%{_datadir}/tupi --libdir=%{buildroot}/%{_libdir}/tupi --package-build
+make
 
 %install
 make install DESTDIR=%{buildroot}
-%find_lang %{name} --with-qt
-find %{buildroot} -name \*.la | xargs rm -f
+#make install
+find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
 
-%post
-/usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
+%post -p /sbin/ldconfig
 
-%postun
-/usr/bin/update-mime-database %{_datadir}/mime &> /dev/null || :
+%postun -p /sbin/ldconfig
 
-desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
-
-%files -f %{name}.lang
-%doc README COPYING
-
-%{_libdir}/%{name}
-%{_bindir}/%{name}
-%{_bindir}/%{name}.bin
-%{_datadir}/applications/tupi.desktop
-%{_datadir}/man/man1/*.1*
-%{_datadir}/mime/packages/tupi.xml
-%{_datadir}/pixmaps/%{name}.png
-%{_datadir}/%{name}/data/help/
-%{_datadir}/%{name}/data/palettes/
-%{_datadir}/%{name}/data/storyboard/
-%{_datadir}/%{name}/data/cs/
-%{_datadir}/%{name}/data/da/
-%{_datadir}/%{name}/data/de/
-%{_datadir}/%{name}/data/en/
-%{_datadir}/%{name}/data/es/
-%{_datadir}/%{name}/data/gl/
-%{_datadir}/%{name}/data/pt/
-%{_datadir}/%{name}/data/ru/
-%{_datadir}/%{name}/data/translations/*.ts
-
-%{_datadir}/%{name}/themes/
+%files
+%defattr(-,root,root)
+%{_bindir}/tupi
+%{_bindir}/tupi.bin
+%{_datadir}/applications
+%{_datadir}/pixmaps/tupi.png
+%{_datadir}/tupi
+%{_libdir}/tupi
+%{_datadir}/man/man1
 
 %changelog
-
-* Sat Dec 8 2012 Gustav Gonzalez <xtingray@maefloresta.com> - 0.2-4
-- The files section was simplified to avoid a warning
-
-* Mon Nov 19 2012 Gustav Gonzalez <xtingray@maefloresta.com> - 0.2-3
-- Extended line "files"
-- Added lines post and postrun to update mime database
-- Added a detailed list of application directories and files
-
-* Sat Nov 17 2012 Gustav Gonzalez <xtingray@maefloresta.com> - 0.2-2
-- Replacing variable %%buildroot instead of RPM_BUILD_ROOT
-- Fixing rpmlint errores
-- Removing the line "ExcludeArch: ppc ppc64"
-- Removing the ownership of the "man" directory   
-- Changing global permissions to 644
-- Added licence/readme line 
-
-* Fri Oct 26 2012 Gustav Gonzalez <xtingray@maefloresta.com> - 0.2-1
-- Several lines of the spec file were adjusted according to the Fedora standard 
+* Sat Oct 13 2012 Tupi
+- Making of RPM
 
