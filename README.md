@@ -1,37 +1,42 @@
-## Tupi: 2D Magic
+ ## Tupi: Open 2D Magic
 
-Tupi is a desktop application focused on 2D vector-based content
-like images (PNG), storyboards (HTML) and animations (OGG, AVI, 
-MPEG, etc).
-Its interface has been designed looking for provide a high level 
-experience of usability for artists and non artists, using as main 
-development resource the Qt framework. 
+ Tupi is a desktop application focused on 2D vector-based content
+ like images (PNG), storyboards (HTML) and animations (OGG, AVI, 
+ MPEG, etc).
+ Its interface has been designed looking for provide a high level 
+ experience of usability for artists and non artists, using as main 
+ development resource the Qt framework. 
 
-See the files ./INSTALL* for building and installation instructions.
+ Copyright (C) 2010 Gustav Gonzalez / xtingray
 
-Primary distribution point:
-http://www.maefloresta.com/portal/downloads
+ Copying and distribution of this file, with or without modification,
+ are permitted in any medium without royalty provided the copyright
+ notice and this notice are preserved.
 
-Home page:
-http://www.maefloresta.com/
+ See the files ./INSTALL* for building and installation instructions.
 
-Forums:
-http://www.maefloresta.com/portal/forum 
+ Primary distribution point: 
+	http://www.maefloresta.com/portal/downloads
 
-Bug reports: 
-http://www.maefloresta.com/portal/bugs.php
+ Home page: 
+	http://www.maefloresta.com/
 
-Tips:
-Please include enough information for the maintainers to reproduce the
-problem.  Generally speaking, that means:
-* The content of any input file or procedure necessary to reproduce 
-the bug (crucial!).
-* A description of the problem and any samples of the erroneous output.
-* The version/revision number of the program(s) involved. 
-* Hardware, operating system, and compiler versions (uname -a).
-* Anything else that you think would be helpful.
+ Forums: 
+	http://www.maefloresta.com/portal/forum 
 
-Patches are very welcome; if possible, please make them with diff -c and
-include ChangeLog entries.
+ Bug reports: 
+	http://www.maefloresta.com/portal/bugs.php
+ Tips:
+ Please include enough information for the maintainers to reproduce the
+ problem.  Generally speaking, that means:
+ * The content of any input file or procedure necessary to reproduce 
+   the bug (crucial!).
+ * A description of the problem and any samples of the erroneous output.
+ * The version/revision number of the program(s) involved. 
+ * Hardware, operating system, and compiler versions (uname -a).
+ * Anything else that you think would be helpful.
 
-Tupi is free software. See the file COPYING for copying conditions.
+ Patches are very welcome; if possible, please make them with diff -c and
+ include ChangeLog entries.
+
+ Tupi is free software. See the file COPYING for copying conditions.
