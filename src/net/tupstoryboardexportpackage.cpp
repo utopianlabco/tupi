@@ -54,12 +54,14 @@
 //   </storyboard>
 // </project_storyboard>
 
-TupStoryboardExportPackage::TupStoryboardExportPackage(const QDomElement storyboard): QDomDocument()
+TupStoryboardExportPackage::TupStoryboardExportPackage(int sceneIndex): QDomDocument()
 {
     QDomElement root = createElement("project_storyboard");
     root.setAttribute("version", "0");
     appendChild(root);
-    root.appendChild(storyboard);
+
+    QDomText sceneDom = createTextNode(QString::number(sceneIndex));
+    root.appendChild(createElement("sceneIndex")).appendChild(sceneDom);
 }
 
 TupStoryboardExportPackage::~TupStoryboardExportPackage()
