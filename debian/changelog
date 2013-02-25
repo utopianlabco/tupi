@@ -1,3 +1,9 @@
+tupi (0.1+git12-7+powerpcspe1) unreleased; urgency=low
+
+  * Fix build on powerpcspe
+
+ -- Roland Stigge <stigge@antcom.de>  Mon, 25 Feb 2013 17:55:49 +0100
+
 tupi (0.1+git12-7) unstable; urgency=low
 
   * xz compression for binary packages.

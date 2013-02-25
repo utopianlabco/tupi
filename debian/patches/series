@@ -4,3 +4,4 @@ desktop-encoding.patch
 build-with-libav-0.8.patch
 crashhandler-path2exec.patch
 658422-armel-armhf-FTBFS.patch
+fix-includes.patch
