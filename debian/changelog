@@ -1,8 +1,9 @@
-tupi (0.1+git12-7+powerpcspe1) unreleased; urgency=low
+tupi (0.1+git12-8) unstable; urgency=medium
 
-  * Fix build on powerpcspe
+  * New patch to fix FTBFS on powerpc, ppc64 and powerpcspe;
+    thanks to Roland Stigge (Closes: #701645).
 
- -- Roland Stigge <stigge@antcom.de>  Mon, 25 Feb 2013 17:55:49 +0100
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Thu, 28 Feb 2013 16:01:01 +1100
 
 tupi (0.1+git12-7) unstable; urgency=low
 
