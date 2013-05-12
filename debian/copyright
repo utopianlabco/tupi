@@ -4,7 +4,7 @@ Upstream-Contact: Gustav Gonzalez <info@maefloresta.com>
 Source: http://www.maefloresta.com/
 
 Files: debian/*
-Copyright: 2011-2012 Dmitry Smirnov <onlyjob@member.fsf.org>
+Copyright: 2011-2013 Dmitry Smirnov <onlyjob@debian.org>
 License: GPL-3+
 
 Files: *

@@ -1,3 +1,17 @@
+tupi (0.2+git01-1) unstable; urgency=low
+
+  * Upload to unstable.
+  * Removed unnecessary versioned Build-Depends.
+  * Removed obsolete "DM-Upload-Allowed".
+  * Added Vcs links to collab-maint.
+  * Standards updated to version 3.9.4.
+  * Corrected "libavutil51"-->"libavutil-dev" in Build-Depends.
+  * Updated debian/watch (corrected URL, removed comments).
+  * Updated get-orig-source (can work from any directory).
+  * Updated my email address; bumped copyright years.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 13 May 2013 09:53:35 +1000
+
 tupi (0.2+git01-1~exp0) experimental; urgency=low
 
   * New upstream release.
