@@ -8,7 +8,9 @@ Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl, qt4-qmake
  ,libaspell-dev (>= 0.60.7~)
  ,libavformat-dev
  ,libavutil-dev
+ ,libogg-dev
  ,libqt4-opengl-dev
+ ,libtheora-dev
  ,zlib1g-dev
 Standards-Version: 3.9.4
 Homepage: http://www.maefloresta.com/portal

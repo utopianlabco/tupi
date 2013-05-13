@@ -1,0 +1,35 @@
+Last-Update: 2013-05-13
+Forwarded: no
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+From: Roland Stigge <stigge@antcom.de>
+Bug-Debian: http://bugs.debian.org/701645
+Description: fix FTBFS on powerpc, ppc64 and powerpcspe.
+
+    tcpuinfo.cpp:56:8: error: 'sigjmp_buf' does not name a type
+    tcpuinfo.cpp:57:8: error: 'sig_atomic_t' does not name a type
+    tcpuinfo.cpp: In function 'void sigill_handler(int)':
+    tcpuinfo.cpp:61:11: error: 'canjump' was not declared in this scope
+    tcpuinfo.cpp:62:22: error: 'SIG_DFL' was not declared in this scope
+    tcpuinfo.cpp:62:30: error: 'signal' was not declared in this scope
+    tcpuinfo.cpp:63:20: error: 'raise' was not declared in this scope
+    tcpuinfo.cpp:65:5: error: 'canjump' was not declared in this scope
+    tcpuinfo.cpp:66:17: error: 'jmpbuf' was not declared in this scope
+    tcpuinfo.cpp:66:27: error: 'siglongjmp' was not declared in this scope
+    tcpuinfo.cpp: At global scope:
+    tcpuinfo.cpp:59:13: warning: 'void sigill_handler(int)' defined but not used [-Wunused-function]
+    make[4]: *** [.obj/tcpuinfo.o] Error 1
+
+--- a/src/framework/tcore/tcpuinfo.cpp
++++ b/src/framework/tcore/tcpuinfo.cpp
+@@ -32,8 +32,11 @@
+  *   You should have received a copy of the GNU General Public License     *
+  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+  ***************************************************************************/
+ 
++#include <signal.h>
++#include <setjmp.h>
++
+ #include "tcpuinfo.h"
+ 
+ #if defined(__GNUC__) || defined(__INTEL_COMPILER)
+ #  define HAVE_GNU_INLINE_ASM

@@ -1,3 +1,14 @@
+tupi (0.2+git01-2) unstable; urgency=low
+
+  * Added "libogg-dev" and "libtheora-dev" to Build-Depends.
+  * Removed unused lintian override.
+  * New patch to always build "tupi.desktop" file (not just on linux;
+    fixes FTBFS on kFreeBSD and Hurd).
+  * New patch to fix FTBFS on powerpc, ppc64 and powerpcspe;
+    thanks to Roland Stigge (Closes: #701645).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 13 May 2013 15:43:00 +1000
+
 tupi (0.2+git01-1) unstable; urgency=low
 
   * Upload to unstable.
