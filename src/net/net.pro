@@ -3,14 +3,19 @@
 # Subdir relative project main directory: ./src/net
 # Target is a library: net
 
-INSTALLS += headers \
-            target
+!include(../../tupiglobal.pri) {
+    error("Please configure first")
+}
 
+INSTALLS += target
 target.path = /lib/
 
-headers.target = .
-headers.commands = cp *.h $(INSTALL_ROOT)/include/tupinet
-headers.path = /include/tupinet/
+contains("DEFINES", "ADD_HEADERS") {
+    INSTALLS += headers
+    headers.target = .
+    headers.commands = cp *.h $(INSTALL_ROOT)/include/tupinet
+    headers.path = /include/tupinet/
+}
 
 macx {
     CONFIG += plugin warn_on
@@ -40,7 +45,9 @@ HEADERS += tupnetprojectmanagerparams.h \
            tupcommunicationparser.h \
            tupimageexportpackage.h \
            tupvideoexportpackage.h \
-           tupstoryboardexportpackage.h
+           tupstoryboardupdatepackage.h \
+           tupstoryboardexportpackage.h \
+           tupstoryboardparser.h
 
 SOURCES += tupnetprojectmanagerparams.cpp \
            tupnetprojectmanagerhandler.cpp \
@@ -66,7 +73,10 @@ SOURCES += tupnetprojectmanagerparams.cpp \
            tupcommunicationparser.cpp \
            tupimageexportpackage.cpp \
            tupvideoexportpackage.cpp \
-           tupstoryboardexportpackage.cpp
+           tupstoryboardupdatepackage.cpp \
+           tupstoryboardexportpackage.cpp \
+           tupstoryboardparser.cpp
+
 *:!macx{
     CONFIG += dll warn_on
 }
@@ -78,6 +88,4 @@ include(net_config.pri)
 
 FRAMEWORK_DIR = "../framework"
 include($$FRAMEWORK_DIR/framework.pri)
-
-include(../../tupiglobal.pri)
 

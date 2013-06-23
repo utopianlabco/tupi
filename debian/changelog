@@ -1,3 +1,24 @@
+tupi (0.2+git02-1) unstable; urgency=low
+
+  * New upstream release [June 2013].
+    + ready for "libav9" transition.
+  * Build-Depends:
+    + libquazip-dev
+  * Packaging updates:
+    + added ugly override for broken upstream libav detection;
+      "pkg-config" is added to Build-Depends for that matter.
+    + rules simplified as upstream introduced support for $(DESTDIR).
+    + re-build translations after configure.
+    + re-build/re-compress man page.
+    + dropped all patches.
+    + updated lintian-overrides, new overrides for
+      "library-not-linked-against-libc" in private libs.
+    + ship all icons and docs in -data package.
+    + data de-duplication in -data package.
+    + debian/watch to check for tags at github as well.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 23 Jun 2013 12:48:05 +1000
+
 tupi (0.2+git01-2) unstable; urgency=low
 
   * Added "libogg-dev" and "libtheora-dev" to Build-Depends.

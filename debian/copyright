@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: tupi
 Upstream-Contact: Gustav Gonzalez <info@maefloresta.com>
-Source: http://www.maefloresta.com/
+Source: https://github.com/xtingray/tupi
 
 Files: debian/*
 Copyright: 2011-2013 Dmitry Smirnov <onlyjob@debian.org>

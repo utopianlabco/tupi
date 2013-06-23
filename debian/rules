@@ -4,61 +4,71 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-PDIR     := $(CURDIR)/debian/tupi
 QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
 
 %:
 	dh $@
+
+override_dh_auto_clean:
+	# remove pre-generated binaries; the following is intentional:
+	# trick lintian and always use Makefile.common to clean generated files.
+	-true && $(MAKE) -f Makefile.common confclean
+	$(RM) -v configure.tests/*/Makefile $(QM_FILES)
+	dh_auto_clean
+
+override_dh_auto_configure:
+	# arch-dependent patching
+	cat debian/patches/series.$(DEB_HOST_ARCH_OS) >> debian/patches/series \
+        && $(RM) debian/patches/series.$(DEB_HOST_ARCH_OS) \
+        && dh_quilt_patch || true
+	# override qonf/defaults.rb
+	ruby configure.rb \
+            --prefix=/usr \
+            --bindir=/usr/lib/tupi/bin \
+            --libdir=/usr/lib/tupi \
+            --sharedir=/usr/share/tupi \
+            --includedir=/usr/include/tupi
+	# force qmake-generated Makefiles to respect dpkg-provided flags and don't strip
+	perl -0pi -e 's[(CXXFLAGS\s*=)][$$1 $$ENV{CFLAGS} $$ENV{CPPFLAGS}]; \
+                      s[(LFLAGS\s*=)][$$1 -Wl,--as-needed $$ENV{LDFLAGS}]; \
+                      s[(CFLAGS\s*=)][$$1 $$ENV{CFLAGS} $$ENV{CPPFLAGS}]; \
+                      s[(STRIP\s*=)\s*\w+][$$1 true];' \
+                     $$(find . -name Makefile)
+	## libav9 and older: ugly override for upstream libav detection:
+	## FTBFS: "WARNING: Failure to find: tffmpegmoviegenerator.cpp"
+	## https://github.com/xtingray/tupi/issues/2
+	## remove "pkg-config" fron Build-Depends when this will not be needed.
+	dpkg --compare-versions $$(pkg-config --modversion libavcodec) lt 54.35.0 \
+        && cp -v src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.old.cpp    \
+                 src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.cpp        \
+        || cp -v src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.debian.cpp \
+                 src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.cpp
 
 $(QM_FILES):
 	# rebuild translations
 	lupdate tupi.pro -locations none -silent -ts $(@:.qm=.ts)
 	lrelease $(@:.qm=.ts)
 
-override_dh_auto_clean:
-	# remove pre-generated binaries
-	cd configure.tests \
-	&& for dir in opengl ffmpeg aspell; do $(RM) $$dir/$$dir $$dir/*.o $$dir/Makefile; done
-	$(RM) launcher/tupi launcher/tupi.desktop $(QM_FILES)
-	# fix wrong upstream permissions
-	chmod -R a-x+X . \
-	&& chmod +x configure debian/rules
-	dh_auto_clean
+override_dh_auto_build: $(QM_FILES)
+	convert -monitor launcher/icons/tupi_32x32.png debian/tupi_32x32.xpm
+	cd src/components/help/man && gzip -9 -c tupi.man > tupi.1.gz
+	dh_auto_build
 
-override_dh_auto_configure: $(QM_FILES)
-	# arch-dependent patching
-	cat debian/patches/series.$(DEB_HOST_ARCH_OS) >> debian/patches/series \
-	&& $(RM) debian/patches/series.$(DEB_HOST_ARCH_OS) \
-	&& dh_quilt_patch || return 0
-	# override qonf/defaults.rb
-	ruby configure.rb --debian-build=1 \
-                      --with-debug \
-                      --prefix=$(PDIR)/usr \
-                      --bindir=$(PDIR)/usr/lib/tupi/bin \
-                      --libdir=$(PDIR)/usr/lib/tupi \
-                      --sharedir=$(PDIR)-data/usr/share/tupi \
-                      --includedir=$(PDIR)-dev/usr/include/tupi
-	# force qmake-generated Makefiles to respect dpkg-provided flags
-	perl -0pi -e 's[(CXXFLAGS\s*=)][$$1 $$ENV{CFLAGS} $$ENV{CPPFLAGS}]; \
-                      s[(LFLAGS\s*=)][$$1 -Wl,--as-needed $$ENV{LDFLAGS}]; \
-                      s[(CFLAGS\s*=)][$$1 $$ENV{CFLAGS} $$ENV{CPPFLAGS}];' \
-                     $$(find . -name Makefile)
+override_dh_install:
+	dh_install
+	# De-duplication (http://wiki.debian.org/dedup.debian.net):
+	rdfind -outputname /dev/null -makesymlinks true debian/tupi-data
+	symlinks -rsc debian/tupi-data
 
-override_dh_auto_install:
-	dh_auto_install
-	$(RM) $(PDIR)/usr/share/man/man1/tupi.1.gz
-	convert launcher/icons/tupi_32x32.png $(PDIR)/usr/share/pixmaps/tupi_32x32.xpm
-	# patch the launcher for the correct paths
-	mkdir "$(PDIR)/usr/bin" && mv "$(PDIR)/usr/lib/tupi/bin/tupi" "$(PDIR)/usr/bin/"
-	perl -pi -e 's{(/usr/lib)(?!/tupi)}{$$1/tupi}g; s{(export\s+TUPI_INCLUDE)}{#$$1}; s{/usr/bin}{/usr/lib/tupi/bin};' $(PDIR)/usr/bin/tupi
-	# wipe empty dirs, if any
-	find $(PDIR) -type d -empty -delete
-
+PDIR     := $(CURDIR)/debian/tupi
 override_dh_shlibdeps:
 	LD_LIBRARY_PATH="$(PDIR)/usr/lib/tupi:$(PDIR)/usr/lib/tupi/plugins:$(LD_LIBRARY_PATH)" dh_shlibdeps
 
 override_dh_makeshlibs:
 	dh_makeshlibs --noscripts
+
+override_dh_installdocs:
+	dh_installdocs --link-doc=tupi-data
 
 override_dh_strip:
 	dh_strip -v --dbg-package=tupi-dbg

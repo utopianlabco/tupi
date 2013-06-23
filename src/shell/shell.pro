@@ -26,21 +26,24 @@ unix:!mac {
 
     INSTALLS += tupidata \
                 launcher \
-                target
-    target.path = /bin/
+                mime \
+                target \
+                desktop \
+                icons \
+                tupiman \
+                copyright
 
     tupidata.target = data
     tupidata.commands = cp -r data/* $(INSTALL_ROOT)/data
     tupidata.path = /data/
 
     launcher.target = ../../launcher/tupi
-    launcher.commands = cp ../../launcher/tupi $(INSTALL_ROOT)/bin
+    launcher.commands = cp ../../launcher/tupi $(INSTALL_ROOT)/bin; chmod 755 $(INSTALL_ROOT)/bin/tupi
     launcher.path = /bin/
 
-    INSTALLS += desktop \
-                icons \
-                tupiman \
-                copyright
+    mime.target = ../../launcher/tupi.xml
+    mime.commands = cp ../../launcher/tupi.xml $(INSTALL_ROOT)/share/mime/packages
+    mime.path = /share/mime/packages/
 
     desktop.target = ../../launcher/tupi.desktop
     desktop.commands = cp ../../launcher/tupi.desktop $(INSTALL_ROOT)/applications
@@ -50,21 +53,22 @@ unix:!mac {
     icons.commands = cp ../../launcher/icons/tupi.png $(INSTALL_ROOT)/pixmaps
     icons.path = /pixmaps/
 
-    tupiman.target = ../components/help/help/man/tupi.1.gz
-    tupiman.commands = cp ../components/help/help/man/tupi.1.gz $(INSTALL_ROOT)/man1
+    tupiman.target = ../components/help/man/tupi.1.gz
+    tupiman.commands = cp ../components/help/man/tupi.1.gz $(INSTALL_ROOT)/man1
     tupiman.path = /man1/
 
-    copyright.target = ../components/help/help/man/copyright
-    copyright.commands = cp ../components/help/help/man/copyright $(INSTALL_ROOT)/share/doc/tupi
+    copyright.target = ../components/help/man/copyright
+    copyright.commands = cp ../components/help/man/copyright $(INSTALL_ROOT)/share/doc/tupi
     copyright.path = /tupi/
 
+    target.path = /bin/
     TARGET = ../../bin/tupi.bin
 }
 
-TRANSLATIONS += data/translations/tupi_es.ts \
-                data/translations/tupi_ca.ts \
-                data/translations/tupi_ru.ts \
-                data/translations/tupi_cs.ts
+# TRANSLATIONS += data/translations/tupi_es.ts \
+#                 data/translations/tupi_ca.ts \
+#                 data/translations/tupi_ru.ts \
+#                 data/translations/tupi_cs.ts
 
 HEADERS += tupmainwindow.h \
            tupstatusbar.h \
@@ -91,21 +95,21 @@ TEMPLATE = app
 
 linux-g{
     TARGETDEPS += ../libtupi/libtupi.so \
-  ../libui/libui.so \
+  ../libui/libtupiui.so \
   ../store/libtupistore.so \
   ../net/libtupinet.so \
-  ../components/paintarea/libpaintarea.so \
-  ../components/pen/libpen.so \
-  ../components/kinas/libkinas.so \
-  ../components/help/libhelp.so \
-  ../components/import/libimport.so \
-  ../components/export/libexport.so \
-  ../components/exposure/libexposure.so \
-  ../components/timeline/libtimeline.so \
-  ../components/library/liblibrary.so \
-  ../components/colorpalette/libcolorpalette.so \
-  ../components/scenes/libscenes.so \
-  ../components/twitter/libtwitter.so
+  ../components/paintarea/libtupipaintarea.so \
+  ../components/pen/libtupipen.so \
+  ../components/kinas/libtupikinas.so \
+  ../components/help/libtupihelp.so \
+  ../components/import/libtupimport.so \
+  ../components/export/libtupiexport.so \
+  ../components/exposure/libtupiexposure.so \
+  ../components/timeline/libtupitimeline.so \
+  ../components/library/libtupilibrary.so \
+  ../components/colorpalette/libtupicolorpalette.so \
+  ../components/scenes/libtupiscenes.so \
+  ../components/twitter/libtupitwitter.so
 }
 
 FRAMEWORK_DIR = ../framework

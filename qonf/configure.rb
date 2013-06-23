@@ -1,10 +1,45 @@
-# encoding: utf-8
+# encoding: UTF-8
 
-require './qonf/test'
-require './qonf/config'
-require './qonf/info'
-require './qonf/qonfexception'
-require './qonf/makefile'
+###########################################################################
+#   Project TUPI: Magia 2D                                                #
+#   Project Contact: info@maefloresta.com                                 #
+#   Project Website: http://www.maefloresta.com                           #
+#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
+#                                                                         #
+#   Developers:                                                           #
+#   2010:                                                                 #
+#    Gustavo Gonzalez / xtingray                                          #
+#                                                                         #
+#   KTooN's versions:                                                     #
+#                                                                         #
+#   2006:                                                                 #
+#    David Cuadrado                                                       #
+#    Jorge Cuadrado                                                       #
+#   2003:                                                                 #
+#    Fernado Roldan                                                       #
+#    Simena Dinas                                                         #
+#                                                                         #
+#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
+#   License:                                                              #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 3 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
+###########################################################################
+
+require_relative 'test'
+require_relative 'config'
+require_relative 'info'
+require_relative 'qonfexception'
+require_relative 'makefile'
 
 module RQonf
 
@@ -31,6 +66,8 @@ module RQonf
 
       @qmake = QMake.new
       @properties = {}
+
+      @ffmpeg = true
 
       setPath()
       Makefile::setArgs(@options)
@@ -73,6 +110,10 @@ module RQonf
       @testsDir = dir
     end
 
+    def disableFFmpeg()
+      @ffmpeg = false
+    end
+
     def verifyQtVersion(minqtversion, qtdir)
       Info.info << "Checking for Qt >= " << minqtversion << "... "
 
@@ -101,7 +142,7 @@ module RQonf
       Info.info << "Creating makefiles..." << $endl
 
       if RUBY_PLATFORM.downcase.include?("darwin")
-        qmakeLine = "'CONFIG += console warn_on' 'LIBS += -lavcodec -lavutil -lavformat -framework CoreFoundation'"
+        qmakeLine = "'CONFIG += console warn_on' 'INCLUDEPATH += /usr/local/include/quazip LIBS += -L/usr/local/lib -lavcodec -lavutil -lavformat -framework CoreFoundation'"
         @qmake.run(qmakeLine, true)
       else
         @qmake.run("", true)
@@ -162,7 +203,14 @@ module RQonf
             findTest(file)
           end
         elsif file =~ /.qonf$/
-          @tests << Test.new(file, @qmake)
+          if file.include? "ffmpeg"
+             if @ffmpeg
+                Info.warn << "Adding ffmpeg support: " << @ffmpeg << $endl
+                @tests << Test.new(file, @qmake)
+             end
+          else
+             @tests << Test.new(file, @qmake)
+          end
         end
       }
     end
@@ -170,35 +218,47 @@ module RQonf
     private
     def setPath()
       if @options['prefix'].nil? then
-        @options['prefix'] = "/usr/local/tupi"
+        @options['prefix'] = "/usr"
       end
+
       if @options['bindir'].nil? then
-        @options['bindir'] = @options['prefix'] + "/bin"
+         @options['bindir'] = @options['prefix'] + "/bin"
       end
+
       if @options['libdir'].nil? then
-        @options['libdir'] = @options['prefix'] + "/lib"
+        if RUBY_PLATFORM == "x86_64-linux"
+           @options['libdir'] = @options['prefix'] + "/lib64/tupi"
+        else
+           @options['libdir'] = @options['prefix'] + "/lib/tupi"
+        end
+      elsif !@options['libdir'].end_with? "tupi" then
+            @options['libdir'] = @options['libdir'] + "/tupi"
       end
+
       if @options['includedir'].nil? then
-        @options['includedir'] = @options['prefix'] + "/include"
+         @options['includedir'] = @options['prefix'] + "/include"
       end
+
       if @options['sharedir'].nil? then
-        @options['sharedir'] = @options['prefix'] + "/share"
+        @options['sharedir'] = @options['prefix'] + "/share/tupi"
       end
 
       launcher_prefix = @options['prefix']
       launcher_sharedir = @options['sharedir']
       launcher_libdir = @options['libdir']
-      launcher_includedir = @options['includedir']
       launcher_bindir = @options['bindir']
 
-      if @options['debian-build'].nil? then
-        @options['debian-build'] = "/usr"
+      if @options['package-build'].nil? then
+        @options['package-build'] = "/usr"
       else
-        @options['debian-build'] = @options['prefix']
+        @options['package-build'] = @options['prefix']
         launcher_prefix = "/usr"
         launcher_sharedir = "/usr/share/tupi"
-        launcher_libdir = "/usr/lib"
-        launcher_includedir = "/usr/include"
+        if RUBY_PLATFORM == "x86_64-linux"
+           launcher_libdir = "/usr/lib64/tupi"
+        else
+           launcher_libdir = "/usr/lib/tupi"
+        end
         launcher_bindir = "/usr/bin"
       end
 
@@ -207,14 +267,17 @@ module RQonf
       newfile += "export TUPI_SHARE=\"" + launcher_sharedir + "\"\n"
       newfile += "export TUPI_LIB=\"" + launcher_libdir + "\"\n"
       newfile += "export TUPI_PLUGIN=\"" + launcher_libdir + "/plugins\"\n"
-      newfile += "export TUPI_INCLUDE=\"" + launcher_includedir + "\"\n"
       newfile += "export TUPI_BIN=\"" + launcher_bindir + "\"\n\n"
 
       if RUBY_PLATFORM.downcase.include?("darwin")
         newfile += "export DYLD_FALLBACK_LIBRARY_PATH=\"\$\{TUPI_LIB\}:\$\{TUPI_PLUGIN\}:$DYLD_FALLBACK_LIBRARY_PATH\"\n\n"
         newfile += "open ${TUPI_BIN}/Tupi.app $*"
       else
-        newfile += "export LD_LIBRARY_PATH=\"\$\{TUPI_LIB\}:\$\{TUPI_PLUGIN\}:$LD_LIBRARY_PATH\"\n\n"
+        if @options['with-ffmpeg'].nil? then 
+           newfile += "export LD_LIBRARY_PATH=\"\$\{TUPI_LIB\}:\$\{TUPI_PLUGIN\}:$LD_LIBRARY_PATH\"\n\n"
+        else
+           newfile += "export LD_LIBRARY_PATH=\"" + @options['with-ffmpeg'] + "/lib:\$\{TUPI_LIB\}:\$\{TUPI_PLUGIN\}:$LD_LIBRARY_PATH\"\n\n" 
+        end
         newfile += "exec ${TUPI_BIN}/tupi.bin $*"
       end
 
@@ -222,18 +285,17 @@ module RQonf
         f << newfile
       }
 
-      if RUBY_PLATFORM.downcase.include?("linux")
         newfile = "[Desktop Entry]\n"
         # newfile += "Encoding=UTF-8\n"
-        newfile += "Name=Tupi: 2D Magic\n"
-        newfile += "Name[es]=Tupí: Magia 2D\n"
-        newfile += "Name[pt]=Tupí: Magia 2D\n"
-        newfile += "Name[ru]=Tupi: 2D Magic\n"
+        newfile += "Name=Tupi: Open 2D Magic\n"
+        newfile += "Name[es]=Tupí: Magia 2D Libre\n"
+        newfile += "Name[pt]=Tupí: Magia 2D Libre\n"
+        newfile += "Name[ru]=Tupi: Open 2D Magic\n"
         newfile += "Exec=" + launcher_bindir + "/tupi\n"
-        newfile += "Icon=tupi.png\n"
+        newfile += "Icon=tupi\n"
         newfile += "Type=Application\n"
-        newfile += "MimeType=application/tup;application/ntup;\n"
-        newfile += "Categories=Application;Graphics;2DGraphics;RasterGraphics;\n"
+        newfile += "MimeType=application/tup;\n"
+        newfile += "Categories=Graphics;2DGraphics;RasterGraphics;\n"
         newfile += "Comment=2D Animation Toolkit\n"
         newfile += "Comment[es]=Herramienta para Animación 2D\n"
         newfile += "Comment[pt]=Ferramenta de animação 2D\n"
@@ -243,7 +305,6 @@ module RQonf
         File.open("launcher/tupi.desktop", "w") { |f|
           f << newfile
         }
-      end
 
       newmakefile = ""
       File.open("src/components/help/help/css/tupi.ini", "r") { |f|

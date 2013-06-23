@@ -1,1 +1,4 @@
 compression = "xz"
+
+# ignore changes on refreshed translations
+extend-diff-ignore = "(^|/)src/shell/data/translations/[^/]+\.ts$"

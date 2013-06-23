@@ -8,9 +8,12 @@
             <define value="HAVE_FFMPEG" />
         </defines>
         <libs>
-            <lib path="-lavcodec" />
             <lib path="-lavformat" />
+            <lib path="-lavcodec" />
         </libs>
+        <includes>
+            <include path="/usr/include/ffmpeg/" />
+        </includes>
     </provide>
     <solution>
         <linux package="ffmpeg" url="http://ffmpeg.sourceforge.net/" comment="" >

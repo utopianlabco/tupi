@@ -4,7 +4,7 @@
 # Target is a subdirs project 
 
 # SUBDIRS += tcore tgui tsound tplugins
-SUBDIRS += tcore tgui tsound
-CONFIG += warn_on
+SUBDIRS += tcore tgui
+CONFIG += ordered warn_on
 TEMPLATE = subdirs
 

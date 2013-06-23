@@ -20,9 +20,14 @@ configure.tests/opengl/opengl
 configure.tests/zlib/Makefile
 configure.tests/zlib/zlib
 configure.tests/theora/theora
+configure.tests/quazip/quazip
 
 src/framework/tupconfig.pri
 tupiglobal.pri
+
+launcher/tupi
+launcher/tupi.desktop
+src/components/help/help/css/tupi.css
 
 3rdparty/Makefile
 3rdparty/potrace/Makefile
