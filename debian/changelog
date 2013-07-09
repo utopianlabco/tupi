@@ -1,6 +1,12 @@
+tupi (0.2+git02-3) unstable; urgency=low
+
+  * Fixed directory to symlink upgrade in tupi-dbg (Closes: #715451).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 09 Jul 2013 19:06:17 +1000
+
 tupi (0.2+git02-2) unstable; urgency=low
 
-  * Fixed directory to symlink upgrade in "postinst".
+  * Fixed directory to symlink upgrade in tupi-data "postinst".
   * Moved symlink to examples to -data package.
 
  -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 25 Jun 2013 22:20:03 +1000
