@@ -36,24 +36,17 @@
 #ifndef APNGPLUGIN_H
 #define APNGPLUGIN_H
 
-#include "tglobal.h"
 #include "tupexportpluginobject.h"
 #include "tupexportinterface.h"
 #include "tmoviegeneratorinterface.h"
-#include "tuplayer.h"
-#include "tupanimationrenderer.h"
-
-#include <QImage>
-#include <QPainter>
 
 /**
  * @author Gustav Gonzalez
 */
 
-class TUPI_EXPORT APNGPlugin : public TupExportPluginObject
+class APNGPlugin : public TupExportPluginObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.maefloresta.tupi.TupToolInterface" FILE "apngplugin.json")
 
     public:
         APNGPlugin();
@@ -64,10 +57,8 @@ class TUPI_EXPORT APNGPlugin : public TupExportPluginObject
         virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format format, const QSize &size, int fps);
         virtual bool exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size);
 
-        // virtual const char* getExceptionMsg();
-        // const char *errorMsg;
-        virtual QString getExceptionMsg();
-        QString errorMsg;
+        virtual const char* getExceptionMsg();
+        const char *errorMsg;
 };
 
 #endif

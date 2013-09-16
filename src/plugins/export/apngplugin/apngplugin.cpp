@@ -35,6 +35,16 @@
 
 #include "apngplugin.h"
 
+// Tupi Framework
+#include "tdebug.h"
+#include "tglobal.h"
+
+#include "tuplayer.h"
+#include "tupanimationrenderer.h"
+
+#include <QImage>
+#include <QPainter>
+
 APNGPlugin::APNGPlugin()
 {
 }
@@ -55,19 +65,14 @@ TupExportInterface::Formats APNGPlugin::availableFormats()
 
 bool APNGPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format fmt, const QSize &size, int fps)
 {
-    Q_UNUSED(color);
-    Q_UNUSED(filePath);
-    Q_UNUSED(scenes);
     Q_UNUSED(fmt);
-    Q_UNUSED(size);
-    Q_UNUSED(fps);
 
     /*
     int frames = 0;
     qreal duration = 0;
     foreach (TupScene *scene, scenes) {
-             duration += (qreal) scene->framesCount() / (qreal) fps;
-             frames += scene->framesCount();
+             duration += (qreal) scene->framesTotal() / (qreal) fps;
+             frames += scene->framesTotal();
     }
 
     TheoraMovieGenerator *generator = 0;
@@ -116,10 +121,10 @@ bool APNGPlugin::exportFrame(int frameIndex, const QColor color, const QString &
     return false;
 }
 
-QString APNGPlugin::getExceptionMsg() const {
+const char* APNGPlugin::getExceptionMsg() {
     return errorMsg;
 }
 
-// #ifdef HAVE_THEORA
-//        Q_EXPORT_PLUGIN( APNGPlugin );
-// #endif
+#ifdef HAVE_THEORA
+       Q_EXPORT_PLUGIN( APNGPlugin );
+#endif

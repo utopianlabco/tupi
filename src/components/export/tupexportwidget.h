@@ -60,7 +60,7 @@ class TupExportWidget : public TExportWizard
     Q_OBJECT
 
     public:
-        // enum Format { Video = 0, Storyboard };
+        enum OutputFormat { Animation = 0, ImagesArray, AnimatedImage };
         TupExportWidget(const TupProject *project, QWidget *parent = 0, bool isLocal = true);
         ~TupExportWidget();
         QString videoTitle() const;
@@ -79,8 +79,9 @@ class TupExportWidget : public TExportWizard
     private:
         SelectPlugin *m_pluginSelectionPage;
         SelectScenes *m_scenesSelectionPage;
-        ExportTo *m_exportToPage;
-        ExportTo *m_exportImages;
+        ExportTo *m_exportAnimation;
+        ExportTo *m_exportImagesArray;
+        ExportTo *m_exportAnimatedImage;
         VideoProperties *videoProperties;
         const TupProject *m_project;
         QHash<QString, TupExportInterface *> m_plugins;
