@@ -57,6 +57,8 @@ struct TExportWizard::Private
 
 TExportWizard::TExportWizard(QWidget *parent) : QDialog(parent), k(new Private)
 {
+    setModal(true);
+
     k->cancelButton = new QPushButton(tr("Cancel"));
     k->backButton = new QPushButton(tr("Back"));
     k->nextButton = new QPushButton(tr("Next"));
@@ -97,12 +99,17 @@ TExportWizardPage *TExportWizard::addPage(TExportWizardPage *newPage)
         k->nextButton->setDefault(true);
     } 
 
-    k->nextButton->setEnabled(newPage->isComplete());
+    // k->nextButton->setEnabled(newPage->isComplete());
+
     connect(newPage, SIGNAL(completed()), this, SLOT(pageCompleted()));
     connect(newPage, SIGNAL(emptyField()), this, SLOT(disableButton()));
 
-    if (tag.compare("PLUGIN") == 0)
-        connect(newPage, SIGNAL(formatSelected(int, const QString &)), this, SLOT(setFormat(int, const QString &)));
+    if (tag.compare("PLUGIN") == 0) {
+        // connect(newPage, SIGNAL(formatSelected(int, const QString &)), this, SLOT(setFormat(int, const QString &)));
+        connect(newPage, SIGNAL(animatedImageFormatSelected(int, const QString &)), this, SLOT(setFormat(int, const QString &)));
+        connect(newPage, SIGNAL(imagesArrayFormatSelected(int, const QString &)), this, SLOT(setFormat(int, const QString &)));
+        connect(newPage, SIGNAL(animationFormatSelected(int, const QString &)), this, SLOT(setFormat(int, const QString &)));
+    }
 
     if (tag.compare("ANIMATION") == 0 || tag.compare("IMAGES_ARRAY") == 0 || tag.compare("ANIMATED_IMAGE") == 0 || tag.compare("PROPERTIES") == 0) 
         connect(newPage, SIGNAL(isDone()), this, SLOT(closeDialog()));
@@ -179,13 +186,20 @@ void TExportWizard::next()
     if (tag.compare("SCENE") == 0)  {
         k->nextButton->setText(tr("Export")); 
         k->backButton->setEnabled(true);
-        emit setFileName();
+
+        tError() << "TExportWizard::next() - formatCode: " << k->formatCode;
 
         if (k->formatCode == 4096) { // ANIMATED PNG
+            tError() << "TExportWizard::next() - Calling signal for Animated PNG! - setAnimatedImageFileName()";
+            emit setAnimatedImageFileName();
             k->history->setCurrentIndex(k->history->currentIndex()+3);
         } else if (k->format.compare(".jpg") == 0 || k->format.compare(".png") == 0) { // IMAGES ARRAY
+                   tError() << "TExportWizard::next() - Calling signal for Images Array! - setImagesArrayFileName()";
+                   emit setImagesArrayFileName();
                    k->history->setCurrentIndex(k->history->currentIndex()+2);
         } else {
+            tError() << "TExportWizard::next() - Calling signal for Animation! - setAnimationFileName()";
+            emit setAnimationFileName();
             k->history->setCurrentIndex(k->history->currentIndex()+1); // ANIMATION 
         }
     } 
@@ -225,6 +239,9 @@ void TExportWizard::closeDialog()
 
 void TExportWizard::setFormat(int code, const QString &extension)
 {
+    tError() << "TExportWizard::setFormat() - Setting code: " << code;
+    tError() << "TExportWizard::setFormat() - Setting extension: " << extension;
+
     k->formatCode = code;
     k->format = extension;
 }

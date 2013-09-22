@@ -79,7 +79,10 @@ class T_GUI_EXPORT TExportWizard : public QDialog
         void exportAnimatedImage();
         void saveVideoToServer();
         void exportImagesArray();
-        void setFileName();
+        void setAnimationFileName();
+        void setAnimatedImageFileName();
+        void setImagesArrayFileName();
+
         void isDone();
 
     private:
@@ -113,7 +116,7 @@ class TExportWizardPage : public TVHBox
     signals:
         void completed();
         void emptyField();
-        void formatSelected(int format, const QString &extension);
+        // void formatSelected(int format, const QString &extension);
 
     private:
         struct Private;
