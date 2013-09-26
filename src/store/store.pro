@@ -62,6 +62,7 @@ HEADERS += tuplayer.h \
            tuptweenerstep.h \
            tupsoundlayer.h \
            tupsvgitem.h \
+           tupbackgroundscene.h \
            tupbackground.h \
            tupstoryboard.h
 
@@ -108,7 +109,10 @@ SOURCES += tuplayer.cpp \
            tuptweenerstep.cpp \
            tupsoundlayer.cpp \
            tupsvgitem.cpp \
-           tupbackground.cpp
+           tupbackgroundscene.cpp \
+           tupbackground.cpp \
+           tupstoryboard.cpp
+
 *:!macx{
     CONFIG += dll warn_on
 }

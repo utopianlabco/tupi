@@ -38,6 +38,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QPainter>
 
 #include "tupglobal.h"
 #include "tupframe.h"
@@ -49,11 +50,12 @@ class TUPI_EXPORT TupBackgroundScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        TupBackgroundScene(TupFrame *background);
+        TupBackgroundScene(const QSize dimension, const QColor color, TupFrame *background);
         ~TupBackgroundScene();
-        void render();
+        void renderView(QPainter *painter);
 
     private:
+        void drawScene();
         void cleanWorkSpace();
         void addFrame(TupFrame *frame);
         void addGraphicObject(TupGraphicObject *object);

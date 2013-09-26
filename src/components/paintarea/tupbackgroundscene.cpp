@@ -40,9 +40,12 @@ struct TupBackgroundScene::Private
     TupFrame *bg;
 };
 
-TupBackgroundScene::TupBackgroundScene(TupFrame *background) : QGraphicsScene(), k(new Private)
+TupBackgroundScene::TupBackgroundScene(const QSize dimension, const QColor color, TupFrame *background) : QGraphicsScene(), k(new Private)
 {
+    setSceneRect(QRectF(QPointF(0,0), dimension));
+    setBackgroundBrush(color);
     k->bg = background;
+    drawScene();
 }
 
 TupBackgroundScene::~TupBackgroundScene()
@@ -59,11 +62,17 @@ TupBackgroundScene::~TupBackgroundScene()
     delete k;
 }
 
-void TupBackgroundScene::render()
+void TupBackgroundScene::drawScene()
 {
     cleanWorkSpace();
     addFrame(k->bg);
     update();
+}
+
+void TupBackgroundScene::renderView(QPainter *painter)
+{
+    render(painter, QRect(0, 0, painter->device()->width(), painter->device()->height()),
+           sceneRect().toRect(), Qt::IgnoreAspectRatio);
 }
 
 void TupBackgroundScene::cleanWorkSpace()
