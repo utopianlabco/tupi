@@ -36,24 +36,17 @@
 #ifndef TUPNETFILEMANAGER_H
 #define TUPNETFILEMANAGER_H 
 
-#include "tglobal.h"
 #include "tupfilemanager.h"
-#include "tupproject.h"
-#include "tupnetprojectmanagerparams.h"
 
 #include <QString>
-#include <QFile>
-#include <QTextStream>
-#include <QDomDocument>
-#include <QDomElement>
 
-// class TupNetProjectManagerParams;
+class TupNetProjectManagerParams;
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupNetFileManager : public TupFileManager 
+class TupNetFileManager : public TupFileManager 
 {
     public:
 
@@ -61,8 +54,7 @@ class TUPI_EXPORT TupNetFileManager : public TupFileManager
         TupNetFileManager(const QString &server, int port);
         ~TupNetFileManager();
         
-        // virtual bool save(const QString &filename, const TupProject *project);
-        virtual bool save(const QString &filename, TupProject *project);
+        virtual bool save(const QString &filename, const TupProject *project);
         virtual bool load(const QString &filename, TupProject *project);
         
         TupNetProjectManagerParams *params(const QString &filename);
