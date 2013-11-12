@@ -36,22 +36,17 @@
 #ifndef TUPITEMMANAGER_H
 #define TUPITEMMANAGER_H
 
-#include "tglobal.h"
 #include "tuptreedelegate.h"
 #include "treelistwidget.h"
 #include "tapplicationproperties.h"
 
 #include <QKeyEvent>
-#include <QHeaderView>
-#include <QMenu>
-#include <QMimeData>
-#include <QDrag>
 
 /**
  * @author David Cuadrado
 */
 
-class TUPI_EXPORT TupItemManager : public TreeListWidget
+class TupItemManager : public TreeListWidget
 {
     Q_OBJECT
 
@@ -68,7 +63,6 @@ class TUPI_EXPORT TupItemManager : public TreeListWidget
         QString oldFolder();
         QTreeWidgetItem *getFolder(const QString &folderName);
         void cleanUI();
-        int itemType();
 
         enum ObjectType 
         {
@@ -81,16 +75,12 @@ class TUPI_EXPORT TupItemManager : public TreeListWidget
         void itemRemoved();
         void itemRenamed(QTreeWidgetItem *item);
         void itemCloned(QTreeWidgetItem *item);
-        void itemExported(QTreeWidgetItem *item);
-        void itemRequired();
         void itemMoved(QString node, QString target);
         void itemCreated(QTreeWidgetItem *item);
         void inkscapeEditCall(QTreeWidgetItem *item);
         void gimpEditCall(QTreeWidgetItem *item);
         void kritaEditCall(QTreeWidgetItem *item);
         void myPaintEditCall(QTreeWidgetItem *item);
-        void newRasterCall();
-        void newVectorCall();
 
     public slots:
         void createFolder(const QString &name = QString());
@@ -98,19 +88,16 @@ class TUPI_EXPORT TupItemManager : public TreeListWidget
     private slots:
         void renameItem();
         void cloneItem();
-        void exportItem();
         void callInkscapeToEdit();
         void callGimpToEdit();
         void callKritaToEdit();
         void callMyPaintToEdit();
-        void createNewRaster();
-        void createNewSVG();
 
     protected:
         void dropEvent(QDropEvent *event);
         void dragEnterEvent(QDragEnterEvent *event);
         void dragMoveEvent(QDragMoveEvent *event);
-        void keyPressEvent(QKeyEvent *event);
+        void keyPressEvent(QKeyEvent * event);
 
     private:
         QTreeWidgetItem *m_currentFolder;
@@ -119,7 +106,7 @@ class TUPI_EXPORT TupItemManager : public TreeListWidget
         QString parentNode;
         QString currentSelection;
         QList<QTreeWidgetItem *> nodeChildren;
-        // typedef QList<QTreeWidgetItem *> Lists;
+        typedef QList<QTreeWidgetItem *> Lists;
         // QHash<int, Lists> deepChildren;
 };
 
