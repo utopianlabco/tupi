@@ -34,106 +34,39 @@
  ***************************************************************************/
 
 #include "tupnewitemdialog.h"
+#include "tupitempreview.h"
+#include "tformfactory.h"
+
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QToolBox>
+#include <QGraphicsItem>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QMap>
 
 struct TupNewItemDialog::Private
 {
-    QLineEdit *itemName;
-    QComboBox *extension;
-    QSpinBox *width;
-    QSpinBox *height;
-    QComboBox *background;
-    QComboBox *editor;
-    QString name;
-    QString software;
-    QString fileExtension;
-    QSize size;
-    QColor colors[3];
-    QColor bg;
+    QToolBox *toolBox;
+    QMap<QGraphicsItem *, QLineEdit *> symbolNames;
+    QMap<int, QLineEdit *> tabs;
 };
 
-TupNewItemDialog::TupNewItemDialog(QString &name, DialogType type, QSize size) : QDialog(), k(new Private)
+TupNewItemDialog::TupNewItemDialog() : QDialog(), k(new Private)
 {
-    k->name = name;
+    setWindowTitle(tr("Library Object"));
 
-    k->colors[0] = Qt::transparent;
-    k->colors[1] = Qt::white;
-    k->colors[2] = Qt::black;
+    QVBoxLayout *layout = new QVBoxLayout(this);
 
-    k->extension = new QComboBox();
-    k->editor = new QComboBox();
+    k->toolBox = new QToolBox;
+    layout->addWidget(k->toolBox);
 
-    if (type == Raster) {
-        setWindowTitle(tr("Create new raster item"));
-        setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/bitmap.png")));
-        k->extension->addItem("PNG");
-        k->extension->addItem("JPG");
-        k->fileExtension = "PNG"; 
-
-        k->background = new QComboBox();
-        k->background->addItem(tr("Transparent"));
-        k->background->addItem(tr("White"));
-        k->background->addItem(tr("Black"));
-        k->bg = Qt::transparent;
-
-#ifdef Q_OS_UNIX
-        if (QFile::exists("/usr/bin/gimp"))
-            k->editor->addItem("Gimp");
-        if (QFile::exists("/usr/bin/krita"))
-            k->editor->addItem("Krita");
-        if (QFile::exists("/usr/bin/mypaint"))
-            k->editor->addItem("MyPaint");
-#endif
-    } else {
-        setWindowTitle(tr("Create new vector item"));
-        setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/svg.png")));
-        k->extension->addItem("SVG");
-        k->editor->addItem("Inkscape");
-        k->fileExtension = "SVG";
-        k->software = "Inkscape";
-    }
-
-    k->software = k->editor->currentText();
-
-    connect(k->extension, SIGNAL(currentIndexChanged(int)), this, SLOT(updateExtension(int)));
-    connect(k->editor, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(updateEditor(const QString &)));
-
-    QFormLayout *formLayout = new QFormLayout;
-
-    k->itemName = new QLineEdit;
-    k->itemName->setText(name);
-
-    k->width = new QSpinBox;
-    k->width->setMaximum(size.width());
-    k->width->setMinimumWidth(60);
-    k->width->setValue(50);
-
-    k->height = new QSpinBox;
-    k->height->setMaximum(size.height());
-    k->height->setMinimumWidth(60);
-    k->height->setValue(50);
-
-    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok 
                                 | QDialogButtonBox::Cancel, Qt::Horizontal);
-    connect(buttons, SIGNAL(accepted ()), this, SLOT(checkValues()));
+    connect(buttons, SIGNAL(accepted ()), this, SLOT(checkNames()));
     connect(buttons, SIGNAL(rejected ()), this, SLOT(reject()));
 
-    QHBoxLayout *buttonsLayout = new QHBoxLayout;
-    buttonsLayout->addWidget(buttons);
-
-    formLayout->addRow(tr("&Name:"), k->itemName);
-    formLayout->addRow(tr("&Extension:"), k->extension);
-    formLayout->addRow(tr("&Width:"), k->width);
-    formLayout->addRow(tr("&Height:"), k->height);
-
-    if (type == Raster) {
-        formLayout->addRow(tr("&Background:"), k->background);
-        connect(k->background, SIGNAL(currentIndexChanged(int)), this, SLOT(updateBackground(int)));
-    }
-
-    formLayout->addRow(tr("&Open it with:"), k->editor);
-    formLayout->addRow(buttonsLayout);
-
-    setLayout(formLayout);
+    layout->addWidget(buttons, 0, Qt::AlignCenter);
 }
 
 TupNewItemDialog::~TupNewItemDialog()
@@ -141,98 +74,41 @@ TupNewItemDialog::~TupNewItemDialog()
     delete k;
 }
 
-void TupNewItemDialog::checkValues()
+void TupNewItemDialog::addItem(QGraphicsItem *item)
 {
-    QString name = k->itemName->text();
-    if (name.length() == 0) {
-        name = TAlgorithm::randomString(8);
-        k->itemName->setText(name);
-        return;
+    TupItemPreview *preview = new TupItemPreview;    
+    preview->render(item);
+
+    QWidget *container = new QWidget;
+
+    QVBoxLayout *layout = new QVBoxLayout(container);
+    layout->addWidget(preview);
+
+    QLineEdit *name = new QLineEdit;
+    connect(name, SIGNAL(returnPressed()), this, SLOT(checkNames()));
+
+    QLayout *grid = TFormFactory::makeGrid(QStringList() << tr("Name"), QWidgetList() << name);
+    layout->addLayout(grid);
+
+    int index = k->toolBox->addItem(container, tr("Item %1").arg(k->toolBox->count()+1));
+    k->symbolNames.insert(item, name);
+    k->tabs.insert(index, name);
+}
+
+QString TupNewItemDialog::symbolName(QGraphicsItem *item) const
+{
+    return k->symbolNames[item]->text();
+}
+
+void TupNewItemDialog::checkNames()
+{
+    for (int i = 0; i < k->toolBox->count(); i++) {
+         if (k->tabs[i]->text().isEmpty()) {
+             k->toolBox->setCurrentIndex (i);
+             k->tabs[i]->setFocus();
+             return;
+         }
     }
-
-    bool alert = false;
-
-    if (k->width->value() == 0) {
-        k->width->setValue(100);
-        alert = true;
-    }
-
-    if (k->height->value() == 0) {
-        k->height->setValue(100);
-        alert = true;
-    }
-
-    if (alert)
-        return;
-
-    name.replace(" ", "_");
-    name.replace(".", "_");
-    k->name = name;
-    k->size.setWidth(k->width->value());
-    k->size.setHeight(k->height->value());
 
     accept();
-}
-
-void TupNewItemDialog::updateExtension(int index)
-{
-    k->fileExtension = k->extension->itemText(index);
-
-    if (index == 1 || (index == 0 && k->software.compare("MyPaint") == 0)) {
-        if (k->background->itemText(0).compare(tr("Transparent")) == 0)
-            k->background->removeItem(0);
-    } else {
-        if (k->background->count() == 2)
-            k->background->insertItem(0, tr("Transparent"));
-    }
-}
-
-void TupNewItemDialog::updateBackground(int index)
-{
-    if (k->software.compare("MyPaint") == 0)
-        k->bg = k->colors[index+1];
-    else    
-        k->bg = k->colors[index];
-}
-
-void TupNewItemDialog::updateEditor(const QString &editor)
-{
-    if (k->fileExtension.compare("SVG") == 0) {
-        k->software = "Inkscape";
-    } else {
-        k->software = editor;
-        if (editor.compare("MyPaint") == 0) {
-            if (k->background->itemText(0).compare(tr("Transparent")) == 0)
-                k->background->removeItem(0);
-        } else {
-            if (k->background->count() == 2)
-                k->background->insertItem(0, tr("Transparent"));
-        }
-    }
-
-}
-
-QString TupNewItemDialog::itemName() const
-{
-    return k->name;
-}
-
-QSize TupNewItemDialog::itemSize() const
-{
-    return k->size;
-}
-
-QString TupNewItemDialog::itemExtension() const
-{
-    return k->fileExtension;
-}
-
-QColor TupNewItemDialog::background() const
-{
-    return k->bg;
-}
-
-QString TupNewItemDialog::software() const
-{
-    return k->software;
 }

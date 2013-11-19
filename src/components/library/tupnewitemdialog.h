@@ -36,43 +36,28 @@
 #ifndef TUPNEWITEMDIALOG_H
 #define TUPNEWITEMDIALOG_H
 
-#include "tglobal.h"
-#include "talgorithm.h"
-#include "tapplicationproperties.h"
-
 #include <QDialog>
-#include <QFormLayout>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QSpinBox>
-#include <QDialogButtonBox>
-#include <QFile>
+class QGraphicsItem;
 
 /**
  * @author Gustav Gonzalez
 **/
 
-class TUPI_EXPORT TupNewItemDialog : public QDialog
+class TupNewItemDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        enum DialogType { Raster = 0, Vector };
+        enum DialogType { Raster = 0, Vectorial };
 
-        TupNewItemDialog(QString &name, DialogType type, QSize size);
+        TupNewItemDialog();
         ~TupNewItemDialog();
 
-        QString itemName() const;
-        QSize itemSize() const;
-        QString itemExtension() const;
-        QColor background() const;
-        QString software() const;
+        void addItem(QGraphicsItem *item);
+        QString symbolName(QGraphicsItem *item) const;
 
     private slots:
-        void checkValues();
-        void updateExtension(int index);
-        void updateBackground(int index);
-        void updateEditor(const QString &editor);
+        void checkNames();
 
     private:
         struct Private;

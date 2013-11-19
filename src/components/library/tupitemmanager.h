@@ -75,6 +75,7 @@ class TupItemManager : public TreeListWidget
         void itemRemoved();
         void itemRenamed(QTreeWidgetItem *item);
         void itemCloned(QTreeWidgetItem *item);
+        void itemExported(QTreeWidgetItem *item);
         void itemMoved(QString node, QString target);
         void itemCreated(QTreeWidgetItem *item);
         void inkscapeEditCall(QTreeWidgetItem *item);
@@ -88,16 +89,19 @@ class TupItemManager : public TreeListWidget
     private slots:
         void renameItem();
         void cloneItem();
+        void exportItem();
         void callInkscapeToEdit();
         void callGimpToEdit();
         void callKritaToEdit();
         void callMyPaintToEdit();
+        void createNewRaster();
+        void createNewSVG();
 
     protected:
         void dropEvent(QDropEvent *event);
         void dragEnterEvent(QDragEnterEvent *event);
         void dragMoveEvent(QDragMoveEvent *event);
-        void keyPressEvent(QKeyEvent * event);
+        void keyPressEvent(QKeyEvent *event);
 
     private:
         QTreeWidgetItem *m_currentFolder;
