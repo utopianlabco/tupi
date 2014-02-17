@@ -36,8 +36,6 @@
 #ifndef TUPRULER_H
 #define TUPRULER_H
 
-#include "tglobal.h"
-
 #include <QWidget>
 #include <QMouseEvent>
 #include <QPaintEvent>
@@ -45,11 +43,10 @@
 #include <QRectF>
 #include <QPoint>
 #include <QSize>
-#include <cmath>
 
 #define RULER_BREADTH 20
 
-class TUPI_EXPORT TupRuler : public QWidget
+class TupRuler : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(qreal origin READ origin WRITE setOrigin)
