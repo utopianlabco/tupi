@@ -36,27 +36,14 @@
 #ifndef TUPSCREEN_H
 #define TUPSCREEN_H
 
-#include "tglobal.h"
 #include "tupscene.h"
+#include "tupglobal.h"
 #include "tupabstractprojectresponsehandler.h"
-#include "tupprojectresponse.h"
-#include "tupgraphicobject.h"
-#include "tupgraphicsscene.h"
-#include "tupanimationrenderer.h"
-#include "tupsoundlayer.h"
-#include "tuplibrary.h"
 
 #include <QImage>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QFrame>
-#include <QGraphicsItem>
-#include <QApplication>
-#include <QMessageBox>
-#include <QDesktopWidget>
-#include <QTimer>
-#include <QMediaPlayer>
-#include <QUrl>
 
 /**
  * @author David Cuadrado
@@ -67,7 +54,7 @@ class TUPI_EXPORT TupScreen : public QFrame, public TupAbstractProjectResponseHa
     Q_OBJECT
 
     public:
-        TupScreen(TupProject *project, const QSize viewSize = QSize(), bool isScaled = false, QWidget *parent = 0);
+        TupScreen(const TupProject *project, const QSize viewSize = QSize(), bool isScaled = false, QWidget *parent = 0);
         ~TupScreen();
 
         QSize sizeHint() const;
@@ -78,6 +65,8 @@ class TUPI_EXPORT TupScreen : public QFrame, public TupAbstractProjectResponseHa
         void setFPS(int fps);
         void resetPhotograms(int sceneIndex);
         void updateAnimationArea();
+        void updateProjectDimension(const QSize dimension);
+        // void updatePhotograms(int sceneIndex);
 
     public slots:
         virtual void render();
@@ -104,7 +93,6 @@ class TUPI_EXPORT TupScreen : public QFrame, public TupAbstractProjectResponseHa
         void toStatusBar(const QString &, int);
         void sceneChanged(const TupScene *newScene);
         void requestTriggered(const TupProjectRequest *event);
-        void isRendering(int advance);
 
     protected:
         void paintEvent(QPaintEvent *event);
@@ -114,9 +102,6 @@ class TUPI_EXPORT TupScreen : public QFrame, public TupAbstractProjectResponseHa
         void initPhotogramsArray();
         void addPhotogramsArray(int index);
         void updateFirstFrame();
-        void setLipSyncSettings();
-        void playLipSyncAt(int frame);
-
         struct Private;
         Private *const k;
 };

@@ -36,58 +36,33 @@
 #ifndef TUPCAMERAINTERFACE_H
 #define TUPCAMERAINTERFACE_H
 
-#include "tglobal.h"
-#include "tupcamerawindow.h"
-#include "tupapplication.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "talgorithm.h"
-#include "tosd.h"
-#include "tupcolorwidget.h"
-
-#include <QFrame>
+#include <QDialog>
 #include <QCloseEvent>
-#include <QComboBox>
-#include <QBoxLayout>
-#include <QIcon>
-#include <QDir>
-#include <QDesktopWidget>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
-#include <QColorDialog>
 #include <QCamera>
+#include <QCameraViewfinder>
 #include <QCameraImageCapture>
 
-class TUPI_EXPORT TupCameraInterface : public QFrame
+class TupCameraInterface : public QDialog
 {
     Q_OBJECT
 
     public:
-        TupCameraInterface(const QString &title, QList<QByteArray> cameraDevices, QComboBox *devicesCombo, int cameraIndex, 
-                           const QSize cameraSize = QSize(), int counter = 1, QWidget *parent = 0);
+        TupCameraInterface(const QSize projectSize = QSize(), const QSize cameraSize = QSize(), QWidget *parent = 0);
         ~TupCameraInterface();
 
     protected:
         void closeEvent(QCloseEvent *event);
 
     signals:
-        void pictureHasBeenSelected(int id, const QString path);
+        void projectSizeHasChanged(int w, int h);
 
     private slots:
-        void changeCameraDevice(int index);
-        void takePicture();
-        void drawGrid();
-        void drawActionSafeArea();
-        void showHistory();
-        void updateImagesOpacity(double opacity);
-        void updateImagesDepth(int depth);
-        void updateGridSpacing(int space);
-        void updateColour();
+        void shotCamera();
+        void cameraError(QCamera::Error error);
+        void imageSavedFromCamera(int id, const QString path);
 
     private:
-        QSize setBestResolution(QList<QSize> resolutions, QSize cameraSize);
-        QString randomPath();
+        void checkSizeProject();
         struct Private;
         Private *const k;
 };
