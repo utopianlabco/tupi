@@ -36,28 +36,28 @@
 #ifndef TUPCAMERAINTERFACE_H
 #define TUPCAMERAINTERFACE_H
 
-#include <QDialog>
+#include <QFrame>
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QCamera>
 #include <QCameraViewfinder>
 #include <QCameraImageCapture>
 
-class TupCameraInterface : public QDialog
+class TupCameraInterface : public QFrame
 {
     Q_OBJECT
 
     public:
-        TupCameraInterface(QComboBox *devicesCombo, QList<QSize> resolutions, QCamera *camera = 0, const QSize cameraSize = QSize(), 
-                           QCameraImageCapture *imageCapture = 0, const QSize projectSize = QSize(), QWidget *parent = 0);
+        TupCameraInterface(QComboBox *devicesCombo, QCamera *camera = 0, const QSize cameraSize = QSize(), 
+                           QCameraImageCapture *imageCapture = 0, QWidget *parent = 0);
         ~TupCameraInterface();
 
     protected:
         void closeEvent(QCloseEvent *event);
 
     signals:
-        void projectSizeHasChanged(const QSize);
-        void pictureHasBeenSelected(int, const QString);
+        void projectSizeHasChanged(const QSize size);
+        void pictureHasBeenSelected(int id, const QString path);
 
     private slots:
         void takePicture();
@@ -65,7 +65,6 @@ class TupCameraInterface : public QDialog
         void imageSavedFromCamera(int id, const QString path);
 
     private:
-        void checkSizeProject();
         struct Private;
         Private *const k;
 };

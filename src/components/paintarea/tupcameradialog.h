@@ -36,42 +36,23 @@
 #ifndef TUPCAMERADIALOG_H
 #define TUPCAMERADIALOG_H
 
-#include "tglobal.h"
-#include "tapplicationproperties.h"
-#include "tconfig.h"
-
 #include <QDialog>
-#include <QComboBox>
-#include <QLabel>
-#include <QComboBox>
-#include <QBoxLayout>
-#include <QCheckBox>
-#include <QPushButton>
-#include <QDir>
-#include <QCamera>
-#include <QCameraImageCapture>
 
-class TUPI_EXPORT TupCameraDialog : public QDialog
+class TupCameraDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        TupCameraDialog(QComboBox *devicesCombo, const QSize projectSize, QList<QSize> resolutions, QWidget *parent=0);
+        TupCameraDialog(const QSize projectSize, QList<QSize> resolutions, QWidget *parent=0);
         ~TupCameraDialog();
-
-        int cameraIndex();
         QSize cameraResolution() const;
         bool changeProjectSize();
-        bool useBasicCamera();
 
     private slots:
-        void changeCameraDevice(const QString &camera);
         void setCameraResolution(int index);
         void projectSizeHasChanged(bool flag);
-        void enableBasicCamera(bool flag);
 
     private:
-        void setCamera(const QString &cameraReference);
         struct Private;
         Private *const k;
 };
