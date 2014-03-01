@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -106,8 +106,8 @@ TRulerBase::TRulerBase(Qt::Orientation orientation, QWidget *parent) : QFrame(pa
 
     k->menu = new QMenu(this);
 
-    QAction *to5 = k->menu->addAction( tr("Change scale to 5..."));
-    QAction *to10 = k->menu->addAction( tr("Change scale to 10..."));
+    QAction *to5 = k->menu->addAction(tr("Change scale to 5..."));
+    QAction *to10 = k->menu->addAction(tr("Change scale to 10..."));
 
     connect(to5, SIGNAL(triggered()), this, SLOT(changeScaleTo5pts()));
     connect(to10, SIGNAL(triggered()), this, SLOT(changeScaleTo10pts()));

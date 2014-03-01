@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -50,9 +50,6 @@ class Settings : public QWidget
     Q_OBJECT
 
     public:
-        // enum Mode { Add = 1, Edit, View };
-        // enum EditMode { Selection = 0, Properties, None };
-
         Settings(QWidget *parent = 0);
         ~Settings();
 
@@ -60,25 +57,26 @@ class Settings : public QWidget
         void setParameters(TupItemTweener *currentTween);
         void initStartCombo(int totalFrames, int currentIndex);
         void setStartFrame(int currentIndex);
+        int startFrame();
 
         int totalSteps();
 
         void notifySelection(bool flag);
         int startComboSize();
         QString currentTweenName() const;
-        void activatePropertiesMode(TupToolPlugin::EditMode mode);
-        QString tweenToXml(int currentFrame, QPointF point);
+        void activateMode(TupToolPlugin::EditMode mode);
+        QString tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point);
 
     private slots:
         void applyTween();
         void emitOptionChanged(int option);
         void refreshForm(int type);
-        void checkBottomLimit(int index);
         void checkTopLimit(int index);
         void updateRangeCheckbox(int state);
         void updateReverseCheckbox(int state);
         void updateTotalSteps(const QString &text);
         void checkRange(int index);
+        void updateLastFrame();
         
     signals:
         void clickedSelect();

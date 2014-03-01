@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -101,8 +101,8 @@ void TupSceneTabWidget::removeScene(int index)
     k->tabber->removeTab(index);
     blockSignals(false);
 
-    tError() << "TupSceneTabWidget::removeScene() - Removing scene at index: " << index;
-    tError() << "TupSceneTabWidget::removeScene() - Scenes count: " << k->tables.count();
+    // tError() << "TupSceneTabWidget::removeScene() - Removing scene at index: " << index;
+    // tError() << "TupSceneTabWidget::removeScene() - Scenes count: " << k->tables.count();
 }
 
 void TupSceneTabWidget::renameScene(int index, const QString &name)
@@ -114,7 +114,7 @@ TupExposureTable* TupSceneTabWidget::getCurrentTable()
 {
     int index = currentIndex();
 
-    tError() << "TupSceneTabWidget::getCurrentTable() - Getting table at index: " << index;
+    // tError() << "TupSceneTabWidget::getCurrentTable() - Getting table at index: " << index;
 
     return getTable(index);
 }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -202,9 +202,12 @@ void TupInfoWidget::getCurrencyConversionFromNet(const QString &money1, const QS
     params << money2;
     QString url = "http://www.webservicex.net//currencyconvertor.asmx/ConversionRate?FromCurrency=1&ToCurrency=2";
 
+    // SQA: Experimental code
+    /*
     TupWebHunter *hunter = new TupWebHunter(TupWebHunter::Currency, url, params);
     hunter->start();
     connect(hunter, SIGNAL(dataReady(const QString &)), this, SLOT(updateObjectInformation(const QString &)));
+    */
 }
 
 void TupInfoWidget::updateObjectInformation(const QString &data)

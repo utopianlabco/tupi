@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -77,7 +77,12 @@ TupAnimationRenderer::TupAnimationRenderer(const QColor color) : k(new Private)
 {
     k->bgColor = color;
     k->scene = new TupGraphicsScene;
-    k->scene->setBackgroundBrush(k->bgColor);
+
+    int alpha = color.alpha();
+    if (alpha == 0)
+        k->scene->setBackgroundBrush(Qt::NoBrush);
+    else
+        k->scene->setBackgroundBrush(k->bgColor);
 }
 
 TupAnimationRenderer::~TupAnimationRenderer()
@@ -90,7 +95,7 @@ void TupAnimationRenderer::setScene(TupScene *scene, QSize dimension)
     k->scene->setCurrentScene(scene);
     k->scene->setSceneRect(QRectF(QPointF(0,0), dimension));
 
-    k->scene->drawPhotogram(0); // ### SQA: Why whithout this doesn't work?
+    k->scene->drawPhotogram(0, false); // ### SQA: Why whithout this doesn't work?
     k->currentPhotogram = -1;
 
     k->totalPhotograms = k->calculateTotalPhotograms(scene);
@@ -106,14 +111,14 @@ bool TupAnimationRenderer::nextPhotogram()
     if (k->currentPhotogram == k->totalPhotograms)
         return false;
 
-    k->scene->drawPhotogram(k->currentPhotogram);
+    k->scene->drawPhotogram(k->currentPhotogram, false);
 
     return true;
 }
 
 void TupAnimationRenderer::renderPhotogram(int index) 
 {
-    k->scene->drawPhotogram(index);
+    k->scene->drawPhotogram(index, false);
 }
 
 void TupAnimationRenderer::render(QPainter *painter)

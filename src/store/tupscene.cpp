@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -51,6 +51,8 @@
 
 struct TupScene::Private
 {
+    QSize dimension;
+    QColor bgColor;
     TupStoryboard *storyboard;
     TupBackground *background;
     Layers layers;
@@ -64,13 +66,15 @@ struct TupScene::Private
     QList<TupSvgItem *> tweeningSvgObjects;
 };
 
-TupScene::TupScene(TupProject *parent) : QObject(parent), k(new Private)
+TupScene::TupScene(TupProject *parent, const QSize dimension, const QColor bgColor) : QObject(parent), k(new Private)
 {
+    k->dimension = dimension;
+    k->bgColor = bgColor;
     k->isLocked = false;
     k->layerCount = 0;
     k->isVisible = true;
     k->storyboard = new TupStoryboard(parent->author());
-    k->background = new TupBackground(this);
+    k->background = new TupBackground(this, dimension, bgColor);
 }
 
 TupScene::~TupScene()
@@ -85,6 +89,12 @@ TupScene::~TupScene()
 void TupScene::setSceneName(const QString &name)
 {
     k->name = name;
+}
+
+void TupScene::setBgColor(const QColor bgColor)
+{
+    k->bgColor = bgColor;
+    k->background->setBgColor(bgColor);
 }
 
 void TupScene::setLocked(bool isLocked)
@@ -613,7 +623,7 @@ void TupScene::reset(QString &name)
 {
     k->name = name;
 
-    k->background = new TupBackground(this);
+    k->background = new TupBackground(this, k->dimension, k->bgColor);
     k->layers.clear();
     k->tweeningGraphicObjects.clear();
     k->tweeningSvgObjects.clear();

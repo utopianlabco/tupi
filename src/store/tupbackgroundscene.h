@@ -6,9 +6,9 @@
  *                                                                         *
  *   Developers:                                                           *
  *   2010:                                                                 *
- *    Gustavo Gonzalez / xtingray                                          *
+ *    Gustav Gonzalez / xtingray                                           *
  *                                                                         *
- *   KTooN's versions:                                                     * 
+ *   KTooN's versions:                                                     *
  *                                                                         *
  *   2006:                                                                 *
  *    David Cuadrado                                                       *
@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,72 +33,36 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPGCTABLE_H
-#define TUPGCTABLE_H
+#ifndef TUPBACKGROUNDSCENE_H
+#define TUPBACKGROUNDSCENE_H
 
-#include "tuptreedelegate.h"
-#include "treelistwidget.h"
-#include "tapplicationproperties.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QPainter>
 
-#include <QKeyEvent>
+#include "tupglobal.h"
+#include "tupframe.h"
+#include "tupgraphicobject.h"
+#include "tupsvgitem.h"
 
-/**
- * @author David Cuadrado
-*/
-
-class TupGCTable : public TreeListWidget
+class TUPI_EXPORT TupBackgroundScene : public QGraphicsScene
 {
     Q_OBJECT
 
     public:
-        TupGCTable(QWidget *parent = 0);
-        ~TupGCTable();
-        QTreeWidgetItem *currentFolder();
-        void setCurrentFolder(QTreeWidgetItem *cf);
-        void removeCurrentFolder();
-        void mousePressEvent(QMouseEvent *event);
-        void mouseDoubleClickEvent(QMouseEvent *event);
-        bool isFolder(QTreeWidgetItem *item);
-        int indexOf(QTreeWidgetItem *item);
-        QString oldFolder();
-        QTreeWidgetItem *getFolder(const QString &folderName);
-        void cleanUI();
-
-        enum ObjectType 
-        {
-            Item = 0,
-            Folder
-        };
-
-    signals:
-        void itemSelected(QTreeWidgetItem *);
-        void itemRemoved();
-        void itemRenamed(QTreeWidgetItem *);
-        void itemMoved(QString node, QString target);
-        void itemCreated(QTreeWidgetItem *);
-
-    public slots:
-        void createFolder(const QString &name = QString());
-
-    private slots:
-        void callRename();
-        void callInkscape();
-        void callGimp();
-
-    protected:
-        void dropEvent(QDropEvent *event);
-        void dragEnterEvent(QDragEnterEvent *event);
-        void dragMoveEvent(QDragMoveEvent *event);
-        void keyPressEvent(QKeyEvent * event);
+        TupBackgroundScene(const QSize dimension, const QColor color, TupFrame *background);
+        ~TupBackgroundScene();
+        void renderView(QPainter *painter);
 
     private:
-        QTreeWidgetItem *m_currentFolder;
-        int foldersTotal;
-        QString folderName; 
-        QString parentNode;
-        QList<QTreeWidgetItem *> nodeChildren;
-        typedef QList<QTreeWidgetItem *> Lists;
-        // QHash<int, Lists> deepChildren;
+        void drawScene();
+        void cleanWorkSpace();
+        void addFrame(TupFrame *frame);
+        void addGraphicObject(TupGraphicObject *object);
+        void addSvgObject(TupSvgItem *svgItem);
+
+        struct Private;
+        Private *const k;
 };
 
 #endif

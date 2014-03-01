@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -665,15 +665,15 @@ void SchemeTool::release(const TupInputDeviceInformation *input, TupBrushManager
             QDomDocument doc;
             doc.appendChild(blackRight->toXml(doc));
             TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                         scene->currentFrame()->graphics().count(), QPointF(), scene->spaceMode(),
-                                                         TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                                             0, QPointF(), scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                             doc.toString());
             emit requested(&request);
 
             doc.clear();
             doc.appendChild(blackLeft->toXml(doc));
             request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                        scene->currentFrame()->graphics().count(), QPointF(), scene->spaceMode(),
-                                        TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                           0, QPointF(), scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                           doc.toString());
             emit requested(&request);
 
         } else {
@@ -685,8 +685,8 @@ void SchemeTool::release(const TupInputDeviceInformation *input, TupBrushManager
             QDomDocument doc;
             doc.appendChild(blackEllipse->toXml(doc));
             TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                         scene->currentFrame()->graphics().count(), currentPoint, scene->spaceMode(),
-                                                         TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                                             0, currentPoint, scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                             doc.toString());
             emit requested(&request);
         }
     }

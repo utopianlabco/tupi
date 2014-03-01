@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -413,13 +413,13 @@ bool TupPaintAreaBase::canPaint() const
 
         if (frame) {
             #ifdef K_DEBUG
-                   tFatal() << "TupPaintAreaBase::canPaint() : Error! The problem is the frame";
+                   tWarning() << "TupPaintAreaBase::canPaint() - Warning: Current frame is NULL!";
             #endif
             return !frame->isLocked();
         }
     } else {
         #ifdef K_DEBUG
-               tFatal() << "TupPaintAreaBase::canPaint() : Error! There's no scene";
+               tWarning() << "TupPaintAreaBase::canPaint() - Warning: Scene is NULL!";
         #endif
     }
 

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -49,11 +49,15 @@ class TupCanvasView : public QGraphicsView
 
     public:
         TupCanvasView(QWidget *parent=0, const QSize &screenSize = QSize(0, 0), 
-                     const QSize &projectSize = QSize(0, 0), const QColor &bg = QColor(Qt::white));
+                      const QSize &projectSize = QSize(0, 0), const QColor &bg = QColor(Qt::white));
         ~TupCanvasView();
 
     protected:
         virtual void drawBackground(QPainter *painter, const QRectF &rect);
+        virtual void mousePressEvent(QMouseEvent *event);
+
+    signals:
+        void rightClick();
 
     private:
         struct Private;

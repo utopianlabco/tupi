@@ -13,7 +13,7 @@ Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl, qt4-qmake, pkg-config
  ,libquazip-dev
  ,libtheora-dev
  ,zlib1g-dev
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://www.maefloresta.com/portal
 Vcs-Git: git://anonscm.debian.org/collab-maint/tupi.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/tupi.git

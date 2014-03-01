@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,7 +39,9 @@
 #include "tupmodulewidgetbase.h"
 #include "tupitempreview.h"
 #include "timagebutton.h"
-#include "tupgctable.h"
+#include "tupitemmanager.h"
+#include "tupnewitemdialog.h"
+#include "tuplibraryobject.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -48,6 +50,7 @@
 #include <QMouseEvent>
 
 class TupLibrary;
+typedef QMap<QString, TupLibraryObject *> LibraryObjects;
 
 /**
  * @author David Cuadrado
@@ -71,14 +74,23 @@ class TupLibraryWidget : public TupModuleWidgetBase
 
     private slots:
         void addFolder();
-        void previewItem(QTreeWidgetItem *);
+        void previewItem(QTreeWidgetItem *item);
         void insertObjectInWorkspace();
         void removeCurrentGraphic();
-        void renameObject(QTreeWidgetItem* item);
+        void cloneObject(QTreeWidgetItem *item);
+        void exportObject(QTreeWidgetItem *item);
+        void createRasterObject();
+        void createVectorObject();
+        void renameObject(QTreeWidgetItem *item);
         void importGraphicObject();
         void refreshItem(QTreeWidgetItem *item);
         void updateLibrary(QString node, QString target);
         void activeRefresh(QTreeWidgetItem *item);
+        void openInkscapeToEdit(QTreeWidgetItem *item);
+        void openGimpToEdit(QTreeWidgetItem *item);
+        void openKritaToEdit(QTreeWidgetItem *item);
+        void openMyPaintToEdit(QTreeWidgetItem *item);
+        void updateItemFromSaveAction();
 
     public slots:
         void importBitmap();
@@ -91,6 +103,15 @@ class TupLibraryWidget : public TupModuleWidgetBase
         void requestCurrentGraphic();
 
     private:
+        void callExternalEditor(QTreeWidgetItem *item, TupNewItemDialog::ThirdParty software);
+        void executeSoftware(TupNewItemDialog::ThirdParty software, QString &path);
+        void updateItem(const QString &name, const QString &extension, TupLibraryObject *object);
+        bool itemNameEndsWithDigit(QString &name);
+        int getItemNameIndex(QString &name) const;
+        QString nameForClonedItem(QString &name, QString &extension, int index, QString &path) const;
+        QString nameForClonedItem(QString &smallId, QString &extension, QString &path) const;
+        QString verifyNameAvailability(QString &name, QString &extension, bool isCloningAction);
+
         struct Private;
         Private *const k;
 };

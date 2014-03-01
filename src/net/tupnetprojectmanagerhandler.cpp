@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -50,7 +50,7 @@
 #include "tupstoryboardupdatepackage.h"
 #include "tupstoryboardexportpackage.h"
 #include "tupstoryboardparser.h"
-#include "tupinetfilemanager.h"
+#include "tupnetfilemanager.h"
 #include "tupopenpackage.h"
 #include "tupchatpackage.h"
 #include "tupnotificationparser.h"
@@ -377,7 +377,7 @@ void TupNetProjectManagerHandler::handlePackage(const QString &root, const QStri
                        file.flush();
             
                        if (k->project) {
-                           TupiFileManager *manager = new TupiFileManager;
+                           TupFileManager *manager = new TupFileManager;
                            bool isOk = manager->load(file.fileName(), k->project);
                            if (isOk) {
                                k->projectIsOpen = true;
@@ -487,7 +487,7 @@ void TupNetProjectManagerHandler::handlePackage(const QString &root, const QStri
     } else if (root == "communication_wall") {
                TupCommunicationParser parser;
                if (parser.parse(package)) {
-                   QString message = QObject::tr("Wall From") + ": "+ parser.login() + "\n" + parser.message();
+                   QString message = QObject::tr("Wall from") + ": "+ parser.login() + "\n" + parser.message();
                    TOsd::self()->display(tr("Information"), message);
                }
     } else if (root == "storyboard_update") {

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,15 +39,9 @@
 #include <QHeaderView>
 #include <QPainter>
 #include <QStyleOptionButton>
-//#include <QMap>
 #include <QVector>
-//#include <QItemDelegate>
 #include <QLineEdit>
 #include <QMouseEvent>
-//#include <QMenu>
-
-//#include "tdebug.h"
-//#include <tupglobal.h>
 
 struct LayerItem
 {
@@ -78,6 +72,7 @@ class TupExposureHeader: public QHeaderView
         bool signalMovedBlocked();
         void setVisibilityChanged(int logicalndex, bool visibility);
         int layersTotal();
+        int currentLayerIndex();
 
     public slots:
         void updateSelection(int col);

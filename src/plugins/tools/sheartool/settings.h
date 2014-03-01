@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -50,9 +50,6 @@ class Settings : public QWidget
     Q_OBJECT
 
     public:
-        // enum Mode { Add = 1, Edit, View };
-        // enum EditMode { Selection = 0, Properties, None };
-
         Settings(QWidget *parent = 0);
         ~Settings();
 
@@ -64,27 +61,28 @@ class Settings : public QWidget
         int totalSteps();
 
         void notifySelection(bool flag);
+        int startFrame();
         int startComboSize();
         QString currentTweenName() const;
-        void activatePropertiesMode(TupToolPlugin::EditMode mode);
-        // void activateSelectionMode();
-        QString tweenToXml(int currentFrame, QPointF point);
+        void activateMode(TupToolPlugin::EditMode mode);
+        QString tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point);
 
     private slots:
         void applyTween();
         void emitOptionChanged(int option);
-        void checkBottomLimit(int index);
+        // void checkBottomLimit(int index);
         void checkTopLimit(int index);
         void updateTotalSteps(const QString &text);
         void updateLoopCheckbox(int state);
         void updateReverseCheckbox(int state);
-        
+        void updateLastFrame();
+     
     signals:
         void clickedSelect();
         void clickedDefineProperties();
         void clickedApplyTween();
         void clickedResetTween();
-        void startingPointChanged(int index);
+        void initFrameChanged(int index);
         
     private:
         void setInnerForm();

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -45,7 +45,7 @@
  */
 TActionManager::TActionManager(QObject *parent) : QObject(parent)
 {
-    setObjectName("TActionManager"+parent->objectName());
+    setObjectName("TActionManager" + parent->objectName());
 }
 
 /**
@@ -68,7 +68,9 @@ bool TActionManager::insert(QAction *action, const QString &_id, const QString &
 
     QAction *a = (m_actionContainer[container])[id];
     if (a == action) {
-        tWarning() << tr("Cannot insert action with id: ") << id;
+        #ifdef K_DEBUG
+               tError() << "TActionManager::insert() - Fatal Error: Cannot insert action with id: " << id;
+        #endif
         return false;
     }
 
@@ -137,8 +139,11 @@ QAction *TActionManager::find(const QString &_id, const QString &container) cons
         }
     }
 
-    if (action == 0)
-        tError() << "TActionManager::find(): Returning NULL action: " << id << " in " << container;
+    if (action == 0) {
+        #ifdef K_DEBUG
+               tError() << "TActionManager::find() - Fatal Error: Returning NULL action: " << id << " in " << container;
+        #endif
+    }
 
     return action;
 }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,90 +33,28 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TEXPORTWIZARD_H
-#define TEXPORTWIZARD_H
+#ifndef TUPFILEMANAGER_H 
+#define TUPFILEMANAGER_H
 
-#include "tvhbox.h"
-#include "tglobal.h"
-#include "toolview.h"
+#include <QObject>
 
-#include <QDialog>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QStackedWidget>
-
-class TExportWizardPage;
+class TupProject;
 
 /**
  * @author David Cuadrado
 */
 
-class T_GUI_EXPORT TExportWizard : public QDialog
+class TupFileManager : public QObject
 {
     Q_OBJECT
 
     public:
-        TExportWizard(QWidget *parent = 0);
-        ~TExportWizard();
-        TExportWizardPage *addPage(TExportWizardPage *page);
-        void showPage(int index);
-        void showPage(TExportWizardPage *page);
+        TupFileManager();
+        ~TupFileManager();
 
-    private slots:
-        void cancel();
-        void back();
-        void next();
-        void pageCompleted();
-        void disableButton();
-        void closeDialog();
-        void setFormat(int code, const QString &extension);
-
-    signals:
-        void cancelled();
-        void updateScenes();
-        void saveFile();
-        void saveVideoToServer();
-        void exportArray();
-        void setFileName();
-        void isDone();
-
-    private:
-        struct Private;
-        Private *const k;
-};
-
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
-
-class TExportWizardPage : public TVHBox
-{
-    Q_OBJECT
-
-    public:
-        TExportWizardPage(const QString &title, QWidget *parent = 0);
-        virtual ~TExportWizardPage();
-        virtual bool isComplete() const = 0;
-        virtual void reset() = 0;
-
-        void setPixmap(const QPixmap &pixmap);
-        void setWidget(QWidget *widget);
-        void setTag(const QString &label);
-        const QString getTag();
-
-    public slots:
-        virtual void aboutToNextPage() {}
-        virtual void aboutToBackPage() {}
-
-    signals:
-        void completed();
-        void emptyField();
-        void formatSelected(int format, const QString &extension);
-
-    private:
-        struct Private;
-        Private *const k;
+        //virtual bool save(const QString &filename, const TupProject *project);
+        virtual bool save(const QString &filename, TupProject *project);
+        virtual bool load(const QString &filename, TupProject *project);
 };
 
 #endif

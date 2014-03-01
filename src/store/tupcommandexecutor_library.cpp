@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -56,7 +56,7 @@ bool TupCommandExecutor::createSymbol(TupLibraryResponse *response)
 
         return true;
     } 
-    
+
     return false;
 }
 
@@ -92,7 +92,6 @@ bool TupCommandExecutor::insertSymbolIntoFrame(TupLibraryResponse *response)
     #ifdef K_DEBUG
            tFatal() << "TupCommandExecutor::insertSymbolIntoFrame() - Adding symbol to project: " << response->arg().toString();
     #endif
-
 
     if (m_project->scenesTotal() > 0) {
         if (m_project->insertSymbolIntoFrame(response->spaceMode(), response->arg().toString(), 

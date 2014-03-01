@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -88,21 +88,22 @@ class SelectTool : public TupToolPlugin
         void closeHugeCanvas();
         void callForPlugin(int menu, int index);
 
+    private slots:
+        void syncNodes();
+        void updateItems(TupGraphicsScene *scene);
+        void applyFlip(InfoPanel::Flip flip);
+        void applyOrderAction(InfoPanel::Order order);
+
     private:
         void setupActions();
         void verifyActiveSelection();
         void updateRealZoomFactor();
         void reset(TupGraphicsScene *scene);
-        
-    private:
+
         struct Private;
         Private *const k;
-        InfoPanel *m_configurator;
-        
-    private slots:
-        void syncNodes();
-        void updateItems(TupGraphicsScene *);
-        void applyFlip(InfoPanel::Flip flip);
+        InfoPanel *panel;
+
 };
 
 #endif

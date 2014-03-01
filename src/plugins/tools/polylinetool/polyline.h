@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -56,36 +56,34 @@ class PolyLine : public TupToolPlugin
         
         virtual void init(TupGraphicsScene *scene);
         virtual QStringList keys() const;
+        virtual QMap<QString, TAction *>actions() const;
+        int toolType() const;
+
         virtual void press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         virtual void move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
-        virtual void doubleClick(const TupInputDeviceInformation *input, TupGraphicsScene *scene);
         
         virtual void keyPressEvent(QKeyEvent *event);
 
-        virtual QMap<QString, TAction *>actions() const;
-        
-        int toolType() const;
-        
         virtual QWidget *configurator();
         void aboutToChangeScene(TupGraphicsScene *scene);
         virtual void aboutToChangeTool();
-        void itemResponse(const TupItemResponse *response);
         virtual void saveConfig();
         virtual QCursor cursor() const;
+
+    protected:
+        virtual void itemResponse(const TupItemResponse *response);
 
     signals:
         void closeHugeCanvas();
         void callForPlugin(int menu, int index);
 
-    private:
-        void setupActions();
-        
     private slots:
         void nodeChanged();
-        void endItem();
+        void initEnv();
         
     private:
+        void setupActions();
         struct Private;
         Private * const k;
 };

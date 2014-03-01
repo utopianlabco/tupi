@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -110,7 +110,7 @@ QList<QPainterPath> TPathHelper::toRect(const QList<QPainterPath> &l, const QRec
 
 QPainterPath TPathHelper::buildPath(const QStringList &polygonsStr, QChar sep)
 {
-    // ###: Not work for curves
+    // SQA: It doesn't work for curves
     QPainterPath path;
     
     foreach (QString polTmp, polygonsStr) {
@@ -135,7 +135,9 @@ QPainterPath TPathHelper::buildPath(const QStringList &polygonsStr, QChar sep)
 
 QPainterPath TPathHelper::buildPath(const QString &svgpath)
 {
-    tWarning() << QObject::tr("Not implemented yet.");
+    #ifdef K_DEBUG
+           tWarning() << "TPathHelper::buildPath() - Warning: method pending for implementation";
+    #endif
     
     return QPainterPath();
 }

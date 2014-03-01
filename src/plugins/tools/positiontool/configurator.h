@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -36,9 +36,10 @@
 #ifndef CONFIGURATOR_H
 #define CONFIGURATOR_H
 
-#include <QFrame>
 #include "tuptoolplugin.h"
 #include "settings.h"
+
+#include <QFrame>
 
 class QGraphicsPathItem;
 class QListWidgetItem;
@@ -74,7 +75,7 @@ class Configurator : public QFrame
         int startFrame();
 
         void updateSteps(const QGraphicsPathItem *path);
-        QString tweenToXml(int currentFrame, QPointF point, QString &path);
+        QString tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point, QString &path);
         int totalSteps();
         // void activateSelectionMode();
         void activateMode(TupToolPlugin::EditMode mode);
@@ -105,7 +106,7 @@ class Configurator : public QFrame
         void setMode(TupToolPlugin::Mode mode);
         void clickedResetInterface();
         void clickedApplyTween();
-        void startingPointChanged(int);
+        void startingFrameChanged(int);
         // void editModeOn();
         void getTweenData(const QString &);
         

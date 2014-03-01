@@ -1,3 +1,12 @@
+tupi (0.2+git03-1) unstable; urgency=low
+
+  * New upstream release [December 2013].
+  * Standards to 3.9.5.
+  * New patch to fix FTBFS with libav10 (Closes: #739429)
+    Thanks, Sebastian Ramacher.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 01 Mar 2014 18:12:25 +1100
+
 tupi (0.2+git02-3) unstable; urgency=low
 
   * Fixed directory to symlink upgrade in tupi-dbg (Closes: #715451).

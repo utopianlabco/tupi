@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -52,11 +52,10 @@ class Node : public QObject, public QGraphicsItem
     Q_OBJECT
     
     public:
-        
         enum TypeNode { TopLeft  = 0, TopRight, BottomLeft, BottomRight, Center };
         enum ActionNode { NoAction = 0, Scale, Rotate };
         
-        Node(TypeNode node, ActionNode action, const QPointF & pos = QPoint(0,0) , NodeManager *manager = 0, QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        Node(TypeNode node, ActionNode action, const QPointF &pos=QPoint(0,0), NodeManager *manager=0, QGraphicsItem *parent=0, QGraphicsScene *scene=0, int zValue=0);
         ~Node();
         
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *);

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,35 +33,32 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPSAVENETPROJECT_H
-#define TUPSAVENETPROJECT_H 
+#ifndef APNGPLUGIN_H
+#define APNGPLUGIN_H
 
-#include "tupifilemanager.h"
-
-#include <QString>
-
-class TupNetProjectManagerParams;
+#include "tupexportpluginobject.h"
+#include "tupexportinterface.h"
+#include "tmoviegeneratorinterface.h"
 
 /**
- * @author David Cuadrado
+ * @author Gustav Gonzalez
 */
 
-class TupiNetFileManager : public TupiFileManager 
+class APNGPlugin : public TupExportPluginObject
 {
-    public:
+    Q_OBJECT
 
-        TupiNetFileManager();
-        TupiNetFileManager(const QString &server, int port);
-        ~TupiNetFileManager();
-        
-        virtual bool save(const QString &filename, const TupProject *project);
-        virtual bool load(const QString &filename, TupProject *project);
-        
-        TupNetProjectManagerParams *params(const QString &filename);
-        
-    private:
-        QString m_server;
-        int m_port;
+    public:
+        APNGPlugin();
+        virtual ~APNGPlugin();
+        virtual QString key() const;
+        TupExportInterface::Formats availableFormats();
+
+        virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, TupExportInterface::Format format, const QSize &size, int fps);
+        virtual bool exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size);
+
+        virtual const char* getExceptionMsg();
+        const char *errorMsg;
 };
 
 #endif

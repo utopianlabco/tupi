@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -273,7 +273,7 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         // Setting undo/redo actions
         setUndoRedoActions();
 
-        animationTab = new TupViewDocument(m_projectManager->project(), this, isNetworked, users);
+        animationTab = new TupDocumentView(m_projectManager->project(), this, isNetworked, users);
 
         TCONFIG->beginGroup("Network");
         QString server = TCONFIG->value("Server").toString();
@@ -290,12 +290,12 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         connectToDisplays(animationTab);
         connectWidgetToManager(animationTab);
         connectWidgetToLocalManager(animationTab);
-        connect(animationTab, SIGNAL(modeHasChanged(int)), this, SLOT(expandExposureView(int))); 
+        connect(animationTab, SIGNAL(modeHasChanged(TupProject::Mode)), this, SLOT(expandExposureView(TupProject::Mode))); 
         connect(animationTab, SIGNAL(expandColorPanel()), this, SLOT(expandColorView()));
 
         connect(animationTab, SIGNAL(updateColorFromFullScreen(const QColor &)), this, SLOT(updatePenColor(const QColor &)));
         connect(animationTab, SIGNAL(updatePenFromFullScreen(const QPen &)), this, SLOT(updatePenThickness(const QPen &)));
-      
+
         animationTab->setAntialiasing(true);
 
         int width = animationTab->workSpaceSize().width();
@@ -385,9 +385,10 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         if (TupMainWindow::requestType == OpenLocalProject || TupMainWindow::requestType == OpenNetProject)
             TOsd::self()->display(tr("Information"), tr("Project <b>%1</b> opened!").arg(m_projectManager->project()->projectName()));
 
-        connect(m_projectManager, SIGNAL(modified(bool)), this, SLOT(updatePlayer(bool)));
-
         m_exposureSheet->setScene(0);
+
+        connect(m_projectManager, SIGNAL(projectHasChanged(bool)), this, SLOT(updatePlayer(bool)));
+        connect(animationTab, SIGNAL(projectHasChanged()), this, SLOT(updatePlayer()));
     }
 }
 
@@ -490,6 +491,9 @@ void TupMainWindow::resetUI()
     #ifdef K_DEBUG
            T_FUNCINFO;
     #endif
+
+    disconnect(animationTab, SIGNAL(projectHasChanged()), this, SLOT(updatePlayer()));
+    disconnect(m_projectManager, SIGNAL(projectHasChanged(bool)), this, SLOT(updatePlayer(bool)));
 
     setCurrentTab(0);
 
@@ -605,7 +609,6 @@ void TupMainWindow::resetUI()
         // netProjectManager->closeProject();
     }
 
-    disconnect(m_projectManager, SIGNAL(modified(bool)), this, SLOT(updatePlayer(bool)));
     m_projectManager->closeProject();
 
     resetMousePointer();
@@ -775,7 +778,7 @@ void TupMainWindow::openProject(const QString &path)
             if (author.length() <= 0)
                 author = "Anonymous";
 
-            setWindowTitle(tr("Tupi: Magia 2D") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
+            setWindowTitle(tr("Tupi: Open 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
             setWorkSpace();
         } else {
                  setUpdatesEnabled(true);
@@ -1315,10 +1318,8 @@ void TupMainWindow::callSave()
         saveProject();
 }
 
-void TupMainWindow::expandExposureView(int index) 
+void TupMainWindow::expandExposureView(TupProject::Mode contextMode) 
 {
-    contextMode = TupProject::Mode(index);
-
     if (contextMode == TupProject::FRAMES_EDITION) {
         exposureView->expandDock(true);
         exposureView->enableButton(true);
@@ -1401,16 +1402,22 @@ void TupMainWindow::postVideo(const QString &title, const QString &topics, const
 }
 */
 
-void TupMainWindow::updatePlayer(bool remove)
+void TupMainWindow::updatePlayer(bool removeAction)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
     #endif
 
-    if (!remove) {
+    if (!removeAction)
+        updatePlayer();
+}
+
+void TupMainWindow::updatePlayer()
+{
+    if (animationTab) {
         int sceneIndex = animationTab->currentSceneIndex();
         viewCamera->updateScenes(sceneIndex);
-    } 
+    }
 }
 
 void TupMainWindow::resetMousePointer()
