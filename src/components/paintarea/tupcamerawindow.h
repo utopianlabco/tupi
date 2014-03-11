@@ -1,21 +1,18 @@
 #ifndef TUPCAMERAWINDOW_H
 #define TUPCAMERAWINDOW_H
 
-#include "tglobal.h"
 #include "tupvideosurface.h"
 
 #include <QtGui>
-#include <QWidget>
-#include <QMessageBox>
 #include <QCamera>
 #include <QCameraImageCapture>
 
-class TUPI_EXPORT TupCameraWindow: public QWidget, public VideoIF
+class TupCameraWindow: public QWidget, public VideoIF
 {
     Q_OBJECT
 
     public:
-        TupCameraWindow(QCamera *input, const QSize &camSize, const QSize &displaySize, 
+        TupCameraWindow(QCamera *input, const QSize &camResolution, const QSize &displayResolution, 
                         QCameraImageCapture *imageCapture, const QString &path, QWidget *parent = 0);
         ~TupCameraWindow();
 
@@ -28,10 +25,6 @@ class TUPI_EXPORT TupCameraWindow: public QWidget, public VideoIF
         void drawGrid(bool flag);
         void drawActionSafeArea(bool flag);
         void showHistory(bool flag);
-        void updateImagesOpacity(double opacity);
-        void updateImagesDepth(int depth);
-        void updateGridSpacing(int space);
-        void updateGridColor(const QColor color);
 
     signals:
         void pictureHasBeenSelected(int id, const QString path);
