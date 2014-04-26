@@ -5,6 +5,7 @@ Maintainer: Dmitry Smirnov <onlyjob@debian.org>
 Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl, qt4-qmake, pkg-config
  ,imagemagick ,rdfind ,symlinks
  ,qt4-linguist-tools
+ ,qtmobility-dev
  ,libaspell-dev (>= 0.60.7~)
  ,libavformat-dev
  ,libavutil-dev

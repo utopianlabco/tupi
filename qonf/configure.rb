@@ -114,10 +114,10 @@ module RQonf
       @ffmpeg = false
     end
 
-    def verifyQtVersion(minqtversion, qtdir)
-      Info.info << "Checking for Qt >= " << minqtversion << "... "
+    def verifyQtVersion(minqtversion, verbose, qtdir)
+      Info.info << "Checking for Qt >= " << minqtversion << " and Qt < 5.x ..." << $endl
 
-      if @qmake.findQMake(minqtversion, true, qtdir)
+      if @qmake.findQMake(minqtversion, verbose, qtdir)
         print "[ \033[92mOK\033[0m ]\n"
       else
         print "[ \033[91mFAILED\033[0m ]\n"
@@ -305,26 +305,6 @@ module RQonf
         File.open("launcher/tupi.desktop", "w") { |f|
           f << newfile
         }
-
-      newmakefile = ""
-      File.open("src/components/help/help/css/tupi.ini", "r") { |f|
-        lines = f.readlines
-        index = 0
-        while index < lines.size
-          line = lines[index]
-          if line.include? "TUPI_SHARE" then
-            newmakefile += "#{line.gsub(/\$\(TUPI_SHARE\)/, launcher_sharedir)}"
-          else
-            newmakefile += line
-          end
-
-          index += 1
-        end
-      }
-
-      File.open("src/components/help/help/css/tupi.css", "w") { |f|
-        f << newmakefile
-      }
 
     end
   end

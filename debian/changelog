@@ -1,3 +1,12 @@
+tupi (0.2+git04-1) unstable; urgency=low
+
+  * New upstream release [April 2014].
+  * Build-Depends:
+    + qtmobility-dev
+  * Dropped obsolete "libav10.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 26 Apr 2014 21:39:57 +1000
+
 tupi (0.2+git03-1) unstable; urgency=low
 
   * New upstream release [December 2013].
