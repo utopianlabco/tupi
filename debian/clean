@@ -6,3 +6,4 @@ src/components/help/help/css/tupi.css
 src/framework/tupconfig.pri
 src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.cpp
 src/components/help/man/*.1.gz
+Changelog

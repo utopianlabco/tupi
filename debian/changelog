@@ -1,3 +1,14 @@
+tupi (0.2+git04-2) unstable; urgency=low
+
+  * Dropped "/usr/share/tupi/doc" symlink to fix binNMU (Closes: #748304);
+    Thanks, Sebastian Ramacher.
+  * Set tupi's arch as "linux-any" (Closes: #747832).
+  * Removed unused-override.
+  * "debian/clean": remove empty upstream changelog.
+  * Install "/usr/share/doc/tupi/examples" symlink.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 17 May 2014 21:20:38 +1000
+
 tupi (0.2+git04-1) unstable; urgency=low
 
   * New upstream release [April 2014].

@@ -1,7 +1,3 @@
 ## false-positives:
 hardening-no-fortify-functions usr/lib/tupi/bin/tupi.bin
 
-# In `ldd` output for those private libraries there are lines like
-# "libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ff3fe3ed000)"
-# so perhaps no symbols from libc are used, overriding:
-library-not-linked-against-libc usr/lib/tupi/libtupi*

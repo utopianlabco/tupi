@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+## Drop documentation directory symlink
+docdir="/usr/share/doc/tupi"
+if [ -h "${docdir}-dbg" ]; then
+    rm -f "${docdir}-dbg" 2>>/dev/null
+fi
+
+#DEBHELPER#

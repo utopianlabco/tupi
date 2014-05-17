@@ -20,7 +20,7 @@ Vcs-Git: git://anonscm.debian.org/collab-maint/tupi.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/tupi.git
 
 Package: tupi
-Architecture: any
+Architecture: linux-any
 Depends: ${misc:Depends}, ${shlibs:Depends}, tupi-data (= ${source:Version})
 Replaces: ktoon
 Description: 2D Animation design and authoring tool

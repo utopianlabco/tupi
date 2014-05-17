@@ -67,9 +67,6 @@ override_dh_shlibdeps:
 override_dh_makeshlibs:
 	dh_makeshlibs --noscripts
 
-override_dh_installdocs:
-	dh_installdocs --link-doc=tupi-data
-
 override_dh_strip:
 	dh_strip -v --dbg-package=tupi-dbg
 
