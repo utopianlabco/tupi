@@ -1,3 +1,10 @@
+tupi (0.2+git05-2) experimental; urgency=low
+
+  * override_dh_fixperms: check if -data package is built to fix
+    FTBFS "-B" type, like on buildd servers.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 05 Jan 2015 10:25:13 +1100
+
 tupi (0.2+git05-1) experimental; urgency=low
 
   * New upstream release [December 2014].

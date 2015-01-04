@@ -42,8 +42,10 @@ override_dh_auto_build: $(QM_FILES)
 
 override_dh_fixperms:
 	dh_fixperms
-	find $(CURDIR)/debian/tupi-data/usr/share/tupi/data/xml/ \
-            -type f -executable -exec chmod -c a-x '{}' \;
+	if [ -d "$(CURDIR)/debian/tupi-data" ]; then \
+            find $(CURDIR)/debian/tupi-data/usr/share/tupi/data/xml/ \
+                -type f -executable -exec chmod -c a-x '{}' \;\
+        ;fi
 
 override_dh_install:
 	dh_install
