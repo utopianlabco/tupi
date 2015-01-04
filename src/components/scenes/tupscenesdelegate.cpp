@@ -34,9 +34,6 @@
  ***************************************************************************/
 
 #include "tupscenesdelegate.h"
-#include "tdebug.h"
-
-#include <QtGui>
 
 TupScenesDelegate::TupScenesDelegate(QObject *parent)
     : QItemDelegate(parent)

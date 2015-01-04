@@ -33,15 +33,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPIP_H
-#define TUPIP_H
+#ifndef TIPDIALOG_H
+#define TIPDIALOG_H
+
+#include "tglobal.h"
+#include "tipdatabase.h"
+#include "tseparator.h"
+#include "tconfig.h"
+#include "tapplicationproperties.h"
 
 #include <QString>
 #include <QList>
 #include <QDialog>
-
-#include "tglobal.h"
-#include "tipdatabase.h"
+#include <QVBoxLayout>
+#include <QTextBrowser>
+#include <QTextFrame>
+#include <QTextFrameFormat>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QDomDocument>
+#include <QFile>
+#include <QDir>
 
 class QCheckBox;
 class QTextBrowser;

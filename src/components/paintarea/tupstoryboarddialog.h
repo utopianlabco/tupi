@@ -36,9 +36,15 @@
 #ifndef TUPSTORYBOARDDIALOG_H
 #define TUPSTORYBOARDDIALOG_H
 
+#include "tglobal.h"
 #include "tupscene.h"
 #include "tupstoryboard.h"
 #include "tupexportinterface.h"
+#include "tapplicationproperties.h"
+#include "tconfig.h"
+#include "tseparator.h"
+#include "talgorithm.h"
+#include "tosd.h"
 
 #include <QDialog>
 #include <QColor>
@@ -46,15 +52,33 @@
 #include <QIcon>
 #include <QListWidgetItem>
 #include <QPrinter>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QPixmap>
+#include <QBoxLayout>
+#include <QListWidget>
+#include <QLabel>
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QDir>
+#include <QPushButton>
+#include <QPainter>
+#include <QFileDialog>
+#include <QDesktopWidget>
+#include <QLocale>
+#include <QPrintDialog>
+#include <QTextBrowser>
+#include <QComboBox>
 
-class TupStoryBoardDialog : public QDialog
+class TUPI_EXPORT TupStoryBoardDialog : public QDialog
 {
     Q_OBJECT
 
     public:
         TupStoryBoardDialog(bool isNetworked, TupExportInterface *imagePlugin, const QColor &color, 
-                            const QSize &size, TupScene *scene, int sceneIndex, QWidget *parent);
+                            const QSize &size, TupScene *scene, int sceneIndex, TupLibrary *library, QWidget *parent);
         ~TupStoryBoardDialog();
+        enum DocType { HTML = 1, PDF };
 
     private slots:
         void updateForm(QListWidgetItem *current, QListWidgetItem *previous);
@@ -87,7 +111,7 @@ class TupStoryBoardDialog : public QDialog
         QString getSceneTitle() const;
         QString getSceneDuration() const;
         QString getSceneDescription() const;
-        void createHTMLFiles(const QString &path);
+        void createHTMLFiles(const QString &path, DocType type);
         void cleanDirectory(const QString &path);
  
         struct Private;

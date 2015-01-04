@@ -34,22 +34,6 @@
  ***************************************************************************/
 
 #include "tupcamerainterface.h"
-#include "tupcamerawindow.h"
-#include "tupapplication.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "talgorithm.h"
-#include "tosd.h"
-#include "tupcolorwidget.h"
-#include "tdebug.h"
-
-#include <QBoxLayout>
-#include <QIcon>
-#include <QDir>
-#include <QDesktopWidget>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QDoubleSpinBox>
 
 struct TupCameraInterface::Private
 {
@@ -69,7 +53,11 @@ TupCameraInterface::TupCameraInterface(const QString &title, QList<QByteArray> c
                                        const QSize cameraSize, int counter, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCameraInterface()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     setWindowTitle(tr("Tupi Camera Manager") + " | " + tr("Current resolution:") + " " + title);
@@ -113,7 +101,12 @@ TupCameraInterface::TupCameraInterface(const QString &title, QList<QByteArray> c
              QByteArray device = cameraDevices.at(i);
              QCamera *camera = new QCamera(device); 
              QCameraImageCapture *imageCapture = new QCameraImageCapture(camera);
-             QSize camSize = setBestResolution(imageCapture->supportedResolutions(), cameraSize);
+
+             // QSize camSize = setBestResolution(imageCapture->supportedResolutions(), cameraSize);
+
+             QList<QSize> resolutions;
+             resolutions << QSize(640, 480);
+             QSize camSize = setBestResolution(resolutions, cameraSize);
 
              TupCameraWindow *cameraWindow = new TupCameraWindow(camera, camSize, displaySize, imageCapture, path);
              connect(cameraWindow, SIGNAL(pictureHasBeenSelected(int, const QString)), this, SIGNAL(pictureHasBeenSelected(int, const QString)));
@@ -233,6 +226,12 @@ TupCameraInterface::TupCameraInterface(const QString &title, QList<QByteArray> c
         menuLayout->addWidget(devicesCombo);
     } 
 
+    QPushButton *exitButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "exit.png")), "");
+    exitButton->setIconSize(QSize(20, 20));
+    exitButton->setToolTip(tr("Close manager"));
+    exitButton->setShortcut(Qt::Key_Escape);
+    connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
+
     devicesCombo->setCurrentIndex(cameraIndex);
     menuLayout->addWidget(new TSeparator(Qt::Horizontal));
     menuLayout->addWidget(clickButton);
@@ -241,6 +240,7 @@ TupCameraInterface::TupCameraInterface(const QString &title, QList<QByteArray> c
     menuLayout->addWidget(k->gridWidget);
     menuLayout->addWidget(k->historyButton);
     menuLayout->addWidget(k->historyWidget);
+    menuLayout->addWidget(exitButton);
     menuLayout->addStretch(2);
 
     connect(devicesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCameraDevice(int)));
@@ -255,7 +255,11 @@ TupCameraInterface::TupCameraInterface(const QString &title, QList<QByteArray> c
 TupCameraInterface::~TupCameraInterface()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupCameraInterface()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -286,8 +290,14 @@ QString TupCameraInterface::randomPath()
     QDir dir;
     if (!dir.mkdir(path)) {
         #ifdef K_DEBUG
-               tError() << "TupCameraInterface::randomPath() - Fatal Error: Can't create pictures directory -> " << path;
+            QString msg = "TupCameraInterface::randomPath() - Fatal Error: Can't create pictures directory -> " + path;
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
+
         path = "";
         TOsd::self()->display(tr("Error"), tr("Can't create pictures directory"), TOsd::Error);
     }

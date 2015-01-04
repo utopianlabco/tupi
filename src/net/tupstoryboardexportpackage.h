@@ -36,13 +36,15 @@
 #ifndef TUPSTORYBOARDEXPORTPACKAGE_H
 #define TUPSTORYBOARDEXPORTPACKAGE_H
 
+#include "tglobal.h"
+
+#include <QDomDocument>
+
 /**
  * @author Gustav Gonzalez
 */
 
-#include <QDomDocument>
-
-class TupStoryboardExportPackage : public QDomDocument
+class TUPI_EXPORT TupStoryboardExportPackage : public QDomDocument
 {
     public:
         TupStoryboardExportPackage(int sceneIndex);

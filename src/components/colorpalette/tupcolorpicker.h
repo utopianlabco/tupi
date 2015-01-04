@@ -33,12 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include <QFrame>
-
 #ifndef TUPCOLORPICKER_H
 #define TUPCOLORPICKER_H
 
-class TupColorPicker : public QFrame
+#include "tglobal.h"
+
+#include <QFrame>
+#include <QPoint>
+#include <QColor>
+#include <QImage>
+#include <QSizePolicy>
+#include <QPixmap>
+#include <QSize>
+#include <QRect>
+#include <QPainter>
+#include <QMouseEvent>
+
+class TUPI_EXPORT TupColorPicker : public QFrame
 {
     Q_OBJECT
 

@@ -33,15 +33,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include <QtGui>
-#include <QtNetwork>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QDomDocument>
-#include <QEventLoop>
-
 #include "tupwebhunter.h"
-#include "tdebug.h"
 
 QString TupWebHunter::BROWSER_FINGERPRINT = QString("Tupi_Browser 1.0");
 
@@ -73,7 +65,8 @@ void TupWebHunter::start()
 
     QNetworkRequest request;
     request.setUrl(QUrl(k->url));
-    request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
+    // request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toAscii());
+    request.setRawHeader("User-Agent", BROWSER_FINGERPRINT.toLatin1());
 
     QNetworkReply *reply = manager->get(request);
     connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
@@ -110,28 +103,63 @@ void TupWebHunter::slotError(QNetworkReply::NetworkError error)
     switch (error) {
             case QNetworkReply::HostNotFoundError:
                  { 
-                     tError() << "TupWebHunter::slotError() - Network Error: Host not found";
+                 #ifdef K_DEBUG
+                     QString msg = "TupWebHunter::slotError() - Network Error: Host not found";
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tError() << msg;
+                     #endif
+                 #endif
                  }
             break;
             case QNetworkReply::TimeoutError:
                  {
-                     tError() << "TupWebHunter::slotError() - Network Error: Time out!";
+                 #ifdef K_DEBUG
+                     QString msg = "TupWebHunter::slotError() - Network Error: Time out!";
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tError() << msg;
+                     #endif
+                 #endif
                  }
             break;
             case QNetworkReply::ConnectionRefusedError:
                  {
-                     tError() << "TupWebHunter::slotError() - Network Error: Connection Refused!";
+                 #ifdef K_DEBUG
+                     QString msg = "TupWebHunter::slotError() - Network Error: Connection Refused!";
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tError() << msg;
+                     #endif
+                 #endif
                  }
             break;
             case QNetworkReply::ContentNotFoundError:
                  {
-                     tError() << "TupWebHunter::slotError() - Network Error: Content not found!";
+                 #ifdef K_DEBUG
+                     QString msg = "TupWebHunter::slotError() - Network Error: Content not found!";
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tError() << msg;
+                     #endif
+                 #endif
                  }
             break;
             case QNetworkReply::UnknownNetworkError:
             default:
                  {
-                     tError() << "TupWebHunter::slotError() - Network Error: Unknown Network error!";
+                 #ifdef K_DEBUG
+                     QString msg = "TupWebHunter::slotError() - Network Error: Unknown Network error!";
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tError() << msg;
+                     #endif
+                 #endif
                  }
             break;
     }

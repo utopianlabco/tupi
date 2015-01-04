@@ -36,7 +36,17 @@
 #ifndef TUPSYMBOLEDITOR_H
 #define TUPSYMBOLEDITOR_H
 
+#include "tglobal.h"
+#include "tuplibraryobject.h"
+#include "tuppluginmanager.h"
+#include "tuptoolplugin.h"
+#include "taction.h"
+
 #include <QMainWindow>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QToolBar>
+#include <QTimer>
 
 class TupLibraryObject;
 
@@ -44,7 +54,7 @@ class TupLibraryObject;
  * @author David Cuadrado
 */
 
-class TupSymbolEditor : public QMainWindow
+class TUPI_EXPORT TupSymbolEditor : public QMainWindow
 {
     Q_OBJECT
 

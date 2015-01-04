@@ -34,12 +34,6 @@
  ***************************************************************************/
 
 #include "tconfig.h"
-#include "tdebug.h"
-
-#include <QDir>
-#include <QCoreApplication>
-#include <QTextDocument>
-#include <QDomDocument>
 
 class TConfig::Private
 {
@@ -61,40 +55,62 @@ TConfig* TConfig::m_instance = 0;
 TConfig::TConfig() : QObject(), k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TConfig()]";
+        #else
+            TINIT;
+        #endif
     #endif
+
+    QString base = QDir::homePath() + QDir::separator();
+
+	/*
+    #ifdef Q_OS_WIN32
+            k->configDirectory.setPath(base + QCoreApplication::applicationName());
+    #else
+            k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
+    #endif
+	*/
 	
-    #ifdef Q_WS_X11
-           k->configDirectory.setPath(QDir::homePath() + "/." + QCoreApplication::applicationName());
-    #elif defined(Q_WS_WIN)
-                  k->configDirectory.setPath(QDir::homePath() + "/" + QCoreApplication::applicationName());
-    #elif defined(Q_WS_MAC)
-                  k->configDirectory.setPath(QDir::homePath() + "/." + QCoreApplication::applicationName());
-    #endif
+	k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
 
     if (!k->configDirectory.exists()) {
         k->firstTime = true;
         #ifdef K_DEBUG
-               tWarning() << "*** TConfig::TConfig() - Config file doesn't exist. Creating path: " << k->configDirectory.path();
+            QString msg = "TConfig::TConfig() - Config file doesn't exist. Creating path: " + k->configDirectory.path();
+            #ifdef Q_OS_WIN32
+                qWarning() << msg;
+            #else
+                tWarning() << msg;
+            #endif
         #endif
 
         if (!k->configDirectory.mkdir(k->configDirectory.path())) {
             #ifdef K_DEBUG
-                   tError() << "TConfig::TConfig() - Fatal Error: Can't create path -> " << k->configDirectory.path();
+                QString msg = "TConfig::TConfig() - Fatal Error: Can't create path -> " + k->configDirectory.path();
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
             #endif
         }
     } else {
         k->firstTime = false;
     }
 
-    k->path = k->configDirectory.path() + "/" + QCoreApplication::applicationName().toLower() + ".cfg";
+    k->path = k->configDirectory.path() + QDir::separator() + QCoreApplication::applicationName().toLower() + ".cfg";
     init();
 }
 
 TConfig::~TConfig()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TConfig()]";
+        #else
+            TEND;
+        #endif
     #endif
 
     if (m_instance) 
@@ -122,9 +138,16 @@ void TConfig::init()
         k->isOk = k->document.setContent(&config, &errorMsg, &errorLine, &errorColumn);
 
         if (!k->isOk) {
-            #ifdef K_DEBUG 
-                   tError() << "TConfig::init() - Fatal Error: Configuration file is corrupted - Line: " << errorLine << " - Column: " << errorColumn;
-                   tError() << "TConfig::init() - Message: " << errorMsg;
+            #ifdef K_DEBUG
+                QString msg1 = "TConfig::init() - Fatal Error: Configuration file is corrupted - Line: " + QString::number(errorLine) + " - Column: " + QString::number(errorColumn);
+                QString msg2 = "TConfig::init() - Message: " + errorMsg;
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg1;
+                    qDebug() << msg2;
+                #else
+                    tError() << msg1;
+                    tError() << msg2;
+                #endif
             #endif
         }
 
@@ -173,7 +196,8 @@ void TConfig::sync()
 
 void TConfig::beginGroup(const QString & prefix)
 {
-    QString stripped = Qt::escape(prefix);
+    // QString stripped = Qt::escape(prefix);
+    QString stripped = QString(prefix).toHtmlEscaped();
 
     stripped.replace(' ', "_");
     stripped.replace('\n', "");

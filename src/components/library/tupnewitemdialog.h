@@ -36,13 +36,23 @@
 #ifndef TUPNEWITEMDIALOG_H
 #define TUPNEWITEMDIALOG_H
 
+#include "tglobal.h"
+#include "talgorithm.h"
+#include "tapplicationproperties.h"
+
 #include <QDialog>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDialogButtonBox>
+#include <QFile>
 
 /**
  * @author Gustav Gonzalez
 **/
 
-class TupNewItemDialog : public QDialog
+class TUPI_EXPORT TupNewItemDialog : public QDialog
 {
     Q_OBJECT
 

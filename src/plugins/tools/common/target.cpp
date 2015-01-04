@@ -34,17 +34,6 @@
  ***************************************************************************/
 
 #include "target.h"
-#include "tdebug.h"
-#include "tupgraphicalgorithm.h"
-#include "tupgraphicobject.h"
-
-#include <QCursor>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QStyleOptionButton>
-#include <QApplication>
 
 /**
  * This class defines the data structure for a node, and all the methods required to manipulate it.
@@ -52,7 +41,8 @@
  * @author Gustav Gonzalez 
 */
 
-Target::Target(const QPointF & pos, int zLevel, QGraphicsScene *scene) : QGraphicsItem(0, scene)
+// Target::Target(const QPointF & pos, int zLevel, QGraphicsScene *scene) : QGraphicsItem(0, scene)
+Target::Target(const QPointF & pos, int zLevel) : QGraphicsItem(0)
 {
     QGraphicsItem::setCursor(QCursor(Qt::PointingHandCursor));
     setFlag(ItemIsSelectable, false);
@@ -110,7 +100,11 @@ void Target::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Target::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[Target::mouseReleaseEvent()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     emit positionUpdated(event->scenePos()); 

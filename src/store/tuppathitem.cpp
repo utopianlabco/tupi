@@ -34,19 +34,11 @@
  ***************************************************************************/
 
 #include "tuppathitem.h"
-#include "tdebug.h"
 #include "tupsvg2qt.h"
 #include "tupgraphicalgorithm.h"
 #include "tupserializer.h"
 
-#include <QMimeData>
-#include <QBrush>
-#include <QGraphicsSceneDragDropEvent>
-#include <QPainter>
-#include <QPainterPath>
-#include <QCursor>
-
-TupPathItem::TupPathItem(QGraphicsItem * parent, QGraphicsScene * scene) : QGraphicsPathItem(parent, scene), m_dragOver(false)
+TupPathItem::TupPathItem(QGraphicsItem * parent) : QGraphicsPathItem(parent), m_dragOver(false)
 {
     setAcceptDrops(true);
 }
@@ -182,10 +174,15 @@ void TupPathItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_dragOver = false;
 
-    if (event->mimeData()->hasColor())
-        setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
-    else if (event->mimeData()->hasImage())
-             setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+    if (event->mimeData()->hasColor()) {
+        // setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
+        QVariant color = event->mimeData()->colorData();
+        setBrush(QBrush(color.value<QColor>()));
+    } else if (event->mimeData()->hasImage()) {
+               // setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+               QVariant pixmap = event->mimeData()->imageData();
+               setBrush(QBrush(pixmap.value<QPixmap>()));
+    }
 
     update();
 }

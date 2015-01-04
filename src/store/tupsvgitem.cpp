@@ -35,10 +35,6 @@
 
 #include "tupsvgitem.h"
 #include "tupserializer.h"
-#include "tdebug.h"
-
-#include <QSvgRenderer>
-#include <QFileInfo>
 
 struct TupSvgItem::Private
 {
@@ -109,7 +105,12 @@ QDomElement TupSvgItem::toXml(QDomDocument &doc) const
 {
     if (k->name.length() == 0) {
         #ifdef K_DEBUG
-               tError() << "TupFrame::fromXml() - ERROR: Object id is null!";
+            QString msg = "TupFrame::fromXml() - Error: Object ID is null!";
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 

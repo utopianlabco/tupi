@@ -1,18 +1,18 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: tupi
 Upstream-Contact: Gustav Gonzalez <info@maefloresta.com>
-Source: https://github.com/xtingray/tupi
-
-Files: debian/*
-Copyright: 2011-2014 Dmitry Smirnov <onlyjob@debian.org>
-License: GPL-2+
+Source: https://projects.kde.org/projects/playground/artwork/tupi/repository
 
 Files: *
-Copyright: 2010-2013 Gustav Gonzalez <info@maefloresta.com>
+Copyright: 2010-2014 Gustav Gonzalez <info@maefloresta.com>
            2006      David Cuadrado
            2006      Jorge Cuadrado
            2003      Fernado Roldan
            2003      Simena Dinas
+License: GPL-2+
+
+Files: debian/*
+Copyright: 2011-2015 Dmitry Smirnov <onlyjob@debian.org>
 License: GPL-2+
 
 License: GPL-2+

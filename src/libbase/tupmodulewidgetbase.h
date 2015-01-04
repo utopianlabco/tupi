@@ -36,17 +36,19 @@
 #ifndef TUPMODULEWIDGETBASE_H
 #define TUPMODULEWIDGETBASE_H
 
+#include "tglobal.h"
 #include "tosd.h"
 #include "tupprojectresponse.h"
 #include "tupabstractprojectresponsehandler.h"
-#include "tupglobal.h"
 
 #include <QLayout>
 #include <QSizePolicy> 
 #include <QObject>
 #include <QEvent>
-#include <QBoxLayout>
 #include <QDockWidget>
+#include <QEvent>
+#include <QBoxLayout>
+#include <QDialog>
 
 /**
  * @author Jorge Cuadrado

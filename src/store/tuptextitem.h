@@ -36,22 +36,24 @@
 #ifndef TUPTEXTITEM_H
 #define TUPTEXTITEM_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QGraphicsTextItem>
-
+#include <QFont>
+#include <QFocusEvent>
+#include <QTimer>
 
 /**
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupTextItem : public QGraphicsTextItem, public TupAbstractSerializable
+class TUPI_EXPORT TupTextItem : public QGraphicsTextItem, public TupAbstractSerializable
 {
     Q_OBJECT
 
     public:
-        TupTextItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupTextItem(QGraphicsItem *parent = 0);
         ~TupTextItem();
         
         virtual void fromXml(const QString &xml);

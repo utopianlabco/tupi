@@ -34,12 +34,6 @@
  ***************************************************************************/
 
 #include "tvhbox.h"
-#include "tdebug.h"
-
-#include <QApplication>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPoint>
 
 TVHBox::TVHBox(QWidget *parent, Qt::Orientation o) : QFrame(parent)
 {
@@ -78,16 +72,20 @@ void TVHBox::addWidget(QWidget *child, Qt::Alignment alignment)
 
 void TVHBox::moveWidgetUp(QWidget *widget)
 {
-    // dDebug() << "Childs " << children ().count() << endl;
     int position = m_pLayout->indexOf(widget);
-    
-    // dDebug() << "Position: " << position << endl;
     
     if (position > 0) {
         m_pLayout->removeWidget(widget);
         m_pLayout->insertWidget(position-1, widget);
     } else {
-        tError() << "The widget isn't in the layout" << endl;
+        #ifdef K_DEBUG
+            QString msg = "TVHBox::moveWidgetUp() - Error: The widget isn't in the layout";
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+        #endif
     }
 }
 
@@ -160,9 +158,8 @@ void TVHBox::switchWidgetsPosition(QWidget *widget1, QWidget *widget2)
 
 void TVHBox::mouseMoveEvent(QMouseEvent *e)
 {
-    if (hasMouseTracking()) {
+    if (hasMouseTracking())
         emit mouseAt(e->pos());
-    }
 }
 
 QBoxLayout *TVHBox::boxLayout()

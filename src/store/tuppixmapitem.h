@@ -36,19 +36,20 @@
 #ifndef TUPPIXMAPITEM_H
 #define TUPPIXMAPITEM_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QGraphicsPixmapItem>
+#include <QPixmap>
 
 /**
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupPixmapItem : public QGraphicsPixmapItem, public TupAbstractSerializable
+class TUPI_EXPORT TupPixmapItem : public QGraphicsPixmapItem, public TupAbstractSerializable
 {
     public:
-        TupPixmapItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupPixmapItem(QGraphicsItem *parent = 0);
         ~TupPixmapItem();
 
         virtual void fromXml(const QString &xml);

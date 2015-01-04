@@ -34,10 +34,6 @@
  ***************************************************************************/
 
 #include "tupgradientcreator.h"
-#include "tdebug.h"
-#include "tapplication.h"
-
-#include <QBoxLayout>
 
 struct TupGradientCreator::Private
 {
@@ -166,7 +162,12 @@ void TupGradientCreator::setGradient(const QBrush & brush)
         }
     } else {
         #ifdef K_DEBUG
-               tError() << "TupGradientCreator::setGradient() - Error: Brush has no gradient (null)";
+		    QString msg = "TupGradientCreator::setGradient() - Error: Brush has no gradient (null)";
+		    #ifdef Q_OS_WIN32
+               qDebug() << msg;
+            #else
+               tError() << msg;
+            #endif
         #endif
     }
 }

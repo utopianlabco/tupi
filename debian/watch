@@ -10,6 +10,7 @@ opts=\
 uversionmangle=s/\-git/+git/ \
  https://github.com/xtingray/tupi/tags .*/archive/v?(\d[-\d\.git]+)\.tar\.(?:gz|bzip2|xz)
 
+## Redirector http://qa.debian.org/watch/sf.php/tupi2d/
 opts=\
 uversionmangle=s/\-git/\+git/ \
- http://sf.net/tupi.berlios/tupi_([0-9.]+\-git[0-9]+)\.tar\.(?:gz|bzip2|xz)
+ http://sf.net/tupi2d/tupi[_-]([0-9.]+\-git[0-9]+)\.tar\.(?:gz|bzip2|xz)

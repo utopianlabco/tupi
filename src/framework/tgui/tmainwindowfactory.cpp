@@ -37,16 +37,8 @@
 #include "tabbedmainwindow.h"
 #include "tstackedmainwindow.h"
 #include "tworkspacemainwindow.h"
-#include "tdebug.h"
 
-#include <QDockWidget>
-#include <QToolBar>
-#include <QTabWidget>
-#include <QEvent>
-#include <QApplication>
-#include <QShowEvent>
-
-class EventFilter : public QObject
+class T_GUI_EXPORT EventFilter : public QObject
 {
     public:
         EventFilter(TMainWindow *mw, QObject *parent = 0);
@@ -115,8 +107,14 @@ TMainWindow *TMainWindowFactory::create(QMainWindow *other)
 
     if (other->inherits("TMainWindow")) {
         #ifdef K_DEBUG
-               tError() << "TMainWindowFactory::create() - Fatal Error: Can't create a TMainWindow!";
+            QString msg = "TMainWindowFactory::create() - Fatal Error: Can't create a TMainWindow!";
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
+
         return static_cast<TMainWindow *>(other);
     }
 

@@ -33,40 +33,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#if !defined(K_NODEBUG)
 #include "tdebug.h"
-
-#include <QFile>
-#include <QString>
-#include <QDateTime>
-#include <QPoint>
-#include <QPointF>
-#include <QRect>
-#include <QStringList>
-#include <QVariant>
-#include <QSize>
-#include <QEvent>
-// #include <QTimer>
-
-#ifdef QT_GUI_LIB
-
-#include <QRegion>
-#include <QPen>
-#include <QBrush>
-#include <QImage>
-#include <QIcon>
-#include <QPixmap>
-#include <QWidget>
-#include <QMessageBox>
-#include <QSyntaxHighlighter>
-#include <QMatrix>
-#include <QDesktopWidget>
-#include <QScrollBar>
-#include <QDebug>
-
-#endif
-
-// #include <QSettings>
 
 #if defined(Q_OS_UNIX)
 # define SHOW_ERROR "*** \033[0;31m%s\033[0;0m ***\n"
@@ -78,10 +45,10 @@
 # define SHOW_FATAL "***** %s *****\n"
 #endif
 
-#ifdef QT_GUI_LIB
-       static QTextEdit *debugBrowser = 0;
-#endif
-
+// #ifdef QT_GUI_LIB
+static QTextEdit *debugBrowser = 0;
+static bool projectIsOpen = false;
+// #endif
 
 #ifdef Q_OS_UNIX
 
@@ -145,7 +112,7 @@ ConfigReader::~ConfigReader()
 {
 }
 
-#ifdef QT_GUI_LIB
+// #ifdef QT_GUI_LIB
 
 class DebugBrowserHighlighter : public QSyntaxHighlighter
 {
@@ -201,7 +168,7 @@ void DebugBrowserHighlighter::highlightBlock(const QString &text)
         setFormat(0, sepIndex, format);
 }
 
-#endif // QT_GUI_LIB
+// #endif // QT_GUI_LIB
 
 static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
 {
@@ -253,7 +220,7 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
                }
             break;
 
-            #ifdef QT_GUI_LIB
+            // #ifdef QT_GUI_LIB
             case TBoxOutput:
                {
                     switch (t) {
@@ -285,17 +252,19 @@ static void tDebugOutput(DebugType t, DebugOutput o, const char *data)
             break;
             case TBrowserOutput:
                {
-                    if (debugBrowser) {
-                        if (data) {
+                   if (projectIsOpen) {
+                       if (debugBrowser) {
+                           if (data) {
                             debugBrowser->append(QString(data));
                             QScrollBar *bar = debugBrowser->verticalScrollBar();
                             bar->setValue(bar->maximum());
-                            fprintf(stderr, output, data);
-                        }
-                    } 
+                           }
+                       } 
+                   }
+                   fprintf(stderr, output, data);
                }
             break;
-            #endif
+            // #endif
 
             default: 
             break;
@@ -332,7 +301,6 @@ TDebug::TDebug(const TDebug & k) : streamer(k.streamer), m_type(k.m_type), m_out
 TDebug::~TDebug()
 {
     ::tDebugOutput(m_type, configReader.outputType, streamer->buffer.toLocal8Bit().data());
-
     delete streamer;
 }
 
@@ -417,7 +385,6 @@ TDebug& TDebug::operator << (const QEvent* e)
     return *this;
 }
 
-#ifdef QT_GUI_LIB
 TDebug& TDebug::operator<<( const QPixmap& p ) 
 {
     *this << "(" << p.width() << ", " << p.height() << ")";
@@ -610,6 +577,8 @@ QTextEdit *TDebug::browser(QWidget *parent, int width)
     return debugBrowser;
 }
 
-#endif // QT_GUI_LIB
+void TDebug::setProjectStatus(bool status)
+{
+    projectIsOpen = status;
+}
 
-#endif // K_NODEBUG

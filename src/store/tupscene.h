@@ -33,25 +33,28 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPSCENEMANAGER_H
-#define TUPSCENEMANAGER_H
+#ifndef TUPSCENE_H
+#define TUPSCENE_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tupproject.h"
 #include "tupstoryboard.h"
 #include "tupbackground.h"
 #include "tupitemtweener.h"
-#include "tupinthash.h"
-#include "tupglobal_store.h"
+#include "tuplipsync.h"
 
 #include <QDomDocument>
 #include <QDomElement>
 #include <QGraphicsScene>
 #include <QMap>
+#include <QList>
+#include <QPainter>
+#include <QGraphicsItem>
+#include <QStyleOptionGraphicsItem>
+#include <QDir>
+#include <QGraphicsView>
 
-class QGraphicsItem;
-class QPainter;
-class QStyleOptionGraphicsItem;
 class TupLayer;
 class TupSoundLayer;
 class TupGraphicObject;
@@ -59,15 +62,17 @@ class TupSvgItem;
 class TupBackground;
 class TupItemTweener;
 
-typedef TupIntHash<TupLayer *> Layers;
-typedef TupIntHash<TupSoundLayer *> SoundLayers;
+typedef QList<TupFrame *> Frames;
+typedef QList<TupLayer *> Layers;
+typedef QList<TupSoundLayer *> SoundLayers;
+typedef QList<TupLipSync *> Mouths;
 
 /**
  * @brief This class represents the scene data structure
  * @author David Cuadrado 
 */
 
-class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupScene : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
 
@@ -148,8 +153,6 @@ class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
         void updateTweenObject(int index, TupGraphicObject *object);
         void updateTweenObject(int index, TupSvgItem *object);
 
-        // int indexOfTweenObject(const QString &name, TupLibraryObject::Type itemType, TupItemTweener::Type tweenType);
-
         void removeTweenObject(TupGraphicObject *object);
         void removeTweenObject(TupSvgItem *object);
 
@@ -168,8 +171,6 @@ class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
 
         int framesTotal();
 
-        QList<int> layerIndexes();
-
         TupBackground *background();
 
         virtual void fromXml(const QString &xml);
@@ -186,6 +187,15 @@ class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
         void moveStoryBoardScene(int oldIndex, int newIndex);
         void resetStoryBoardScene(int index);
         void removeStoryBoardScene(int index);
+
+        QList<QString> getLipSyncNames();
+        bool lipSyncExists(const QString &name);
+        int getLipSyncLayerIndex(const QString &name);
+        TupLipSync * getLipSync(const QString &name);
+        bool updateLipSync(TupLipSync *lipsync);
+        bool removeLipSync(const QString &name);
+        int lipSyncTotal();
+        Mouths getLipSyncList();
 
     private:
         void removeTweensFromLayer(int layer);

@@ -36,13 +36,14 @@
 #ifndef TUPGRADIENTMANAGER_H
 #define TUPGRADIENTMANAGER_H
 
+#include "tglobal.h"
+
+#include "tapplication.h"
 #include "tupgradientselector.h"
 #include "tupgradientviewer.h"
-
 #include "timagebutton.h"
 #include "tcirclebutton.h"
 #include "txyspinbox.h"
-#include "tupglobal.h"
 
 #include <QFrame>
 #include <QComboBox>

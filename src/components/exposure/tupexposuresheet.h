@@ -36,26 +36,38 @@
 #ifndef TUPEXPOSURESHEET_H
 #define TUPEXPOSURESHEET_H
 
+#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
 #include "tupexposuretable.h"
 #include "tupscenetabwidget.h"
 #include "timagebutton.h"
 #include "tupprojectactionbar.h"
 #include "tupproject.h"
+#include "tapplication.h"
+#include "toptionaldialog.h"
+#include "tupprojectrequest.h"
+#include "tuprequestbuilder.h"
+#include "tupscene.h"
+#include "tuplayer.h"
+#include "tupframe.h"
 
-// Qt
 #include <QButtonGroup>
 #include <QGroupBox>
 #include <QPushButton>
 #include <QListWidget>
 #include <QList>
 #include <QActionGroup>
+#include <QToolTip>
+#include <QPixmap>
+#include <QHBoxLayout>
+#include <QList>
+#include <QMenu>
  
 /**
 * @author Jorge Cuadrado
 */
 
-class TupExposureSheet : public TupModuleWidgetBase
+class TUPI_EXPORT TupExposureSheet : public TupModuleWidgetBase
 {
     Q_OBJECT
 
@@ -91,28 +103,18 @@ class TupExposureSheet : public TupModuleWidgetBase
         void emitRequestChangeScene(int index);
         void emitRequestCopyCurrentFrame();
         void emitRequestPasteInCurrentFrame();
-        void expandCurrentFrameOnce();
-        void expandCurrentFrameFive();
-        void expandCurrentFrameTen();
-        void insertOneFrame();
-        void insertFiveFrames();
-        void insertTenFrames();
-        void insertTwentyFrames();
-        void insertFiftyFrames();
-        void insertHundredFrames();
+
+        void insertFramesFromMenu(QAction *action);
+        void copyTimeLineFromMenu(QAction *action);
+
         void removeOne();
         void clearFrame();
         void lockFrame();
-        void copyTimeLineOnce();
-        void copyTimeLineTwoTimes();
-        void copyTimeLineThreeTimes();
-        void copyTimeLineFourTimes();
-        void copyTimeLineFiveTimes();
-		
+
         void insertFrame(int indexLayer, int indexFrame);
-        void renameFrame(int indexLayer, int indexFrame, const QString & name);
+        void renameFrame(int indexLayer, int indexFrame, const QString &name);
         void selectFrame(int indexLayer, int indexFrame);
-        void renameLayer(int indexLayer, const QString & name);
+        void requestRenameLayer(int indexLayer, const QString &name);
         void moveLayer(int oldIndex, int newIndex);
         void actionTriggered(QAction *action);
 };

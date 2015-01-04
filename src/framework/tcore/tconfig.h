@@ -36,13 +36,16 @@
 #ifndef TCONFIG_H
 #define TCONFIG_H
 
-#include <QObject>
-#include <QDir>
-#include <QHash>
-#include <QDomDocument>
-#include <QVariant>
-
 #include "tglobal.h"
+
+#include <QDir>
+#include <QCoreApplication>
+#include <QTextStream>
+#include <QTextDocument>
+#include <QDomDocument>
+#include <QObject>
+#include <QHash>
+#include <QVariant>
 
 class TConfig;
 

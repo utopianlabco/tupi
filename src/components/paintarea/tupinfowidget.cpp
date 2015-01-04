@@ -34,25 +34,6 @@
  ***************************************************************************/
 
 #include "tupinfowidget.h"
-#include "tdebug.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "timagebutton.h"
-#include "tpushbutton.h"
-#include "tupwebhunter.h"
-
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QDesktopWidget>
-#include <QTableWidget>
-#include <QHeaderView>
-#include <QFileDialog>
 
 struct TupInfoWidget::Private
 {
@@ -130,8 +111,11 @@ void TupInfoWidget::setUIContext()
 
     k->table->setMaximumWidth(250);
     k->table->setMaximumHeight((k->currencyList.count() - 1)*30);
-    k->table->verticalHeader()->setResizeMode(QHeaderView::Stretch);
-    k->table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+    // k->table->verticalHeader()->setResizeMode(QHeaderView::Stretch);
+    // k->table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    k->table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    k->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     QBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(1, 1, 1, 1);

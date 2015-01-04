@@ -36,14 +36,30 @@
 #ifndef TUPPAINTAREASTATUS_H
 #define TUPPAINTAREASTATUS_H
 
+#include "tglobal.h"
 #include "tupdocumentview.h"
+#include "tseparator.h"
+#include "tupbrushmanager.h"
+#include "tupcolorwidget.h"
+#include "tupbrushstatus.h"
+#include "tuptoolstatus.h"
+
 #include <QStatusBar>
+#include <QPushButton>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QIntValidator>
+#include <QObject>
+#include <QLineEdit>
+#include <QDir>
 
 /**
  * @author David Cuadrado
 */
 
-class TupPaintAreaStatus : public QStatusBar
+class TUPI_EXPORT TupPaintAreaStatus : public QStatusBar
 {
     Q_OBJECT
 
@@ -51,7 +67,8 @@ class TupPaintAreaStatus : public QStatusBar
         TupPaintAreaStatus(TupDocumentView *parent);
         ~TupPaintAreaStatus();
         void updateTool(const QString &label, const QPixmap &pixmap);
-        void setZoomFactor(const QString &text);
+        void setZoomPercent(const QString &percent);
+        void setRotationAngle(const QString &angle);
         void updateZoomFactor(double factor);
         qreal currentZoomFactor();
         void updateRotationAngle(int angle);
@@ -62,11 +79,11 @@ class TupPaintAreaStatus : public QStatusBar
     public slots:
         void applyZoom(const QString &text);
         void setPen(const QPen &pen);
+        void applyRotation(const QString &text);
 
     private slots:
         void selectAntialiasingHint();
         void selectRenderer(int id);
-        void applyRotation(const QString &text);
         void updateFrameIndex(int index);
         void updateFramePointer();
 
@@ -77,6 +94,7 @@ class TupPaintAreaStatus : public QStatusBar
 
     private:
         void updateZoomField(const QString &text);
+        void updateRotationField(const QString &angle);
         struct Private;
         Private *const k;
 };

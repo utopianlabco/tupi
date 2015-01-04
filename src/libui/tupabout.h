@@ -36,13 +36,19 @@
 #ifndef TUPABOUT_H
 #define TUPABOUT_H
 
+#include "tglobal.h"
+#include "tapplicationproperties.h"
 #include "tabdialog.h"
 #include "tanimwidget.h"
-#include "tapplicationproperties.h"
 
 #include <QTextBrowser>
 #include <QLabel>
 #include <QPixmap>
+#include <QFile>
+#include <QDomDocument>
+#include <QTextStream>
+#include <QScrollArea>
+#include <QDir>
 
 /**
  * @brief Class that handles the about dialog box
@@ -62,7 +68,7 @@
  * Moreover, it provides an OK Button and a Cancel Button.
  */
 
-class TupAbout : public TabDialog
+class TUPI_EXPORT TupAbout : public TabDialog
 {
     Q_OBJECT
 

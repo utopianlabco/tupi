@@ -36,6 +36,7 @@
 #ifndef TUPCANVASVIEW_H
 #define TUPCANVASVIEW_H
 
+#include "tglobal.h"
 #include "tuppaintareabase.h"
 
 #include <QGraphicsView>
@@ -43,7 +44,7 @@
 #include <QRectF>
 #include <QMouseEvent>
 
-class TupCanvasView : public QGraphicsView
+class TUPI_EXPORT TupCanvasView : public QGraphicsView
 {
     Q_OBJECT
 

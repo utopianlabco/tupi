@@ -33,17 +33,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPVIDEOEXPORTTPACKAGE_H
+#ifndef TUPVIDEOEXPORTPACKAGE_H
 #define TUPVIDEOEXPORTPACKAGE_H
+
+#include "tglobal.h"
+
+#include <QDomDocument>
+#include <QList>
 
 /**
  * @author Gustav Gonzalez
 */
 
-#include <QDomDocument>
-#include <QList>
-
-class TupVideoExportPackage : public QDomDocument
+class TUPI_EXPORT TupVideoExportPackage : public QDomDocument
 {
     public:
         TupVideoExportPackage(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> sceneIndexes);

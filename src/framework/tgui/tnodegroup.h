@@ -36,17 +36,20 @@
 #ifndef NODEGROUP_H
 #define NODEGROUP_H
 
+#include "tglobal.h"
 #include "tcontrolnode.h"
 
 #include <QGraphicsScene>
 #include <QObject>
 #include <QHash>
+#include <QGraphicsPathItem>
+#include <QAbstractGraphicsShapeItem>
 
 /**
  * @author Jorge Cuadrado
 */
 
-class TNodeGroup : public QObject
+class T_GUI_EXPORT TNodeGroup : public QObject
 {
     Q_OBJECT
 
@@ -84,6 +87,7 @@ class TNodeGroup : public QObject
         void expandAllNodes();
         bool isSelected();
         int size();
+        void resizeNodes(qreal scaleFactor);
         
     private:
         struct Private;

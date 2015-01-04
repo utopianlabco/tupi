@@ -36,13 +36,24 @@
 #ifndef TUPVALUECOLOR_H
 #define TUPVALUECOLOR_H
 
+#include "tglobal.h"
+#include "tdoublecombobox.h"
+
 #include <QFrame>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
+#include <QGridLayout>
+#include <QSpinBox>
+#include <QLineEdit>
+#include <cmath>
 
 /**
  * @author Jorge Cuadrado
 **/
 
-class TupItemColorValue : public QFrame
+class TUPI_EXPORT TupItemColorValue : public QFrame
 {
     Q_OBJECT
 
@@ -67,7 +78,7 @@ class TupItemColorValue : public QFrame
         void editingFinished();
 };
 
-class TupColorValue : public QFrame
+class TUPI_EXPORT TupColorValue : public QFrame
 {
     Q_OBJECT
 

@@ -2,22 +2,24 @@ Source: tupi
 Section: graphics
 Priority: optional
 Maintainer: Dmitry Smirnov <onlyjob@debian.org>
-Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl, qt4-qmake, pkg-config
+Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl
  ,imagemagick ,rdfind ,symlinks
- ,qt4-linguist-tools
- ,qtmobility-dev
  ,libaspell-dev (>= 0.60.7~)
  ,libavformat-dev
  ,libavutil-dev
  ,libogg-dev
- ,libqt4-opengl-dev
- ,libquazip-dev
+ ,qt5-qmake
+ ,qttools5-dev-tools
+ ,qtmultimedia5-dev
+ ,libqt5opengl5-dev
+ ,libqt5svg5-dev
+ ,libquazip-qt5-dev
  ,libtheora-dev
  ,zlib1g-dev
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Homepage: http://www.maefloresta.com/portal
+Vcs-Browser: http://anonscm.debian.org/cgit/collab-maint/tupi.git
 Vcs-Git: git://anonscm.debian.org/collab-maint/tupi.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/tupi.git
 
 Package: tupi
 Architecture: linux-any

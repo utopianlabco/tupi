@@ -39,7 +39,6 @@
 #include "tuprequestbuilder.h"
 #include "tupprojectrequest.h"
 #include "tupprojectresponse.h"
-#include "tdebug.h"
 
 TupCommandExecutor::TupCommandExecutor(TupProject *project) : QObject(project), m_project(project)
 {
@@ -58,7 +57,11 @@ void TupCommandExecutor::getScenes(TupSceneResponse *response)
 bool TupCommandExecutor::createScene(TupSceneResponse *response)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCommandExecutor::createScene()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     int position = response->sceneIndex();
@@ -96,8 +99,12 @@ bool TupCommandExecutor::createScene(TupSceneResponse *response)
 bool TupCommandExecutor::removeScene(TupSceneResponse *response)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
-    #endif    
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCommandExecutor::removeScene()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif	
 
     int position = response->sceneIndex();
     int scenesTotal = m_project->scenesTotal();
@@ -124,7 +131,12 @@ bool TupCommandExecutor::removeScene(TupSceneResponse *response)
         } 
     } else {
         #ifdef K_DEBUG
-               tError() << "TupCommandExecutor::removeScene() - Scene doesn't exist (" << position << ")";
+            QString msg = "TupCommandExecutor::removeScene() - Scene index doesn't exist -> " + QString::number(position);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError("library") << msg;
+            #endif
         #endif
     }
     
@@ -149,8 +161,13 @@ bool TupCommandExecutor::lockScene(TupSceneResponse *response)
     bool lock = response->arg().toBool();
 
     #ifdef K_DEBUG
-        tWarning() << "Lock scene: " << lock;
-    #endif    
+        QString msg = "TupCommandExecutor::lockScene() - Scene is locked: " + QString::number(lock);
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning("library") << msg;
+        #endif
+    #endif  
 
     TupScene *scene = m_project->scene(position);
     
@@ -198,7 +215,6 @@ bool TupCommandExecutor::setSceneVisibility(TupSceneResponse *response)
         return false;
     
     scene->setVisible(view);
-    
     emit responsed(response);
     
     return true;
@@ -214,7 +230,6 @@ bool TupCommandExecutor::resetScene(TupSceneResponse *response)
         return false;
 
     scene->reset(name);
-
     emit responsed(response);
 
     return true;

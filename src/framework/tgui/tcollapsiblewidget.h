@@ -40,7 +40,20 @@
 
 #include <QScrollArea>
 #include <QLabel>
-#include <QDebug>
+#include <QTextDocument>
+#include <QMimeData>
+#include <QPainter>
+#include <QMouseEvent>
+#include <QDragEnterEvent>
+#include <QVBoxLayout>
+#include <QApplication>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QPainterPath>
+#include <QStyleOption>
+#include <QGroupBox>
+#include <QFontMetrics>
+#include <QDrag>
 
 class QScrollArea;
 class QTextDocument;

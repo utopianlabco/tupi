@@ -34,36 +34,6 @@
  ***************************************************************************/
 
 #include "tupstoryboarddialog.h"
-#include "tupstoryboard.h"
-#include "tapplicationproperties.h"
-#include "tglobal.h"
-#include "tconfig.h"
-#include "tseparator.h"
-#include "tupscene.h"
-#include "talgorithm.h"
-#include "tosd.h"
-#include "tdebug.h"
-
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QIcon>
-#include <QPixmap>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QListWidget>
-#include <QLabel>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QDir>
-#include <QPushButton>
-#include <QPainter>
-#include <QFileDialog>
-#include <QDesktopWidget>
-#include <QLocale>
-#include <QPrinter>
-#include <QPrintDialog>
-#include <QTextBrowser>
-#include <QComboBox>
 
 struct TupStoryBoardDialog::Private
 {
@@ -99,10 +69,11 @@ struct TupStoryBoardDialog::Private
     QTextEdit *sceneDescriptionEdit;
 
     QLocale utf;
+    TupLibrary *library;
 };
 
 TupStoryBoardDialog::TupStoryBoardDialog(bool isNetworked, TupExportInterface *imagePlugin, const QColor &color, 
-                                         const QSize &size, TupScene *scene, int sceneIndex, QWidget *parent) : QDialog(parent), k(new Private)
+                                         const QSize &size, TupScene *scene, int sceneIndex, TupLibrary *library, QWidget *parent) : QDialog(parent), k(new Private)
 {
     k->isNetworked = isNetworked;
     k->imagePlugin = imagePlugin;
@@ -111,6 +82,7 @@ TupStoryBoardDialog::TupStoryBoardDialog(bool isNetworked, TupExportInterface *i
     k->scene = scene;
     k->sceneIndex = sceneIndex;
     k->storyboard = k->scene->storyboard();
+    k->library = library;
     k->utf = QLocale(QLocale::AnyLanguage, QLocale::AnyCountry);
 
     QDesktopWidget desktop;
@@ -372,7 +344,7 @@ void TupStoryBoardDialog::thumbnailGenerator()
 
     for (int i=0; i < framesTotal; i++) {
          QString fileName = k->path + "scene" + QString::number(i);
-         bool isOk = k->imagePlugin->exportFrame(i, k->bgColor, fileName, k->scene, k->size);
+         bool isOk = k->imagePlugin->exportFrame(i, k->bgColor, fileName, k->scene, k->size, k->library);
          fileName += ".png";
          QPixmap resized(fileName);
          resized = resized.scaledToWidth(k->scaledSize.width(), Qt::SmoothTransformation);
@@ -465,7 +437,7 @@ void TupStoryBoardDialog::updateForm(QListWidgetItem *current, QListWidgetItem *
     k->screenLabel->setPixmap(pixmap);
 }
 
-void TupStoryBoardDialog::createHTMLFiles(const QString &path)
+void TupStoryBoardDialog::createHTMLFiles(const QString &path, DocType type)
 {
     if (k->scaledSize.width() <= 520) {
         QDir directory(k->path);
@@ -497,8 +469,12 @@ void TupStoryBoardDialog::createHTMLFiles(const QString &path)
         }
     }
 
-    QFile::copy(kAppProp->shareDir() + "data" + QDir::separator() + "storyboard" + QDir::separator() + "tupi.css", 
-                path + QDir::separator() + "tupi.css");
+    QString base = kAppProp->shareDir() + "data" + QDir::separator() + "storyboard" + QDir::separator();
+
+    if (type == HTML) 
+        QFile::copy(base + "tupi.html.css", path + QDir::separator() + "tupi.css");
+    else
+        QFile::copy(base + "tupi.pdf.css", path + QDir::separator() + "tupi.css");
 
     QString index = path + QDir::separator() + "index.html";
 
@@ -510,41 +486,78 @@ void TupStoryBoardDialog::createHTMLFiles(const QString &path)
     QTextStream out(&file);
     out << "<html>\n";
     out << "<head>\n";
-    out << "<title>" << k->storyboard->storyTitle() << "</title>\n";
+    QString record = k->storyboard->storyTitle();
+    if (record.length() == 0)
+        record = "&nbsp;";
+    out << "<title>" << record << "</title>\n";
     out << "<link rel=\"stylesheet\" type=\"text/css\" href=\"tupi.css\" media=\"screen\" />\n";
     out << "</head>\n";
     out << "<body>\n";
     out << "<div id=\"header\">\n";
     out << "<div id=\"title\">Storyboard</div>\n";
-    out << "<div id=\"item\"><div id=\"item-header\">Title:</div>\n";
-    out << "<div id=\"item-data\">" << k->storyboard->storyTitle() << "</div></div>\n";
-    out << "<div id=\"item\"><div id=\"item-header\">Author:</div>\n";
-    out << "<div id=\"item-data\">" << k->storyboard->storyAuthor() << "</div></div>\n";
-    out << "<div id=\"item\"><div id=\"item-header\">Summary:</div>\n";
-    out << "<div id=\"item-data\">" << k->storyboard->storySummary() << "</div></div>\n";
-    out << "<div id=\"item\"><div id=\"item-header\">Scenes Total:</div>\n";
-    out << "<div id=\"item-data\">" << QString::number(k->storyboard->size()) << "</div></div>\n";
+    out << "<div id=\"item\">\n";
+    out << "     <div id=\"item-header\">Title:</div>\n";
+    out << "     <div id=\"item-data\">" << record << "</div>\n";
+    out << "     </div>\n";
+    out << "<div id=\"item\">\n";
+    out << "     <div id=\"item-header\">Author:</div>\n";
+    record = k->storyboard->storyAuthor();
+    if (record.length() == 0)
+        record = "&nbsp;";
+    out << "     <div id=\"item-data\">" << record << "</div>\n";
     out << "</div>\n";
+    out << "<div id=\"item\">\n";
+    out << "     <div id=\"item-header\">Summary:</div>\n";
+    record = k->storyboard->storySummary();
+    if (record.length() == 0)
+        record = "&nbsp;";
+    out << "     <div id=\"item-data\">" << record << "</div>\n";
+    out << "</div>\n";
+    out << "<div id=\"item\">\n";
+    out << "     <div id=\"item-header\">Scenes Total:</div>\n";
+    out << "     <div id=\"item-data\">" << QString::number(k->storyboard->size()) << "</div>\n";
+    out << "</div>\n";
+    out << "</div>\n";
+    if (type == PDF) {
+        out << "<div id=\"page-break\">\n";
+        out << "</div>\n";
+    }
 
-    for (int i=0; i < k->storyboard->size(); i++) {
+    int scenes = k->storyboard->size();
+    for (int i=0; i < scenes; i++) {
          out << "<div id=\"scene\">\n";
          QString image = "<img src=\"scene" + QString::number(i) + ".png\" />\n";
          out << image;
          out << "<div id=\"paragraph\">\n";
          out << "<div id=\"scene-item\">\n";
          out << " <div id=\"scene-header\">Title:</div>\n";
-         out << " <div id=\"scene-data\">" << k->storyboard->sceneTitle(i) << "</div>\n";
+         record = k->storyboard->sceneTitle(i);
+         if (record.length() == 0)
+             record = "&nbsp;";
+         out << " <div id=\"scene-data\">" << record << "</div>\n";
          out << "</div>\n";
          out << "<div id=\"scene-item\">\n";
          out << " <div id=\"scene-header\">Duration:</div>\n";
-         out << " <div id=\"scene-data\">" << k->storyboard->sceneDuration(i) << "</div>\n";
+         record = k->storyboard->sceneDuration(i);
+         if (record.length() == 0)
+             record = "&nbsp;";
+         out << " <div id=\"scene-data\">" << record << "</div>\n";
          out << "</div>\n";
          out << "<div id=\"scene-item\">\n";
          out << " <div id=\"scene-header\">Description:</div>\n";
-         out << " <div id=\"scene-data\">" << k->storyboard->sceneDescription(i)  << "</div>\n";
+         record = k->storyboard->sceneDescription(i);
+         if (record.length() == 0)
+             record = "&nbsp;";
+         out << " <div id=\"scene-data\">" << record << "</div>\n";
          out << "</div>\n";
          out << "</div>\n";
          out << "</div>\n";
+         if (type == PDF) {
+             if (i < (k->storyboard->size() - 1)) {
+                 out << "<div id=\"page-break\">\n";
+                 out << "</div>\n";
+             }
+         }
     }
     out << "</body>\n";
     out << "</html>";
@@ -559,7 +572,7 @@ void TupStoryBoardDialog::exportAsHTML()
     QString path = QFileDialog::getExistingDirectory(this, tr("Choose a directory..."), QDir::homePath(),
                                                      QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (!path.isEmpty()) {
-        createHTMLFiles(path);
+        createHTMLFiles(path, HTML);
         TOsd::self()->display(tr("Info"), tr("Storyboard exported successfully!"), TOsd::Info);
     }
 }
@@ -571,7 +584,7 @@ void TupStoryBoardDialog::exportAsPDF()
     QString path = QDir::tempPath() + QDir::separator() + TAlgorithm::randomString(8) + QDir::separator();
     QDir().mkpath(path);
     if (!path.isEmpty())
-        createHTMLFiles(path);
+        createHTMLFiles(path, PDF);
 
     QString pdfPath = QFileDialog::getSaveFileName(this, tr("Save PDF file"), QDir::homePath(), tr("PDF file (*.pdf)"));
 
@@ -605,7 +618,12 @@ void TupStoryBoardDialog::exportAsPDF()
 void TupStoryBoardDialog::postStoryboardAtServer()
 {
     #ifdef K_DEBUG
-           tWarning() << "TupStoryBoardDialog::postStoryBoardAtServer() - Posting in Tupitube!";
+        QString msg = "TupStoryBoardDialog::postStoryBoardAtServer() - Posting in Tupitube!";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
     #endif
 
     saveLastComponent();

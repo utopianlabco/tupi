@@ -36,7 +36,8 @@
 #ifndef TUPABSTRACTPROJECTRESPONSEHANDLER_H
 #define TUPABSTRACTPROJECTRESPONSEHANDLER_H
 
-#include "tupglobal_store.h"
+#include "tglobal.h"
+
 #include <QObject>
 
 class TupPaintAreaEvent;
@@ -51,7 +52,7 @@ class TupLibraryResponse;
  * @author David Cuadrado
 **/
 
-class STORE_EXPORT TupAbstractProjectResponseHandler
+class TUPI_EXPORT TupAbstractProjectResponseHandler
 {
     public:
         TupAbstractProjectResponseHandler();

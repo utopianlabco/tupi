@@ -36,10 +36,13 @@
 #ifndef TUPPAINTAREASTATUS_H
 #define TUPPAINTAREASTATUS_H
 
+#include "tglobal.h"
+
 #include <QBrush>
 #include <QSize>
 #include <QPaintEvent>
 #include <QWidget>
+#include <QPainter>
 
 /**
  * This class defines the options panel in the bottom of the paint area.
@@ -47,7 +50,7 @@
  * @author David Cuadrado
 */
 
-class TupColorWidget : public QWidget
+class TUPI_EXPORT TupColorWidget : public QWidget
 {
     Q_OBJECT
 

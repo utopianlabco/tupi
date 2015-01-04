@@ -36,21 +36,22 @@
 #ifndef TUPITEMFACTORY_H
 #define TUPITEMFACTORY_H
 
+#include "tglobal.h"
 #include "txmlparserbase.h"
-#include "tupglobal_store.h"
 
 #include <QStack>
 #include <QPen>
 #include <QBrush>
+#include <QGraphicsItem>
 
-class QGraphicsItem;
+// class QGraphicsItem;
 class TupLibrary;
 
 /**
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupItemFactory : public TXmlParserBase
+class TUPI_EXPORT TupItemFactory : public TXmlParserBase
 {
     public:
         enum Type

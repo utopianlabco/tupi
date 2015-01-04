@@ -34,17 +34,6 @@
  ***************************************************************************/
 
 #include "tupsymboleditor.h"
-#include "tuplibraryobject.h"
-#include "tuppluginmanager.h"
-#include "tuptoolplugin.h"
-// Tupi Framework
-#include "taction.h"
-#include "tdebug.h"
-
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QToolBar>
-#include <QTimer>
 
 /**
  * This class defines the toolbar at the left side of the paint area.
@@ -52,7 +41,7 @@
  * @author David Cuadrado
 */
 
-class View : public QGraphicsView
+class TUPI_EXPORT View : public QGraphicsView
 {
     public:
         View();
@@ -135,7 +124,12 @@ void TupSymbolEditor::loadTools()
             
              for (it = keys.begin(); it != keys.end(); ++it) {
                   #ifdef K_DEBUG
-                         tDebug("plugins") << "*** Tool Loaded: " << *it;
+                      QString msg = "TupSymbolEditor::loadTools() - *** Tool Loaded: " + *it;
+                      #ifdef Q_OS_WIN32
+                          qDebug() << msg;
+                      #else
+                          tDebug("plugins") << msg;
+                      #endif
                   #endif
             
                   TAction *act = tool->actions()[*it];
@@ -176,7 +170,11 @@ void TupSymbolEditor::loadTools()
 void TupSymbolEditor::selectTool()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;                         
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupSymbolEditor::selectTool()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     TAction *action = qobject_cast<TAction *>(sender());

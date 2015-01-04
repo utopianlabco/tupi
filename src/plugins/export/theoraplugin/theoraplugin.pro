@@ -13,10 +13,23 @@ TARGET = tupitheoraplugin
 
 LIBS += -ltheora -ltheoraenc -ltheoradec -logg
 
+INCLUDEPATH += ../../../libbase
+INCLUDEPATH += ../../../store
+INCLUDEPATH += ../../../libtupi
+LIBS += -L../../../libbase -ltupibase
+LIBS += -L../../../store -ltupistore 
+LIBS += -L../../../libtupi -ltupi
+
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)
-include(../export_config.pri)
+# include(../export_config.pri)
 
-!include(../../../../tupiglobal.pri){
-    error("Please run configure first")
+unix {
+    !include(../../../../tupiglobal.pri) {
+        error("Please run configure first")
+    }
+}
+
+win32 {
+    include(../../../../win.pri)
 }

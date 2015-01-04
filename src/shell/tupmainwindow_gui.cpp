@@ -40,12 +40,6 @@
 #include "toolview.h"
 #include "tviewbutton.h"
 // #include "taudioplayer.h"
-#include "tdebug.h"
-
-#include <QKeySequence>
-#include <QTextBrowser>
-#include <QToolBar>
-#include <QDesktopWidget>
 
 /**
  * This class implements the Tupi GUI
@@ -94,23 +88,23 @@ void TupMainWindow::createGUI()
     addToPerspective(libraryView->toggleViewAction(), Animation);
 
     new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "bitmap.png"), tr("Bitmap"), QKeySequence(tr("Alt+B")), m_libraryWidget, SLOT(importBitmapGroup()),
-                m_actionManager, "importbitmap");
+		m_actionManager, "importBitmap");
 
     new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "bitmap_array.png"), tr("Bitmap Array"), QKeySequence(tr("Alt+Shift+B")), 
-                m_libraryWidget, SLOT(importBitmapArray()), m_actionManager, "importbitmaparray");
+		m_libraryWidget, SLOT(importBitmapArray()), m_actionManager, "importBitmapArray");
 
     new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "svg.png"), tr("SVG File"), QKeySequence(tr("Alt+S")), m_libraryWidget, SLOT(importSvgGroup()),
-                m_actionManager, "importsvg");
+		m_actionManager, "importSvg");
 
     new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "svg_array.png"), tr("SVG Array"), QKeySequence(tr("Alt+Shift+S")), m_libraryWidget, 
-                SLOT(importSvgArray()), m_actionManager, "importsvgarray");
+		SLOT(importSvgArray()), m_actionManager, "importSvgArray");
 
     //new TAction(QPixmap(), tr("Audio File..."), QKeySequence(), m_libraryWidget, SLOT(importSound()),
-    //            m_actionManager, "importaudiofile");
+    //            m_actionManager, "importAudioFile");
 
     // SQA: Temporary code
-    //m_actionManager->enable("importsvg", false);
-    //m_actionManager->enable("importsvgarray", false);
+    //m_actionManager->enable("importSvg", false);
+    //m_actionManager->enable("importSvgArray", false);
 
     connectWidgetToManager(m_libraryWidget);
     connectWidgetToLocalManager(m_libraryWidget);
@@ -136,7 +130,12 @@ void TupMainWindow::createGUI()
 
     // Adding the help widget to the right side of the interface
 
-    m_helper = new TupHelpWidget(SHARE_DIR + "data/help/");
+#ifdef Q_OS_WIN32
+    QString helpPath = SHARE_DIR + "help" + QDir::separator();
+#else
+	QString helpPath = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
+#endif	
+    m_helper = new TupHelpWidget(helpPath);
     helpView = addToolView(m_helper, Qt::RightDockWidgetArea, All, "Help", QKeySequence(tr("Shift+H")));
     m_actionManager->insert(helpView->toggleViewAction(), "show_help");
     addToPerspective(helpView->toggleViewAction(), All);
@@ -144,14 +143,13 @@ void TupMainWindow::createGUI()
     TViewButton *helpButton = helpView->button();
 
     connect(helpButton, SIGNAL(helpIsOpen()), this,
-            SLOT(setHelpPerspective()));
+	    SLOT(setHelpPerspective()));
 
     connect(m_helper, SIGNAL(pageLoaded(const QString &)), this, 
-            SLOT(showHelpPage(const QString &)));
+	    SLOT(showHelpPage(const QString &)));
 
     // Adding the time line widget to the bottom side of the interface
-    m_timeLine = new TupTimeLine;
-    m_timeLine->setLibrary(m_projectManager->project()->library());
+    m_timeLine = new TupTimeLine(m_projectManager->project());
     timeView = addToolView(m_timeLine, Qt::BottomDockWidgetArea, Animation, "Time Line", QKeySequence(tr("Shift+T")));
     m_actionManager->insert(timeView->toggleViewAction(), "show_timeline");
     addToPerspective(timeView->toggleViewAction(), Animation);
@@ -159,7 +157,7 @@ void TupMainWindow::createGUI()
     connectWidgetToManager(m_timeLine);
     connectWidgetToLocalManager(m_timeLine);
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
     QDesktopWidget desktop;
     m_debug = new TupDebugWidget(this, desktop.screenGeometry().width());
     debugView = addToolView(m_debug, Qt::BottomDockWidgetArea, Animation, "Debug Term", QKeySequence(tr("Shift+D")));
@@ -193,18 +191,7 @@ void TupMainWindow::setupMenu()
     setupFileActions();
 
     // Menu File	
-    m_fileMenu = new QMenu(tr("&File"), this);
-    menuBar()->addMenu(m_fileMenu);
-
-    // Adding Option New	
-    /*
-    QMenu *newMenu = new QMenu(tr("&New"), this);
-    newMenu->setIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "file_new.png"));
-    m_fileMenu->addMenu(newMenu);
-    newMenu->addAction(m_actionManager->find("newproject"));
-    newMenu->addSeparator();
-    */
-
+    m_fileMenu = menuBar()->addMenu(tr("&File"));
     m_fileMenu->addAction(m_actionManager->find("newproject"));
     m_fileMenu->addAction(m_actionManager->find("openproject"));
 
@@ -214,9 +201,8 @@ void TupMainWindow::setupMenu()
 
     // Adding Option Open Recent	
     m_recentProjectsMenu = new QMenu(tr("Recents"), this);
-    // m_recentProjectsMenu->setIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "recent_files.png"));
 
-    TCONFIG->beginGroup("General");
+    // TCONFIG->beginGroup("General");
     QStringList recents = TCONFIG->value("Recents").toString().split(';');
     updateOpenRecentMenu(m_recentProjectsMenu, recents);	
     m_fileMenu->addMenu(m_recentProjectsMenu);
@@ -230,75 +216,57 @@ void TupMainWindow::setupMenu()
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_actionManager->find("export"));
 
-    // SQA: This option has been moved to the Import menu
-    // m_fileMenu->addSeparator();
-    // m_fileMenu->addAction(m_actionManager->find("ImportPalettes"));
-
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_actionManager->find("Exit"));
-    m_fileMenu->addSeparator();
 
     // Setting up the Settings menu
     setupSettingsActions();
-    m_settingsMenu = new QMenu(tr("&Edit"), this);
-    menuBar()->addMenu(m_settingsMenu);
-
-    // Adding Options wizard and preferences
-    //m_settingsMenu->addAction(m_actionManager->find("wizard"));
+    m_settingsMenu = menuBar()->addMenu(tr("&Edit"));
 
     m_settingsMenu->addAction(m_actionManager->find("preferences"));
     // Temporary out while SQA is done
     m_actionManager->enable("preferences", false);
 
-// Temporary out while SQA is done
+    // Temporary out while SQA is done
     // Setting up the insert menu
     // setupInsertActions();
     // Menu Insert
-    m_insertMenu = new QMenu(tr("&Import"), this);
-    menuBar()->addMenu(m_insertMenu);
-
-    // Adding Options insert scene, insert layer and insert frame
-    /*
-    m_insertMenu->addAction(m_actionManager->find("InsertScene"));
-    m_insertMenu->addAction(m_actionManager->find("InsertLayer"));
-    m_insertMenu->addAction(m_actionManager->find("InsertFrame"));
-    m_insertMenu->addSeparator();
-    */
+    m_insertMenu = menuBar()->addMenu(tr("&Import"));
 
     // Adding Options import bitmap and import audio file
-    m_insertMenu->addAction(m_actionManager->find("importbitmap"));
-    m_insertMenu->addAction(m_actionManager->find("importbitmaparray"));
-    m_insertMenu->addAction(m_actionManager->find("importsvg"));
-    m_insertMenu->addAction(m_actionManager->find("importsvgarray"));
-    //m_insertMenu->addAction(m_actionManager->find("importaudiofile"));
+    m_insertMenu->addAction(m_actionManager->find("importBitmap"));
+    m_insertMenu->addAction(m_actionManager->find("importBitmapArray"));
+    m_insertMenu->addAction(m_actionManager->find("importSvg"));
+    m_insertMenu->addAction(m_actionManager->find("importSvgArray"));
+    //m_insertMenu->addAction(m_actionManager->find("importAudioFile"));
 
     m_insertMenu->addSeparator();
-    m_insertMenu->addAction(m_actionManager->find("ImportPalettes"));
+    m_insertMenu->addAction(m_actionManager->find("importGimpPalettes"));
+
+    // SQA: Action disabled while Library module is fixed
+    m_insertMenu->addAction(m_actionManager->find("importPapagayoLipSync"));
 
     // Setting up the window menu
     // setupWindowActions();
-    m_windowMenu = new QMenu(tr("&Window"),this);
-    menuBar()->addMenu(m_windowMenu);
+    m_windowMenu = menuBar()->addMenu(tr("&Window"));
 
     // Adding Options show debug, palette, pen, library, timeline, scenes, exposure, help
     m_windowMenu->addAction(m_actionManager->find("show_palette"));
     m_windowMenu->addAction(m_actionManager->find("show_pen"));
     m_windowMenu->addAction(m_actionManager->find("show_library"));
     m_windowMenu->addAction(m_actionManager->find("show_timeline"));
-    m_actionManager->enable("show_timeline", false);
     m_windowMenu->addAction(m_actionManager->find("show_scenes"));
     m_windowMenu->addAction(m_actionManager->find("show_exposure"));
     m_windowMenu->addAction(m_actionManager->find("show_help"));
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
     m_windowMenu->addAction(m_actionManager->find("show_debug"));
 #endif
 
-    // m_actionManager->enable("show_help", false);
     m_windowMenu->addSeparator();
 
     // Setup perspective menu
-    m_viewMenu = new QMenu(tr("Modules"),this);
+    m_viewMenu = new QMenu(tr("Modules"), this);
     QActionGroup *group = new QActionGroup(this);
     group->setExclusive(true);
 
@@ -318,7 +286,7 @@ void TupMainWindow::setupMenu()
     animationPerspective->setData(Player);
     group->addAction(animationPerspective);
 
-   // Adding Option Help 
+    // Adding Option Help 
     QAction *helpPerspective = new QAction(tr("Help"), this);
     helpPerspective->setIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "help_mode.png"));
     helpPerspective->setIconVisibleInMenu(true);
@@ -326,7 +294,7 @@ void TupMainWindow::setupMenu()
     helpPerspective->setData(Help);
     group->addAction(helpPerspective);
 
-   // Adding Option News 
+    // Adding Option News 
     QAction *newsPerspective = new QAction(tr("News"), this);
     newsPerspective->setIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "news_mode.png"));
     newsPerspective->setIconVisibleInMenu(true);
@@ -340,7 +308,7 @@ void TupMainWindow::setupMenu()
 	
     // Setting up the help menu
     setupHelpActions();
-    m_helpMenu = new QMenu(tr("&Help"),this);
+    m_helpMenu = new QMenu(tr("&Help"), this);
     menuBar()->addMenu(m_helpMenu);
     m_helpMenu->addAction(m_actionManager->find("tip_of_day"));
     m_helpMenu->addSeparator();
@@ -355,7 +323,7 @@ void TupMainWindow::setMenuItemsContext(bool flag)
     m_actionManager->enable("saveprojectas", flag);
     m_actionManager->enable("closeproject", flag);
     m_actionManager->enable("export", flag);
-    m_actionManager->enable("importbitmap", flag);
+    m_actionManager->enable("importBitmap", flag);
 
     m_insertMenu->setEnabled(flag);
     m_windowMenu->setEnabled(flag);
@@ -366,10 +334,10 @@ void TupMainWindow::setupActions()
 {
 /*
     TAction *next = new TAction(QPixmap(), tr( "Back Frame" ), QKeySequence(Qt::Key_PageUp), this, 
-                    SLOT(selectBackFrame()), m_actionManager, "BackFrame");
+		    SLOT(selectBackFrame()), m_actionManager, "BackFrame");
     next->setShortcutContext ( Qt::ApplicationShortcut );
     TAction *back = new TAction( QPixmap(), tr( "Next Frame" ), QKeySequence(Qt::Key_PageDown), this, 
-                    SLOT(selectNextFrame()), m_actionManager, "Next Frame");
+		    SLOT(selectNextFrame()), m_actionManager, "Next Frame");
     back->setShortcutContext ( Qt::ApplicationShortcut );
     addAction(back);
     addAction(next);
@@ -388,50 +356,61 @@ void TupMainWindow::setupActions()
 void TupMainWindow::setupFileActions()
 {
     TAction *newProject = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "new.png"), tr("New project"), QKeySequence(tr("Ctrl+N")),
-                                      this, SLOT(newProject()), m_actionManager);
+				      this, SLOT(newProject()), m_actionManager);
     newProject->setStatusTip(tr("Open new project"));
     m_actionManager->insert(newProject, "newproject", "file");
 
     TAction *openFile = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "open.png"), tr("Open project"), QKeySequence(tr("Ctrl+O")), 
-                                    this, SLOT(openProject()), m_actionManager);
+				    this, SLOT(openProject()), m_actionManager);
     m_actionManager->insert(openFile, "openproject", "file");
     openFile->setStatusTip(tr("Load existent project"));
 
     // SQA: This code has been disabled temporary
     /*
     TAction *openNetFile = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "net_document.png"), tr("Open project from server..."), 
-                                       tr(""), this, SLOT(openProjectFromServer()), m_actionManager);
+				       tr(""), this, SLOT(openProjectFromServer()), m_actionManager);
     m_actionManager->insert(openNetFile, "opennetproject", "file");
 
     TAction *importNetFile = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "import_project.png"), tr("Export project to server..."), tr(""), this, 
-                                         SLOT(importProjectToServer()), m_actionManager);
+					 SLOT(importProjectToServer()), m_actionManager);
     m_actionManager->insert(importNetFile, "exportprojectserver", "file");
     */
 
     TAction *save = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "save.png"), tr( "Save project" ),
-                                QKeySequence(tr("Ctrl+S")), this, SLOT(saveProject()), m_actionManager);
+				QKeySequence(tr("Ctrl+S")), this, SLOT(saveProject()), m_actionManager);
     m_actionManager->insert(save, "saveproject", "file");
     save->setStatusTip(tr("Save current project in current location"));
 
-    TAction *saveAs = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "save_as.png"), tr("Save project &As..."), 
-                                  QKeySequence(tr("Ctrl+Shift+S")), m_actionManager);
+    // TAction *saveAs = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "save_as.png"), tr("Save project &As..."),
+    //                               QKeySequence(tr("Ctrl+Shift+S")), m_actionManager);
 
-    connect(saveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
+    TAction *saveAs = new TAction(QPixmap(THEME_DIR + "icons/save_as.png"), tr("Save project &As..."),
+				  QKeySequence(tr("Ctrl+Shift+S")), this, SLOT(saveAs()), m_actionManager);
+
+    // connect(saveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
     saveAs->setStatusTip(tr("Open dialog box to save current project in any location"));
     m_actionManager->insert(saveAs, "saveprojectas", "file");
 
-    TAction *close = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "close.png"), tr("Cl&ose project"), 
-                                 QKeySequence(tr("Ctrl+W")), m_actionManager);
-    connect(close, SIGNAL(triggered()), this, SLOT(closeProject()));
+    // TAction *close = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "close.png"), tr("Cl&ose project"), 
+    //                              QKeySequence(tr("Ctrl+W")), m_actionManager);
+
+    TAction *close = new TAction(QPixmap(THEME_DIR + "icons/close.png"), tr("Cl&ose project"), QKeySequence(tr("Ctrl+W")),
+				 this, SLOT(closeProject()), m_actionManager);
+    // connect(close, SIGNAL(triggered()), this, SLOT(closeProject()));
     close->setStatusTip(tr("Close active project"));
     m_actionManager->insert(close, "closeproject", "file");
 
     // Import Palette action
 
     TAction *importPalette = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "import.png"), tr("&Import GIMP palettes"),
-                                         QKeySequence(tr("Shift+G")), this, SLOT(importPalettes()), m_actionManager);
+					 QKeySequence(tr("Shift+G")), this, SLOT(importPalettes()), m_actionManager);
     importPalette->setStatusTip(tr("Import palettes"));
-    m_actionManager->insert(importPalette, "importpalettes", "file");
+    m_actionManager->insert(importPalette, "importGimpPalettes", "file");
+
+    TAction *importPapagayo = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "papagayo.png"), tr("&Import Papagayo Lip-sync"),
+                                         QKeySequence(tr("Alt+P")), this, SLOT(importPapagayoLipSync()), m_actionManager);
+    importPapagayo->setStatusTip(tr("Import Papagayo lip-sync"));
+    m_actionManager->insert(importPapagayo, "importPapagayoLipSync", "file");
 
     // Export Project action
     TAction *exportProject = new TAction(QPixmap(THEME_DIR + "icons" + QDir::separator() + "export.png"), tr("&Export Project"), QKeySequence(tr("Ctrl+R")),
@@ -500,7 +479,7 @@ void TupMainWindow::setupHelpActions()
 void TupMainWindow::setupWindowActions()
 {
     // Temporary commented code - SQA required 
-    #if defined(QT_GUI_LIB) && defined(K_DEBUG)
+    #if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
         new TAction(QPixmap(), tr("Show Debug Dialog"), QKeySequence(), TDebug::browser(), SLOT(show()), m_actionManager,
                     "show debug");
     #endif
@@ -566,7 +545,7 @@ void TupMainWindow::setupToolBar()
 */
 
 void TupMainWindow::updateOpenRecentMenu(QMenu *menu, QStringList recents)
-{	
+{
     if (recents.count() > 10) {
         int limit = recents.count() - 10;
         for(int i=0; i<limit; i++)
@@ -619,8 +598,7 @@ void TupMainWindow::showWidgetPage()
             widget = m_libraryWidget;
             position = DiDockWidget::Left;
             actionText = "library widget";
-	}
-	else if ( action == m_actionManager->find("show_scenes") ) {
+        } else if ( action == m_actionManager->find("show_scenes") ) {
             widget = m_scenes;
             position = DiDockWidget::Right;
             actionText = "scenes widget";
@@ -628,14 +606,14 @@ void TupMainWindow::showWidgetPage()
             widget = m_helper;
             position = DiDockWidget::Right;
             actionText = "help widget";
- 	} else if ( action == m_actionManager->find("show_palette") ) {
+        } else if ( action == m_actionManager->find("show_palette") ) {
             widget = m_colorPalette;
             position = DiDockWidget::Left;
             actionText = "color palette widget";
         }
 
-        if ( widget ) {
-            if ( widget->isVisible() ) {
+        if (widget) {
+            if (widget->isVisible()) {
                 toolWindow( position)->centralWidget()->setExpanded(false);
                 action->setText("Show "+actionText);
             } else {
@@ -696,4 +674,9 @@ void TupMainWindow::setUndoRedoActions()
 
     kApp->insertGlobalAction(undo, "undo");
     kApp->insertGlobalAction(redo, "redo");
+}
+
+void TupMainWindow::importPapagayoLipSync()
+{
+    animationTab->importPapagayoLipSync();
 }

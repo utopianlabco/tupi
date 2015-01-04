@@ -36,8 +36,6 @@
 #ifndef TVHBOX_H
 #define TVHBOX_H
 
-class TVHBox;
-
 #include "tglobal.h"
 
 #include <QFrame>
@@ -45,6 +43,8 @@ class TVHBox;
 #include <QBoxLayout>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QApplication>
+#include <QPoint>
 
 /**
  * @author David Cuadrado

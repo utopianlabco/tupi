@@ -34,10 +34,9 @@
  ***************************************************************************/
 
 #include "tupprojectresponse.h"
-#include "tdebug.h"
 
 // This class returns information about data structure of a Tupi project 
-// It is used from signals in the TupProject class to send data to anothers classes
+// It is used from signals in the TupProject class to send data to other classes
 
 class TupProjectResponse::Private
 {
@@ -140,7 +139,12 @@ int TupProjectResponse::action() const
                 default:
                      {
                         #ifdef K_DEBUG
-                               tError() << "TupProjectResponse::action() : Fatal Error: Unhandled action -> " << k->action;
+                            QString msg = "TupProjectResponse::action() : Fatal Error: Unhandled action -> " + QString::number(k->action);
+                            #ifdef Q_OS_WIN32
+                                qDebug() << msg;
+                            #else
+                                tError() << msg;
+                            #endif
                         #endif
                      }
                 break;
@@ -431,7 +435,14 @@ TupProjectResponse *TupProjectResponseFactory::create(int part, int action)
             break;
             default:
              {
-                tFatal() << "TupProjectResponseFactory::create() - Unknown/Unhandled element: " << part;
+                 #ifdef K_DEBUG
+                     QString msg = "TupProjectResponseFactory::create() - Error: Unknown/Unhandled element: " + QString::number(part);
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tFatal() << msg;
+                     #endif
+                 #endif
              }
             break;
     }

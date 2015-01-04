@@ -36,10 +36,10 @@
 #ifndef TUPFRAME_H
 #define TUPFRAME_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tupsvgitem.h"
 #include "tupbackground.h"
-#include "tupglobal_store.h"
 
 #include <QGraphicsScene>
 #include <QDomDocument>
@@ -62,7 +62,7 @@ typedef QList<TupSvgItem *> SvgObjects;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
 {
     public:
        enum FrameType { DynamicBg = 0, StaticBg, Regular };
@@ -95,12 +95,9 @@ class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        void updateIdFromFrame(const QString &oldId, const QString &newId);
 
        void addSvgItem(const QString &id, TupSvgItem *item);
-       // void addSvgItem(int position, TupSvgItem *item);
        void removeSvgItemFromFrame(const QString &id);
        void updateSvgIdFromFrame(const QString &oldId, const QString &newId);
 
-       // void insertItem(int position, QGraphicsItem *item);
-       
        void replaceItem(int position, QGraphicsItem *item);
        bool moveItem(TupLibraryObject::Type type, int currentPosition, int action);
        
@@ -119,8 +116,8 @@ class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        TupSvgItem *svg(int position) const; 
        QGraphicsItem *item(int position) const;
        
-       QGraphicsItemGroup *createItemGroupAt(int position, QList<qreal> group);
-       QList<QGraphicsItem *> destroyItemGroup(int position);
+       int createItemGroup(int position, QList<int> group);
+       QList<QGraphicsItem *> splitItemsGroup(int position);
              
        TupLayer *layer() const;
        TupScene *scene() const;
@@ -138,6 +135,7 @@ class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        void clear();
        int graphicItemsCount();
        int svgItemsCount();
+       int itemsTotalCount();
 
        int getTopZLevel();
 
@@ -145,12 +143,14 @@ class STORE_EXPORT TupFrame : public QObject, public TupAbstractSerializable
 
        void reloadGraphicItem(const QString &id, const QString &path);
        void reloadSVGItem(const QString &id, TupLibraryObject *object);
+       void updateZLevel(int zLevelIndex);
        
     public:
        virtual void fromXml(const QString &xml);
        virtual QDomElement toXml(QDomDocument &doc) const;
        
     private:
+       void insertItem(int position, QGraphicsItem *item);
        struct Private;
        Private *const k;
 };

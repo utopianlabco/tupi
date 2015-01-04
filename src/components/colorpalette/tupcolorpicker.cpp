@@ -34,17 +34,6 @@
  ***************************************************************************/
 
 #include "tupcolorpicker.h"
-#include "tdebug.h"
-
-#include <QPoint>
-#include <QColor>
-#include <QImage>
-#include <QSizePolicy>
-#include <QPixmap>
-#include <QSize>
-#include <QRect>
-#include <QPainter>
-#include <QMouseEvent>
 
 static int pWidth = 100;
 static int pHeight = 80;
@@ -81,8 +70,13 @@ TupColorPicker::TupColorPicker(QWidget* parent) : QFrame(parent), k( new Private
 TupColorPicker::~TupColorPicker()
 {
     delete k;
+
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupColorPicker()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -125,7 +119,7 @@ void TupColorPicker::setColor(int hue, int saturation)
     QRect rect(colorPoint(), QSize(20,20));
     k->hue = nhue; 
     k->saturation = nsat;
-    rect = rect.unite(QRect(colorPoint(), QSize(20,20)));
+    rect = rect.united(QRect(colorPoint(), QSize(20,20)));
     rect.translate(contentsRect().x()-9, contentsRect().y()-9);
 
     repaint(rect);
@@ -139,7 +133,7 @@ void TupColorPicker::setHUE(int hue)
 
     QRect rect(colorPoint(), QSize(20, 20));
     k->hue = newHue;
-    rect = rect.unite(QRect(colorPoint(), QSize(20, 20)));
+    rect = rect.united(QRect(colorPoint(), QSize(20, 20)));
     rect.translate(contentsRect().x()-9, contentsRect().y()-9);
 
     repaint(rect);
@@ -153,7 +147,7 @@ void TupColorPicker::setSaturation(int saturation)
 
     QRect rect(colorPoint(), QSize(20,20));
     k->saturation = newSat;
-    rect = rect.unite(QRect(colorPoint(), QSize(20,20)));
+    rect = rect.united(QRect(colorPoint(), QSize(20,20)));
     rect.translate(contentsRect().x()-9, contentsRect().y()-9);
 
     repaint(rect);

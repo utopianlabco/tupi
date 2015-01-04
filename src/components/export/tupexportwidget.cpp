@@ -34,30 +34,6 @@
  ***************************************************************************/
 
 #include "tupexportwidget.h"
-#include "tuppluginmanager.h"
-#include "tglobal.h"
-#include "tdebug.h"
-#include "titemselector.h"
-#include "txyspinbox.h"
-
-// Qt
-#include <QApplication>
-#include <QPluginLoader>
-#include <QRadioButton>
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QPushButton>
-#include <QLabel>
-#include <QIntValidator>
-#include <QToolButton>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QtDebug>
-#include <QLocale>
-#include <QDir>
 
 /**
  * This class handles the whole process to export a project into a movie format.
@@ -65,7 +41,7 @@
  * @author David Cuadrado
 */
 
-class SelectPlugin : public TupExportWizardPage
+class TUPI_EXPORT SelectPlugin : public TupExportWizardPage
 {
     Q_OBJECT
 
@@ -136,7 +112,17 @@ void SelectPlugin::reset()
 
 void SelectPlugin::addPlugin(const QString &plugin)
 {
-    new QListWidgetItem(plugin, m_exporterList);
+    qDebug() << "SelectPlugin::addPlugin() - plugin: " << plugin;
+    #ifdef Q_OS_WIN32
+       if (QSysInfo::windowsVersion() != QSysInfo::WV_XP) {
+           new QListWidgetItem(plugin, m_exporterList);
+       } else {
+	       if (plugin.compare(tr("Video Formats")) != 0)
+		       new QListWidgetItem(plugin, m_exporterList);
+	   }
+    #else
+       new QListWidgetItem(plugin, m_exporterList);
+    #endif
 }
 
 void SelectPlugin::selectedPluginItem(QListWidgetItem *item)
@@ -167,10 +153,12 @@ void SelectPlugin::setFormats(TupExportInterface::Formats formats)
         format->setData(3124, TupExportInterface::WEBM);
     }
 
+#ifdef Q_OS_UNIX
     if (formats & TupExportInterface::OGV) {
         QListWidgetItem *format = new QListWidgetItem(tr("OGV Video"), m_formatList);
         format->setData(3124, TupExportInterface::OGV);
     }
+#endif
 
     if (formats & TupExportInterface::MPEG) {
         QListWidgetItem *format = new QListWidgetItem(tr("MPEG Video"), m_formatList);
@@ -197,7 +185,7 @@ void SelectPlugin::setFormats(TupExportInterface::Formats formats)
         format->setData(3124, TupExportInterface::MOV);
     }
 
-    // SQA: The ffmpeg procedure to export animated GIF files must be implemented
+    // SQA: The libav procedure to export animated GIF files must be implemented
     /*
     if (formats & TupExportInterface::GIF) {
         QListWidgetItem *format = new QListWidgetItem(tr("Gif Image"), m_formatList);
@@ -232,8 +220,10 @@ char const* SelectPlugin::getFormatExtension(const QString format)
     if (format.compare(tr("WEBM Video")) == 0)
         return ".webm";
 
+#ifdef Q_OS_UNIX		
     if (format.compare(tr("OGV Video")) == 0)
         return ".ogv";
+#endif
 
     if (format.compare(tr("MPEG Video")) == 0)
         return ".mpg";
@@ -299,7 +289,7 @@ const char* SelectPlugin::getFileExtension()
     return extension;
 }
 
-class SelectScenes : public TupExportWizardPage
+class TUPI_EXPORT SelectScenes : public TupExportWizardPage
 {
     Q_OBJECT
 
@@ -352,7 +342,11 @@ void SelectScenes::reset()
 void SelectScenes::setScenes(const QList<TupScene *> &scenes)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[SelectScenes::setScenes()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     m_selector->clear();
@@ -360,14 +354,25 @@ void SelectScenes::setScenes(const QList<TupScene *> &scenes)
 
     foreach (TupScene *scene, scenes) {
              #ifdef K_DEBUG
-                    tDebug("export") << "SelectScenes::setScenes() - Adding " << scene->sceneName();
+                 QString msg = "SelectScenes::setScenes() - Adding " + scene->sceneName();
+                 #ifdef Q_OS_WIN32
+                     qWarning() << msg;
+                 #else
+                     tWarning("export") << msg;
+                 #endif
              #endif
+
              m_selector->addItem(QString("%1: ").arg(pos) + scene->sceneName());
              pos++;
     }
 
     #ifdef K_DEBUG
-           tWarning("export") << "SelectScenes::setScenes() - Available Scenes: " << pos - 1;
+        QString msg = "SelectScenes::setScenes() - Available Scenes: " + QString::number(pos - 1);
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
     #endif
 
     m_selector->selectFirstItem();
@@ -388,12 +393,12 @@ void SelectScenes::updateScenesList()
     // SQA: Pending code right over here
 }
 
-class ExportTo : public TupExportWizardPage
+class TUPI_EXPORT ExportTo : public TupExportWizardPage
 {
     Q_OBJECT
 
     public:
-        ExportTo(const TupProject *project, TupExportWidget::OutputFormat output, QString title, const TupExportWidget *widget);
+        ExportTo(TupProject *project, TupExportWidget::OutputFormat output, QString title, const TupExportWidget *widget);
         ~ExportTo();
 
         bool isComplete() const;
@@ -431,7 +436,8 @@ class ExportTo : public TupExportWizardPage
         TupExportInterface::Format m_currentFormat;
         TupExportWidget::OutputFormat output;
 
-        const TupProject *m_project;
+        // const TupProject *m_project;
+        TupProject *m_project;
         QLineEdit *m_filePath;
         QLineEdit *m_prefix;
         QSpinBox *m_fps;
@@ -443,9 +449,17 @@ class ExportTo : public TupExportWizardPage
         bool transparency;
 };
 
-ExportTo::ExportTo(const TupProject *project, TupExportWidget::OutputFormat outputFormat, QString title, const TupExportWidget *widget) : TupExportWizardPage(title), m_currentExporter(0), 
+ExportTo::ExportTo(TupProject *project, TupExportWidget::OutputFormat outputFormat, QString title, const TupExportWidget *widget) : TupExportWizardPage(title), m_currentExporter(0), 
                    m_currentFormat(TupExportInterface::NONE), m_project(project)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[ExportTo::ExportTo()]";
+        #else
+            TINIT;
+        #endif
+    #endif
+
     output = outputFormat;
     transparency = false;
 
@@ -461,7 +475,8 @@ ExportTo::ExportTo(const TupProject *project, TupExportWidget::OutputFormat outp
 
     QWidget *container = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(container);
-    path = getenv("HOME");
+    // path = getenv("HOME");
+	path = QDir::homePath();
 
     ////////////////
 
@@ -504,11 +519,10 @@ ExportTo::ExportTo(const TupProject *project, TupExportWidget::OutputFormat outp
     QToolButton *button = new QToolButton;
     button->setIcon(QIcon(THEME_DIR + "icons" + QDir::separator() + "open.png"));
 
-    if (output == TupExportWidget::ImagesArray) {
+    if (output == TupExportWidget::ImagesArray)
         connect(button, SIGNAL(clicked()), this, SLOT(chooseDirectory()));
-    } else {
+    else
         connect(button, SIGNAL(clicked()), this, SLOT(chooseFile()));
-    }
 
     filePathLayout->addWidget(button);
 
@@ -600,16 +614,18 @@ void ExportTo::setCurrentFormat(int currentFormat, const QString &value)
     extension = value;
     filename = path;
 
-#if defined(Q_OS_UNIX)
-
     if (m_currentFormat == TupExportInterface::APNG || (m_currentFormat != TupExportInterface::PNG && m_currentFormat != TupExportInterface::JPEG)) { // Animated Image or Animation
         if (!filename.endsWith(QDir::separator()))
             filename += QDir::separator();
 
         filename += m_project->projectName();
         filename += extension;
+		
+		qDebug() << "ExportTo::setCurrentFormat() - Tracing name: " << filename;
+		
     } else { // Images Array
-        filename = getenv("HOME");
+        // filename = getenv("HOME");
+		filename = QDir::homePath();
 
         if (m_currentFormat == TupExportInterface::JPEG) {
             if (bgTransparency->isEnabled())
@@ -618,18 +634,21 @@ void ExportTo::setCurrentFormat(int currentFormat, const QString &value)
             if (!bgTransparency->isEnabled())
                 bgTransparency->setEnabled(true);
         }
+		
+		qDebug() << "ExportTo::setCurrentFormat() - Tracing name: " << filename;
     } 
 
+	#ifdef Q_OS_WIN32
+	    filename.replace(QString("/"), QString("\\"));
+	#endif
+	
     m_filePath->setText(filename);
-
-#endif
 }
 
 void ExportTo::updateNameField()
 {
-   if (filename.length() > 0) {
+   if (filename.length() > 0) 
        m_filePath->setText(filename);
-   } 
 }
 
 void ExportTo::enableTransparency(bool flag)
@@ -654,7 +673,8 @@ void ExportTo::chooseFile()
 
 void ExportTo::chooseDirectory()
 {
-    QString dir = getenv("HOME");
+    // QString dir = getenv("HOME");
+	QString dir = QDir::homePath();
     filename = QFileDialog::getExistingDirectory(this, tr("Choose a directory..."), dir,
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks);
@@ -675,7 +695,11 @@ void ExportTo::updateState(const QString &name)
 void ExportTo::exportIt()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[ExportTo::exportIt()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     bool done = false; 
@@ -691,7 +715,8 @@ void ExportTo::exportIt()
         }
 
         if (path.length() == 0)
-            path = getenv("HOME");
+		    path = QDir::homePath();
+            // path = getenv("HOME");
 
         filename = path + QDir::separator() + name;
     } else { // Animation or Animated Image
@@ -699,9 +724,15 @@ void ExportTo::exportIt()
 
         if (filename.length() == 0) {
             TOsd::self()->display(tr("Error"), tr("Directory doesn't exist! Please, choose another path."), TOsd::Error);
+
             #ifdef K_DEBUG
-                   QString file = path.toLocal8Bit();
-                   tError() << "ExportTo::exportIt() - Fatal Error: Directory doesn't exist! -> " << file;
+                QString file = path.toLocal8Bit();
+                QString msg = "ExportTo::exportIt() - Fatal Error: Directory doesn't exist! -> " + file;
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
             #endif
             return;
         }
@@ -715,7 +746,8 @@ void ExportTo::exportIt()
             name += extension;
 
         if (path.length() == 0) {
-            path = getenv("HOME");
+            //path = getenv("HOME");
+			path = QDir::homePath();
             filename = path + QDir::separator() + name;
         }
 
@@ -734,8 +766,13 @@ void ExportTo::exportIt()
     if (!directory.exists()) {
         TOsd::self()->display(tr("Error"), tr("Directory doesn't exist! Please, choose another path."), TOsd::Error);
         #ifdef K_DEBUG
-               QString file = path.toLocal8Bit();
-               tError() << "ExportTo::exportIt() - Fatal Error: Directory doesn't exist! -> " << file;
+            QString file = path.toLocal8Bit();
+            QString msg = "ExportTo::exportIt() - Fatal Error: Directory doesn't exist! -> " + file;
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
         return;
     } else {
@@ -752,19 +789,30 @@ void ExportTo::exportIt()
 
     if (m_currentExporter) {
         #ifdef K_DEBUG
-               tWarning() << "ExportTo::exportIt() - Exporting to file: " << filename;
+            QString file = path.toLocal8Bit();
+            QString msg = "ExportTo::exportIt() -  Exporting to file: " + file;
+            #ifdef Q_OS_WIN32
+                qWarning() << msg;
+            #else
+                tWarning() << msg;
+            #endif
         #endif
 
         QList<TupScene *> scenes = scenesToExport();
 
         #ifdef K_DEBUG
-               tWarning() << "ExportTo::exportIt() - Exporting " << scenes.count() << " scenes";
+            QString msg1 = "ExportTo::exportIt() - Exporting " + QString::number(scenes.count()) + " scenes";
+            #ifdef Q_OS_WIN32
+                qWarning() << msg1;
+            #else
+                tWarning() << msg1;
+            #endif
         #endif
 
         if (scenes.count() > 0) { 
             int width = (int) m_size->x();
             int height = (int) m_size->y();
-            /* ffmpeg requirement: resolution must be a multiple of two */
+            /* libav requirement: resolution must be a multiple of two */
             if (width%2 != 0)
                 width++;
             if (height%2 != 0)
@@ -779,7 +827,7 @@ void ExportTo::exportIt()
             }
 
             done = m_currentExporter->exportToFormat(color, filename, scenes, m_currentFormat, 
-                                                     QSize(width, height), m_fps->value());
+                                                     QSize(width, height), m_fps->value(), m_project->library());
         }
     } else {
         TOsd::self()->display(tr("Error"), tr("Format problem. Tupi Internal error."), TOsd::Error);
@@ -806,7 +854,7 @@ QList<TupScene *> ExportTo::scenesToExport() const
     return scenes;
 }
 
-class VideoProperties : public TupExportWizardPage
+class TUPI_EXPORT VideoProperties : public TupExportWizardPage
 {
     Q_OBJECT
 
@@ -983,10 +1031,14 @@ TupExportWidget::Format VideoProperties::workType()
 }
 */
 
-TupExportWidget::TupExportWidget(const TupProject *project, QWidget *parent, bool isLocal) : TupExportWizard(parent), m_project(project)
+TupExportWidget::TupExportWidget(TupProject *project, QWidget *parent, bool isLocal) : TupExportWizard(parent), m_project(project)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupExportWidget()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     if (isLocal) {
@@ -997,7 +1049,8 @@ TupExportWidget::TupExportWidget(const TupProject *project, QWidget *parent, boo
         addPage(m_pluginSelectionPage);
 
         m_scenesSelectionPage = new SelectScenes(this);
-        m_scenesSelectionPage->setScenes(project->scenes().values());
+        // m_scenesSelectionPage->setScenes(project->scenes().values());
+        m_scenesSelectionPage->setScenes(project->scenes());
         addPage(m_scenesSelectionPage);
 
         m_exportAnimation = new ExportTo(project, TupExportWidget::Animation, tr("Export to Video File"), this);
@@ -1026,7 +1079,8 @@ TupExportWidget::TupExportWidget(const TupProject *project, QWidget *parent, boo
         setWindowIcon(QIcon(THEME_DIR + "icons" + QDir::separator() + "net_document.png"));
 
         m_scenesSelectionPage = new SelectScenes(this);
-        m_scenesSelectionPage->setScenes(project->scenes().values());
+        // m_scenesSelectionPage->setScenes(project->scenes().values());
+        m_scenesSelectionPage->setScenes(project->scenes());
         addPage(m_scenesSelectionPage);
 
         videoProperties = new VideoProperties(this);
@@ -1039,7 +1093,11 @@ TupExportWidget::TupExportWidget(const TupProject *project, QWidget *parent, boo
 TupExportWidget::~TupExportWidget()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupExportWidget()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -1063,7 +1121,12 @@ void TupExportWidget::loadPlugins()
                      pluginList.insert(index, exporter);
                  } else {
                      #ifdef K_DEBUG
-                            tError() << "TupExportWidget::loadPlugins() - [ Fatal Error ] - Can't load export plugin";
+                         QString msg = "TupExportWidget::loadPlugins() - [ Fatal Error ] - Can't load export plugin";
+                         #ifdef Q_OS_WIN32
+                            qDebug() << msg;
+                         #else
+                            tError() << msg;
+                         #endif
                      #endif
                  }
              }
@@ -1088,7 +1151,12 @@ void TupExportWidget::setExporter(const QString &plugin)
         m_exportImagesArray->setCurrentExporter(currentExporter);
     } else {
         #ifdef K_DEBUG
-               tError() << "TupExportWidget::setExporter() - [ Fatal Error ] - Can't load export plugin";
+            QString msg = "TupExportWidget::setExporter() - [ Fatal Error ] - Can't load export plugin -> " + plugin;
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }

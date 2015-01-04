@@ -36,15 +36,23 @@
 #ifndef TUPPAINTAREACONFIG_H
 #define TUPPAINTAREACONFIG_H
 
+#include "tglobal.h"
+#include "tcolorbutton.h"
+#include "tconfig.h"
+
 #include <QWidget>
 #include <QSpinBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QLabel>
 
 class TColorButton;
 
 /**
  * @author David Cuadrado
 */
-class TupPaintAreaConfig : public QWidget
+class TUPI_EXPORT TupPaintAreaConfig : public QWidget
 {
     Q_OBJECT
 

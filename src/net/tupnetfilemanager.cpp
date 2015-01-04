@@ -33,14 +33,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include <QFile>
-#include <QTextStream>
-#include <QDomDocument>
-#include <QDomElement>
-
 #include "tupnetfilemanager.h"
-#include "tupproject.h"
-#include "tupnetprojectmanagerparams.h"
 
 TupNetFileManager::TupNetFileManager() : TupFileManager()
 {
@@ -54,7 +47,7 @@ TupNetFileManager::~TupNetFileManager()
 {
 }
 
-bool TupNetFileManager::save(const QString &_filename, const TupProject *project)
+bool TupNetFileManager::save(const QString &_filename, TupProject *project)
 {
     QString filename = _filename;
     

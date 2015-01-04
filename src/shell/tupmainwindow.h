@@ -43,13 +43,12 @@
 
 // modules
 #include "tupexposuresheet.h"
-#include "kinaswidget.h"
+// #include "kinaswidget.h"
 #include "tuppenwidget.h"
 #include "tupcolorpalette.h"
 #include "tupsceneswidget.h"
 #include "tuplibrarywidget.h"
 #include "tuptimeline.h"
-#include "tupdebugwidget.h"
 #include "tupcamerawidget.h"
 #include "tuphelpwidget.h"
 #include "tuphelpbrowser.h"
@@ -65,6 +64,15 @@
 #include "tupprojectmanager.h"
 #include "tupnetprojectmanagerhandler.h"
 
+#ifdef K_DEBUG
+#ifdef Q_OS_WIN32
+#include <QDebug>
+#else
+#include "tdebug.h"
+#include "tupdebugwidget.h"
+#endif
+#endif
+
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
@@ -72,6 +80,10 @@
 #include <QResizeEvent>
 #include <QCloseEvent>
 #include <QUndoStack>
+#include <QKeySequence>
+#include <QTextBrowser>
+#include <QToolBar>
+#include <QDesktopWidget>
 
 class TupProjectManagerParams;
 class TupNetProjectManagerParams;
@@ -168,6 +180,7 @@ class TupMainWindow : public TabbedMainWindow
 
     private slots:
           void setWorkSpace(const QStringList &users = QStringList() = QStringList());
+          void updateTabContext(int tab);
           void createNewLocalProject();
           void newProject();
           bool closeProject();
@@ -213,6 +226,7 @@ class TupMainWindow : public TabbedMainWindow
           // void postVideo(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> sceneIndexes);
           void resetMousePointer();
           void updateUsersOnLine(const QString &login, int state);
+          void importPapagayoLipSync();
 
     private:
           TupProjectManager *m_projectManager;
@@ -250,7 +264,7 @@ class TupMainWindow : public TabbedMainWindow
           TupScenesWidget *m_scenes;
           TupTimeLine *m_timeLine;
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
           TupDebugWidget *m_debug;
 #endif
           TupHelpWidget *m_helper;

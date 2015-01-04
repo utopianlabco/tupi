@@ -34,15 +34,6 @@
  ***************************************************************************/
 
 #include "tcellview.h"
-#include "tdebug.h"
-
-#include <QPainter>
-#include <QPaintEvent>
-#include <QItemSelectionModel>
-#include <QPainterPath>
-#include <QScrollBar>
-#include <QHeaderView>
-#include <QTimer>
 
 ////////// TCellViewItemDelegate ///////////
 
@@ -173,8 +164,11 @@ void TCellView::setup()
 
     setItemSize(18, 18);
 
-    horizontalHeader()->setResizeMode(QHeaderView::Custom);
-    verticalHeader()->setResizeMode(QHeaderView::Custom);
+    // horizontalHeader()->setResizeMode(QHeaderView::Custom);
+    // verticalHeader()->setResizeMode(QHeaderView::Custom);
+
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Custom);
+    verticalHeader()->setSectionResizeMode(QHeaderView::Custom);
 }
 
 void TCellView::setItemSize(int w, int h)
@@ -226,7 +220,7 @@ void TCellView::addItem(TCellViewItem *item)
     }
 
     m_countColor++;
-    setItem(m_row-1 , m_col , item);
+    setItem(m_row-1, m_col, item);
 
     fixSize();
 }
@@ -250,7 +244,13 @@ void TCellView::addItem(const QImage &i)
 void TCellView::wheelEvent(QWheelEvent *event)
 {
     if (event->modifiers() == Qt::ControlModifier) {
-        SHOW_VAR(event->delta());
+        #ifdef K_DEBUG
+            #ifdef Q_OS_WIN32
+                qDebug() << "[TCellView::wheelEvent()] - event->delta(): " << event->delta();
+            #else
+                SHOW_VAR(event->delta());
+            #endif
+        #endif
     } else {
         QTableWidget::wheelEvent(event);
     }

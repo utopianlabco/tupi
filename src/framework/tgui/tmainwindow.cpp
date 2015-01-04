@@ -34,25 +34,8 @@
  ***************************************************************************/
 
 #include "tmainwindow.h"
-#include "tbuttonbar.h"
-#include "toolview.h"
-#include "tviewbutton.h"
-#include "tmainwindowabstractsettings.h"
-#include "tdebug.h"
 
-#include <QTimer>
-#include <QMenu>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QSettings>
-#include <QApplication>
-#include <QtDebug>
-#include <QHashIterator>
-#include <QMenuBar>
-
-#include <QCloseEvent>
-
-class DefaultSettings : public TMainWindowAbstractSettings
+class T_GUI_EXPORT DefaultSettings : public TMainWindowAbstractSettings
 {
     public:
         DefaultSettings(QObject *parent);
@@ -71,6 +54,15 @@ DefaultSettings::~DefaultSettings()
 
 void DefaultSettings::save(TMainWindow *w)
 {
+    #ifdef K_DEBUG
+            QString msg = "DefaultSettings::save() - Saving UI settings...";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
+    #endif
+
     QSettings settings(qApp->applicationName(), "ideality", this);
 
     QHash<Qt::ToolBarArea, TButtonBar *> buttonBars = w->buttonBars();
@@ -110,7 +102,12 @@ void DefaultSettings::save(TMainWindow *w)
 void DefaultSettings::restore(TMainWindow *w)
 {
     #ifdef K_DEBUG
-           tFatal() << "Restoring Interface...";
+	    QString msg = "DefaultSettings::restore() - Restoring UI settings...";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
     #endif
 
     QSettings settings(qApp->applicationName(), "ideality", this);
@@ -130,6 +127,7 @@ void DefaultSettings::restore(TMainWindow *w)
                       Qt::DockWidgetArea area = Qt::DockWidgetArea(settings.value("area", 0).toInt());
                       w->moveToolView(view, area);
                       view->setFixedSize(settings.value("size").toInt());
+
                       view->button()->setToolButtonStyle(Qt::ToolButtonStyle(settings.value("style", 
                                                          int(view->button()->toolButtonStyle())).toInt()));
                       view->button()->setSensible(settings.value("sensibility", view->button()->isSensible()).toBool());
@@ -293,13 +291,7 @@ void TMainWindow::enableToolViews(bool flag)
 
              while (it != views.end()) {
                     ToolView *v = *it;
-
-                    // SQA: Temporary code while Time Line components are fixed
-                    if (v->getObjectID().compare("ToolView-Time Line")==0)
-                        v->enableButton(false);
-                    else
-                        v->enableButton(flag);
-
+                    v->enableButton(flag);
                     ++it;
              }
     }
@@ -408,8 +400,17 @@ Qt::DockWidgetArea TMainWindow::toDockWidgetArea(Qt::ToolBarArea area)
                }
                break;
             default: 
-                 qWarning("toDockWidgetArea: Floating... %d", area); 
-                 break;
+               {
+                   #ifdef K_DEBUG
+                       QString msg = "TMainWindow::toDockWidgetArea() - Floating -> " + QString::number(area);
+                       #ifdef Q_OS_WIN32
+                           qWarning() << msg;
+                       #else
+                           tWarning() << msg;
+                       #endif
+                   #endif
+               }
+               break;
     }
 
     return Qt::LeftDockWidgetArea;
@@ -439,8 +440,17 @@ Qt::ToolBarArea TMainWindow::toToolBarArea(Qt::DockWidgetArea area)
                }
                break;
             default: 
-                 qWarning("toToolBarArea: Floating... %d", area); 
-                 break;
+               {
+                 #ifdef K_DEBUG
+                     QString msg = "TMainWindow::toToolBarArea() - Floating -> " + QString::number(area);
+                     #ifdef Q_OS_WIN32
+                         qWarning() << msg;
+                     #else
+                         tWarning() << msg;
+                     #endif
+                 #endif
+               }
+               break;
     }
 
     return Qt::LeftToolBarArea;
@@ -551,16 +561,7 @@ void TMainWindow::setCurrentPerspective(int workspace)
                       view->setUpdatesEnabled(false);
 
                       if (view->perspective() & workspace) {
-
-                          // SQA: Temporary code while Library and Time Line components are fixed
-                          if (view->getObjectID().compare("ToolView-Time Line")==0) {
-                              bar->enable(view->button());
-                              view->enableButton(false);
-                          } else {
-                              bar->enable(view->button());
-                          } 
-
-                          // bar->enable(view->button());
+                          bar->enable(view->button());
  
                           if (view->button()->isChecked() && (workspace != 4) && view->getObjectID().compare("ToolView-Help")!=0) {
                               view->show();

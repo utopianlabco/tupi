@@ -36,13 +36,44 @@
 #ifndef TUPPAINTAREA_H
 #define TUPPAINTAREA_H
 
+#include "tglobal.h"
 #include "tuppaintareabase.h"
 #include "tupabstractprojectresponsehandler.h"
 #include "tupgraphicsscene.h"
+#include "tupbrushmanager.h"
+#include "tupinputdeviceinformation.h"
+#include "tuppaintareaevent.h"
+#include "tuppaintarearotator.h"
+#include "tupimagedevice.h"
+#include "tupgraphicsscene.h"
+#include "tconfig.h"
+#include "tapplication.h"
+#include "tuptextitem.h"
+#include "tuplibrarydialog.h"
+#include "tuplibraryobject.h"
+#include "tuprequestbuilder.h"
+#include "tupprojectrequest.h"
+#include "tupprojectresponse.h"
+#include "tupscene.h"
+#include "tuplayer.h"
+#include "tupsvgitem.h"
+#include "tuppixmapitem.h"
+#include "node.h"
+#include "tcontrolnode.h"
+#include "tupproject.h"
+#include "tosd.h"
 
-// #include <QTabletEvent>
+#include <QGraphicsScene>
+#include <QMouseEvent>
+#include <QGraphicsRectItem>
+#include <QPolygon>
+#include <QApplication>
+// #include <QTimer>
+#include <QStyleOptionGraphicsItem>
+#include <QClipboard>
+#include <QMenu>
 
-class QGraphicsRectItem;
+// class QGraphicsRectItem;
 class TupBrushManager;
 class TupInputDeviceInformation;
 class TupProject;
@@ -53,7 +84,7 @@ class TupPaintAreaRotator;
  * @author Jorge Cuadrado - David Cuadrado
 */
 
-class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseHandler
+class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseHandler
 {
     Q_OBJECT
 
@@ -78,6 +109,7 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
         int currentSceneIndex();
         int currentLayerIndex();
         int currentFrameIndex();
+        void resetWorkSpaceCenter(const QSize projectSize);
 
     public slots:
         void setNextFramesOnionSkinCount(int n);
@@ -90,12 +122,14 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
         void itemAddedOnSelection(TupGraphicsScene *);
         void frameChanged(int);
         void closePolyLine();
+        void closeLine();
         void updateStatusBgColor(const QColor color);
+        void zoomIn();
+        void zoomOut();
 
     public slots:
         void deleteItems();
-        void groupItems();
-        void ungroupItems();
+        // void ungroupItems();
         void copyItems();
         void pasteItems();
         void pasteNextFive();

@@ -33,11 +33,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TVALIDATES_H
-#define TVALIDATES_H
+#ifndef TFORMVALIDATOR_H
+#define TFORMVALIDATOR_H
+
+#include "tglobal.h"
 
 #include <QWidget>
-class QLineEdit;
+#include <QLineEdit>
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include <QRegExpValidator>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+
+// class QLineEdit;
 
 #define K_GIVE_NAME(obj) obj->setObjectName(#obj);
 
@@ -45,7 +54,7 @@ class QLineEdit;
  * @author David Cuadrado
 */
 
-class TFormValidator
+class T_GUI_EXPORT TFormValidator
 {
     public:
         TFormValidator(QWidget *form);

@@ -37,7 +37,10 @@
 #define TSTYLECOMBOBOX_H
 
 #include "tglobal.h"
+
 #include <QComboBox>
+#include <QStyleFactory>
+#include <QApplication>
 
 /**
  * @author David Cuadrado

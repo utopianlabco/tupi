@@ -1,7 +1,4 @@
 #include "tupcamerawindow.h"
-#include "tdebug.h"
-
-#include <QVideoEncoderControl>
 
 struct TupCameraWindow::Private
 {
@@ -28,10 +25,10 @@ TupCameraWindow::TupCameraWindow(QCamera *input, const QSize &camSize, const QSi
 
     QMediaService *service = k->camera->service();
 
-    QVideoEncoderControl *encoderControl = service->requestControl<QVideoEncoderControl*>();
-    QVideoEncoderSettings settings = encoderControl->videoSettings();
-    settings.setResolution(camSize);
-    encoderControl->setVideoSettings(settings);
+    // QVideoEncoderControl *encoderControl = service->requestControl<QVideoEncoderControl*>();
+    // QVideoEncoderSettings settings = encoderControl->videoSettings();
+    // settings.setResolution(camSize);
+    // encoderControl->setVideoSettings(settings);
 
     QVideoRendererControl *rendererControl = service->requestControl<QVideoRendererControl*>();
 
@@ -70,8 +67,13 @@ void TupCameraWindow::reset()
 
     if (! dir.rmdir(dir.absolutePath())) {
         #ifdef K_DEBUG
-               tError() << "TupCameraInterface::closeEvent() - Fatal Error: Can't remove pictures directory -> " << dir.absolutePath();
-        #endif
+            QString msg = "TupCameraInterface::closeEvent() - Fatal Error: Can't remove pictures directory -> " + dir.absolutePath();
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+        #endif 
     }
 
     if (k->videoSurface)
@@ -90,22 +92,22 @@ void TupCameraWindow::error(QCamera::Error error)
             }
             case QCamera::CameraError:
             {
-                QMessageBox::warning(this, "TupCameraWindow", "General Camera error");
+                QMessageBox::warning(this, "TupCameraWindow", tr("General Camera error"));
                 break;
             }
             case QCamera::InvalidRequestError:
             {
-                QMessageBox::warning(this, "TupCameraWindow", "Camera invalid request error");
+                QMessageBox::warning(this, "TupCameraWindow", tr("Camera invalid request error"));
                 break;
             }
             case QCamera::ServiceMissingError:
             {
-                QMessageBox::warning(this, "TupCameraWindow", "Camera service missing error");
+                QMessageBox::warning(this, "TupCameraWindow", tr("Camera service missing error"));
                 break;
             }
             case QCamera::NotSupportedFeatureError :
             {
-                QMessageBox::warning(this, "TupCameraWindow", "Camera not supported error");
+                QMessageBox::warning(this, "TupCameraWindow", tr("Camera not supported error"));
                 break;
             }
     };

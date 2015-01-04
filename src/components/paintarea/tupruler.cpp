@@ -34,9 +34,6 @@
  ***************************************************************************/
 
 #include "tupruler.h" 
-#include "tdebug.h"
-
-#include <cmath>
 
 struct TupRuler::Private
 {
@@ -221,6 +218,9 @@ void TupRuler::drawMaximizedRuler(QPainter* painter, QRectF rulerRect, qreal sta
     qreal startPosition = 16;
 
     int counter = fabs(k->origin)/step;
+
+    if (step < 0)
+        step *= -1;
 
     for (qreal current = startMark + delta; current <= endMark; current += step) {
          startPosition = 16;

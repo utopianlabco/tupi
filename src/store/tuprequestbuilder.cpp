@@ -34,11 +34,8 @@
  ***************************************************************************/
 
 #include "tuprequestbuilder.h"
-#include "tdebug.h"
 #include "tupprojectrequest.h"
 #include "tupprojectresponse.h"
-
-#include <QDomDocument>
 
 TupRequestBuilder::TupRequestBuilder()
 {
@@ -71,8 +68,10 @@ TupProjectRequest TupRequestBuilder::createItemRequest(int sceneIndex, int layer
     objectType.setAttribute("id", type);
 
     QDomElement position = doc.createElement("position");
-    position.setAttribute("x", point.x());
-    position.setAttribute("y", point.y());
+    double px = point.x(); 
+    double py = point.y();
+    position.setAttribute("x", QString::number(px));
+    position.setAttribute("y", QString::number(py));
 
     QDomElement space = doc.createElement("spaceMode");
     space.setAttribute("current", spaceMode);
@@ -277,7 +276,12 @@ TupProjectRequest TupRequestBuilder::fromResponse(TupProjectResponse *response)
             default:
                  {
                     #ifdef K_DEBUG
-                           tWarning() << "wOw! Unknown response! O_o";
+                        QString msg = "TupRequestBuilder::fromResponse() - Error: wOw! Unknown response! O_o";
+                        #ifdef Q_OS_WIN32
+                            qWarning() << msg;
+                        #else
+                            tWarning() << msg;
+                        #endif
                     #endif
                  }
     }

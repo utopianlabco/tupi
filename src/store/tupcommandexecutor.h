@@ -36,7 +36,9 @@
 #ifndef TUPCOMMANDEXECUTOR_H
 #define TUPCOMMANDEXECUTOR_H
 
+#include "tglobal.h"
 #include "tupscene.h"
+
 #include <QObject>
 
 class TupProject;
@@ -52,7 +54,7 @@ class TupLibraryResponse;
  * @author David Cuadrado
 */
 
-class TupCommandExecutor : public QObject
+class TUPI_EXPORT TupCommandExecutor : public QObject
 {
     Q_OBJECT
 
@@ -63,9 +65,12 @@ class TupCommandExecutor : public QObject
         void getScenes(TupSceneResponse *response);
         bool createScene(TupSceneResponse *response);
         bool createLayer(TupLayerResponse *response);
+        bool addLipSync(TupLayerResponse *response);
         bool createFrame(TupFrameResponse *response);
         
         bool createItem(TupItemResponse *response);
+
+        bool updateLipSync(TupLayerResponse *response);
         
         bool convertItem(TupItemResponse *response);
         bool transformItem(TupItemResponse *response);
@@ -73,6 +78,7 @@ class TupCommandExecutor : public QObject
         
         bool removeScene(TupSceneResponse *response);
         bool removeLayer(TupLayerResponse *response);
+        bool removeLipSync(TupLayerResponse *response);
         bool removeFrame(TupFrameResponse *response);
         bool resetFrame(TupFrameResponse *response);
         

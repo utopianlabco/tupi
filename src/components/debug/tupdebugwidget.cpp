@@ -34,16 +34,12 @@
  ***************************************************************************/
 
 #include "tupdebugwidget.h"
-#include "tupdebugterm.h"
-#include "tdebug.h"
 
-#include <QIcon>
+#ifdef K_DEBUG
 
 TupDebugWidget::TupDebugWidget(QWidget *parent, int width) : TupModuleWidgetBase(parent, "Debug Terminal")
 {
-    #ifdef K_DEBUG
-           TINIT;
-    #endif
+    TINIT;
   
     setWindowTitle(tr("Debug Console"));
     setWindowIcon(QIcon(THEME_DIR + "icons/debug.png"));
@@ -53,13 +49,18 @@ TupDebugWidget::TupDebugWidget(QWidget *parent, int width) : TupModuleWidgetBase
 
     setFixedHeight(120);
 
-    TupDebugTerm *term = new TupDebugTerm(this, width);
+    term = new TupDebugTerm(this, width);
     addChild(term);
 }
 
 TupDebugWidget::~TupDebugWidget()
 {
-    #ifdef K_DEBUG
-           TEND;
-    #endif
+    TEND;
 }
+
+void TupDebugWidget::setProjectStatus(bool status)
+{
+    term->setProjectStatus(status);
+}
+
+#endif

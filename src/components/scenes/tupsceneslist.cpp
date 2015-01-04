@@ -34,10 +34,6 @@
  ***************************************************************************/
 
 #include "tupsceneslist.h"
-#include "tdebug.h"
-
-#include <QTreeWidgetItem>
-#include <QHeaderView>
 
 // SQA: Add support for renaming and moving objects from the list
 
@@ -50,7 +46,8 @@ TupScenesList::TupScenesList(QWidget *parent) : TreeListWidget(parent), k(new Pr
 {
     k->scenesTotal = 0;
     setHeaderLabels(QStringList() << "");
-    header()->setResizeMode(QHeaderView::ResizeToContents);
+    // header()->setResizeMode(QHeaderView::ResizeToContents);
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     setColumnCount(1);
 
     setItemDelegate(new TupScenesDelegate(this));
@@ -181,7 +178,11 @@ bool TupScenesList::nameExists(QString &name)
 void TupScenesList::resetUI()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScenesList::resetUI()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     blockSignals(true);

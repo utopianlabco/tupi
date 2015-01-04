@@ -35,10 +35,6 @@
 
 #include "tapplicationproperties.h"
 
-#include <QDir>
-#include <QLocale>
-#include <QApplication>
-
 TApplicationProperties *TApplicationProperties::s_instance = 0;
 
 struct TApplicationProperties::Private
@@ -97,7 +93,7 @@ void TApplicationProperties::setPluginDir(const QString &path)
 
 void TApplicationProperties::setCacheDir(const QString &path)
 {
-    k->cacheDir = path;
+	k->cacheDir = path;
 }
 
 void TApplicationProperties::setRepositoryDir(const QString &path)
@@ -145,7 +141,7 @@ QString TApplicationProperties::dataDir() const
         if (locale.length() < 2)
             locale = "en";
 
-        return k->shareDir + QDir::separator() + "data" + QDir::separator() + locale + QDir::separator();
+        return k->shareDir + QDir::separator() + "data" + QDir::separator() + "xml" + QDir::separator() + locale + QDir::separator();
     }
 
     return k->dataDir;

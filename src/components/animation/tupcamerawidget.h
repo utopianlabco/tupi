@@ -36,6 +36,12 @@
 #ifndef TUPCAMERAWIDGET_H
 #define TUPCAMERAWIDGET_H
 
+#include "tglobal.h"
+#include "tupexportwidget.h"
+#include "tseparator.h"
+#include "tupprojectrequest.h"
+#include "tupprojectresponse.h"
+#include "tuprequestbuilder.h"
 #include "tcirclebuttonbar.h"
 #include "tvhbox.h"
 #include "tupscreen.h"
@@ -44,6 +50,11 @@
 
 #include <QMainWindow>
 #include <QFrame>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QProgressBar>
 
 class TupProjectResponse;
 class QCheckBox;
@@ -53,7 +64,7 @@ class TupCameraStatus;
  * @author David Cuadrado 
 */
 
-class TupCameraWidget : public QFrame
+class TUPI_EXPORT TupCameraWidget : public QFrame
 {
     Q_OBJECT
 
@@ -68,10 +79,12 @@ class TupCameraWidget : public QFrame
     private slots:
         void setLoop();
         void selectScene(int index);
+        void updateProgressBar(int advance);
 
     public slots:
         bool handleProjectResponse(TupProjectResponse *event);
         void setFPS(int fps);
+        void setStatusFPS(int fps);
         void updateFramesTotal(int sceneIndex);
         void exportDialog();
         void postDialog();

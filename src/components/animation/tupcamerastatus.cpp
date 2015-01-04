@@ -34,22 +34,9 @@
  ***************************************************************************/
 
 #include "tupcamerastatus.h"
-#include "tupexportwidget.h"
-#include "tdebug.h"
-#include "tconfig.h"
-#include "tseparator.h"
-
-#include <QStatusBar>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QApplication>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QComboBox>
 
 struct TupCameraStatus::Private
 {
-    // QComboBox *fps;
     QSpinBox *fps;
     QComboBox *scenes;
     QLabel *framesTotal;
@@ -60,7 +47,11 @@ struct TupCameraStatus::Private
 TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCameraStatus()]";
+        #else
            TINIT;
+        #endif
     #endif
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
@@ -159,7 +150,11 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
 TupCameraStatus::~TupCameraStatus()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupCameraStatus()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -187,9 +182,12 @@ void TupCameraStatus::setScenes(TupProject *project)
     if (k->scenes->count())
         k->scenes->clear(); 
 
-    foreach (TupScene *scene, project->scenes().values()) { 
-             if (scene)
-                 k->scenes->addItem(scene->sceneName());
+    int scenesTotal = project->scenes().size();
+    for (int i = 0; i < scenesTotal; i++) {
+         TupScene *scene = project->scenes().at(i);
+         if (scene)
+             k->scenes->addItem(scene->sceneName());
+
     }
 }
 

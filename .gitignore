@@ -7,6 +7,10 @@
 *.1
 *.dylib
 *.pro.user
+*.moc
+*.Debug
+*.Release
+moc_*
 
 bin/
 src/framework/tgui/qrc_tgui_images.cpp
@@ -27,6 +31,7 @@ tupiglobal.pri
 
 launcher/tupi
 launcher/tupi.desktop
+src/components/help/help/css/tupi.css
 
 3rdparty/Makefile
 3rdparty/potrace/Makefile

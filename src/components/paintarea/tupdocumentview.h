@@ -36,16 +36,39 @@
 #ifndef TUPDOCUMENTVIEW_H
 #define TUPDOCUMENTVIEW_H
 
+#include "tglobal.h"
 #include "tupdocumentruler.h"
 #include "tactionmanager.h"
 #include "tosd.h"
 #include "tupfilterinterface.h"
 #include "tuptoolinterface.h"
 #include "tupconfigurationarea.h"
-#include "tupglobal.h"
 #include "tupstoryboard.h"
 
 #include <QMainWindow>
+#include <QLayout>
+#include <QStatusBar>
+#include <QMenuBar>
+#include <QPixmap>
+#include <QActionGroup>
+#include <QDockWidget>
+#include <QTimer>
+#include <QApplication>
+#include <QCursor>
+#include <QAction>
+#include <QActionGroup>
+#include <QToolBar>
+#include <QMenu>
+#include <QDir>
+#include <QPluginLoader>
+#include <QSpinBox>
+#include <QFrame>
+#include <QGridLayout>
+#include <QComboBox>
+#include <QDesktopWidget>
+#include <QMessageBox>
+#include <QCamera>
+#include <QCameraImageCapture>
 
 class TupProjectRequest;
 class TupProject;
@@ -58,7 +81,7 @@ class TupProjectResponse;
  * @author Jorge Cuadrado
 */
 
-class TupDocumentView : public QMainWindow
+class TUPI_EXPORT TupDocumentView : public QMainWindow
 {
     Q_OBJECT
 
@@ -73,7 +96,7 @@ class TupDocumentView : public QMainWindow
         void setOpenGL(bool useIt);
 
         QPainter::RenderHints renderHints() const;
-        void setZoom(qreal factor);
+        void setZoomFactor(qreal factor);
 
         TupBrushManager *brushManager() const;
         TupPaintAreaCommand *createCommand(const TupPaintAreaEvent *event);
@@ -82,17 +105,19 @@ class TupDocumentView : public QMainWindow
         TupProject *project();
         int currentFramesTotal();
         int currentSceneIndex();
-        void setZoomView(const QString &percent);
+        void setZoomPercent(const QString &percent);
         void setRotationAngle(int angle);
         QSize workSpaceSize() const;
         void updateUsersOnLine(const QString &login, int state);
         void resizeProjectDimension(const QSize dimension);
+        void updatePerspective();
 
     private slots:
         void setNextOnionSkin(int n);
         void setPreviousOnionSkin(int n);
-        // void setZoomFactor(int porcent);
-        void updateScaleVars(double factor);
+        void updateZoomVars(qreal factor);
+        void applyZoomIn();
+        void applyZoomOut();
         void updateRotationVars(int angle);
         void changeRulerOrigin(const QPointF &zero);
         void saveTimer();
@@ -108,6 +133,7 @@ class TupDocumentView : public QMainWindow
         void fullScreenRightClick();
         void cameraInterface();
         void insertPictureInFrame(int id, const QString path);
+        void papagayoManager();
 
     private:
         struct Private;
@@ -115,7 +141,7 @@ class TupDocumentView : public QMainWindow
         void setupDrawActions();
         void createToolBar();
         void createMenu();
-        void createTools();
+        void createLateralToolBar();
         void updateRotationAngleFromRulers(int angle);
 
     private slots: 
@@ -135,7 +161,6 @@ class TupDocumentView : public QMainWindow
     private slots:
         void showPos(const QPointF &point);	
         void setCursor(const QCursor &cursor);
-        void updateZoomFactor(double factor);
         void selectToolFromMenu(QAction *action);
         void callAutoSave();
         void sendStoryboard(TupStoryboard *storyboard, int sceneIndex);
@@ -148,6 +173,9 @@ class TupDocumentView : public QMainWindow
         void drawGrid();
         void drawActionSafeArea();
         bool handleProjectResponse(TupProjectResponse *event);
+        void updateNodesScale(qreal factor);
+        void importPapagayoLipSync();
+        void resetWorkSpaceTransformations();
 
     signals:
         void requestTriggered(const TupProjectRequest *event);
@@ -163,7 +191,9 @@ class TupDocumentView : public QMainWindow
         void postStoryboard(int sceneIndex);
         // void projectHasChanged();
         void closePolyLine();
+        void closeLine();
         void projectSizeHasChanged(const QSize dimension);
+        void updateFPS(int fps);
 
     // protected:
     // void closeEvent(QCloseEvent *e);

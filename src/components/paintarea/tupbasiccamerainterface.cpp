@@ -34,18 +34,6 @@
  ***************************************************************************/
 
 #include "tupbasiccamerainterface.h"
-#include "tupapplication.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "talgorithm.h"
-#include "tosd.h"
-#include "tdebug.h"
-
-#include <QBoxLayout>
-#include <QIcon>
-#include <QDir>
-#include <QDesktopWidget>
-#include <QPushButton>
 
 struct TupBasicCameraInterface::Private
 {
@@ -63,7 +51,11 @@ TupBasicCameraInterface::TupBasicCameraInterface(const QString &title, QList<QBy
                                        const QSize cameraSize, int counter, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupBasicCameraInterface()]";
+        #else
            TINIT;
+        #endif
     #endif
 
     setWindowTitle(tr("Tupi Camera Manager") + " | " + tr("Current resolution:") + " " + title);
@@ -150,9 +142,16 @@ TupBasicCameraInterface::TupBasicCameraInterface(const QString &title, QList<QBy
         menuLayout->addWidget(devicesCombo);
     } 
 
+    QPushButton *exitButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "exit.png")), "");
+    exitButton->setIconSize(QSize(20, 20));
+    exitButton->setToolTip(tr("Close manager"));
+    exitButton->setShortcut(Qt::Key_Escape);
+    connect(exitButton, SIGNAL(clicked()), this, SLOT(close()));
+
     devicesCombo->setCurrentIndex(cameraIndex);
     menuLayout->addWidget(new TSeparator(Qt::Horizontal));
     menuLayout->addWidget(clickButton);
+    menuLayout->addWidget(exitButton);
     menuLayout->addStretch(2);
 
     connect(devicesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCameraDevice(int)));
@@ -169,7 +168,11 @@ TupBasicCameraInterface::TupBasicCameraInterface(const QString &title, QList<QBy
 TupBasicCameraInterface::~TupBasicCameraInterface()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupBasicCameraInterface()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -185,7 +188,12 @@ void TupBasicCameraInterface::closeEvent(QCloseEvent *event)
 
     if (! dir.rmdir(dir.absolutePath())) {
         #ifdef K_DEBUG
-               tError() << "TupBasicCameraInterface::closeEvent() - Fatal Error: Can't remove pictures directory -> " << dir.absolutePath();
+            QString msg = "TupBasicCameraInterface::closeEvent() - Fatal Error: Can't remove pictures directory -> " + dir.absolutePath();
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 
@@ -199,8 +207,14 @@ QString TupBasicCameraInterface::randomPath()
     QDir dir;
     if (!dir.mkdir(path)) {
         #ifdef K_DEBUG
-               tError() << "TupBasicCameraInterface::randomPath() - Fatal Error: Can't create pictures directory -> " << path;
+            QString msg = "TupBasicCameraInterface::randomPath() - Fatal Error: Can't create pictures directory -> " + path;
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
+
         path = "";
         TOsd::self()->display(tr("Error"), tr("Can't create pictures directory"), TOsd::Error);
     }

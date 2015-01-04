@@ -36,8 +36,8 @@
 #ifndef TUPITEMGROUP_H
 #define TUPITEMGROUP_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QGraphicsItemGroup>
 
@@ -45,10 +45,10 @@
  * @author Jorge Cuadrado
  **/
 
-class STORE_EXPORT TupItemGroup: public TupAbstractSerializable, public QGraphicsItemGroup
+class TUPI_EXPORT TupItemGroup: public TupAbstractSerializable, public QGraphicsItemGroup
 {
     public:
-        TupItemGroup(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupItemGroup(QGraphicsItem *parent = 0);
         ~TupItemGroup();
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;

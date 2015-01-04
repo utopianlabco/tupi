@@ -34,10 +34,6 @@
  ***************************************************************************/
 
 #include "tnodegroup.h"
-#include "tdebug.h"
-
-#include <QGraphicsPathItem>
-#include <QAbstractGraphicsShapeItem>
 
 struct TNodeGroup::Private
 {
@@ -54,7 +50,11 @@ struct TNodeGroup::Private
 TNodeGroup::TNodeGroup(QGraphicsItem *parent, QGraphicsScene *scene, GroupType type, int level): k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     k->parentItem = parent;
@@ -74,25 +74,37 @@ QGraphicsItem *TNodeGroup::parentItem()
 TNodeGroup::~TNodeGroup()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TNodeGroup()]";
+        #else
+            TEND;
+        #endif
     #endif
 
-    // clear();
     delete k;
 }
 
 void TNodeGroup::clear()
 {
-    // SQA: Check if exists a better way to clean nodes 
-    qDeleteAll(k->nodes);
+    // qDeleteAll(k->nodes);
 
+    foreach (TControlNode *node, k->nodes) {
+             if (node)
+                 k->scene->removeItem(node);
+    }
+
+    k->nodes.clear();
     k->parentItem->update();
 }
 
 void TNodeGroup::syncNodes(const QPainterPath &path)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::syncNodes()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->nodes.isEmpty())
@@ -109,7 +121,11 @@ void TNodeGroup::syncNodes(const QPainterPath &path)
 void TNodeGroup::syncNodesFromParent()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::syncNodesFromParent()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->parentItem) {
@@ -121,7 +137,11 @@ void TNodeGroup::syncNodesFromParent()
 void TNodeGroup::setParentItem(QGraphicsItem *newParent)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::setParentItem()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     k->parentItem = newParent;
@@ -133,9 +153,15 @@ void TNodeGroup::setParentItem(QGraphicsItem *newParent)
 
 void TNodeGroup::moveElementTo(int index, const QPointF& pos)
 {
+    /*
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::moveElementTo()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
+    */
 
     QPainterPath path = qgraphicsitem_cast<QGraphicsPathItem *>(k->parentItem)->path();
     path.setElementPositionAt(index, pos.x(), pos.y());
@@ -202,7 +228,11 @@ int TNodeGroup::removeSelectedNodes()
 void TNodeGroup::createNodes(QGraphicsPathItem *pathItem)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::createNodes()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (pathItem) {
@@ -267,7 +297,12 @@ void TNodeGroup::createNodes(QGraphicsPathItem *pathItem)
         }
     } else {
         #ifdef K_DEBUG
-               tError() << "TNodeGroup::createNodes() - Fatal Error: Item is NULL!";
+            QString msg = "TNodeGroup::createNodes() - Fatal Error: Item is NULL!";
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }
@@ -279,7 +314,11 @@ void TNodeGroup::addControlNode(TControlNode*)
 void TNodeGroup::emitNodeClicked(TControlNode::State state)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TNodeGroup::emitNodeClicked()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     /* SQA: Possible code for the future 
@@ -312,4 +351,12 @@ bool TNodeGroup::isSelected()
 int TNodeGroup::size()
 {
     return k->nodes.count();
+}
+
+void TNodeGroup::resizeNodes(qreal scaleFactor)
+{
+    foreach (TControlNode *node, k->nodes) {
+             if (node)
+                 node->resize(scaleFactor);
+    }
 }

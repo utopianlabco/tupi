@@ -37,6 +37,7 @@
 #define TXMLPARSERBASE_H
 
 #include "tglobal.h"
+
 #include <QXmlDefaultHandler>
 
 /**

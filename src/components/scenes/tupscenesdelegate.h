@@ -36,10 +36,14 @@
 #ifndef TUPSCENESDELEGATE_H
 #define TUPSCENESDELEGATE_H
 
+#include "tglobal.h"
+
+#include <QtGui>
+#include <QLineEdit>
 #include <QItemDelegate>
 #include <QRegExp>
 
-class TupScenesDelegate : public QItemDelegate
+class TUPI_EXPORT TupScenesDelegate : public QItemDelegate
 {
     Q_OBJECT
 

@@ -36,15 +36,18 @@
 #ifndef TUPLAYER_H
 #define TUPLAYER_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tupframe.h"
-#include "tupinthash.h"
-#include "tupglobal_store.h"
+#include "tuplipsync.h"
 
 #include <QDomDocument>
 #include <QDomElement>
+#include <QList>
+#include <QTextStream>
 
-typedef TupIntHash<TupFrame *> Frames;
+typedef QList<TupFrame *> Frames;
+typedef QList<TupLipSync *> Mouths;
 
 class TupScene;
 class TupProject;
@@ -54,7 +57,7 @@ class TupProject;
  * @author David Cuadrado 
 */
 
-class STORE_EXPORT TupLayer : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupLayer : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
 
@@ -127,23 +130,25 @@ class STORE_EXPORT TupLayer : public QObject, public TupAbstractSerializable
         bool expandFrame(int position, int size);
         
         TupFrame *frame(int position) const;
+
+        TupLipSync *createLipSync(const QString &name, const QString &soundFile, int initFrame);
+        void addLipSync(TupLipSync *lipsync);
+        int lipSyncCount();
+        Mouths lipSyncList();
+        bool removeLipSync(const QString &name);
         
         TupScene *scene() const;
         TupProject *project() const;
 
+        void updateLayerIndex(int index);
         int layerIndex();
         
-        //int logicalIndexOf(TupFrame *frame) const;
         int visualIndexOf(TupFrame *frame) const;
         
-        //int logicalIndex() const;
         int objectIndex() const;
 
         int framesTotal() const;
 
-        //void setZLevel(int level);
-        //int getZLevel();
-        
     public:
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;

@@ -44,6 +44,12 @@
 #include <QPaintEvent>
 #include <QTimer>
 #include <QTextDocument>
+#include <QApplication>
+#include <QBitmap>
+#include <QTimer>
+#include <QPainter>
+#include <QDesktopWidget>
+#include <QLinearGradient>
 
 /**
  * @author David Cuadrado

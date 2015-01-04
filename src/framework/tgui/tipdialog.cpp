@@ -34,20 +34,6 @@
  ***************************************************************************/
 
 #include "tipdialog.h"
-#include "tseparator.h"
-#include "tconfig.h"
-#include "tdebug.h"
-#include "tapplicationproperties.h"
-
-#include <QVBoxLayout>
-#include <QTextBrowser>
-#include <QTextFrame>
-#include <QTextFrameFormat>
-#include <QCheckBox>
-#include <QPushButton>
-#include <QDomDocument>
-#include <QFile>
-#include <QDir>
 
 TipDialog::TipDialog(QStringList &labels, const QString &file, QWidget *parent) : QDialog(parent)
 {
@@ -83,7 +69,12 @@ void TipDialog::setupGUI()
     textBrowser->setOpenExternalLinks(true);
 
     QStringList path;
-    QString resources = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
+#ifdef Q_OS_WIN32
+    QString resources = SHARE_DIR + "help" + QDir::separator();
+#else
+	QString resources = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
+#endif	
+
     path << resources + "css";
     path << resources + "images";
     textBrowser->setSearchPaths(path);

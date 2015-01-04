@@ -36,8 +36,16 @@
 #ifndef TUPCANVAS_H
 #define TUPCANVAS_H
 
+#include "tglobal.h"
+#include "tapplicationproperties.h"
+#include "tapplication.h"
 #include "tupgraphicsscene.h"
 #include "tupcanvasview.h"
+#include "tupexposuredialog.h"
+#include "tuptoolsdialog.h"
+#include "tuponionopacitydialog.h"
+#include "tuppendialog.h"
+#include "timagebutton.h"
 #include "tupbrushmanager.h"
 #include "tupprojectrequest.h"
 #include "tuprequestbuilder.h"
@@ -50,17 +58,31 @@
 #include <QColor>
 #include <QPen>
 #include <QStringList>
+#include <QDialog>
+#include <QBoxLayout>
+#include <QIcon>
+#include <QGraphicsView>
+#include <QColorDialog>
+#include <QToolBar>
+#include <QAction>
+#include <QSlider>
+#include <QLabel>
+#include <QFont>
+#include <QDesktopWidget>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QBuffer>
 
-class TupGraphicsScene;
+// class TupGraphicsScene;
 
-class TupCanvas : public QFrame
+class TUPI_EXPORT TupCanvas : public QFrame
 {
     Q_OBJECT
 
     public:
         TupCanvas(QWidget *parent=0, Qt::WindowFlags f=0, TupGraphicsScene *scene=0, 
                   const QPointF centerPoint = QPoint(0, 0) , const QSize &size = QSize(0, 0), 
-                  TupProject *project = 0, double scaleFactor = 1, int angle=0, 
+                  TupProject *project = 0, qreal scaleFactor = 1, int angle=0, 
                   TupBrushManager *brushManager = 0, bool isNetworked = false, const QStringList &onLineUsers = QStringList());
         ~TupCanvas();
         void updateCursor(const QCursor &cursor);
@@ -96,7 +118,7 @@ class TupCanvas : public QFrame
         void wakeUpDeleteSelection();
         void wakeUpZoomIn();
         void wakeUpZoomOut();
-        void wakeUpHand();
+        void wakeUpShift();
 
         void undo();
         void redo();
@@ -118,6 +140,7 @@ class TupCanvas : public QFrame
         void updateColorFromFullScreen(const QColor &color);
         void updatePenThicknessFromFullScreen(int size);
         void updateOnionOpacityFromFullScreen(double opacity);
+        void updateZoomFactorFromFullScreen(qreal factor);
         void callAction(int menu, int index);
         void goToFrame(int frame, int layer, int scene);
         void goToScene(int scene);

@@ -36,13 +36,15 @@
 #ifndef TUPITEMTWEENER_H
 #define TUPITEMTWEENER_H
 
+#include "tglobal.h"
 #include "tuptweenerstep.h"
-#include "tupglobal_store.h"
 
 #include <QObject>
 #include <QMatrix>
 #include <QPointF>
 #include <QColor>
+#include <QGraphicsItem>
+#include <QHash>
 
 class QGraphicsItem;
 class QGraphicsPathItem;
@@ -52,7 +54,7 @@ class QGraphicsPathItem;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupItemTweener : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupItemTweener : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
  
@@ -64,8 +66,10 @@ class STORE_EXPORT TupItemTweener : public QObject, public TupAbstractSerializab
              Shear = 3,
              Opacity = 4,
              Coloring = 5,
-             Compound = 6 
+             Compound = 6, 
+             Papagayo = 7
         };
+
         enum RotationType { Continuos = 0, Partial };
         enum RotateDirection { Clockwise = 0, Counterclockwise };
         enum TransformAxes { XY = 0, X, Y };

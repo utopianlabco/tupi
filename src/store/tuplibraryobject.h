@@ -36,11 +36,13 @@
 #ifndef TUPLIBRARYOBJECT_H
 #define TUPLIBRARYOBJECT_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QVariant>
 #include <QGraphicsItem>
+#include <QTemporaryFile>
+#include <QDir>
 
 class TupLibraryObject;
 
@@ -48,7 +50,7 @@ class TupLibraryObject;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializable
 {
     public:
         enum Type

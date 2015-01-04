@@ -33,26 +33,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include <QPainter>
-#include <QDialog>
-#include <QPushButton>
-#include <QApplication>
-#include <QFile>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QTextBrowser>
-#include <QtDebug>
-#include <QProcess>
-#include <signal.h>
-
 #include "tupcrashwidget.h"
-#include "tupcrashhandler.h"
 
-#include "tglobal.h"
-#include "tconfig.h"
-#include "tdebug.h"
-
-#include <unistd.h>
+#ifdef K_DEBUG
 
 class TextArea : public QTextBrowser
 {
@@ -150,9 +133,7 @@ void TupCrashWidget::setPid(int pid)
 
 void TupCrashWidget::addBacktracePage(const QString &execInfo, const QString &backtrace)
 {
-    #ifdef K_DEBUG
-        T_FUNCINFO << execInfo << " " << backtrace;
-    #endif
+    T_FUNCINFO << execInfo << " " << backtrace;
 
     QWidget *btPage = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(btPage);
@@ -183,10 +164,10 @@ void TupCrashWidget::restart()
 
    QString path = QString::fromLocal8Bit(::getenv("TUPI_BIN")) + "/tupi &";
    QByteArray ba = path.toLatin1();
+
    int flag = system(ba.data());
-   #ifdef K_DEBUG
-          tWarning() << "TupCrashWidget::restart() - System output: " << flag;
-   #endif
+   tWarning() << "TupCrashWidget::restart() - System output: " << flag;
+
    kill(m_pid, 9);
 }
 
@@ -194,4 +175,6 @@ void TupCrashWidget::exit()
 {
    kill(m_pid, 9);
 }
+
+#endif
 

@@ -34,17 +34,15 @@
  ***************************************************************************/
 
 #include "tupcamerabar.h"
-#include "tdebug.h"
-#include "tglobal.h"
 
-#include <QBoxLayout>
-
-
-TupCameraBar::TupCameraBar(QWidget *parent)
- : QFrame(parent)
+TupCameraBar::TupCameraBar(QWidget *parent) : QFrame(parent)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCameraBar()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
@@ -89,7 +87,11 @@ TupCameraBar::TupCameraBar(QWidget *parent)
 TupCameraBar::~TupCameraBar()
 {
     #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupCameraBar()]";
+        #else
            TEND;
+        #endif
     #endif
 }
 

@@ -36,17 +36,18 @@
 #ifndef TUPTWEENERSTEP_H
 #define TUPTWEENERSTEP_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QPointF>
 #include <QColor>
+#include <QVector>
 
 /**
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupTweenerStep : public TupAbstractSerializable
+class TUPI_EXPORT TupTweenerStep : public TupAbstractSerializable
 {
     public:
         enum Type {

@@ -34,10 +34,6 @@
  ***************************************************************************/
 
 #include "ticon.h"
-#include "tdebug.h"
-
-#include <qdrawutil.h>
-#include <QPainter>
 
 struct TIcon::Private
 {

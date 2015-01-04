@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tuppaletteparser.h"
-#include "tdebug.h"
 
 struct TupPaletteParser::Private
 {
@@ -54,17 +53,14 @@ struct TupPaletteParser::Private
 
 TupPaletteParser::TupPaletteParser(): TXmlParserBase(), k(new Private)
 {
-     // TINIT;
      k->paletteName = "";
      k->isEditable = false;
      k->gradient = 0;
 }
 
-
 TupPaletteParser::~TupPaletteParser()
 {
      delete k;
-     //	TEND;
 }
 
 bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
@@ -83,9 +79,14 @@ bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
                    if (c.isValid()) {
                        k->brushes << c;
                    } else {
-                    #ifdef K_DEBUG
-		           tError() << "Invalid Color";
-                    #endif
+                   #ifdef K_DEBUG
+                       QString msg = "TupPaletteParser::startTag() - Error: Invalid color!";
+                       #ifdef Q_OS_WIN32
+                           qDebug() << msg;
+                       #else
+                           tError() << msg;
+                       #endif
+                   #endif 					
                    }
         } else if (tag == "Gradient") {
                    if (k->gradient) 
@@ -121,7 +122,12 @@ bool TupPaletteParser::startTag(const QString &tag, const QXmlAttributes &atts)
                            default:
                              {
                                #ifdef K_DEBUG
-                                      tFatal() << "No gradient type: " << type;
+                                   QString msg = "TupPaletteParser::startTag() - No gradient type: " + QString::number(type);
+                                   #ifdef Q_OS_WIN32
+                                       qDebug() << msg;
+                                   #else
+                                       tFatal() << msg;
+                                   #endif
                                #endif
                              }
                            break;

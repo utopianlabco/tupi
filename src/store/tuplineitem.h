@@ -36,19 +36,19 @@
 #ifndef TUPLINEITEM_H 
 #define TUPLINEITEM_H 
 
-#include <QGraphicsLineItem>
-
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
+
+#include <QGraphicsLineItem>
 
 /**
     @author David Cuadrado
 */
 
-class STORE_EXPORT TupLineItem : public QGraphicsLineItem, public TupAbstractSerializable
+class TUPI_EXPORT TupLineItem : public QGraphicsLineItem, public TupAbstractSerializable
 {
     public:
-        TupLineItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupLineItem(QGraphicsItem *parent = 0);
         ~TupLineItem();
         
         virtual void fromXml(const QString &xml);

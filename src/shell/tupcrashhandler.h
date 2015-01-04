@@ -36,18 +36,35 @@
 #ifndef TUPCRASHHANDLER_H
 #define TUPCRASHHANDLER_H
 
+#ifdef K_DEBUG
+
 #include "tapplicationproperties.h"
+#include "tdebug.h"
+
+extern "C"
+{
+#include <sys/types.h> //pid_t
+#include <sys/wait.h>  //waitpid
+#include <unistd.h>    //write, getpid
+#include <stdio.h>
+}
 
 #include <QString>
 #include <QMap>
 #include <QColor>
 #include <QPair>
 #include <QImage>
+#include <QApplication>
+#include <QDomDocument>
+#include <QFile>
+#include <QTemporaryFile>
+#include <QProcess>
+#include <QTranslator>
+#include <QDesktopWidget>
 #include <csignal>
+#include <cstdio>
 
 class TupCrashHandler;
-
-#ifdef Q_OS_UNIX
 
 class TupCrashHandler
 {
@@ -93,11 +110,10 @@ class TupCrashHandler
         static TupCrashHandler *m_instance; // Singleton
         QString m_program;
         QString m_imagePath;
-        bool m_verbose;
+        // bool m_verbose;
 };
 
 #define CHANDLER TupCrashHandler::instance()
 
-#endif // Q_OS_UNIX
-
+#endif
 #endif

@@ -36,7 +36,7 @@
 #ifndef TUPPROJECTCOMMAND_H
 #define TUPPROJECTCOMMAND_H
 
-#include "tupglobal_store.h"
+#include "tglobal.h"
 
 #include <QUndoCommand>
 #include <QVariant>
@@ -51,7 +51,7 @@ class TupProjectResponse;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupProjectCommand : public QUndoCommand
+class TUPI_EXPORT TupProjectCommand : public QUndoCommand
 {
     public:
         TupProjectCommand(TupCommandExecutor *executor, const TupProjectRequest *event);

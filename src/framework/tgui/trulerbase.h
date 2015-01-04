@@ -33,8 +33,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef RULER_H
-#define RULER_H
+#ifndef RULERBASE_H
+#define RULERBASE_H
 
 #include "tglobal.h"
 
@@ -44,6 +44,7 @@
 #include <QMenu>
 #include <QPolygonF>
 #include <QFrame>
+#include <QPainter>
 
 #define UNITCOUNT 5
 

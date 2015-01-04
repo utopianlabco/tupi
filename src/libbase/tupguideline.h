@@ -36,8 +36,15 @@
 #ifndef TUPLINEGUIDE_H
 #define TUPLINEGUIDE_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
+
 #include <QGraphicsItem>
+#include <QGraphicsScene>
+#include <QPainter>
+#include <QCursor>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QApplication>
 
 /**
  * @author Jorge Cuadrado
@@ -46,7 +53,7 @@
 class TUPI_EXPORT TupLineGuide : public QGraphicsItem
 {
     public:
-        TupLineGuide(Qt::Orientation o, QGraphicsScene *scene);
+        TupLineGuide(Qt::Orientation orientation);
         ~TupLineGuide();
         
         QRectF boundingRect() const;

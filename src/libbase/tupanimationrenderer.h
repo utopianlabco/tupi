@@ -36,20 +36,24 @@
 #ifndef TUPANIMATIONRENDERER_H
 #define TUPANIMATIONRENDERER_H
 
+#include "tglobal.h"
+
 #include <QColor>
 #include <QSize>
+#include <QPainter>
 
 class QPainter;
 class TupScene;
+class TupLibrary;
 
 /**
  * @author David Cuadrado
 */
 
-class TupAnimationRenderer
+class TUPI_EXPORT TupAnimationRenderer
 {
     public:
-        TupAnimationRenderer(const QColor color);
+        TupAnimationRenderer(const QColor color, TupLibrary *library);
         ~TupAnimationRenderer();
 
         void setScene(TupScene *scene, QSize dimension);

@@ -35,8 +35,6 @@
 
 #include "txmlparserbase.h"
 
-#include "tdebug.h"
-
 struct TXmlParserBase::Private
 {
     QString currentTag;
@@ -116,16 +114,34 @@ bool TXmlParserBase::characters(const QString & ch)
 
 bool TXmlParserBase::error(const QXmlParseException & exception)
 {
-    tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-    tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+#ifdef K_DEBUG	
+    #ifdef Q_OS_WIN32
+        qWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        qWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+    #else
+        tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+    #endif
+#else
+     Q_UNUSED(exception);
+#endif
 
     return true;
 }
 
 bool TXmlParserBase::fatalError(const QXmlParseException & exception)
 {
-    tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-    tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+#ifdef K_DEBUG
+    #ifdef Q_OS_WIN32
+        qWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        qWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+    #else
+        tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+    #endif
+#else
+     Q_UNUSED(exception);
+#endif
 
     return true;
 }
@@ -169,7 +185,15 @@ bool TXmlParserBase::parse(QFile *file)
 {
     if (!file->isOpen()) {
         if (! file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-            tWarning() << "Cannot open file " << file->fileName();
+#ifdef K_DEBUG
+            QString msg = "TXmlParserBase::parse() - Error: Cannot open file -> " + file->fileName();
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+#endif
+
             return false;
         }
     }

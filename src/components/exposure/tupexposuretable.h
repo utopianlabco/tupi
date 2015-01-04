@@ -36,16 +36,29 @@
 #ifndef TUPEXPOSURETABLE_H
 #define TUPEXPOSURETABLE_H
 
+#include "tglobal.h"
+#include "tupexposureheader.h"
+
 #include <QTableWidget>
+#include <QPainter>
+#include <QItemDelegate>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QMenu>
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QLineEdit>
+
+#include <cmath>
 
 class TupExposureVerticalHeader;
-class QMenu;
+// class QMenu;
 
 /**
  * @author Jorge Cuadrado
 */
 
-class TupExposureTable : public QTableWidget
+class TUPI_EXPORT TupExposureTable : public QTableWidget
 {
     Q_OBJECT
 
@@ -67,13 +80,13 @@ class TupExposureTable : public QTableWidget
           UsedWithTween
         };
 
-        TupExposureTable(QWidget * parent = 0);
+        TupExposureTable(QWidget *parent = 0);
         ~TupExposureTable();
 
         int currentLayer() const;
         int currentFrame() const;
-        void insertLayer(int index, const QString & name);
-        void insertFrame(int layerIndex, int frameIndex, const QString & name, bool external);
+        void insertLayer(int index, const QString &name);
+        void insertFrame(int layerIndex, int frameIndex, const QString &name, bool external);
         void removeLayer(int layerIndex);
         void removeFrame(int layerIndex, int frameIndex, bool fromMenu);
         void exchangeFrame(int oldPosLayer, int oldPosFrame, int newPosLayer, int newPosFrame, bool external);
@@ -81,7 +94,7 @@ class TupExposureTable : public QTableWidget
 
         void setLockFrame(int layerIndex, int frameIndex, bool locked);
         void setLockLayer(int layerIndex,  bool locked);
-        void setVisibilityChanged(int visualIndex, bool visibility);
+        void setLayerVisibility(int visualIndex, bool visibility);
         int usedFrames(int column) const;
 
         QString frameName(int layerIndex, int frameIndex);
@@ -95,41 +108,41 @@ class TupExposureTable : public QTableWidget
         int framesTotalAtCurrentLayer();
 
         void setMenu(QMenu *menu);
-        void emitCellClicked(int frame, int layer);
+        void notifyCellClicked(int frame, int layer);
         void reset();
 
         TupExposureTable::FrameType frameState(int layerIndex, int frameIndex);
         void updateFrameState(int layerIndex, int frameIndex, TupExposureTable::FrameType value);
 		
-    private:
-        struct Private;
-        Private *const k;
-
     private slots:
-        void emitRequestSetUsedFrame(int frameIndex,  int layerIndex);
-        void emitRequestRenameFrame(QTableWidgetItem * item);
-        void emitRequestSelectFrame(int currentRow, int currentColumn, int previousRow, int previousColumn);
-        void emitRequestMoveLayer(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+        void markUsedFrames(int frameIndex,  int layerIndex);
+        void requestFrameRenaming(QTableWidgetItem *item);
+        void requestFrameSelection(int currentRow, int currentColumn, int previousRow, int previousColumn);
+        void requestLayerMove(int logicalIndex, int oldVisualIndex, int newVisualIndex);
         void updateLayerSelection(int layerIndex);
 
     protected:
-        bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event);
-        void mousePressEvent(QMouseEvent * event);
-        void keyPressEvent(QKeyEvent * event);
+        bool edit(const QModelIndex & index, EditTrigger trigger, QEvent *event);
+        void mousePressEvent(QMouseEvent *event);
+        void keyPressEvent(QKeyEvent *event);
         void enterEvent(QEvent *event);
         void leaveEvent(QEvent *event);
 
     protected slots:
-        void commitData(QWidget * editor);
+        void commitData(QWidget *editor);
 
     signals:
-        void requestSetUsedFrame(int layerIndex, int frameIndex);
-        void requestRenameFrame(int layerIndex, int frameIndex,const QString & name);
-        void requestSelectFrame(int layerIndex, int frameIndex);
+        void frameUsed(int layerIndex, int frameIndex);
+        void frameRenamed(int layerIndex, int frameIndex,const QString & name);
+        void frameSelected(int layerIndex, int frameIndex);
 
-        void requestRenameLayer(int layerIndex, const QString & name);
-        void requestMoveLayer(int oldIndex, int newIndex);
-        void requestChangeVisibilityLayer(int visualIndexLayer, bool visibility);
+        void layerNameChanged(int layerIndex, const QString & name);
+        void layerMoved(int oldIndex, int newIndex);
+        void layerVisibilityChanged(int visualIndexLayer, bool visibility);
+
+    private:
+        struct Private;
+        Private *const k;
 };
 
 #endif

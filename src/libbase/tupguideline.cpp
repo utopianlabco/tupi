@@ -35,23 +35,15 @@
 
 #include "tupguideline.h"
 
-#include <QGraphicsScene>
-#include <QPainter>
-#include <QCursor>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsView>
-#include <QDebug>
-#include <QApplication>
-
 struct TupLineGuide::Private
 {
     Qt::Orientation orientation;
     bool enabled;
 };
 
-TupLineGuide::TupLineGuide(Qt::Orientation o ,QGraphicsScene *scene): QGraphicsItem(0, scene), k(new Private)
+TupLineGuide::TupLineGuide(Qt::Orientation orientation): QGraphicsItem(0), k(new Private)
 {
-    k->orientation = o;
+    k->orientation = orientation;
     k->enabled = true;
     // setAcceptsHoverEvents(true);
     // setAcceptedMouseButtons(0);

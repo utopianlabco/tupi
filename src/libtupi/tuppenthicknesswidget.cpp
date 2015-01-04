@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tuppenthicknesswidget.h"
-#include "tdebug.h"
 
 struct TupPenThicknessWidget::Private
 {
@@ -104,7 +103,8 @@ void TupPenThicknessWidget::paintEvent(QPaintEvent *)
      painter.fillRect(0, 0, width(), height(), QColor(255, 255, 255));
 
      QPen border(QColor(0, 0, 0));
-     border.setWidth(0.5);
+     // border.setWidth(0.5);
+     border.setWidth(1);
      painter.setPen(border);
      painter.drawRect(0, 0, width(), height());
 
@@ -123,7 +123,15 @@ void TupPenThicknessWidget::paintEvent(QPaintEvent *)
                  // tFatal() << "TupPenThicknessWidget::paintEvent() - Setting gradient brush";
                  brush = k->currentBrush;
              } else {
-                 // tFatal() << "TupPenThicknessWidget::paintEvent() - Warning! NO gradient!";
+                #ifdef K_DEBUG
+                    QString msg = "TupPenThicknessWidget::paintEvent() - Warning! NO gradient!";
+                    #ifdef Q_OS_WIN32
+                        qDebug() << msg;
+                    #else
+                        tError() << msg;
+                    #endif
+                #endif
+                return;
              }
          }
          QPen pen(Qt::NoPen);

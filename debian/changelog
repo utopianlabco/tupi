@@ -1,3 +1,31 @@
+tupi (0.2+git05-1) experimental; urgency=low
+
+  * New upstream release [December 2014].
+  * Build-Depends:
+    - pkg-config
+    - qtmobility-dev
+    - qt4-linguist-tools
+    + qttools5-dev-tools
+    + qt4-qmake
+    + qt5-qmake
+    + qtmultimedia5-dev
+    - libqt4-opengl-dev
+    + libqt5opengl5-dev
+    + libqt5svg5-dev
+    - libquazip-dev
+    + libquazip-qt5-dev
+  * Build with "--without-debug"; added new patch to enable verbose build.
+  * Do not inject "-Wl,--as-needed" to LDFLAGS.
+  * Added new patch to disable defective libquazip detection.
+  * Standards-Version: 3.9.6.
+  * Updated Vcs-Browser URL.
+  * Updated "debian/watch" file.
+  * Updated link to new upstream repository.
+  * tupi-data: new lintian-override for "extra-license-file".
+  * "debian/rules": --parallel build; minor cleanup; override_dh_fixperms.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 04 Jan 2015 18:42:38 +1100
+
 tupi (0.2+git04-2) unstable; urgency=low
 
   * Dropped "/usr/share/tupi/doc" symlink to fix binNMU (Closes: #748304);

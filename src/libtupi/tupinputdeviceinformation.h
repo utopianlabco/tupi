@@ -36,10 +36,13 @@
 #ifndef TUPINPUTDEVICEINFORMATION_H
 #define TUPINPUTDEVICEINFORMATION_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
 
 #include <QObject>
 #include <QPoint>
+#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
+#include <QTabletEvent>
 
 class QGraphicsSceneMouseEvent;
 class QMouseEvent;

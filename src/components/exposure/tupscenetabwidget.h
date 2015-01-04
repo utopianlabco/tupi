@@ -44,6 +44,9 @@
 #include <QList>
 #include <QLabel>
 #include <QFrame>
+#include <QWheelEvent>
+#include <QTabBar>
+#include <QVBoxLayout>
 
 /**
  * @author Gustav Gonzalez 
