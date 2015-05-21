@@ -1,3 +1,9 @@
+tupi (0.2+git05-3) unstable; urgency=medium
+
+  * Upload to unstable (Closes: #786337).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 21 May 2015 14:54:58 +1000
+
 tupi (0.2+git05-2) experimental; urgency=low
 
   * override_dh_fixperms: check if -data package is built to fix
@@ -13,7 +19,7 @@ tupi (0.2+git05-1) experimental; urgency=low
     - qtmobility-dev
     - qt4-linguist-tools
     + qttools5-dev-tools
-    + qt4-qmake
+    - qt4-qmake
     + qt5-qmake
     + qtmultimedia5-dev
     - libqt4-opengl-dev
