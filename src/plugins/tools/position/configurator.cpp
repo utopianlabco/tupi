@@ -34,8 +34,6 @@
  ***************************************************************************/
 
 #include "configurator.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
 #include "tweenmanager.h"
 #include "buttonspanel.h"
 #include "tupitemtweener.h"
@@ -79,13 +77,16 @@ Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QLabel *toolTitle = new QLabel;
-    toolTitle->setAlignment(Qt::AlignHCenter);
-    QPixmap pic(THEME_DIR + "icons/position_tween.png");
-    toolTitle->setPixmap(pic.scaledToWidth(20, Qt::SmoothTransformation));
-    toolTitle->setToolTip(tr("Position Tween Properties"));
-    k->layout->addWidget(toolTitle);
-    k->layout->addWidget(new TSeparator(Qt::Horizontal));
+    QLabel *title = new QLabel(tr("Position Tween"));
+    title->setAlignment(Qt::AlignHCenter);
+
+#ifndef Q_OS_MAC 
+    QFont font = this->font();
+    font.setPointSize(8);
+    title->setFont(font);
+#endif
+
+    k->layout->addWidget(title);
 
     k->settingsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     k->settingsLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -108,7 +109,7 @@ Configurator::~Configurator()
 void Configurator::loadTweenList(QList<QString> tweenList)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Configurator::loadTweenList()]";
         #else
             T_FUNCINFO;
@@ -132,9 +133,6 @@ void Configurator::setPropertiesPanel()
     connect(k->settingsPanel, SIGNAL(clickedApplyTween()), this, SLOT(applyItem()));
     connect(k->settingsPanel, SIGNAL(clickedResetTween()), this, SLOT(closeTweenProperties()));
 
-    connect(k->settingsPanel, SIGNAL(framesTotalChanged()), this, SIGNAL(framesTotalChanged()));
-
-
     k->settingsLayout->addWidget(k->settingsPanel);
 
     activePropertiesPanel(false);
@@ -142,12 +140,10 @@ void Configurator::setPropertiesPanel()
 
 void Configurator::activePropertiesPanel(bool enable)
 {
-    if (enable) {
+    if (enable)
         k->settingsPanel->show();
-    } else {
-        k->settingsPanel->clearData();
+    else
         k->settingsPanel->hide();
-    }
 }
 
 void Configurator::setTweenManagerPanel()
@@ -232,19 +228,14 @@ int Configurator::totalSteps()
     return k->settingsPanel->totalSteps();
 }
 
-QList<QPointF> Configurator::tweenPoints()
-{
-    return k->settingsPanel->tweenPoints();
-}
-
 void Configurator::activateMode(TupToolPlugin::EditMode mode)
 {
     k->settingsPanel->activateMode(mode);
 }
 
-void Configurator::clearData()
+void Configurator::cleanData()
 {
-    k->settingsPanel->clearData();
+    k->settingsPanel->cleanData();
 }
 
 void Configurator::addTween(const QString &name)
@@ -278,7 +269,7 @@ void Configurator::editTween()
 void Configurator::closeTweenProperties()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Configurator::closeTweenProperties()]";
         #else
             T_FUNCINFO;
@@ -329,7 +320,7 @@ void Configurator::notifySelection(bool flag)
 void Configurator::closeSettingsPanel()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Configurator::closeSettingsPanel()]";
         #else
             T_FUNCINFO;
@@ -358,7 +349,7 @@ void Configurator::applyItem()
 void Configurator::resetUI()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Configurator::resetUI()]";
         #else
             T_FUNCINFO;

@@ -1,7 +1,4 @@
 QT += opengl core gui svg xml network
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupicomposedtool
 
 unix {
     !include(../../../../tupiglobal.pri){
@@ -28,6 +25,10 @@ SOURCES += tweener.cpp \
            tweenerpanel.cpp \
            tweenertable.cpp \
            positionsettings.cpp
+
+CONFIG += plugin warn_on
+TEMPLATE = lib
+TARGET = tupicomposedtool
 
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

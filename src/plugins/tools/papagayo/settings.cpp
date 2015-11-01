@@ -54,11 +54,6 @@ struct Settings::Private
 
     QTextEdit *textArea;
 
-    // QString phoneme;
-    QLabel *phonemeLabel;
-    QSpinBox *xPosField;
-    QSpinBox *yPosField;
-
     QString name;
     int initFrame;
     int framesCount;
@@ -84,8 +79,19 @@ void Settings::setInnerForm()
     QBoxLayout *innerLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->innerPanel);
     innerLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
+#ifndef Q_OS_MAC 
+    QFont font = this->font();
+    font.setPointSize(8);
+    setFont(font);
+#endif
+
     QLabel *nameLabel = new QLabel(tr("Editing") + ": ");
     k->lipSyncName = new QLabel;
+
+#ifndef Q_OS_MAC
+    font.setBold(true);
+    k->lipSyncName->setFont(font);
+#endif
 
     QHBoxLayout *nameLayout = new QHBoxLayout;
     nameLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -151,48 +157,10 @@ void Settings::setInnerForm()
     listLayout->addWidget(mouthsLabel);
     listLayout->addWidget(k->mouthsList);
 
-    QLabel *textLabel = new QLabel(tr("Text") + ": ");
-    textLabel->setAlignment(Qt::AlignHCenter);
-
     k->textArea = new QTextEdit;
     k->textArea->setReadOnly(true);
 
-    // k->phonemeLabel = new QLabel(tr("Current Phoneme") + ": " + k->phoneme);
-    k->phonemeLabel = new QLabel;
-    k->phonemeLabel->setAlignment(Qt::AlignHCenter);
-
-    QLabel *mouthPosLabel = new QLabel(tr("Current Mouth Position") + ": ");
-    mouthPosLabel->setAlignment(Qt::AlignHCenter);
-
-    QLabel *xLabel = new QLabel(tr("X") + ": ");
-    xLabel->setMaximumWidth(20);
-
-    k->xPosField = new QSpinBox;
-    k->xPosField->setMinimum(-5000);
-    k->xPosField->setMaximum(5000);
-    connect(k->xPosField, SIGNAL(valueChanged(int)), this, SIGNAL(xPosChanged(int)));
-
-    QLabel *yLabel = new QLabel(tr("Y") + ": ");
-    yLabel->setMaximumWidth(20);
-
-    k->yPosField = new QSpinBox;
-    k->yPosField->setMinimum(-5000);
-    k->yPosField->setMaximum(5000);
-    connect(k->yPosField, SIGNAL(valueChanged(int)), this, SIGNAL(yPosChanged(int)));
-
-    QBoxLayout *xLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-    xLayout->setMargin(0);
-    xLayout->setSpacing(0);
-    xLayout->addWidget(xLabel);
-    xLayout->addWidget(k->xPosField);
-
-    QBoxLayout *yLayout = new QBoxLayout(QBoxLayout::LeftToRight);
-    yLayout->setMargin(0);
-    yLayout->setSpacing(0);
-    yLayout->addWidget(yLabel);
-    yLayout->addWidget(k->yPosField);
-
-    TImageButton *remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"), 22);
+    TImageButton *remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"), 22);
     remove->setToolTip(tr("Close properties"));
     connect(remove, SIGNAL(clicked()), this, SIGNAL(closeLipSyncProperties()));
 
@@ -208,13 +176,7 @@ void Settings::setInnerForm()
     innerLayout->addLayout(endLayout);
     innerLayout->addLayout(totalLayout);
     innerLayout->addLayout(listLayout);
-    innerLayout->addWidget(textLabel);
     innerLayout->addWidget(k->textArea);
-    innerLayout->addWidget(k->phonemeLabel);
-    innerLayout->addWidget(mouthPosLabel);
-    innerLayout->addLayout(xLayout);
-    innerLayout->addLayout(yLayout);
-
     innerLayout->addSpacing(10);
     innerLayout->addLayout(buttonsLayout);
     innerLayout->addSpacing(5);
@@ -248,6 +210,11 @@ void Settings::openLipSyncProperties(TupLipSync *lipsync)
     if (total > 0) {
         for (int i=0; i < total; i++) {
              QListWidgetItem *item = new QListWidgetItem(k->mouthsList);
+#ifndef Q_OS_MAC
+             QFont font = font();
+             font.setPointSize(8);
+             item->setFont(font);
+#endif
              item->setText(tr("mouth") + "_" + QString::number(i));
              item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         }
@@ -285,24 +252,4 @@ void Settings::updateInterfaceRecords()
 {
     int endIndex = k->initFrame + k->framesCount;
     k->endingLabel->setText(tr("Ending at frame") + ": " + QString::number(endIndex));
-}
-
-void Settings::setPos(const QPointF &point) 
-{
-    qreal x = point.x();
-    qreal y = point.y();
-
-    k->xPosField->blockSignals(true);
-    k->yPosField->blockSignals(true);
-
-    k->xPosField->setValue(x);
-    k->yPosField->setValue(y);
-
-    k->xPosField->blockSignals(false);
-    k->yPosField->blockSignals(false);
-}
-
-void Settings::setPhoneme(const QString &phoneme)
-{
-    k->phonemeLabel->setText(tr("Current Phoneme") + ": " + "<b>" + phoneme + "</b>");
 }

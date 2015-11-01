@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tuppapagayodialog.h"
-#include "tconfig.h"
 
 struct TupPapagayoDialog::Private
 {
@@ -54,13 +53,13 @@ TupPapagayoDialog::TupPapagayoDialog() : QDialog(), k(new Private)
     QVBoxLayout *buttonsLayout = new QVBoxLayout;
     QVBoxLayout *textLayout = new QVBoxLayout;
 
-    QPushButton *fileButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/papagayo.png")), " " + tr("&Load PGO File"), this); 
+    QPushButton *fileButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "papagayo.png")), " " + tr("&Load PGO File"), this); 
     connect(fileButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
 
-    QPushButton *imagesButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/bitmap_array.png")), " " + tr("Load &Images"), this);
+    QPushButton *imagesButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "bitmap_array.png")), " " + tr("Load &Images"), this);
     connect(imagesButton, SIGNAL(clicked()), this, SLOT(openImagesDialog()));
 
-    QPushButton *soundButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/bitmap_array.png")), " " + tr("Load &Sound"), this);
+    QPushButton *soundButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "bitmap_array.png")), " " + tr("Load &Sound"), this);
     connect(soundButton, SIGNAL(clicked()), this, SLOT(openSoundDialog()));
 
     buttonsLayout->addWidget(fileButton);
@@ -98,38 +97,21 @@ TupPapagayoDialog::~TupPapagayoDialog()
 
 void TupPapagayoDialog::openFileDialog()
 {
-    TCONFIG->beginGroup("General");
-    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
-    QString file = QFileDialog::getOpenFileName(this, tr("Load Papagayo project"), path, tr("Papagayo Project (*.pgo)"));
-
-    if (!file.isEmpty()) {
-        k->filePath->setText(file);
-        setDefaultPath(file);
-    }
+    QString file = QFileDialog::getOpenFileName(this, tr("Load Papagayo project"), QDir::homePath(), tr("Papagayo Project (*.pgo)"));
+    k->filePath->setText(file);
 }
 
 void TupPapagayoDialog::openImagesDialog()
 {
-    TCONFIG->beginGroup("General");
-    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose the images directory..."), path, 
-                                                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if (!dir.isEmpty()) {
-        k->imagesPath->setText(dir);
-        saveDefaultPath(dir);
-    }
+    QString path = QFileDialog::getExistingDirectory(this, tr("Choose the images directory..."), getenv("HOME"), 
+                                                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    k->imagesPath->setText(path);
 }
 
 void TupPapagayoDialog::openSoundDialog()
 {
-    TCONFIG->beginGroup("General");
-    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
-    QString file = QFileDialog::getOpenFileName(this, tr("Load sound file"), path, tr("Sound file (*.ogg *.wav *.mp3)"));
-
-    if (!file.isEmpty()) {
-        k->soundPath->setText(file);
-        setDefaultPath(file);
-    }
+    QString file = QFileDialog::getOpenFileName(this, tr("Load sound file"), QDir::homePath(), tr("Sound file (*.ogg *.wav *.mp3)"));
+    k->soundPath->setText(file);
 }
 
 void TupPapagayoDialog::checkRecords()
@@ -167,16 +149,3 @@ QString TupPapagayoDialog::getSoundFile() const
     return k->soundPath->text();
 }
 
-void TupPapagayoDialog::setDefaultPath(const QString &path)
-{
-    int last = path.lastIndexOf("/");
-    QString dir = path.left(last);
-    saveDefaultPath(dir);
-}
-
-void TupPapagayoDialog::saveDefaultPath(const QString &dir)
-{
-    TCONFIG->beginGroup("General");
-    TCONFIG->setValue("DefaultPath", dir);
-    TCONFIG->sync();
-}

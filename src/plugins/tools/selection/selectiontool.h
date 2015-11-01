@@ -93,14 +93,12 @@ class TUPI_PLUGIN SelectionTool : public TupToolPlugin
 
         void resizeNodes(qreal scaleFactor);
         void updateZoomFactor(qreal scaleFactor);
-        void clearSelection();
 
     signals:
         void closeHugeCanvas();
         void callForPlugin(int menu, int index);
 
     private slots:
-        void initItems(TupGraphicsScene *scene);
         void syncNodes();
         void applyFlip(Settings::Flip flip);
         void applyOrderAction(Settings::Order order);
@@ -110,11 +108,10 @@ class TUPI_PLUGIN SelectionTool : public TupToolPlugin
     private:
         void setupActions();
         bool selectionIsActive();
+        void reset(TupGraphicsScene *scene);
         void updateItemPosition();
-        void removeTarget();
         TupFrame* currentFrame();
         TupFrame* frameAt(int sceneIndex, int layerIndex, int frameIndex);
-        void requestTransformation(QGraphicsItem *item, TupFrame *frame);
 
         struct Private;
         Private *const k;

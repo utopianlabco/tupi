@@ -1,7 +1,4 @@
 QT += opengl core gui svg xml network
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupipenciltool
 
 unix {
     !include(../../../../tupiglobal.pri){
@@ -18,9 +15,12 @@ target.path = /plugins/
 
 HEADERS += penciltool.h \
            settings.h
-
 SOURCES += penciltool.cpp \
            settings.cpp
+
+CONFIG += plugin warn_on
+TEMPLATE = lib 
+TARGET = tupipenciltool
 
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

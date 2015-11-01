@@ -34,64 +34,47 @@
  ***************************************************************************/
 
 #include "configurator.h"
-#include "tconfig.h"
-
-#include <QLabel>
-#include <QBoxLayout>
 
 Configurator::Configurator(QWidget *parent) :QWidget(parent)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Configurator()]";
         #else
             TINIT;
         #endif
     #endif
 
-    QFont titleFont = font(); 
-    titleFont.setBold(true);
-
-    TCONFIG->beginGroup("InkTool");
-    double spacing = TCONFIG->value("DotsSpacing", 5).toInt();
-    double tolerance = TCONFIG->value("Tolerance", 5).toInt();
-    double smoothness = TCONFIG->value("Smoothness", 4.0).toDouble();
-    bool border = TCONFIG->value("ShowBorder", true).toBool();
-    bool borderSize = TCONFIG->value("BorderSize", 1).toInt();
-
     QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    QBoxLayout *borderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    QLabel *borderLabel = new QLabel(tr("Border"));
-    borderLabel->setFont(titleFont);
-    borderLabel->setAlignment(Qt::AlignHCenter);
-    borderLayout->addWidget(borderLabel);
-    mainLayout->addLayout(borderLayout);
+    /*
+    QTextEdit *textArea = new QTextEdit; 
+    textArea->setFixedHeight(170);
+    textArea->setHtml("<p>" + tr("This tool is just a <b>proof-of-concept</b> of the basic algorithm for the Tupi's free-tracing vectorial brushes") + "</p>"); 
+    mainLayout->addWidget(textArea);
+    */
 
-    borderOption = new QCheckBox(tr("Show border line"));
-    borderOption->setChecked(border);
-    mainLayout->addWidget(borderOption);
+    QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom);
+    QLabel *label = new QLabel(tr("Parameters"));
+    label->setAlignment(Qt::AlignHCenter);
+    layout->addWidget(label);
+    mainLayout->addLayout(layout);
 
-    QBoxLayout *borderSizeLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    QLabel *borderSizeLabel = new QLabel(tr("Border Size"));
-    borderSizeLabel->setAlignment(Qt::AlignHCenter);
-    borderSizeLayout->addWidget(borderSizeLabel);
+    /*
+    QBoxLayout *structureLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    QLabel *structureLabel = new QLabel(tr("Structure"));
+    structureLabel->setAlignment(Qt::AlignHCenter);
+    structureLayout->addWidget(structureLabel);
 
-    borderSizeBox = new QSpinBox();
-    borderSizeBox->setSingleStep(1);
-    borderSizeBox->setMinimum(1);
-    borderSizeBox->setMaximum(10);
-    borderSizeBox->setValue(borderSize);
-    borderSizeLayout->addWidget(borderSizeBox);
+    structureCombo = new QComboBox();
+    structureCombo->addItem(tr("Basic"));
+    structureCombo->addItem(tr("Axial"));
+    structureCombo->addItem(tr("Organic"));
+    structureCombo->setCurrentIndex(2);
+    structureLayout->addWidget(structureCombo);
 
-    mainLayout->addLayout(borderSizeLayout);
-
-    QBoxLayout *paramsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    QLabel *paramsLabel = new QLabel(tr("Parameters"));
-    paramsLabel->setFont(titleFont);
-    paramsLabel->setAlignment(Qt::AlignHCenter);
-    paramsLayout->addWidget(paramsLabel);
-    mainLayout->addLayout(paramsLayout);
+    mainLayout->addLayout(structureLayout);
+    */
 
     QBoxLayout *spaceLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     QLabel *spaceLabel = new QLabel(tr("Dot Spacing"));
@@ -102,7 +85,7 @@ Configurator::Configurator(QWidget *parent) :QWidget(parent)
     spacingBox->setSingleStep(1);
     spacingBox->setMinimum(1);
     spacingBox->setMaximum(10);
-    spacingBox->setValue(spacing);
+    spacingBox->setValue(5);
     spaceLayout->addWidget(spacingBox);
 
     connect(spacingBox, SIGNAL(valueChanged(int)), this, SIGNAL(updateSpacing(int)));
@@ -118,12 +101,21 @@ Configurator::Configurator(QWidget *parent) :QWidget(parent)
     sizeBox->setSingleStep(10);
     sizeBox->setMinimum(0);
     sizeBox->setMaximum(200);
-    sizeBox->setValue(tolerance);
+    sizeBox->setValue(50);
     sizeLayout->addWidget(sizeBox);
 
     connect(sizeBox, SIGNAL(valueChanged(int)), this, SIGNAL(updateSizeTolerance(int)));
 
     mainLayout->addLayout(sizeLayout);
+
+    /*
+    QBoxLayout *checkLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    checkBox = new QCheckBox(tr("Run simulation"));
+    checkBox->setChecked(true);
+    checkLayout->addWidget(checkBox);
+    connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(updateInterface(int)));
+    mainLayout->addLayout(checkLayout);
+    */
 
     QBoxLayout *smoothLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     QLabel *smoothLabel = new QLabel(tr("Smoothness"));
@@ -131,19 +123,27 @@ Configurator::Configurator(QWidget *parent) :QWidget(parent)
     smoothLayout->addWidget(smoothLabel);
     smoothBox = new QDoubleSpinBox();
 
-    smoothBox->setValue(smoothness);
+    smoothBox->setValue(4.0);
     smoothBox->setDecimals(2);
     smoothBox->setSingleStep(0.1);
-    smoothBox->setMinimum(0);
-    smoothBox->setMaximum(20);
+    smoothBox->setMaximum(100);
     smoothLayout->addWidget(smoothBox);
 
     mainLayout->addLayout(smoothLayout);
+    // smoothBox->setDisabled(true);
+
     mainLayout->addStretch(2);
 }
 
 Configurator::~Configurator()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~Configurator()]";
+        #else
+            TEND;
+        #endif
+    #endif
 }
 
 int Configurator::spacingValue()
@@ -156,17 +156,32 @@ qreal Configurator::sizeToleranceValue()
     return sizeBox->value();
 }
 
+/*
+bool Configurator::runSimulation()
+{
+    return checkBox->isChecked();
+}
+*/
+
+/*
+void Configurator::updateInterface(int state)
+{ 
+    if (state == 2)
+        smoothBox->setDisabled(false);
+    else
+        smoothBox->setDisabled(true);
+}
+*/
+
 double Configurator::smoothness() const
 {
     return smoothBox->value();
 }
 
-bool Configurator::showBorder()
+/*
+Configurator::Structure Configurator::structureType()
 {
-    return borderOption->isChecked();
+    int index = structureCombo->currentIndex();
+    return Structure(index);
 }
-
-int Configurator::borderSizeValue()
-{
-    return borderSizeBox->value();
-}
+*/

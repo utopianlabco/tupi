@@ -62,7 +62,7 @@ void TupSceneSelector::reset()
 void TupSceneSelector::setScenes(const QList<TupScene *> &scenes)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[TupSceneSelector::setScenes()]";
         #else
             T_FUNCINFO;
@@ -70,37 +70,32 @@ void TupSceneSelector::setScenes(const QList<TupScene *> &scenes)
     #endif
 
     m_selector->clear();
+    int pos = 1;
 
-    if (scenes.count() > 1) {
-        int pos = 1;
-        foreach (TupScene *scene, scenes) {
-                 #ifdef K_DEBUG
-                     QString msg = "TupSceneSelector::setScenes() - Adding " + scene->sceneName();
-                     #ifdef Q_OS_WIN
-                         qWarning() << msg;
-                     #else
-                         tWarning("export") << msg;
-                     #endif
+    foreach (TupScene *scene, scenes) {
+             #ifdef K_DEBUG
+                 QString msg = "TupSceneSelector::setScenes() - Adding " + scene->sceneName();
+                 #ifdef Q_OS_WIN32
+                     qWarning() << msg;
+                 #else
+                     tWarning("export") << msg;
                  #endif
+             #endif
 
-                 m_selector->addItem(QString("%1: ").arg(pos) + scene->sceneName());
-                 pos++;
-        }
-
-        #ifdef K_DEBUG
-            QString msg = "TupSceneSelector::setScenes() - Available Scenes: " + QString::number(pos - 1);
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
-        #endif
-
-        m_selector->selectFirstItem();
-    } else {
-        TupScene *scene = scenes.first();
-        m_selector->addSelectedItem(QString("1: ") + scene->sceneName());
+             m_selector->addItem(QString("%1: ").arg(pos) + scene->sceneName());
+             pos++;
     }
+
+    #ifdef K_DEBUG
+        QString msg = "TupSceneSelector::setScenes() - Available Scenes: " + QString::number(pos - 1);
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
+    #endif
+
+    m_selector->selectFirstItem();
 }
 
 void TupSceneSelector::aboutToNextPage()

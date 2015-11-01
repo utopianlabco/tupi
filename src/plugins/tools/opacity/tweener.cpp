@@ -124,7 +124,7 @@ QStringList Tweener::keys() const
 void Tweener::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Tweener::press()]";
         #else
             T_FUNCINFO;
@@ -152,7 +152,7 @@ void Tweener::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Tweener::release()]";
         #else
             T_FUNCINFO;
@@ -222,9 +222,9 @@ void Tweener::aboutToChangeTool()
 
 void Tweener::setupActions()
 {
-    TAction *action = new TAction(QPixmap(kAppProp->themeDir() + "icons/opacity_tween.png"), 
+    TAction *action = new TAction(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "opacity_tween.png"), 
                                       tr("Opacity Tween"), this);
-    action->setCursor(QCursor(kAppProp->themeDir() + "cursors/tweener.png",0 ,0));
+    action->setCursor(QCursor(kAppProp->themeDir() + "cursors" + QDir::separator() + "tweener.png",0 ,0));
     action->setShortcut(QKeySequence(tr("Shift+O")));
 
     k->actions.insert(tr("Opacity Tween"), action);
@@ -287,7 +287,7 @@ void Tweener::setCurrentTween(const QString &name)
 int Tweener::framesCount()
 {
     int total = 1;
-    TupLayer *layer = k->scene->scene()->layerAt(k->scene->currentLayerIndex());
+    TupLayer *layer = k->scene->scene()->layer(k->scene->currentLayerIndex());
     if (layer)
         total = layer->framesCount();
 
@@ -325,9 +325,9 @@ void Tweener::setSelection()
 {
     k->editMode = TupToolPlugin::Selection;
 
-    /*
-    int bottomBoundary = (2*ZLAYER_LIMIT) + (k->initLayer*ZLAYER_LIMIT);
-    int topBoundary = bottomBoundary + ZLAYER_LIMIT;
+    int bottomBoundary = 20000 + (k->initLayer*10000);
+    int topBoundary = bottomBoundary + 10000;
+
     foreach (QGraphicsView *view, k->scene->views()) {
              view->setDragMode(QGraphicsView::RubberBandDrag);
              foreach (QGraphicsItem *item, view->scene()->items()) {
@@ -335,11 +335,7 @@ void Tweener::setSelection()
                           item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
              }
     }
-    */
 
-    k->scene->enableItemsForSelection();
-    foreach (QGraphicsView *view, k->scene->views())
-             view->setDragMode(QGraphicsView::RubberBandDrag);
     // When Object selection is enabled, previous selection is set
     if (k->objects.size() > 0) {
         foreach (QGraphicsItem *item, k->objects) {
@@ -420,8 +416,8 @@ void Tweener::applyTween()
                  // TupScene *scene = project->scene(k->initScene);
 
                  TupScene *scene = k->scene->scene();
-                 TupLayer *layer = scene->layerAt(k->initLayer);
-                 TupFrame *frame = layer->frameAt(k->currentTween->initFrame());
+                 TupLayer *layer = scene->layer(k->initLayer);
+                 TupFrame *frame = layer->frame(k->currentTween->initFrame());
                  int objectIndex = -1;
                  TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item);
 
@@ -453,13 +449,13 @@ void Tweener::applyTween()
                                                                    TupProjectRequest::Remove);
                      emit requested(&request);
 
-                     frame = layer->frameAt(k->initFrame);
+                     frame = layer->frame(k->initFrame);
                      if (type == TupLibraryObject::Item) {
                          objectIndex = frame->graphicItemsCount() - 1;
-                         newList.append(frame->graphicAt(objectIndex)->item());
+                         newList.append(frame->graphic(objectIndex)->item());
                      } else {
                          objectIndex = frame->svgItemsCount() - 1;
-                         newList.append(frame->svgAt(objectIndex));
+                         newList.append(frame->svg(objectIndex));
                      }
                  }
 
@@ -484,7 +480,7 @@ void Tweener::applyTween()
         for (int i = framesNumber; i < total; i++) {
              for (int j = 0; j < layersCount; j++) {
                   request = TupRequestBuilder::createFrameRequest(k->initScene, j, i,
-                                                                  TupProjectRequest::Add, tr("Frame"));
+                                                                  TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
                   emit requested(&request);
              }
         }
@@ -514,7 +510,7 @@ void Tweener::removeTweenFromProject(const QString &name)
     } else {
         #ifdef K_DEBUG
             QString msg = "Tweener::removeTweenFromProject() - Opacity tween couldn't be removed -> " + name;
-            #ifdef Q_OS_WIN
+            #ifdef Q_OS_WIN32
                 qDebug() << msg;
             #else
                 tError() << msg;

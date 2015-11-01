@@ -34,37 +34,17 @@
  ***************************************************************************/
 
 #include "tuphelpdialog.h"
-#include "tuphelpbrowser.h"
-#include "tuphelpwidget.h"
 
-#include <QHBoxLayout>
-
-TupHelpDialog::TupHelpDialog(const QString &path, QWidget *parent) : QFrame(parent)
+TupHelpDialog::TupHelpDialog(const QString &path, QWidget *parent) : QDialog(parent)
 {
-    QFile file(THEME_DIR + "config/help.qss");
-    if (file.exists()) {
-        file.open(QFile::ReadOnly);
-        QString styleSheet = QLatin1String(file.readAll());
-        if (styleSheet.length() > 0) 
-            setStyleSheet(styleSheet);
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupHelpDialog::TupHelpDialog() - theme file doesn't exist -> " + QString(THEME_DIR + "config/ui.qss");
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tError() << msg;
-            #endif
-        #endif
-    }
-
+    setModal(true);
     setWindowTitle(tr("Help Content"));
-    setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/help_mode.png")));
+    setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "help_mode.png")));
 
-    #ifdef Q_OS_WIN
-        QString helpPath = SHARE_DIR + "help/";
+    #ifdef Q_OS_WIN32
+        QString helpPath = SHARE_DIR + "help" + QDir::separator();
     #else
-        QString helpPath = SHARE_DIR + "data/help/";
+        QString helpPath = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
     #endif
 
     TupHelpBrowser *helpBrowser = new TupHelpBrowser(path, this);

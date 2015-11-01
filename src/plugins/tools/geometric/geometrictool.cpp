@@ -54,7 +54,7 @@ struct GeometricTool::Private
     TupLineItem *line;
     TupPathItem *path;
     TupGraphicsScene *scene;
-    Settings *configurator;
+    InfoPanel *configurator;
     bool added;
     QPointF currentPoint;
     QPointF lastPoint;
@@ -85,7 +85,7 @@ QStringList GeometricTool::keys() const
 void GeometricTool::init(TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[GeometricTool::init()]";
         #else
             T_FUNCINFO;
@@ -96,6 +96,16 @@ void GeometricTool::init(TupGraphicsScene *scene)
     delete k->path;
     k->path = 0;
     k->proportion = false;
+
+    foreach (QGraphicsView * view, scene->views()) {
+             view->setDragMode(QGraphicsView::NoDrag);
+             if (QGraphicsScene *scene = qobject_cast<QGraphicsScene *>(view->scene())) {
+                 foreach (QGraphicsItem *item, scene->items()) {
+                          item->setFlag(QGraphicsItem::ItemIsSelectable, false);
+                          item->setFlag(QGraphicsItem::ItemIsMovable, false);
+                 }
+             }
+    }
 }
 
 void GeometricTool::setupActions()
@@ -125,7 +135,7 @@ void GeometricTool::setupActions()
 void GeometricTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[GeometricTool::press()]";
         #else
             T_FUNCINFO;
@@ -185,7 +195,7 @@ void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[GeometricTool::move()]";
         #else
             T_FUNCINFO;
@@ -284,7 +294,7 @@ void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager
 void GeometricTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[GeometricTool::release()]";
         #else
             T_FUNCINFO;
@@ -326,14 +336,14 @@ int GeometricTool::toolType() const
         
 QWidget *GeometricTool::configurator()
 {
-    Settings::ToolType toolType = Settings::Line;
+    InfoPanel::ToolType toolType = InfoPanel::Line;
 
     if (name() == tr("Rectangle"))
-        toolType = Settings::Rectangle;
+        toolType = InfoPanel::Rectangle;
     else if (name() == tr("Ellipse"))
-             toolType = Settings::Ellipse;
+             toolType = InfoPanel::Ellipse;
 
-    k->configurator = new Settings(toolType);
+    k->configurator = new InfoPanel(toolType);
     return k->configurator;
 }
 
@@ -392,7 +402,7 @@ QCursor GeometricTool::cursor() const
 void GeometricTool::endItem()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[GeometricTool::endItem()]";
         #else
             T_FUNCINFO;

@@ -1,2 +1,2 @@
 LIBS += -LC:/Quazip/lib/ -lquazip
-INCLUDEPATH += C:/Quazip/include
+INCLUDEPATH += C:\Quazip\include\quazip

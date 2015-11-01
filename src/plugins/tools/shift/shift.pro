@@ -1,7 +1,4 @@
 QT += opengl core gui svg xml network
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupishifttool
 
 unix {
     !include(../../../../tupiglobal.pri){
@@ -17,8 +14,14 @@ INSTALLS += target
 target.path = /plugins/ 
 
 HEADERS += shifttool.h
+           # zoomconfigurator.h
 
 SOURCES += shifttool.cpp 
+           # zoomconfigurator.cpp
+
+CONFIG += plugin warn_on
+TEMPLATE = lib
+TARGET = tupishifttool
 
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

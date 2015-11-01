@@ -1,7 +1,4 @@
 QT += opengl core gui svg xml network
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupiopacitytool
 
 unix {
     !include(../../../../tupiglobal.pri){
@@ -23,6 +20,10 @@ HEADERS += tweener.h \
 SOURCES += tweener.cpp \
            configurator.cpp \
            settings.cpp
+
+CONFIG += plugin warn_on
+TEMPLATE = lib
+TARGET = tupiopacitytool
 
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

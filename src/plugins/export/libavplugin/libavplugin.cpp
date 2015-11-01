@@ -50,10 +50,8 @@ QString LibavPlugin::key() const
 
 TupExportInterface::Formats LibavPlugin::availableFormats()
 {
-    // SQA: MPEG codec was removed because it crashes. Check the issue.
-    // TupExportInterface::MPEG 
-    return TupExportInterface::WEBM | TupExportInterface::SWF | TupExportInterface::AVI 
-           | TupExportInterface::ASF | TupExportInterface::MOV | TupExportInterface::GIF;
+    return TupExportInterface::WEBM | TupExportInterface::OGV | TupExportInterface::MPEG | TupExportInterface::SWF 
+           | TupExportInterface::AVI | TupExportInterface::ASF | TupExportInterface::MOV | TupExportInterface::GIF;
 }
 
 TMovieGeneratorInterface::Format LibavPlugin::videoFormat(TupExportInterface::Format format)
@@ -64,18 +62,21 @@ TMovieGeneratorInterface::Format LibavPlugin::videoFormat(TupExportInterface::Fo
                    return TLibavMovieGenerator::WEBM;
                  }
                  break;
+            case TupExportInterface::OGV:
+                 {
+                   return TLibavMovieGenerator::OGV;
+                 }
+                 break;
             case TupExportInterface::SWF:
                  {
                    return TLibavMovieGenerator::SWF;
                  }
                  break;
-            /* SQA: MPEG codec was removed because it crashes. Check the issue
             case TupExportInterface::MPEG:
                  {
                    return TLibavMovieGenerator::MPEG;
                  }
                  break;
-            */
             case TupExportInterface::AVI:
                  {
                    return TLibavMovieGenerator::AVI;
@@ -134,7 +135,7 @@ bool LibavPlugin::exportToFormat(const QColor color, const QString &filePath, co
              errorMsg = generator->getErrorMsg();
              #ifdef K_DEBUG
                  QString msg = "LibavPlugin::exportToFormat() - [ Fatal Error ] - Can't create video -> " + filePath;
-                 #ifdef Q_OS_WIN
+                 #ifdef Q_OS_WIN32
                      qDebug() << msg;
                  #else
                      tError() << msg;
@@ -176,6 +177,6 @@ bool LibavPlugin::exportFrame(int frameIndex, const QColor color, const QString 
     return false;
 }
 
-QString LibavPlugin::getExceptionMsg() const {
+const char* LibavPlugin::getExceptionMsg() {
     return errorMsg;
 }

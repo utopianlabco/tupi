@@ -1,7 +1,4 @@
 QT += opengl core gui svg xml network
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupinodestool
 
 unix {
     !include(../../../../tupiglobal.pri){
@@ -17,8 +14,11 @@ INSTALLS += target
 target.path = /plugins/
 
 HEADERS += nodestool.h
-
 SOURCES += nodestool.cpp
+
+CONFIG += plugin warn_on
+TEMPLATE = lib
+TARGET = tupinodestool
 
 FRAMEWORK_DIR = "../../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

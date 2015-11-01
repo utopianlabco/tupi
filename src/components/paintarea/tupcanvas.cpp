@@ -34,33 +34,6 @@
  ***************************************************************************/
 
 #include "tupcanvas.h"
-#include "tupapplication.h"
-#include "tapplicationproperties.h"
-#include "tuptoolplugin.h"
-#include "timagebutton.h"
-#include "tdebug.h"
-#include "tuppendialog.h"
-#include "tuponionopacitydialog.h"
-#include "tupexposuredialog.h"
-#include "tuptoolsdialog.h"
-#include "tupinfowidget.h"
-
-#include <QDialog>
-#include <QHBoxLayout>
-#include <QBoxLayout>
-#include <QFrame>
-#include <QIcon>
-#include <QGraphicsView>
-#include <QColorDialog>
-#include <QToolBar>
-#include <QAction>
-#include <QSlider>
-#include <QLabel>
-#include <QFont>
-#include <QDesktopWidget>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QBuffer>
 
 struct TupCanvas::Private
 {
@@ -84,11 +57,15 @@ struct TupCanvas::Private
 };
 
 TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *scene, 
-                   const QPointF centerPoint, const QSize &screenSize, TupProject *project, double scaleFactor,
+                   const QPointF centerPoint, const QSize &screenSize, TupProject *project, qreal scaleFactor,
                    int angle, TupBrushManager *brushManager, bool isNetworked, const QStringList &onLineUsers) : QFrame(parent, flags), k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCanvas()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     setWindowTitle(tr("Tupi: Open 2D Magic"));
@@ -152,9 +129,9 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     zoomOut->setToolTip(tr("Zoom Out"));
     connect(zoomOut, SIGNAL(clicked()), this, SLOT(wakeUpZoomOut()));
 
-    TImageButton *hand = new TImageButton(QPixmap(THEME_DIR + "icons/hand_big.png"), 60, this, true);
-    hand->setToolTip(tr("Hand"));
-    connect(hand, SIGNAL(clicked()), this, SLOT(wakeUpHand()));
+    TImageButton *shift = new TImageButton(QPixmap(THEME_DIR + "icons/hand_big.png"), 60, this, true);
+    shift->setToolTip(tr("Shift"));
+    connect(shift, SIGNAL(clicked()), this, SLOT(wakeUpShift()));
 
     TImageButton *penProperties = new TImageButton(QPixmap(THEME_DIR + "icons/color_palette_big.png"), 60, this, true);
     penProperties->setToolTip(tr("Pen Properties"));
@@ -177,8 +154,7 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     controls->addWidget(trash);
     controls->addWidget(zoomIn);
     controls->addWidget(zoomOut);
-    controls->addWidget(hand);
-
+    controls->addWidget(shift);
     controls->addWidget(penProperties);
     controls->addWidget(exposure);
 
@@ -223,6 +199,7 @@ void TupCanvas::updateCursor(const QCursor &cursor)
 
 void TupCanvas::closeEvent(QCloseEvent *event)
 {
+    delete graphicsView; 
     event->accept();
 }
 
@@ -498,7 +475,8 @@ void TupCanvas::wakeUpLibrary()
                 if (answer == QMessageBox::Yes) {
                     pixmap = new QPixmap();
                     QString extension = fileInfo.suffix().toUpper();
-                    QByteArray ba = extension.toAscii();
+                    // QByteArray ba = extension.toAscii();
+                    QByteArray ba = extension.toLatin1();
                     const char* ext = ba.data();
                     if (pixmap->loadFromData(data, ext)) {
                         QPixmap newpix;
@@ -534,27 +512,23 @@ void TupCanvas::wakeUpDeleteSelection()
 void TupCanvas::wakeUpZoomIn()
 {
     updateMenuStates();
-    // emit callAction(TupToolPlugin::ZoomMenu, TupToolPlugin::ZoomInTool);
+    graphicsView->scale(1.3, 1.3);
 
-    foreach (QGraphicsView * view, k->scene->views()) {
-             view->scale(1 + 0.3, 1 + 0.3);
-    }
+    emit updateZoomFactorFromFullScreen(1.3);
 }
 
 void TupCanvas::wakeUpZoomOut()
 {
     updateMenuStates();
-    // emit callAction(TupToolPlugin::ZoomMenu, TupToolPlugin::ZoomOutTool);
+    graphicsView->scale(0.7, 0.7);
 
-    foreach (QGraphicsView * view, k->scene->views()) {
-             view->scale(1 - 0.3, 1 - 0.3);
-    }
+    emit updateZoomFactorFromFullScreen(0.7);
 }
 
-void TupCanvas::wakeUpHand()
+void TupCanvas::wakeUpShift()
 {
     updateMenuStates();
-    emit callAction(TupToolPlugin::ZoomMenu, TupToolPlugin::HandTool);
+    emit callAction(TupToolPlugin::ZoomMenu, TupToolPlugin::ShiftTool);
 }
 
 void TupCanvas::undo()
@@ -630,7 +604,7 @@ void TupCanvas::updateExposureDialogState()
 
 void TupCanvas::createScene()
 {
-    int sceneIndex = k->project->scenesTotal();
+    int sceneIndex = k->project->scenesCount();
 
     TupProjectRequest request = TupRequestBuilder::createSceneRequest(sceneIndex, TupProjectRequest::Add, tr("Scene %1").arg(sceneIndex + 1));
     emit requestTriggered(&request);
@@ -642,11 +616,7 @@ void TupCanvas::createScene()
     emit requestTriggered(&request);
 
     request = TupRequestBuilder::createSceneRequest(sceneIndex, TupProjectRequest::Select);
-    // emit requestTriggered(&request);
     emit localRequestTriggered(&request);
-
-    // request = TupRequestBuilder::createFrameRequest(sceneIndex, 0, 0, TupProjectRequest::Select, "1");
-    // emit requestTriggered(&request);
 }
 
 void TupCanvas::createLayer(int sceneIndex, int layerIndex)
@@ -654,9 +624,9 @@ void TupCanvas::createLayer(int sceneIndex, int layerIndex)
     TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layerIndex, TupProjectRequest::Add, tr("Layer %1").arg(layerIndex + 1));
     emit requestTriggered(&request);
 
-    tError() << "TupCanvas::createLayer() - Creating layer at [ " << sceneIndex << ", " << layerIndex << " ]";
+    // tError() << "TupCanvas::createLayer() - Creating layer at [ " << sceneIndex << ", " << layerIndex << " ]";
 
-    int oneRow = k->scene->framesTotal();
+    int oneRow = k->scene->framesCount();
     for(int i=0; i<oneRow; i++) {
         request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
         emit requestTriggered(&request);
@@ -667,9 +637,9 @@ void TupCanvas::createLayer(int sceneIndex, int layerIndex)
     emit localRequestTriggered(&request);
 }
 
-void TupCanvas::createFrame(int sceneIndex, int layerIndex, int layersTotal, int frameIndex)
+void TupCanvas::createFrame(int sceneIndex, int layerIndex, int layersCount, int frameIndex)
 {
-    for(int i=0; i<layersTotal; i++) {
+    for(int i=0; i<layersCount; i++) {
         TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, i, frameIndex, TupProjectRequest::Add, tr("Frame %1").arg(frameIndex + 1));
         emit requestTriggered(&request);
     }

@@ -58,10 +58,10 @@ class TUPI_PLUGIN Settings : public QWidget
     public:
         Settings(QWidget *parent = 0);
         ~Settings();
-        double smoothness() const;
+        double exactness() const;
         
     private:
-        QDoubleSpinBox *m_smoothness;
+        QDoubleSpinBox *m_exactness;
 };
 
 #endif

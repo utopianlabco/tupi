@@ -1,7 +1,3 @@
-CONFIG += plugin warn_on
-TEMPLATE = lib
-TARGET = tupismileplugin
-
 INSTALLS += target 
 target.path = /plugins/ 
 
@@ -16,10 +12,13 @@ macx {
 HEADERS += smileplugin.h
 SOURCES += smileplugin.cpp
 
+CONFIG += plugin warn_on
+TEMPLATE = lib 
+TARGET = tupismileplugin
+
 INCLUDEPATH += ../../../libbase
 INCLUDEPATH += ../../../store
 INCLUDEPATH += ../../../libtupi
-
 LIBS += -L../../../libbase
 LIBS += -L../../../store
 LIBS += -L../../../libtupi

@@ -83,9 +83,6 @@ class TUPI_PLUGIN PapagayoTool : public TupToolPlugin
         // virtual void addNewItem(const QString &name);
         virtual void updateWorkSpaceContext();
 
-        virtual void keyPressEvent(QKeyEvent *event);
-        virtual void keyReleaseEvent(QKeyEvent *event);
-
     signals:
         void importLipSync();
 
@@ -97,8 +94,6 @@ class TUPI_PLUGIN PapagayoTool : public TupToolPlugin
         void resetCanvas();
         void addTarget(const QString &id, int index);
         void updateInitFrame(int index);
-        void updateXPosition(int x);
-        void updateYPosition(int y);
 
     private:
         void setTargetEnvironment();

@@ -34,8 +34,6 @@
  ***************************************************************************/
 
 #include "configurator.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
 #include "tweenmanager.h"
 #include "buttonspanel.h"
 #include "tupitemtweener.h"
@@ -69,13 +67,16 @@ Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QLabel *toolTitle = new QLabel;
-    toolTitle->setAlignment(Qt::AlignHCenter);
-    QPixmap pic(THEME_DIR + "icons/scale_tween.png");
-    toolTitle->setPixmap(pic.scaledToWidth(20, Qt::SmoothTransformation));
-    toolTitle->setToolTip(tr("Scale Tween Properties"));
-    k->layout->addWidget(toolTitle);
-    k->layout->addWidget(new TSeparator(Qt::Horizontal));
+    QLabel *title = new QLabel(tr("Scale Tween"));
+    title->setAlignment(Qt::AlignHCenter);
+
+#ifndef Q_OS_MAC 
+    QFont font = this->font();
+    font.setPointSize(8);
+    title->setFont(font);
+#endif
+
+    k->layout->addWidget(title);
 
     k->settingsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     k->settingsLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);

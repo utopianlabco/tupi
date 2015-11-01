@@ -34,8 +34,6 @@
  ***************************************************************************/
 
 #include "configurator.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
 #include "lipsyncmanager.h"
 
 struct Configurator::Private
@@ -47,16 +45,19 @@ struct Configurator::Private
 
 Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
 {
+#ifndef Q_OS_MAC
+    QFont font = this->font();
+    font.setPointSize(8);
+    setFont(font);
+#endif
+
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
-    QLabel *toolTitle = new QLabel;
-    toolTitle->setAlignment(Qt::AlignHCenter);
-    QPixmap pic(THEME_DIR + "icons/papagayo.png");
-    toolTitle->setPixmap(pic.scaledToWidth(20, Qt::SmoothTransformation));
-    toolTitle->setToolTip(tr("Papagayo LipSync Files"));
-    layout->addWidget(toolTitle);
-    layout->addWidget(new TSeparator(Qt::Horizontal));
+    QLabel *title = new QLabel(tr("Papagayo LipSync Files"));
+    title->setAlignment(Qt::AlignHCenter);
+
+    layout->addWidget(title);
 
     k->settingsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     k->settingsLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -86,8 +87,6 @@ void Configurator::setPropertiesPanel()
     connect(k->settingsPanel, SIGNAL(selectMouth(const QString &, int)), this, SIGNAL(selectMouth(const QString &, int)));
     connect(k->settingsPanel, SIGNAL(closeLipSyncProperties()), this, SLOT(closeSettingsPanel())); 
     connect(k->settingsPanel, SIGNAL(initFrameHasChanged(int)), this, SIGNAL(initFrameHasChanged(int)));
-    connect(k->settingsPanel, SIGNAL(xPosChanged(int)), this, SIGNAL(xPosChanged(int)));
-    connect(k->settingsPanel, SIGNAL(yPosChanged(int)), this, SIGNAL(yPosChanged(int)));
 
     k->settingsLayout->addWidget(k->settingsPanel);
 
@@ -159,14 +158,4 @@ void Configurator::closePanels()
 void Configurator::updateInterfaceRecords()
 {
     k->settingsPanel->updateInterfaceRecords();
-}
-
-void Configurator::setPos(const QPointF &point)
-{
-    k->settingsPanel->setPos(point);
-}
-
-void Configurator::setPhoneme(const QString &phoneme)
-{
-    k->settingsPanel->setPhoneme(phoneme);
 }

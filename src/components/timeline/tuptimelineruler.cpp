@@ -34,20 +34,16 @@
  ***************************************************************************/
 
 #include "tuptimelineruler.h"
-#include "tconfig.h"
 
 TupTimeLineRuler::TupTimeLineRuler(QWidget *parent) : QHeaderView(Qt::Horizontal, parent)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[TupTimeLineRuler()]";
         #else
             TINIT;
         #endif
     #endif
-
-    TCONFIG->beginGroup("General");
-    themeName = TCONFIG->value("Theme", "Light").toString();
 
     setHighlightSections(true);
     setStyleSheet("QHeaderView { background-color: #CCCCCC; }");
@@ -56,7 +52,7 @@ TupTimeLineRuler::TupTimeLineRuler(QWidget *parent) : QHeaderView(Qt::Horizontal
 TupTimeLineRuler::~TupTimeLineRuler()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[~TupTimeLineRuler()]";
         #else
             TEND;
@@ -95,6 +91,7 @@ void TupTimeLineRuler::paintSection(QPainter *painter, const QRect & rect, int l
     if (logicalIndex == 1 || logicalIndex % 5 == 0) {
         QFont font = this->font();
         font.setPointSize(7);
+        // QFont label("Arial", 7, QFont::Normal, false);
         QFontMetrics fm(font);
 
         QString number = QString::number(logicalIndex);

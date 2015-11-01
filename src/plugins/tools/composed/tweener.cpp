@@ -105,7 +105,7 @@ void Tweener::init(TupGraphicsScene *scene)
     k->pathAdded = false;
     delete k->group;
     k->group = 0;
-    k->baseZValue = (2*ZLAYER_LIMIT) + (scene->scene()->layersCount() * ZLAYER_LIMIT);
+    k->baseZValue = 20000 + (scene->scene()->layersCount() * 10000);
 
     k->scene = scene;
     k->objects.clear();
@@ -151,7 +151,7 @@ QStringList Tweener::keys() const
 void Tweener::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Tweener::press()]";
         #else
             T_FUNCINFO;
@@ -172,7 +172,7 @@ void Tweener::press(const TupInputDeviceInformation *input, TupBrushManager *bru
         } else {
         #ifdef K_DEBUG
             QString msg = "Tweener::press() - Error: No position!";
-            #ifdef Q_OS_WIN
+            #ifdef Q_OS_WIN32
                 qDebug() << msg;
             #else
                 tFatal() << msg;
@@ -198,7 +198,7 @@ void Tweener::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Tweener::release()]";
         #else
             T_FUNCINFO;
@@ -239,7 +239,7 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
             } else {
                 #ifdef K_DEBUG
                     QString msg = "Tweener::release() - No position!";
-                    #ifdef Q_OS_WIN
+                    #ifdef Q_OS_WIN32
                         qDebug() << msg;
                     #else
                         tFatal() << msg;
@@ -427,7 +427,7 @@ void Tweener::setSelect()
     foreach (QGraphicsView * view, k->scene->views()) {
              view->setDragMode(QGraphicsView::RubberBandDrag);
              foreach (QGraphicsItem *item, view->scene()->items()) {
-                      if ((item->zValue() >= (2*ZLAYER_LIMIT)) && (item->toolTip().length()==0)) {
+                      if ((item->zValue() >= 20000) && (item->toolTip().length()==0)) {
                           item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
                       }
              }
@@ -530,7 +530,7 @@ void Tweener::applyTween()
             for (int i = framesNumber; i <= total; i++) {
                  TupProjectRequest requestFrame = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
                                                                                       k->scene->currentLayerIndex(),
-                                                                                      i, TupProjectRequest::Add, tr("Frame"));
+                                                                                      i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
                  emit requested(&requestFrame);
             }
         }
@@ -547,8 +547,8 @@ void Tweener::applyTween()
 
                  TupLibraryObject::Type type = TupLibraryObject::Item;
                  TupScene *scene = k->scene->scene();
-                 TupLayer *layer = scene->layerAt(k->scene->currentLayerIndex());
-                 TupFrame *frame = layer->frameAt(k->currentTween->initFrame());
+                 TupLayer *layer = scene->layer(k->scene->currentLayerIndex());
+                 TupFrame *frame = layer->frame(k->currentTween->initFrame());
                  int objectIndex = frame->indexOf(item);
 
                  QRectF rect = item->sceneBoundingRect();
@@ -589,13 +589,13 @@ void Tweener::applyTween()
                                                                    TupProjectRequest::Remove);
                      emit requested(&request);
 
-                     frame = layer->frameAt(k->startPoint);
+                     frame = layer->frame(k->startPoint);
                      if (type == TupLibraryObject::Item)
                          objectIndex = frame->graphicItemsCount() - 1;
                      else
                          objectIndex = frame->svgItemsCount() - 1;
 
-                     newList.append(frame->graphicAt(objectIndex)->item());
+                     newList.append(frame->graphic(objectIndex)->item());
                  }
 
                  TupProjectRequest request = TupRequestBuilder::createItemRequest(
@@ -616,7 +616,7 @@ void Tweener::applyTween()
                      for (int i = framesNumber; i < total; i++) {
                           TupProjectRequest requestFrame = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
                                                           k->scene->currentLayerIndex(),
-                                                          i, TupProjectRequest::Add, tr("Frame"));
+                                                          i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
                           emit requested(&requestFrame);
                      }
                  }
@@ -763,7 +763,7 @@ void Tweener::removeTweenFromProject(const QString &name)
     } else {
         #ifdef K_DEBUG
             QString msg = "Tweener::removeTweenFromProject() - Position tween couldn't be removed -> " + name;
-            #ifdef Q_OS_WIN
+            #ifdef Q_OS_WIN32
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -838,7 +838,7 @@ void Tweener::setEditEnv()
 int Tweener::framesCount()
 {
     int total = 1;
-    TupLayer *layer = k->scene->scene()->layerAt(k->scene->currentLayerIndex());
+    TupLayer *layer = k->scene->scene()->layer(k->scene->currentLayerIndex());
     if (layer)
         total = layer->framesCount();
 

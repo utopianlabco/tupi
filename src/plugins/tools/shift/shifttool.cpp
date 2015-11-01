@@ -74,7 +74,6 @@ void ShiftTool::init(TupGraphicsScene *scene)
 {
     k->scene = scene;
 
-    /*
     foreach (QGraphicsView *view, scene->views()) {
              k->currentCenter =  view->sceneRect().center();
              view->setDragMode(QGraphicsView::NoDrag);
@@ -83,7 +82,6 @@ void ShiftTool::init(TupGraphicsScene *scene)
                       item->setFlag(QGraphicsItem::ItemIsMovable, false);
              }
     }
-    */
 }
 
 QStringList ShiftTool::keys() const

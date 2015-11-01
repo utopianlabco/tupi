@@ -42,87 +42,52 @@
  * @author Jorge Cuadrado
 */
 
-struct NodeManager::Private
+NodeManager::NodeManager(QGraphicsItem * parent, QGraphicsScene  *scene, int zValue): 
+                         m_parent(parent), m_scene(scene), m_anchor(0,0), m_press(false), m_rotation(0)
 {
-    QHash<Node::TypeNode, Node *> nodes;
-    QGraphicsItem *parent;
-    QGraphicsScene *scene;
-
-    QTransform origTransform;
-    QPointF origPos;
-    QPointF itemCenter;
-
-    bool isPressed;
-    bool proportional;
-    qreal rotation;
-    qreal scaleX;
-    qreal scaleY;
-};
-
-NodeManager::NodeManager(QGraphicsItem *parent, QGraphicsScene *scene, int zValue): k(new Private)
-{
-    k->parent = parent;
-    k->scene = scene;
-    k->itemCenter = QPointF(0, 0);
-    k->isPressed = false;
-
-    k->rotation = k->parent->data(TupGraphicObject::Rotate).toReal();
-    k->scaleX = k->parent->data(TupGraphicObject::ScaleX).toReal();
-    k->scaleY = k->parent->data(TupGraphicObject::ScaleY).toReal();
-
-    // This condition is only for SVG objects
-    if (k->scaleX == 0) {
-        k->scaleX = 1;
-        k->parent->setData(TupGraphicObject::ScaleX, 1);
-    }
-    if (k->scaleY == 0) {
-        k->scaleY = 1;
-        k->parent->setData(TupGraphicObject::ScaleY, 1);
-    }
-
     QRectF rect = parent->sceneBoundingRect();
     Node *topLeft = new Node(Node::TopLeft, Node::Scale, rect.topLeft(), this, parent, zValue);
     Node *topRight = new Node(Node::TopRight, Node::Scale, rect.topRight(), this, parent, zValue);
-    Node *bottomLeft = new Node(Node::BottomLeft, Node::Scale, rect.bottomLeft(), this, parent, zValue);
-    Node *bottomRight = new Node(Node::BottomRight, Node::Scale, rect.bottomRight(), this, parent, zValue);
-    Node *center = new Node(Node::Center, Node::Scale, rect.center(), this, parent, zValue);
+    Node *bottomLeft = new Node(Node::BottomLeft,Node::Scale, rect.bottomLeft(),this, parent, zValue);
+    Node *bottomRight = new Node(Node::BottomRight,Node::Scale, rect.bottomRight(),this, parent, zValue);
+    Node *center = new Node(Node::Center, Node::Scale, rect.center(), this,parent, zValue);
 
-    k->nodes.insert(Node::TopLeft, topLeft);
-    k->nodes.insert(Node::TopRight, topRight);
-    k->nodes.insert(Node::BottomLeft, bottomLeft);
-    k->nodes.insert(Node::BottomRight, bottomRight);
-    k->nodes.insert(Node::Center, center);
+    m_nodes.insert(Node::TopLeft, topLeft);
+    m_nodes.insert(Node::TopRight, topRight);
+    m_nodes.insert(Node::BottomLeft, bottomLeft);
+    m_nodes.insert(Node::BottomRight, bottomRight);
+    m_nodes.insert(Node::Center, center);
 
-    k->proportional = false;
+    m_proportional = false;
     
     beginToEdit();
 }
 
 NodeManager::~NodeManager()
 {
+    clear();
 }
 
 void NodeManager::clear()
 {
-    foreach (Node *node, k->nodes) {
+    foreach (Node *node, m_nodes) {
              if (node) {
-                 QGraphicsScene *scene = node->scene();
-                 if (scene)
+                 if (QGraphicsScene *scene = node->scene())
                      scene->removeItem(node);
              }
              delete node;
              node = 0;
     }
-    k->nodes.clear();
+    m_nodes.clear();
 }
 
 void NodeManager::syncNodes(const QRectF &rect)
 {
-    if (k->nodes.isEmpty())
+    if (m_nodes.isEmpty())
         return;
     
-    QHash<Node::TypeNode, Node *>::iterator it = k->nodes.begin();
-    while (it != k->nodes.end()) {
+    QHash<Node::TypeNode, Node *>::iterator it = m_nodes.begin();
+    while (it != m_nodes.end()) {
            if ((*it)) {
                switch (it.key()) {
                        case Node::TopLeft:
@@ -163,123 +128,87 @@ void NodeManager::syncNodes(const QRectF &rect)
 
 void NodeManager::syncNodesFromParent()
 {
-    if (k->parent)
-        syncNodes(k->parent->sceneBoundingRect());
+    if (m_parent)
+        syncNodes(m_parent->sceneBoundingRect());
 }
 
 QGraphicsItem *NodeManager::parentItem() const
 {
-    return k->parent;
+    return m_parent;
 }
 
 bool NodeManager::isModified() const
 {
-    return !((k->parent->transform() == k->origTransform) && (k->parent->pos() == k->origPos));
+    return !((m_parent->matrix() == m_origMatrix) && (m_parent->pos() == m_origPos));
 }
 
 void NodeManager::beginToEdit()
 {
-    k->origTransform = k->parent->transform();
-    k->origPos = k->parent->pos();
+    m_origMatrix = m_parent->matrix();
+    m_origPos = m_parent->pos();
 }
 
 void NodeManager::restoreItem()
 {
-    k->parent->setTransform(k->origTransform);
-    k->parent->setPos(k->origPos);
+    m_parent->setMatrix(m_origMatrix);
+    m_parent->setPos(m_origPos);
+}
+
+void NodeManager::setAnchor(const QPointF& point)
+{
+    m_anchor = point;
+}
+
+QPointF NodeManager::anchor() const
+{
+    return m_anchor;
 }
 
 void NodeManager::scale(float sx, float sy)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[NodeManager::scale()]";
-        #else
-            T_FUNCINFO;
-            tWarning() << "Scale X: " << sx;
-            tWarning() << "Scale Y: " << sy;
-        #endif
-    #endif
-
-    QTransform transform;
-
-    QPointF point = k->parent->boundingRect().center();
-    transform.translate(point.x(), point.y());
-    transform.rotate(k->rotation);
-    transform.scale(sx, sy);
-    transform.translate(-point.x(), -point.y());
-
-    k->parent->setTransform(transform);
+    QMatrix m;
+    m.translate(m_anchor.x(),m_anchor.y());
+    m.scale(sx,sy);
+    m.translate(-m_anchor.x(),-m_anchor.y());
+    m_parent->setMatrix(m, true);
 
     syncNodesFromParent();
-    k->scaleX = sx;
-    k->scaleY = sy;
-    k->parent->setData(TupGraphicObject::ScaleX, sx);
-    k->parent->setData(TupGraphicObject::ScaleY, sy);
 }
 
-void NodeManager::rotate(double angle)
+void NodeManager::rotate(double a)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[NodeManager::rotate()]";
-        #else
-            T_FUNCINFO;
-            tWarning() << "angle: " << angle;
-        #endif
-    #endif
-
-    QTransform transform;
-
-    QPointF point = k->parent->boundingRect().center();
-    transform.translate(point.x(), point.y());
-    transform.rotate(angle);
-    transform.scale(k->scaleX, k->scaleY);
-    transform.translate(-point.x(), -point.y());
-
-    k->parent->setTransform(transform);
+    QMatrix m = m_parent->matrix();
+    m.translate(m_anchor.x(),m_anchor.y());
+    m.rotate(m_rotation-a);
+    m.translate(-m_anchor.x(),-m_anchor.y());
+    m_parent->setMatrix(m);
+    m_parent->setData(TupGraphicObject::Rotate, m_rotation - a);
 
     syncNodesFromParent();
-    k->rotation = angle;
-    k->parent->setData(TupGraphicObject::Rotate, k->rotation);
-}
-
-void NodeManager::horizontalFlip()
-{
-    scale(k->scaleX*(-1), k->scaleY);
-}
-
-void NodeManager::verticalFlip()
-{
-    scale(k->scaleX, k->scaleY*(-1));
-}
-
-void NodeManager::crossedFlip()
-{
-    scale(k->scaleX*(-1), k->scaleY*(-1));
+    m_rotation = a;
 }
 
 void NodeManager::show()
 {
-    foreach (Node *node, k->nodes) {
+    foreach (Node *node, m_nodes) {
              if (!node->scene())
-                 k->scene->addItem(node);
+                 m_scene->addItem(node);
     }
 }
 
-void NodeManager::setPressedStatus(bool isPressed)
+void NodeManager::setPress(bool press)
 {
-    k->isPressed = isPressed;
+    m_press = press;
 }
 
-bool NodeManager::isPressed()
+bool NodeManager::isPress()
 {
-    return k->isPressed;
+    return m_press;
 }
 
 void NodeManager::toggleAction()
 {
-    foreach (Node *node, k->nodes) {
+    foreach (Node *node, m_nodes) {
              if (node->actionNode() == Node::Scale) {
                  node->setAction(Node::Rotate);
              } else if (node->actionNode() == Node::Rotate) {
@@ -290,33 +219,33 @@ void NodeManager::toggleAction()
 
 void NodeManager::setActionNode(Node::ActionNode action)
 {
-    foreach (Node *node, k->nodes)
+    foreach (Node *node, m_nodes)
              node->setAction(action);
 }
 
 void NodeManager::resizeNodes(qreal factor)
 {
-    foreach (Node *node, k->nodes)
+    foreach (Node *node, m_nodes)
              node->resize(factor);
 }
 
 void NodeManager::setVisible(bool visible)
 {
-    foreach (Node *node, k->nodes)
+    foreach (Node *node, m_nodes)
              node->setVisible(visible);
 }
 
 double NodeManager::rotation()
 {
-    return k->rotation;
+    return m_rotation;
 }
 
 void NodeManager::setProportion(bool flag)
 {
-    k->proportional = flag;
+    m_proportional = flag;
 }
 
 bool NodeManager::proportionalScale()
 {
-    return k->proportional;
+    return m_proportional;
 }

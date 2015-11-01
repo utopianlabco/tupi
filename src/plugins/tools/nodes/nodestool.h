@@ -105,14 +105,13 @@ class TUPI_PLUGIN NodesTool : public TupToolPlugin
 
         void resizeNodes(qreal scaleFactor);
         void updateZoomFactor(qreal scaleFactor);
-        void clearSelection();
 
     signals:
         void closeHugeCanvas();
         void callForPlugin(int menu, int index);
-
+ 
     private:
-        // void reset(TupGraphicsScene *scene);
+        void reset(TupGraphicsScene *scene);
         void setupActions();
         TupFrame* currentFrame();
         

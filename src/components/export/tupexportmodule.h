@@ -57,6 +57,7 @@ class TUPI_EXPORT TupExportModule : public TupExportWizardPage
 
         bool isComplete() const;
         void reset();
+        void aboutToFinish();
 
     public slots:
         void exportIt();
@@ -97,7 +98,6 @@ class TUPI_EXPORT TupExportModule : public TupExportWizardPage
         QString extension;
         QCheckBox *bgTransparency;
         bool transparency;
-        bool browserWasOpened; 
 };
 
 #endif

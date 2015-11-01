@@ -52,6 +52,8 @@
 #include <QMenu>
 #include <QAction>
 
+// class QGraphicsPathItem;
+// class QListWidgetItem;
 class TupItemTweener;
 
 /**
@@ -86,9 +88,9 @@ class TUPI_PLUGIN Configurator : public QFrame
         void updateSteps(const QGraphicsPathItem *path);
         QString tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point, QString &path);
         int totalSteps();
-        QList<QPointF> tweenPoints();
+        // void activateSelectionMode();
         void activateMode(TupToolPlugin::EditMode mode);
-        void clearData();
+        void cleanData();
         QString currentTweenName() const;
         void notifySelection(bool flag);
         int startComboSize();
@@ -98,12 +100,12 @@ class TUPI_PLUGIN Configurator : public QFrame
         void setCurrentTween(TupItemTweener *currentTween);
 
     public slots:
-        void editTween();
         void closeTweenProperties();
         
     private slots:
         void applyItem();
         void addTween(const QString &name);
+        void editTween();
         void removeTween();
         void removeTween(const QString &name);
         void updateTweenData(const QString &name);
@@ -116,8 +118,8 @@ class TUPI_PLUGIN Configurator : public QFrame
         void clickedResetInterface();
         void clickedApplyTween();
         void startingFrameChanged(int);
+        // void editModeOn();
         void getTweenData(const QString &);
-        void framesTotalChanged();
         
     private:
         struct Private;

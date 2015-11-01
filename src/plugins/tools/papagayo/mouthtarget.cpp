@@ -99,7 +99,7 @@ void MouthTarget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void MouthTarget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[MouthTarget::mouseReleaseEvent()]";
         #else
             T_FUNCINFO;

@@ -35,9 +35,8 @@
 
 #include "node.h"
 #include "nodemanager.h"
+#include "tupgraphicalgorithm.h"
 #include "tupgraphicobject.h"
-
-#include <cmath> //fabs
 
 /**
  * This class defines the data structure for a node, and all the methods required to manipulate it.
@@ -49,11 +48,11 @@ struct Node::Private
 {
     TypeNode typeNode;
     ActionNode action;
+    bool notChange;
     ActionNode generalState; 
     QGraphicsItem *parent;
     NodeManager *manager;
     QSizeF size;
-    QPointF oldPoint;
 };
 
 Node::Node(TypeNode node, ActionNode action, const QPointF &pos, NodeManager *manager, QGraphicsItem *parent, int zValue) : 
@@ -142,7 +141,7 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Node::itemChange()]";
         #else
             T_FUNCINFO;
@@ -163,22 +162,21 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Node::mousePressEvent()]";
         #else
             T_FUNCINFO;
         #endif
     #endif
 
-    k->oldPoint = event->scenePos();
-    k->manager->setPressedStatus(true);
+    k->manager->setPress(true);
     QGraphicsItem::mousePressEvent(event);
 }
 
 void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Node::mouseReleaseEvent()]";
         #else
             T_FUNCINFO;
@@ -187,53 +185,95 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsItem::mouseReleaseEvent(event);
     k->parent->setSelected(true);
-    k->manager->setPressedStatus(false);
+    k->manager->setPress(false);
 }
 
 void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QPointF newPos(event->scenePos());
 
-    if (k->typeNode == Center) {
-        if ((int)newPos.x() % 2 == 0) {
-            k->parent->moveBy(newPos.x() - scenePos().x(), newPos.y() - scenePos().y());
-            event->accept();
-        }
+    if (k->notChange) {
+        k->notChange = false;
     } else {
         if (k->action == Scale) {
-            QPointF center = k->parent->boundingRect().center();
-            QPointF distance = k->parent->mapToScene(center) - newPos;
+            QRectF rect = k->parent->sceneBoundingRect();
+            QRectF parentRect  = k->parent->sceneBoundingRect();
+            QRectF parentSquare  = k->parent->boundingRect();
+            
+            // SQA: Lines for debugging purposes
+            /*
+            scene()->addRect(rect, QPen(Qt::red));
+            scene()->addRect(parentRect, QPen(Qt::green));
+            */
+            
+            switch (k->typeNode) {
+                    case TopLeft:
+                    {
+                         k->manager->setAnchor(parentSquare.bottomRight());
+                         rect.setTopLeft(newPos);
+                         break;
+                    }
+                    case TopRight:
+                    {
+                         k->manager->setAnchor(parentSquare.bottomLeft());
+                         rect.setTopRight(newPos);
+                         break;
+                    }
+                    case BottomRight:
+                    {
+                         k->manager->setAnchor(parentSquare.topLeft());
+                         rect.setBottomRight(newPos);
+                         break;
+                    }
+                    case BottomLeft:
+                    {
+                         k->manager->setAnchor(parentSquare.topRight());
+                         rect.setBottomLeft(newPos);
+                         break;
+                    }
+                    case Center:
+                    {
+                         break;
+                    }
+            };
+            
+            float sx = 1, sy = 1;
+            sx = static_cast<float>(rect.width()) / static_cast<float>(parentRect.width());
+            sy = static_cast<float>(rect.height()) / static_cast<float>(parentRect.height());
 
-            qreal w = k->parent->boundingRect().width() / 2;
-            qreal h = k->parent->boundingRect().height() / 2;
-            qreal sx = fabs(distance.x()) / w;
-            qreal sy = fabs(distance.y()) / h;
+            if (k->manager->proportionalScale()) {
+                k->manager->scale(sx, sx);
+            } else {
+                if (sx > 0 && sy > 0) {
+                    k->manager->scale(sx, sy);
+                } else {
+                    if (sx > 0)
+                        k->manager->scale(sx, 1);
 
-            if (k->manager->proportionalScale())
-                sy = sx;
-            k->manager->scale(sx, sy);
+                    if (sy > 0)
+                        k->manager->scale(1, sy);
+                }
+            }
         } else if (k->action == Rotate) {
                    QPointF p1 = newPos;
                    QPointF p2 = k->parent->sceneBoundingRect().center();
-
-                   QLineF line(p2, p1);
-                   QLineF lineRef(p2, k->oldPoint);
-                   qreal angle = lineRef.angle() - line.angle();
-
-                   qreal rotation = k->parent->data(TupGraphicObject::Rotate).toReal() + angle;
-                   if (fabs(rotation) > 360)
-                       rotation = 0;
-
-                   k->manager->rotate(rotation);
-                   k->oldPoint = newPos;
+                   k->manager->setAnchor(k->parent->boundingRect().center());
+                
+                   double a = (180 * TupGraphicalAlgorithm::angleForPos(p1, p2)) / M_PI;
+                   k->manager->rotate(a-45);
         }
+    }
+
+    if (k->typeNode == Center) {
+        k->parent->moveBy(event->scenePos().x() - scenePos().x() , event->scenePos().y() - scenePos().y());
+        event->accept();
     }
 }
 
 void Node::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
+        #ifdef Q_OS_WIN32
             qDebug() << "[Node::mouseDoubleClickEvent()]";
         #else
             T_FUNCINFO;

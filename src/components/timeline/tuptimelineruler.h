@@ -60,9 +60,6 @@ class TUPI_EXPORT TupTimeLineRuler : public QHeaderView
 
     signals:
         void headerSelectionChanged(int section);
-
-    private:
-        QString themeName;
 };
 
 #endif

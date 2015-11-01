@@ -69,9 +69,6 @@ class TUPI_PLUGIN Configurator : public QFrame
         void resetUI();
         void closePanels();
 
-        void setPhoneme(const QString &phoneme);
-        void setPos(const QPointF &point);
-
     private slots:
         void editCurrentLipSync(const QString &name);
         void closeSettingsPanel();
@@ -81,10 +78,9 @@ class TUPI_PLUGIN Configurator : public QFrame
         void selectMouth(const QString &name, int index);
         void closeLipSyncProperties();
         void editLipSyncSelection(const QString &lipSyncName);
+        // void updateLipSyncSelection(const QString &lipSyncName);
         void initFrameHasChanged(int index);
         void removeCurrentLipSync(const QString &name);
-        void xPosChanged(int x);
-        void yPosChanged(int y);
         
     private:
         void setPropertiesPanel();

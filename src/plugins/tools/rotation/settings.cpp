@@ -45,26 +45,27 @@ struct Settings::Private
 {
     QWidget *innerPanel;
     QWidget *rangePanel;
+    QWidget *clockPanel;
 
     QBoxLayout *layout;
     TupToolPlugin::Mode mode;
 
     QLineEdit *input;
     TRadioButtonGroup *options;
-    QSpinBox *initFrame;
-    QSpinBox *endFrame;
+    QSpinBox *comboInit;
+    QSpinBox *comboEnd;
 
-    QComboBox *rotationTypeCombo;
+    QComboBox *comboType;
     TupItemTweener::RotationType rotationType;
 
-    QSpinBox *rangeStart;
-    QSpinBox *rangeEnd;
+    QSpinBox *comboStart;
+    QSpinBox *comboFinish;
 
-    QSpinBox *degreesPerFrame;
+    QSpinBox *degreesSpinbox;
     QCheckBox *rangeLoopBox;
     QCheckBox *reverseLoopBox;
     QLabel *totalLabel;
-    QComboBox *clockCombo;
+    QComboBox *comboClock;
     int totalSteps;
 
     bool selectionDone;
@@ -84,6 +85,12 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
+#ifndef Q_OS_MAC 
+    QFont font = this->font();
+    font.setPointSize(8);
+    setFont(font);
+#endif
+
     QLabel *nameLabel = new QLabel(tr("Name") + ": ");
     k->input = new QLineEdit;
 
@@ -99,10 +106,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -139,33 +146,33 @@ void Settings::setInnerForm()
     QLabel *startingLabel = new QLabel(tr("Starting at frame") + ": ");
     startingLabel->setAlignment(Qt::AlignVCenter);
 
-    k->initFrame = new QSpinBox();
-    k->initFrame->setEnabled(false);
-    k->initFrame->setMaximum(999);
-    connect(k->initFrame, SIGNAL(valueChanged(int)), this, SLOT(updateLastFrame()));
+    k->comboInit = new QSpinBox();
+    k->comboInit->setEnabled(false);
+    k->comboInit->setMaximum(999);
+    connect(k->comboInit, SIGNAL(valueChanged(int)), this, SLOT(updateLastFrame()));
  
     QLabel *endingLabel = new QLabel(tr("Ending at frame") + ": ");
     endingLabel->setAlignment(Qt::AlignVCenter);
 
-    k->endFrame = new QSpinBox();
-    k->endFrame->setEnabled(true);
-    k->endFrame->setValue(1);
-    k->endFrame->setMaximum(999);
-    connect(k->endFrame, SIGNAL(valueChanged(int)), this, SLOT(checkTopLimit(int)));
+    k->comboEnd = new QSpinBox();
+    k->comboEnd->setEnabled(true);
+    k->comboEnd->setValue(1);
+    k->comboEnd->setMaximum(999);
+    connect(k->comboEnd, SIGNAL(valueChanged(int)), this, SLOT(checkTopLimit(int)));
 
     QHBoxLayout *startLayout = new QHBoxLayout;
     startLayout->setAlignment(Qt::AlignHCenter);
     startLayout->setMargin(0);
     startLayout->setSpacing(0);
     startLayout->addWidget(startingLabel);
-    startLayout->addWidget(k->initFrame);
+    startLayout->addWidget(k->comboInit);
 
     QHBoxLayout *endLayout = new QHBoxLayout;
     endLayout->setAlignment(Qt::AlignHCenter);
     endLayout->setMargin(0);
     endLayout->setSpacing(0);
     endLayout->addWidget(endingLabel);
-    endLayout->addWidget(k->endFrame);
+    endLayout->addWidget(k->comboEnd);
 
     k->totalLabel = new QLabel(tr("Frames Total") + ": 1");
     k->totalLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
@@ -175,11 +182,11 @@ void Settings::setInnerForm()
     totalLayout->setSpacing(0);
     totalLayout->addWidget(k->totalLabel);
 
-    k->rotationTypeCombo = new QComboBox();
-    k->rotationTypeCombo->addItem(tr("Continuous"));
-    k->rotationTypeCombo->addItem(tr("Partial"));
+    k->comboType = new QComboBox();
+    k->comboType->addItem(tr("Continuous"));
+    k->comboType->addItem(tr("Partial"));
 
-    connect(k->rotationTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshForm(int)));
+    connect(k->comboType, SIGNAL(currentIndexChanged(int)), this, SLOT(refreshForm(int)));
 
     QLabel *typeLabel = new QLabel(tr("Type") + ": ");
     typeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -188,16 +195,16 @@ void Settings::setInnerForm()
     typeLayout->setMargin(0);
     typeLayout->setSpacing(0);
     typeLayout->addWidget(typeLabel);
-    typeLayout->addWidget(k->rotationTypeCombo);
+    typeLayout->addWidget(k->comboType);
 
     QLabel *speedLabel = new QLabel(tr("Speed (Degrees/Frame)") + ": ");
     speedLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    k->degreesPerFrame = new QSpinBox;
-    k->degreesPerFrame->setEnabled(true);
-    k->degreesPerFrame->setMinimum(1);
-    k->degreesPerFrame->setMaximum(360);
-    k->degreesPerFrame->setValue(5);
+    k->degreesSpinbox = new QSpinBox;
+    k->degreesSpinbox->setEnabled(true);
+    k->degreesSpinbox->setMinimum(0);
+    k->degreesSpinbox->setMaximum(359);
+    k->degreesSpinbox->setValue(5);
 
     QVBoxLayout *speedLayout = new QVBoxLayout;
     speedLayout->setAlignment(Qt::AlignHCenter);
@@ -209,7 +216,7 @@ void Settings::setInnerForm()
     speedLayout2->setAlignment(Qt::AlignHCenter);
     speedLayout2->setMargin(0);
     speedLayout2->setSpacing(0);
-    speedLayout2->addWidget(k->degreesPerFrame);
+    speedLayout2->addWidget(k->degreesSpinbox);
 
     innerLayout->addLayout(startLayout);
     innerLayout->addLayout(endLayout);
@@ -221,24 +228,8 @@ void Settings::setInnerForm()
 
     innerLayout->addWidget(new TSeparator(Qt::Horizontal));
 
-    QBoxLayout *clockLayout = new QBoxLayout(QBoxLayout::TopToBottom); // , k->clockPanel);
-    clockLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
-    clockLayout->setMargin(0);
-    clockLayout->setSpacing(0);
-
-    QLabel *directionLabel = new QLabel(tr("Direction") + ": ");
-    directionLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-
-    k->clockCombo = new QComboBox();
-    k->clockCombo->addItem(tr("Clockwise"));
-    k->clockCombo->addItem(tr("Counterclockwise"));
-
-    clockLayout->addWidget(directionLabel);
-    clockLayout->addWidget(k->clockCombo);
-    clockLayout->addSpacing(5);
-
-    innerLayout->addLayout(clockLayout);
-
+    setClockForm();
+    innerLayout->addWidget(k->clockPanel);
     setRangeForm();
     innerLayout->addWidget(k->rangePanel);
 
@@ -263,6 +254,36 @@ void Settings::activeInnerForm(bool enable)
     }
 }
 
+void Settings::setClockForm()
+{
+    k->clockPanel = new QWidget;
+
+    QBoxLayout *clockLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->clockPanel);
+    clockLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
+    clockLayout->setMargin(0);
+    clockLayout->setSpacing(0);
+
+    QLabel *directionLabel = new QLabel(tr("Direction") + ": ");
+    directionLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+
+    k->comboClock = new QComboBox();
+    k->comboClock->addItem(tr("Clockwise"));
+    k->comboClock->addItem(tr("Counterclockwise"));
+
+    clockLayout->addWidget(directionLabel);    
+    clockLayout->addWidget(k->comboClock);
+    clockLayout->addSpacing(5);
+    activeClockForm(true);
+}
+
+void Settings::activeClockForm(bool enable)
+{
+    if (enable && !k->clockPanel->isVisible())
+        k->clockPanel->show();
+    else
+        k->clockPanel->hide();
+}
+
 void Settings::setRangeForm()
 {
     k->rangePanel = new QWidget;
@@ -277,34 +298,34 @@ void Settings::setRangeForm()
     QLabel *startLabel = new QLabel(tr("Start at") + ": ");
     startLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    k->rangeStart = new QSpinBox;
-    k->rangeStart->setEnabled(true);
-    k->rangeStart->setMinimum(0);
-    k->rangeStart->setMaximum(360);
-    connect(k->rangeStart, SIGNAL(valueChanged(int)), this, SLOT(checkRange(int)));
+    k->comboStart = new QSpinBox;
+    k->comboStart->setEnabled(true);
+    k->comboStart->setMinimum(0);
+    k->comboStart->setMaximum(359);
+    connect(k->comboStart, SIGNAL(valueChanged(int)), this, SLOT(checkRange(int)));
 
     QHBoxLayout *startLayout = new QHBoxLayout;
     startLayout->setAlignment(Qt::AlignHCenter);
     startLayout->setMargin(0);
     startLayout->setSpacing(0);
     startLayout->addWidget(startLabel);
-    startLayout->addWidget(k->rangeStart);
+    startLayout->addWidget(k->comboStart);
 
     QLabel *endLabel = new QLabel(tr("Finish at") + ": ");
     endLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    k->rangeEnd = new QSpinBox;
-    k->rangeEnd->setEnabled(true);
-    k->rangeEnd->setMinimum(0);
-    k->rangeEnd->setMaximum(360);
-    connect(k->rangeEnd, SIGNAL(valueChanged(int)), this, SLOT(checkRange(int)));
+    k->comboFinish = new QSpinBox;
+    k->comboFinish->setEnabled(true);
+    k->comboFinish->setMinimum(0);
+    k->comboFinish->setMaximum(359);
+    connect(k->comboFinish, SIGNAL(valueChanged(int)), this, SLOT(checkRange(int)));
 
     QHBoxLayout *endLayout = new QHBoxLayout;
     endLayout->setAlignment(Qt::AlignHCenter);
     endLayout->setMargin(0);
     endLayout->setSpacing(0);
     endLayout->addWidget(endLabel);
-    endLayout->addWidget(k->rangeEnd);
+    endLayout->addWidget(k->comboFinish);
 
     k->rangeLoopBox = new QCheckBox(tr("Loop"), k->rangePanel);
 
@@ -347,66 +368,44 @@ void Settings::activeRangeForm(bool enable)
 
 void Settings::setParameters(const QString &name, int framesCount, int initFrame)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[Settings::setParameters()]";
-        #else
-            T_FUNCINFO << "- Adding new tween";
-        #endif
-    #endif
-
     k->mode = TupToolPlugin::Add;
     k->input->setText(name);
 
     activateMode(TupToolPlugin::Selection);
 
-    // Resetting interface
-    k->rotationTypeCombo->setCurrentIndex(0);
-    k->clockCombo->setCurrentIndex(0);
-    k->rangeStart->setValue(0);
-    k->rangeEnd->setValue(0);
-    k->rangeLoopBox->setChecked(false);
-    k->reverseLoopBox->setChecked(false);
-    k->degreesPerFrame->setValue(1);
-
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
     initStartCombo(framesCount, initFrame);
 }
 
-// Editing current Tween
+// Editing new Tween
 
 void Settings::setParameters(TupItemTweener *currentTween)
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[Settings::setParameters()]";
-        #else
-            T_FUNCINFO << "- Editing current tween";
-        #endif
-    #endif
-
     setEditMode();
     activateMode(TupToolPlugin::Properties);
 
     k->input->setText(currentTween->name());
 
-    k->initFrame->setEnabled(true);
-    k->initFrame->setValue(currentTween->initFrame());
+    k->comboInit->setEnabled(true);
+    k->comboInit->setValue(currentTween->initFrame());
 
-    k->endFrame->setValue(currentTween->initFrame() + currentTween->frames());
+    k->comboEnd->setValue(currentTween->initFrame() + currentTween->frames());
+
+    // tError() << "Settings::setParameters() - Tracing comboEnd - comboEnd: " << currentTween->initFrame() + currentTween->frames();
 
     checkFramesRange();
 
-    k->rotationTypeCombo->setCurrentIndex(currentTween->tweenRotationType());
-    k->degreesPerFrame->setValue(currentTween->tweenRotateSpeed());
-    k->clockCombo->setCurrentIndex(currentTween->tweenRotateDirection()); 
+    k->comboType->setCurrentIndex(currentTween->tweenRotationType());
+    k->degreesSpinbox->setValue(currentTween->tweenRotateSpeed());
 
-    if (currentTween->tweenRotationType() == TupItemTweener::Partial) {
-        k->rangeStart->setValue(currentTween->tweenRotateStartDegree());
-        k->rangeEnd->setValue(currentTween->tweenRotateEndDegree());
+    if (currentTween->tweenRotationType() == TupItemTweener::Continuos) {
+        k->comboClock->setCurrentIndex(currentTween->tweenRotateDirection());
+    } else {
+        k->comboStart->setValue(currentTween->tweenRotateStartDegree());
+        k->comboFinish->setValue(currentTween->tweenRotateEndDegree());
 
         k->rangeLoopBox->setChecked(currentTween->tweenRotateLoop());
         k->reverseLoopBox->setChecked(currentTween->tweenRotateReverseLoop());
@@ -415,45 +414,45 @@ void Settings::setParameters(TupItemTweener *currentTween)
 
 void Settings::initStartCombo(int framesCount, int currentIndex)
 {
-    k->initFrame->clear();
-    k->endFrame->clear();
+    k->comboInit->clear();
+    k->comboEnd->clear();
 
-    k->initFrame->setMinimum(1);
-    k->initFrame->setMaximum(framesCount);
-    k->initFrame->setValue(currentIndex + 1);
+    k->comboInit->setMinimum(1);
+    k->comboInit->setMaximum(framesCount);
+    k->comboInit->setValue(currentIndex + 1);
 
-    k->endFrame->setMinimum(1);
-    k->endFrame->setValue(framesCount);
+    k->comboEnd->setMinimum(1);
+    k->comboEnd->setValue(framesCount);
 }
 
 void Settings::setStartFrame(int currentIndex)
 {
-    k->initFrame->setValue(currentIndex + 1);
-    int end = k->endFrame->value();
+    k->comboInit->setValue(currentIndex + 1);
+    int end = k->comboEnd->value();
     if (end < currentIndex+1)
-        k->endFrame->setValue(currentIndex + 1);
+        k->comboEnd->setValue(currentIndex + 1);
 }
 
 int Settings::startFrame()
 {
-    return k->initFrame->value() - 1;
+    return k->comboInit->value() - 1;
 }
 
 int Settings::startComboSize()
 {
-    return k->initFrame->maximum();
+    return k->comboInit->maximum();
 }
 
 int Settings::totalSteps()
 {
-    return k->endFrame->value() - (k->initFrame->value() - 1);
+    return k->comboEnd->value() - (k->comboInit->value() - 1);
 }
 
 void Settings::setEditMode()
 {
     k->mode = TupToolPlugin::Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 
@@ -463,7 +462,7 @@ void Settings::applyTween()
         TOsd::self()->display(tr("Info"), tr("You must select at least one object!"), TOsd::Info); 
         #ifdef K_DEBUG
             QString msg = "Settings::applyTween() - You must select at least one object!";
-            #ifdef Q_OS_WIN
+            #ifdef Q_OS_WIN32
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -474,10 +473,10 @@ void Settings::applyTween()
     }
 
     if (!k->propertiesDone) {
-        TOsd::self()->display(tr("Info"), tr("You must set Tween properties first!"), TOsd::Error);
+        TOsd::self()->display(tr("Info"), tr("You must set Tween properties first!"), TOsd::Info);
         #ifdef K_DEBUG
             QString msg = "Settings::applyTween() - You must set Tween properties first!";
-            #ifdef Q_OS_WIN
+            #ifdef Q_OS_WIN32
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -486,42 +485,11 @@ void Settings::applyTween()
         return;
     }
 
-    if (k->rotationType == TupItemTweener::Partial) {
-        int start = k->rangeStart->value();
-        int end = k->rangeEnd->value();
-        if (start == end) {
-            TOsd::self()->display(tr("Info"), tr("Angle range must be greater than 0!"), TOsd::Error);
-            #ifdef K_DEBUG
-                QString msg = "Settings::applyTween() - Angle range must be greater than 0!";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
-            return;
-        }
-
-        int range = abs(start - end); 
-        if (range < k->degreesPerFrame->value()) { 
-            TOsd::self()->display(tr("Info"), tr("Angle range must be greater than Speed!"), TOsd::Error);
-            #ifdef K_DEBUG
-                QString msg = "Settings::applyTween() - Angle range must be greater than Speed!";
-                #ifdef Q_OS_WIN
-                    qDebug() << msg;
-                #else
-                    tError() << msg;
-                #endif
-            #endif
-            return;
-        }
-    }
-
     // SQA: Verify Tween is really well applied before call setEditMode!
     setEditMode();
 
-    if (!k->initFrame->isEnabled())
-        k->initFrame->setEnabled(true);
+    if (!k->comboInit->isEnabled())
+        k->comboInit->setEnabled(true);
 
     emit clickedApplyTween();
 }
@@ -559,7 +527,7 @@ void Settings::emitOptionChanged(int option)
                     TOsd::self()->display(tr("Info"), tr("Select objects for Tweening first!"), TOsd::Info);
                     #ifdef K_DEBUG
                         QString msg = "Settings::emitOptionChanged() - You must set Tween properties first!";
-                        #ifdef Q_OS_WIN
+                        #ifdef Q_OS_WIN32
                             qDebug() << msg;
                         #else
                             tError() << msg;
@@ -586,13 +554,13 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
 
     root.setAttribute("origin", QString::number(point.x()) + "," + QString::number(point.y()));
     root.setAttribute("rotationType", k->rotationType);
-    int speed = k->degreesPerFrame->value();
+    int speed = k->degreesSpinbox->value();
     root.setAttribute("rotateSpeed", speed);
 
-    int direction = k->clockCombo->currentIndex();
-    root.setAttribute("rotateDirection", direction);
-
     if (k->rotationType == TupItemTweener::Continuos) {
+        int direction = k->comboClock->currentIndex();
+        root.setAttribute("rotateDirection", direction);
+
         int angle = 0;
         for (int i=0; i < k->totalSteps; i++) {
              TupTweenerStep *step = new TupTweenerStep(i);
@@ -603,6 +571,7 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
              else
                  angle -= speed;
         }
+
     } else if (k->rotationType == TupItemTweener::Partial) {
                bool loop = k->rangeLoopBox->isChecked();
                if (loop)
@@ -610,99 +579,68 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
                else
                    root.setAttribute("rotateLoop", "0");
 
-               int start = k->rangeStart->value();
+               int start = k->comboStart->value();
                root.setAttribute("rotateStartDegree", start);
 
-               int end = k->rangeEnd->value();
+               int end = k->comboFinish->value();
                root.setAttribute("rotateEndDegree", end);
 
                bool reverse = k->reverseLoopBox->isChecked();
                if (reverse)
-                   root.setAttribute("rotateReverseLoop", "1");
+                   root.setAttribute("reverseLoop", "1");
                else
-                   root.setAttribute("rotateReverseLoop", "0");
+                   root.setAttribute("reverseLoop", "0");
 
-               int angle = start;
+               double angle = start;
                bool token = false;
 
-               int distance = 0;
-               if (direction == TupItemTweener::Clockwise) {
-                   if (start > end)
-                       distance = 360 - (start - end);
-                   else
-                       distance = end - start;
-               } else { // CounterClockwise
-                   if (start > end)
-                       distance = start - end;
-                   else
-                       distance = 360 - (end - start);
-               }
+               if (start < end) {
+                   for (int i=0; i < k->totalSteps; i++) {
+                        TupTweenerStep *step = new TupTweenerStep(i);
+                        step->setRotation(angle);
+                        root.appendChild(step->toXml(doc));
 
-               int counter = 0; 
-               int go = distance;
-               int back = distance - (2*speed);
-
-               for (int i=0; i < k->totalSteps; i++) {
-                    TupTweenerStep *step = new TupTweenerStep(i);
-                    step->setRotation(angle);
-                    root.appendChild(step->toXml(doc));
-
-                    if (!token) { // going on initial direction
-                        if (counter < distance) {
-                            if (direction == TupItemTweener::Clockwise)
+                        if (!token) {
+                            if (angle < end)
                                 angle += speed;
-                            else
-                                angle -= speed;
-
-                            if (end < start) {
-                                if (angle >= 360)
-                                    angle = angle - 360;
-                            }
-                        }
-                    } else { // returning back
-                        if (counter < distance) {
-                            if (direction == TupItemTweener::Clockwise)
-                                angle -= speed;
-                            else
-                                angle += speed;
-
-                            if (end < start) {
-                                if (angle < 0)
-                                    angle = 360 - std::abs(angle);
-                            }
-                        }
-                    }
-
-                    if (reverse) {
-                        if (counter >= distance) {
-                            token = !token;
-                            counter = 0;
-
-                            if (direction == TupItemTweener::Clockwise) {
-                                angle -= speed;
-                                if (angle < 0)
-                                    angle = 360 - std::abs(angle);
-                            } else {
-                                angle += speed;
-                                if (angle >= 360)
-                                    angle = angle - 360;
-                            }
-
-                            if (token)
-                                distance = back;
-                            else
-                                distance = go;
                         } else {
-                            counter += speed;
+                            angle -= speed;
                         }
-                    } else if (loop && counter >= distance) {
-                               angle = start;
-                               counter = 0;
-                    } else {
-                        counter += speed;
-                    }
+
+                        if (reverse) {
+                            if (angle >= end)
+                                token = true;
+                            else if (angle < start) 
+                                     token = false;
+                        } else if (loop && angle >= end) {
+                                   angle = start;
+                        } 
+                   }
+               } else {
+                   for (int i=0; i < k->totalSteps; i++) {
+                        TupTweenerStep *step = new TupTweenerStep(i);
+                        step->setRotation(angle);
+                        root.appendChild(step->toXml(doc));
+
+                        if (!token) {
+                            if (angle > end)
+                                angle -= speed;
+                        } else {
+                            angle += speed;
+                        }
+
+                        if (reverse) {
+                            if (angle <= end)
+                                token = true;
+                            else if (angle > start)
+                                     token = false;
+                        } else if (loop && angle <= end) {
+                                   angle = start;
+                        }
+                   }
                }
     }
+
     doc.appendChild(root);
 
     return doc.toString();
@@ -717,9 +655,11 @@ void Settings::refreshForm(int type)
 {
     if (type == 0) {
         k->rotationType = TupItemTweener::Continuos;
+        activeClockForm(true);
         activeRangeForm(false);
     } else {
         k->rotationType = TupItemTweener::Partial;
+        activeClockForm(false);
         activeRangeForm(true);
     }
 }
@@ -732,18 +672,21 @@ void Settings::checkTopLimit(int index)
 
 void Settings::updateLastFrame()
 {
-    int end = k->initFrame->value() + k->totalSteps - 1;
-    k->endFrame->setValue(end);
+    int end = k->comboInit->value() + k->totalSteps - 1;
+    k->comboEnd->setValue(end);
 }
 
 void Settings::checkFramesRange()
 {
-    int begin = k->initFrame->value();
-    int end = k->endFrame->value();
+    int begin = k->comboInit->value();
+    int end = k->comboEnd->value();
        
     if (begin > end) {
-        k->endFrame->setValue(k->endFrame->maximum() - 1);
-        end = k->endFrame->value();
+        // tError() << "Settings::checkFramesRange() - begin: " << begin;
+        // tError() << "Settings::checkFramesRange() - end: " << end;
+        // tError() << "Settings::checkFramesRange() - Updating comboEnd value...";
+        k->comboEnd->setValue(k->comboEnd->maximum() - 1);
+        end = k->comboEnd->value();
     }
 
     k->totalSteps = end - begin + 1;
@@ -776,13 +719,13 @@ void Settings::checkRange(int index)
 {
     Q_UNUSED(index);
 
-    int start = k->rangeStart->value();
-    int end = k->rangeEnd->value();
+    int start = k->comboStart->value();
+    int end = k->comboFinish->value();
 
     if (start == end) {
-        if (k->rangeEnd->value() == 360)
-            k->rangeStart->setValue(k->rangeStart->value() - 1);
+        if (k->comboFinish->value() == 359)
+            k->comboStart->setValue(k->comboStart->value() - 1);
         else
-            k->rangeEnd->setValue(k->rangeEnd->value() + 1);
+            k->comboFinish->setValue(k->comboFinish->value() + 1);
     }
 }

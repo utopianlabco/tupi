@@ -79,6 +79,12 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
+#ifndef Q_OS_MAC 
+    QFont font = this->font();
+    font.setPointSize(8);
+    setFont(font);
+#endif
+
     QLabel *nameLabel = new QLabel(tr("Name") + ": ");
     k->input = new QLineEdit;
 
@@ -94,10 +100,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -288,7 +294,7 @@ void Settings::setParameters(const QString &name, int framesCount, int initFrame
 
     activatePropertiesMode(TupToolPlugin::Selection);
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
     initStartCombo(framesCount, initFrame);
@@ -360,7 +366,7 @@ void Settings::setEditMode()
 {
     k->mode = TupToolPlugin::Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 

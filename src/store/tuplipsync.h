@@ -43,31 +43,25 @@
 #include <QStringList>
 #include <QPoint>
 #include <QTextStream>
-#include <QMap>
 
 class TUPI_EXPORT TupPhoneme : public QObject, public TupAbstractSerializable
 {
     public:
         TupPhoneme();
-        // TupPhoneme(const QString &value, int duration, QPointF point);
-        TupPhoneme(const QString &value, QPointF point);
+        TupPhoneme(const QString &value, int duration);
         ~TupPhoneme();
 
-        // void setDuration(int duration);
-        // int duration();
+        void setDuration(int duration);
+        int duration();
         void setValue(const QString &value);
         QString value() const;
-        void setPos(QPointF point);
-        QPointF position();
 
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;
 
     private:
-        // int frames;
+        int frames;
         QString phoneme;
-        QPointF pos;
-        // bool posRef;
 };
 
 class TUPI_EXPORT TupWord : public QObject, public TupAbstractSerializable
@@ -78,7 +72,6 @@ class TUPI_EXPORT TupWord : public QObject, public TupAbstractSerializable
         ~TupWord();
         void setInitFrame(int index);
         int initFrame();
-        void setEndFrame(int index);
         int endFrame();
         void addPhoneme(TupPhoneme *phoneme);
         QList<TupPhoneme *> phonemesList();
@@ -102,10 +95,8 @@ class TUPI_EXPORT TupPhrase : public QObject, public TupAbstractSerializable
         ~TupPhrase();
         void setInitFrame(int index);
         int initFrame();
-        void setEndFrame(int index);
         int endFrame();
         void addWord(TupWord *word);
-        void insertWord(int index, TupWord *word);
         QList<TupWord *> wordsList();
         bool contains(int frame);
 
@@ -127,15 +118,13 @@ class TUPI_EXPORT TupVoice : public QObject, public TupAbstractSerializable
         void setVoiceTitle(const QString &label);
         QString voiceTitle() const;
         void setMouthPos(QPointF pos);
-        void updateMouthPos(QPointF pos, int frame);
         QPointF mouthPos();
         void setText(const QString &content);
         QString text() const;
         int initFrame();
         int endFrame();
         void addPhrase(TupPhrase *phrase);
-        QList<TupPhrase *> getPhrases();
-        TupPhoneme * getPhonemeAt(int frame);
+        QString getPhoneme(int frame);
         bool contains(int frame);
 
         virtual void fromXml(const QString &xml);
@@ -172,8 +161,7 @@ class TUPI_EXPORT TupLipSync : public QObject, public TupAbstractSerializable
         void addVoice(TupVoice *voice);
         TupVoice *voiceAt(int index);
         QList<TupVoice *> voices();
-        void updateMouthPosition(int mouthIndex, QPointF point, int frame);
-        void verifyStructure();
+        void updateMouthPosition(int mouthIndex, QPointF point);
 
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;
