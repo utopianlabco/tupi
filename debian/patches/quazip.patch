@@ -5,8 +5,7 @@ Description: drop stupid quazip detection.
 
 --- a/qonf/test.rb
 +++ b/qonf/test.rb
-@@ -102,13 +102,9 @@
-                          extraInclude = quazipDir + "/include"
+@@ -103,11 +103,7 @@ class Test
                           qmakeLine = "'LIBS += #{extraLib}'"
                           qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
                        else
@@ -15,13 +14,11 @@ Description: drop stupid quazip detection.
 -                         else
 -                            extraLib = "-lquazip"
 -                         end
-+                         extraLib = "-lquazip-qt5"
++                         extraLib = "-lquazip5"
                           qmakeLine = "'LIBS += #{extraLib}'"
                        end
                     else
-                       if File.dirname(@rules).end_with?("theora")
-@@ -176,13 +172,9 @@
-         parser.libs.each { |lib|
+@@ -177,11 +173,7 @@ class Test
              config.addLib(lib)
          }
  
@@ -30,8 +27,7 @@ Description: drop stupid quazip detection.
 -        else
 -           config.addLib("-lquazip")
 -        end
-+        config.addLib("-lquazip-qt5")
++        config.addLib("-lquazip5")
          
          parser.defines.each { |define|
              config.addDefine(define)
-         }

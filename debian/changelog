@@ -1,3 +1,12 @@
+tupi (0.2+git05-4) unstable; urgency=medium
+
+  * Team upload
+  * Use the new libquazip5 instead the old libquazip-qt5 (thanks for the
+    patch to Bas Couwenberg <sebastic@xs4all.nl>)
+    Closes: #810609
+
+ -- Andreas Tille <tille@debian.org>  Sun, 10 Jan 2016 17:15:22 +0100
+
 tupi (0.2+git05-3) unstable; urgency=medium
 
   * Upload to unstable (Closes: #786337).
