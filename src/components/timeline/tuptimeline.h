@@ -38,7 +38,7 @@
 
 #include "tglobal.h"
 #include "tupmodulewidgetbase.h"
-#include "ttabwidget.h"
+#include "tupscenecontainer.h"
 #include "tupprojectrequest.h"
 #include "tuplibraryobject.h"
 #include "tuptimelinetable.h"
@@ -81,9 +81,9 @@ class TUPI_EXPORT TupTimeLine : public TupModuleWidgetBase
 
     private slots:
         void requestCommand(int action);
-        bool requestFrameAction(int action, int framePos = -1, int layerPos = -1, int scenePos = -1, const QVariant &arg = QVariant());
-        bool requestLayerAction(int action, int layerPos = -1, int scenePos = -1, const QVariant &arg = QVariant());
-        bool requestSceneAction(int action, int scenePos = -1, const QVariant &arg = QVariant());
+        bool requestFrameAction(int action, int frameIndex = -1, int layerIndex = -1, int sceneIndex = -1, const QVariant &arg = QVariant());
+        bool requestLayerAction(int action, int layerIndex = -1, int sceneIndex = -1, const QVariant &arg = QVariant());
+        bool requestSceneAction(int action, int sceneIndex = -1, const QVariant &arg = QVariant());
         void selectFrame(int indexLayer, int indexFrame);
         void requestLayerMove(int oldIndex, int newIndex);
 

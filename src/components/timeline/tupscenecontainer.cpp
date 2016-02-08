@@ -49,7 +49,7 @@ TupSceneContainer::~TupSceneContainer()
 {
 }
 
-void TupSceneContainer::addScene(int sceneIndex, TupTimeLineTable *framesTable, const QString &sceneName)
+void TupSceneContainer::insertScene(int sceneIndex, TupTimeLineTable *framesTable, const QString &sceneName)
 {
     k->scenes << framesTable; 
     QTabWidget::insertTab(sceneIndex, framesTable, sceneName);
@@ -68,30 +68,14 @@ void TupSceneContainer::removeScene(int sceneIndex)
     QTabWidget::removeTab(sceneIndex);
 }
 
-void TupSceneContainer::removeAllScenes()
+void TupSceneContainer::removeAllTabs()
 {
-    clear();
-    k->scenes.clear();
-    k->undoScenes.clear();
-}
-
-TupTimeLineTable * TupSceneContainer::currentScene()
-{
-    int index = currentIndex();
-    TupTimeLineTable *framesTable = k->scenes.at(index);
-
-    return framesTable;
-}
-
-TupTimeLineTable * TupSceneContainer::getTable(int index)
-{
-    TupTimeLineTable *framesTable = k->scenes.at(index);
-    return framesTable;
-}
-
-int TupSceneContainer::scenesCount()
-{
-    return k->scenes.count();
+    int total = this->count();
+    for (int i = 0; i < total; i++) {
+         k->undoScenes << k->scenes.takeAt(i); 
+         QTabWidget::removeTab(i);
+    }
+    // delete currentWidget();
 }
 
 #ifndef QT_NO_WHEELEVENT
