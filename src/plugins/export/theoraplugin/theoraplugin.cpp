@@ -54,7 +54,7 @@ TheoraPlugin::~TheoraPlugin()
 
 QString TheoraPlugin::key() const
 {
-    return "Open Video Format";
+    return tr("Open Video Format");
 }
 
 TupExportInterface::Formats TheoraPlugin::availableFormats()
@@ -70,8 +70,8 @@ bool TheoraPlugin::exportToFormat(const QColor color, const QString &filePath, c
     int frames = 0;
     qreal duration = 0;
     foreach (TupScene *scene, scenes) {
-             duration += (qreal) scene->framesTotal() / (qreal) fps;
-             frames += scene->framesTotal();
+             duration += (qreal) scene->framesCount() / (qreal) fps;
+             frames += scene->framesCount();
     }
 
     TheoraMovieGenerator *generator = 0;
@@ -83,7 +83,7 @@ bool TheoraPlugin::exportToFormat(const QColor color, const QString &filePath, c
              errorMsg = generator->getErrorMsg();
              #ifdef K_DEBUG
                     QString msg = "FFMpegPlugin::exportToFormat() - [ Fatal Error ] - Can't create video -> " + filePath;
-                    #ifdef Q_OS_WIN32
+                    #ifdef Q_OS_WIN
                         qDebug() << msg;
                     #else
                         tError() << msg;
@@ -126,6 +126,6 @@ bool TheoraPlugin::exportFrame(int frameIndex, const QColor color, const QString
     return false;
 }
 
-const char* TheoraPlugin::getExceptionMsg() {
+QString TheoraPlugin::getExceptionMsg() const {
     return errorMsg;
 }

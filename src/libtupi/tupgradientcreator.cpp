@@ -109,8 +109,13 @@ TupGradientCreator::~TupGradientCreator()
 
 void TupGradientCreator::setCurrentColor(const QColor &color)
 {
+    Q_UNUSED(color);
+
+    // SQA: This code has been disabled temporarily 
+    /*
     k->selector->setCurrentColor(color);
     k->viewer->createGradient();
+    */
 
     // emit gradientChanged(QBrush(k->viewer->gradient()));
 }
@@ -163,7 +168,7 @@ void TupGradientCreator::setGradient(const QBrush & brush)
     } else {
         #ifdef K_DEBUG
 		    QString msg = "TupGradientCreator::setGradient() - Error: Brush has no gradient (null)";
-		    #ifdef Q_OS_WIN32
+		    #ifdef Q_OS_WIN
                qDebug() << msg;
             #else
                tError() << msg;

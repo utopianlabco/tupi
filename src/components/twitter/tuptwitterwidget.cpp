@@ -60,7 +60,7 @@ TupTwitterWidget::TupTwitterWidget(QWidget *parent) : QWidget(parent), k(new Pri
 TupTwitterWidget::~TupTwitterWidget()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupTwitterWidget()]";
         #else
             TEND;
@@ -71,10 +71,10 @@ TupTwitterWidget::~TupTwitterWidget()
 void TupTwitterWidget::setSource(const QString &filePath)
 {
     QStringList path;
-#ifdef Q_OS_WIN32
-    QString resources = SHARE_DIR + "help" + QDir::separator();
+#ifdef Q_OS_WIN
+    QString resources = SHARE_DIR + "help/";
 #else
-    QString resources = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
+    QString resources = SHARE_DIR + "data/help/";
 #endif
 
     path << resources + "css";
@@ -84,11 +84,19 @@ void TupTwitterWidget::setSource(const QString &filePath)
     k->pageArea->setSource(QUrl::fromLocalFile(filePath));
 }
 
-void TupTwitterWidget::keyPressEvent(QKeyEvent * event) {
+void TupTwitterWidget::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
             case (Qt::Key_R):
                   if (event->modifiers() == Qt::ControlModifier)
                       downLoadNews();
+            break;
+            case Qt::Key_1:
+                  if (event->modifiers() == Qt::ControlModifier)
+                      emit newPerspective(0);
+            break;
+            case Qt::Key_2:
+                  if (event->modifiers() == Qt::ControlModifier)
+                      emit newPerspective(1);
             break;
     }
 }

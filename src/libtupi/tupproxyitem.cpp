@@ -59,16 +59,17 @@ TupProxyItem::~TupProxyItem()
 
 void TupProxyItem::setItem(QGraphicsItem *item)
 {
-    if (k->realItem)
-        this->removeSceneEventFilter(k->realItem);
+    // TODO: Enable this line when filter support is ready
+    // if (k->realItem)
+    //     this->removeSceneEventFilter(k->realItem);
     
     k->realItem = item;
     
     if (k->realItem) {
         // TODO: Enable this line when filter support is ready 
-        //k->realItem->installSceneEventFilter(this);
+        // k->realItem->installSceneEventFilter(this);
         this->setFlags(k->realItem->flags());
-    } 
+    }
 }
 
 QGraphicsItem *TupProxyItem::item() const
@@ -84,10 +85,16 @@ QRectF TupProxyItem::boundingRect() const
     return QRectF(0, 0, 0, 0);
 }
 
-void TupProxyItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void TupProxyItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    if (k->realItem)
-        k->realItem->paint(painter, option, widget);
+    if (k->realItem) {
+        if (QGraphicsItemGroup *group = qgraphicsitem_cast<QGraphicsItemGroup *>(k->realItem)) {
+            foreach (QGraphicsItem *child, group->childItems())
+                     child->paint(painter, option, widget);
+        } else {
+            k->realItem->paint(painter, option, widget);
+        }
+    }
 }
 
 QPainterPath TupProxyItem::shape() const
@@ -98,7 +105,7 @@ QPainterPath TupProxyItem::shape() const
     return QGraphicsItem::shape();
 }
 
-bool TupProxyItem::collidesWithItem(const QGraphicsItem * other, Qt::ItemSelectionMode mode) const
+bool TupProxyItem::collidesWithItem(const QGraphicsItem *other, Qt::ItemSelectionMode mode) const
 {
     if (k->realItem)
         return k->realItem->collidesWithItem(other, mode);
@@ -106,7 +113,7 @@ bool TupProxyItem::collidesWithItem(const QGraphicsItem * other, Qt::ItemSelecti
     return QGraphicsItem::collidesWithItem(other, mode);
 }
 
-bool TupProxyItem::collidesWithPath(const QPainterPath & path, Qt::ItemSelectionMode mode) const
+bool TupProxyItem::collidesWithPath(const QPainterPath &path, Qt::ItemSelectionMode mode) const
 {
     if (k->realItem)
         return k->realItem->collidesWithPath(path, mode);
@@ -114,7 +121,7 @@ bool TupProxyItem::collidesWithPath(const QPainterPath & path, Qt::ItemSelection
     return QGraphicsItem::collidesWithPath(path, mode);
 }
 
-bool TupProxyItem::contains(const QPointF & point) const
+bool TupProxyItem::contains(const QPointF &point) const
 {
     if (k->realItem)
         return k->realItem->contains(point);
@@ -122,7 +129,7 @@ bool TupProxyItem::contains(const QPointF & point) const
     return QGraphicsItem::contains(point);
 }
 
-bool TupProxyItem::isObscuredBy(const QGraphicsItem * item) const
+bool TupProxyItem::isObscuredBy(const QGraphicsItem *item) const
 {
     if (k->realItem)
         return k->realItem->isObscuredBy(item);

@@ -6,9 +6,9 @@ SUBDIRS += common \
            nodes \
            text \
            geometric \
-           shift \
+           # shift \
            fill \
-           eraser \
+           # eraser \
            polyline \
            position \
            rotation \
@@ -16,7 +16,7 @@ SUBDIRS += common \
            shear \
            opacity \
            color \
-           compound \
+           composed \
            papagayo
 
 CONFIG += ordered warn_on

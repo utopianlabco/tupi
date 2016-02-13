@@ -49,10 +49,8 @@ TweenManager::TweenManager(QWidget *parent) : QWidget(parent), k(new Private)
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    setFont(QFont("Arial", 8, QFont::Normal, false));
-
     k->input = new QLineEdit;
-    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "plus_sign.png"), 22);
+    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/plus_sign.png"), 22);
     k->addButton->setToolTip(tr("Create a new Tween"));
     connect(k->input, SIGNAL(returnPressed()), this, SLOT(addTween()));
     connect(k->addButton, SIGNAL(clicked()), this, SLOT(addTween()));
@@ -94,7 +92,6 @@ void TweenManager::loadTweenList(QList<QString> tweenList)
 
     for (int i=0; i < tweenList.size(); i++) {
         QListWidgetItem *tweenerItem = new QListWidgetItem(k->tweensList);
-        tweenerItem->setFont(QFont("verdana", 8));
         tweenerItem->setText(tweenList.at(i));
         tweenerItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
@@ -120,7 +117,6 @@ void TweenManager::addTween()
     if (name.length() > 0) {
         if (!itemExists(name)) {
             QListWidgetItem *tweenerItem = new QListWidgetItem(k->tweensList);
-            tweenerItem->setFont(QFont("verdana", 8));
             tweenerItem->setText(name);
             tweenerItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             k->input->clear();

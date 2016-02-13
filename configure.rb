@@ -81,9 +81,9 @@ _EOH_
 
     if conf.hasArgument?("with-qtdir")
        qtdir = conf.argumentValue("with-qtdir")
-       conf.verifyQtVersion("5.2.0", debug, qtdir)
+       conf.verifyQtVersion("5.4.0", debug, qtdir)
     else
-       conf.verifyQtVersion("5.2.0", debug, "")
+       conf.verifyQtVersion("5.4.0", debug, "")
     end
 
     if conf.hasArgument?("with-libav")
@@ -144,24 +144,40 @@ _EOH_
     config.addLib("-ltupifwcore")
     # config.addLib("-ltupifwsound")
     
-    config.addDefine('VERSION=\\\\\"0.2\\\\\"')
-    config.addDefine('CODE_NAME=\\\\\"Amandy\\\\\"')
-    config.addDefine('REVISION=\\\\\"git05\\\\\"')
-
     if conf.hasArgument?("install-headers")
        config.addDefine("ADD_HEADERS");
     end
 
     Info.info << "Debug support... "
 
+    file_name = 'src/components/components.pro'
     if debug == 1 
+       var = open(file_name).grep(/debug/)
+       if var.count == 0
+          open(file_name, 'a') { |f|
+               f.puts "SUBDIRS += debug"
+          }
+       end
+
+       config.addOption("debug")
        config.addDefine("K_DEBUG")
        print "[ \033[92mON\033[0m ]\n"
     else
+       var = open(file_name).grep(/debug/)
+       if var.count > 0
+          text = File.read(file_name)
+          new_contents = text.gsub(/\nSUBDIRS \+\= debug/, "")
+          File.open(file_name, "w") {|file| file.puts new_contents }
+       end
+
+       config.addOption("release")
        config.addDefine("K_NODEBUG")
-       config.addOption("silent")
        print "[ \033[91mOFF\033[0m ]\n"
     end
+
+    config.addDefine('VERSION=\\\\\"0.2\\\\\"')
+    config.addDefine('CODE_NAME=\\\\\"Kunumi\\\\\"')
+    config.addDefine('REVISION=\\\\\"git06\\\\\"')
 
     if File.exists?('/etc/canaima_version')
        config.addDefine("CANAIMA")
@@ -192,4 +208,3 @@ rescue => err
         puts err.backtrace
     end
 end
-

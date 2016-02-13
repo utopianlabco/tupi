@@ -86,7 +86,7 @@ class TUPI_EXPORT TupTimeLineHeader : public QHeaderView
         void hideTitleEditor();
 
     signals:
-        void selectionChanged(int section);
+        void headerSelectionChanged(int section);
         void visibilityChanged(int section, bool isVisible);
         void nameChanged(int section, const QString &name);
 

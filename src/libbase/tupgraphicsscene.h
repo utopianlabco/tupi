@@ -68,7 +68,7 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        enum Context { Current = 1, Preview, Next };
+        enum Context { Current = 1, Previous, Next };
 
         TupGraphicsScene();
         ~TupGraphicsScene();
@@ -111,17 +111,18 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         void mouseMoved(QGraphicsSceneMouseEvent *event);
         void mouseReleased(QGraphicsSceneMouseEvent *event);
 
-        virtual void aboutToMousePress();
+        void setSelectionRange();
+        void enableItemsForSelection();
 
-        void includeObject(QGraphicsItem *object);
+        void includeObject(QGraphicsItem *object, bool isPolyLine = false);
 
-        TupProject::Mode spaceMode();
+        TupProject::Mode spaceContext();
         void setSpaceMode(TupProject::Mode mode);
 
         void setOnionFactor(double opacity);
         double opacity();
 
-        int framesTotal();
+        int framesCount();
 
         void setLibrary(TupLibrary *library);
 
@@ -137,10 +138,13 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
 
     private:
         void addFrame(TupFrame *frame, double opacity = 1.0, Context mode = Current);
-        void addGraphicObject(TupGraphicObject *object, double opacity = 1.0);
-        void addSvgObject(TupSvgItem *svgItem, double opacity = 1.0);
-        void addTweeningObjects(int photogram);
-        void addSvgTweeningObjects(int photogram);
+        void addGraphicObject(TupGraphicObject *object, TupFrame::FrameType frameType, double opacity = 1.0, bool tweenInAdvance = false);
+        void processNativeObject(TupGraphicObject *object, TupFrame::FrameType frameType, double opacity, Context mode);
+        void processSVGObject(TupSvgItem *svg, TupFrame::FrameType frameType, double opacity, Context mode);
+
+        void addSvgObject(TupSvgItem *svgItem, TupFrame::FrameType frameType, double opacity = 1.0, bool tweenInAdvance = false);
+        void addTweeningObjects(int indexLayer, int photogram);
+        void addSvgTweeningObjects(int indexLayer, int photogram);
         void addLipSyncObjects(TupLayer *layer, int photogram, int zLevel);
 
     protected:

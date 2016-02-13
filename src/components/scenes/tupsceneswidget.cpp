@@ -47,7 +47,7 @@ struct TupScenesWidget::Private
 TupScenesWidget::TupScenesWidget(QWidget *parent) : TupModuleWidgetBase(parent, "TupScenesWidget"), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget()]";
         #else
             TINIT;
@@ -63,7 +63,7 @@ TupScenesWidget::TupScenesWidget(QWidget *parent) : TupModuleWidgetBase(parent, 
 TupScenesWidget::~TupScenesWidget()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupScenesWidget()]";
         #else
             TEND;
@@ -128,22 +128,23 @@ void TupScenesWidget::sendEvent(int action)
 void TupScenesWidget::selectScene(int index)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget::selectScene()]";
         #else
             T_FUNCINFO;
         #endif
     #endif
 
-    TupProjectRequest event = TupRequestBuilder::createSceneRequest(index, TupProjectRequest::Select);
-    // emit requestTriggered(&event);
-    emit localRequestTriggered(&event);
+    if (k->scenesTable->scenesCount() > 1) {
+        TupProjectRequest event = TupRequestBuilder::createSceneRequest(index, TupProjectRequest::Select);
+        emit localRequestTriggered(&event);
+    }
 }
 
 void TupScenesWidget::emitRequestInsertScene()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget::emitRequestInsertScene()]";
         #else
             T_FUNCINFO;
@@ -165,18 +166,18 @@ void TupScenesWidget::emitRequestInsertScene()
     event = TupRequestBuilder::createLayerRequest(index, 0, TupProjectRequest::Add, tr("Layer %1").arg(1));
     emit requestTriggered(&event);
 
-    event = TupRequestBuilder::createFrameRequest(index, 0, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
+    // event = TupRequestBuilder::createFrameRequest(index, 0, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
+    event = TupRequestBuilder::createFrameRequest(index, 0, 0, TupProjectRequest::Add, tr("Frame"));
     emit requestTriggered(&event);
 
     event = TupRequestBuilder::createSceneRequest(index, TupProjectRequest::Select);
-    // emit requestTriggered(&event);
     emit localRequestTriggered(&event);
 }
 
 void TupScenesWidget::emitRequestRemoveScene()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget::emitRequestRemoveScene()]";
         #else
             T_FUNCINFO;
@@ -198,7 +199,6 @@ void TupScenesWidget::emitRequestRemoveScene()
 
         if (index >= 0) {
             event = TupRequestBuilder::createSceneRequest(index, TupProjectRequest::Select);
-            // emit requestTriggered(&event);
             emit localRequestTriggered(&event);
         }
     }
@@ -207,7 +207,7 @@ void TupScenesWidget::emitRequestRemoveScene()
 void TupScenesWidget::closeAllScenes()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget::closeAllScenes()]";
         #else
             T_FUNCINFO;
@@ -220,7 +220,7 @@ void TupScenesWidget::closeAllScenes()
 void TupScenesWidget::sceneResponse(TupSceneResponse *e)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupScenesWidget::sceneResponse()]";
             qDebug() << "SHOW_VAR: " << e->action();
         #else

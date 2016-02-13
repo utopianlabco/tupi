@@ -97,6 +97,10 @@ struct TupPaintAreaBase::Private
     QPen greenBoldPen;
     QPen greenThinPen;
     QPen blackPen;
+    bool spaceBar;
+
+    QPoint initPoint;
+    QPoint centerPoint;
 };
 
 TupPaintAreaBase::TupPaintAreaBase(QWidget *parent, QSize dimension, TupLibrary *library) : QGraphicsView(parent), k(new Private)
@@ -115,9 +119,11 @@ TupPaintAreaBase::TupPaintAreaBase(QWidget *parent, QSize dimension, TupLibrary 
     k->gridFlag = false;
     k->actionSafeAreaFlag = false;
     k->angle = 0;
+    k->spaceBar = false;
 
     k->rotator = new TupPaintAreaRotator(this, this);
     k->drawingRect = QRectF(QPointF(0, 0), dimension);
+    k->centerPoint = k->drawingRect.center().toPoint();
 
     k->scene->setSceneRect(k->drawingRect);
     setScene(k->scene);
@@ -132,6 +138,7 @@ TupPaintAreaBase::TupPaintAreaBase(QWidget *parent, QSize dimension, TupLibrary 
 void TupPaintAreaBase::setBgColor(const QColor color)
 {
     k->bgcolor = color;
+    viewport()->update();
 }
 
 void TupPaintAreaBase::saveState()
@@ -173,7 +180,7 @@ void TupPaintAreaBase::setAntialiasing(bool use)
 void TupPaintAreaBase::setUseOpenGL(bool opengl)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupPaintAreaBase::setUseOpenGL()] - opengl: " << opengl;
         #else
             T_FUNCINFO << opengl;
@@ -194,7 +201,7 @@ void TupPaintAreaBase::setUseOpenGL(bool opengl)
         Q_UNUSED(opengl);
         #ifdef K_DEBUG
             QString msg = "OpenGL isn't supported";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 kWarning() << msg;
@@ -226,7 +233,7 @@ void TupPaintAreaBase::setTool(TupToolPlugin *tool)
     if (!scene()) {
         #ifdef K_DEBUG
             QString msg = "TupPaintAreaBase::setTool() - Fatal Error: No scene available";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -257,7 +264,7 @@ bool TupPaintAreaBase::actionSafeAreaFlag() const
 void TupPaintAreaBase::mousePressEvent(QMouseEvent * event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupPaintAreaBase::mousePressEvent()]";
         #else
             T_FUNCINFO;
@@ -267,7 +274,7 @@ void TupPaintAreaBase::mousePressEvent(QMouseEvent * event)
     if (!canPaint()) { 
         #ifdef K_DEBUG
             QString msg = "TupPaintAreaBase::mousePressEvent() -> I can't paint right now!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 tWarning() << msg;
@@ -277,7 +284,7 @@ void TupPaintAreaBase::mousePressEvent(QMouseEvent * event)
         return;
     }
 
-    k->scene->aboutToMousePress();
+    k->scene->setSelectionRange();
     QGraphicsView::mousePressEvent(event);
 }
 
@@ -286,7 +293,7 @@ void TupPaintAreaBase::mouseMoveEvent(QMouseEvent * event)
     if (!canPaint()) { 
         #ifdef K_DEBUG
             QString msg = "TupPaintAreaBase::mouseMoveEvent() - Canvas is busy. Can't paint!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 tWarning() << msg;
@@ -294,6 +301,14 @@ void TupPaintAreaBase::mouseMoveEvent(QMouseEvent * event)
         #endif
 
         return;
+    }
+
+    QPoint point = mapToScene(event->pos()).toPoint();
+    if (k->spaceBar) {
+        updateCenter(point);
+        return;
+    } else {
+        k->initPoint = point;
     }
 
     // Rotate WorkSpace
@@ -347,6 +362,26 @@ void TupPaintAreaBase::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+void TupPaintAreaBase::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Space) {
+        k->spaceBar = true;
+        return;
+    }
+
+    QGraphicsView::keyPressEvent(event);
+}
+
+void TupPaintAreaBase::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Space) {
+        k->spaceBar = false;
+        return;
+    }
+
+    QGraphicsView::keyReleaseEvent(event);
+}
+
 void TupPaintAreaBase::tabletEvent(QTabletEvent *event)
 {
     QGraphicsView::tabletEvent(event);
@@ -393,8 +428,8 @@ void TupPaintAreaBase::drawForeground(QPainter *painter, const QRectF &rect)
     if (!currentScene) {
         drawPadLock(painter, rect, tr("No Scene!"));
     } else {
-        if (currentScene->layersTotal() > 0) {
-            if (currentScene->framesTotal() > 0) {
+        if (currentScene->layersCount() > 0) {
+            if (currentScene->framesCount() > 0) {
                 if (TupFrame *frame = k->scene->currentFrame()) {
                     if (frame) {
                         if (frame->isLocked()) {
@@ -477,10 +512,12 @@ void TupPaintAreaBase::drawForeground(QPainter *painter, const QRectF &rect)
 
 void TupPaintAreaBase::drawPadLock(QPainter *painter, const QRectF &rect, QString text)
 {
-    QFont kfont(QFont("Arial", 30));
-    QFontMetricsF fm(kfont);
+    QFont font;
+    font.setPointSize(30);
+    font.setBold(true);
+    QFontMetricsF fm(font);
 
-    painter->setFont(kfont);
+    painter->setFont(font);
     painter->fillRect(rect, QColor(201, 201, 201, 200));
 
     QRectF shore = fm.boundingRect(text);
@@ -504,7 +541,7 @@ void TupPaintAreaBase::drawPadLock(QPainter *painter, const QRectF &rect, QStrin
 bool TupPaintAreaBase::canPaint() const
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupPaintAreaBase::canPaint()]";
         #else
             T_FUNCINFO;
@@ -519,7 +556,7 @@ bool TupPaintAreaBase::canPaint() const
     } else {
         #ifdef K_DEBUG
             QString msg = "TupPaintAreaBase::canPaint() - Warning: Scene is NULL!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 tWarning() << msg;
@@ -608,3 +645,33 @@ void TupPaintAreaBase::updateDimension(const QSize dimension)
 
     update();
 }
+
+void TupPaintAreaBase::updateCenter(const QPoint point)
+{
+    int x = point.x();
+    int y = point.y();
+
+    int cx = k->centerPoint.x();
+    int cy = k->centerPoint.y();
+
+    int x0 = k->initPoint.x();
+    int y0 = k->initPoint.y();
+
+    int b = fabs(x0 - x);
+    int h = fabs(y0 - y);
+    if (x0 > x)
+        cx += b;
+    else
+        cx -= b;
+
+    if (y0 > y)
+        cy += h;
+    else
+        cy -= h;
+
+    k->centerPoint = QPoint(cx, cy);
+    centerOn(k->centerPoint);
+    setSceneRect(cx - (k->drawingRect.width()/2), cy - (k->drawingRect.height()/2),
+                 k->drawingRect.width(), k->drawingRect.height());
+}
+

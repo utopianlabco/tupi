@@ -59,7 +59,7 @@ struct Configurator::Private
     TupToolPlugin::Mode mode; 
     GuiState state;
 
-    int framesTotal;
+    int framesCount;
     int currentFrame;
 
     TupItemTweener *currentTween;
@@ -67,7 +67,7 @@ struct Configurator::Private
 
 Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
 {
-    k->framesTotal = 1;
+    k->framesCount = 1;
     k->currentFrame = 0;
 
     k->mode = TupToolPlugin::View;
@@ -79,8 +79,6 @@ Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
 
     QLabel *title = new QLabel(tr("Position Tween"));
     title->setAlignment(Qt::AlignHCenter);
-    title->setFont(QFont("Arial", 8, QFont::Bold));
-
     k->layout->addWidget(title);
 
     k->settingsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -104,7 +102,7 @@ Configurator::~Configurator()
 void Configurator::loadTweenList(QList<QString> tweenList)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[Configurator::loadTweenList()]";
         #else
             T_FUNCINFO;
@@ -185,11 +183,11 @@ void Configurator::activeButtonsPanel(bool enable)
         k->controlPanel->hide();
 }
 
-void Configurator::initStartCombo(int framesTotal, int currentFrame)
+void Configurator::initStartCombo(int framesCount, int currentFrame)
 {
-    k->framesTotal = framesTotal;
+    k->framesCount = framesCount;
     k->currentFrame = currentFrame;
-    k->settingsPanel->initStartCombo(framesTotal, currentFrame);
+    k->settingsPanel->initStartCombo(framesCount, currentFrame);
 }
 
 void Configurator::setStartFrame(int currentIndex)
@@ -237,7 +235,7 @@ void Configurator::addTween(const QString &name)
 {
     k->mode = TupToolPlugin::Add;
 
-    k->settingsPanel->setParameters(name, k->framesTotal, k->currentFrame);
+    k->settingsPanel->setParameters(name, k->framesCount, k->currentFrame);
 
     activeTweenManagerPanel(false);
     activePropertiesPanel(true);
@@ -264,7 +262,7 @@ void Configurator::editTween()
 void Configurator::closeTweenProperties()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[Configurator::closeTweenProperties()]";
         #else
             T_FUNCINFO;
@@ -315,7 +313,7 @@ void Configurator::notifySelection(bool flag)
 void Configurator::closeSettingsPanel()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[Configurator::closeSettingsPanel()]";
         #else
             T_FUNCINFO;
@@ -344,7 +342,7 @@ void Configurator::applyItem()
 void Configurator::resetUI()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[Configurator::resetUI()]";
         #else
             T_FUNCINFO;

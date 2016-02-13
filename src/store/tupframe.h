@@ -40,6 +40,7 @@
 #include "tupabstractserializable.h"
 #include "tupsvgitem.h"
 #include "tupbackground.h"
+#include "tupgraphiclibraryitem.h"
 
 #include <QGraphicsScene>
 #include <QDomDocument>
@@ -64,6 +65,8 @@ typedef QList<TupSvgItem *> SvgObjects;
 
 class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
 {
+    Q_OBJECT
+
     public:
        enum FrameType { DynamicBg = 0, StaticBg, Regular };
        enum MoveItemType { MoveBack, MoveToFront, MoveOneLevelBack, MoveOneLevelToFront };
@@ -75,6 +78,7 @@ class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        ~TupFrame();
        
        void setFrameName(const QString &name);
+       QString frameName() const;
 
        void setDynamicDirection(const QString &direction);
        void setDynamicShift(const QString &shift);
@@ -82,14 +86,17 @@ class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        int dynamicShift() const;
 
        void setLocked(bool isLocked);
-       
-       QString frameName() const;
-       
        bool isLocked() const;
        
        void setVisible(bool isVisible);
        bool isVisible() const;
-       
+
+       void setOpacity(double opacity);
+       double opacity(); 
+
+       TupFrame::FrameType type();
+      
+       void addLibraryItem(const QString &id, TupGraphicLibraryItem *libraryItem);
        void addItem(const QString &id, QGraphicsItem *item);
        void removeImageItemFromFrame(const QString &id);
        void updateIdFromFrame(const QString &oldId, const QString &newId);
@@ -112,12 +119,12 @@ class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        GraphicObjects graphics() const;
        SvgObjects svgItems() const; 
        
-       TupGraphicObject *graphic(int position) const;
-       TupSvgItem *svg(int position) const; 
+       TupGraphicObject *graphicAt(int position) const;
+       TupSvgItem *svgAt(int position) const; 
        QGraphicsItem *item(int position) const;
        
        int createItemGroup(int position, QList<int> group);
-       QList<QGraphicsItem *> splitItemsGroup(int position);
+       QList<QGraphicsItem *> splitGroup(int position);
              
        TupLayer *layer() const;
        TupScene *scene() const;
@@ -129,8 +136,8 @@ class TUPI_EXPORT TupFrame : public QObject, public TupAbstractSerializable
        
        int index() const;
        
-       void setRepeat(int repeat);
-       int repeat() const;
+       // void setRepeat(int repeat);
+       // int repeat() const;
        
        void clear();
        int graphicItemsCount();

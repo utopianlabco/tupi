@@ -66,8 +66,9 @@ class TUPI_EXPORT TupExportInterface
                PNG  = 1 << 8,
                JPEG = 1 << 9,
                XPM  = 1 << 10,
-               SMIL = 1 << 11,
-               APNG = 1 << 12
+               SVG  = 1 << 11, 
+               SMIL = 1 << 12,
+               APNG = 1 << 13
              };
 
         Q_DECLARE_FLAGS(Formats, Format);
@@ -75,9 +76,9 @@ class TUPI_EXPORT TupExportInterface
         virtual ~TupExportInterface() {};
         virtual QString key() const = 0;
         virtual Formats availableFormats() = 0;
-        virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, Format format, const QSize &size, int fps, TupLibrary *library) = 0;
-        virtual bool exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size, TupLibrary *library) = 0;
-        virtual const char* getExceptionMsg() = 0;
+        virtual bool exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, Format format, const QSize &size, int fps, TupLibrary *library = 0) = 0;
+        virtual bool exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size, TupLibrary *library = 0) = 0;
+        virtual QString getExceptionMsg() const = 0;
 };
 
         Q_DECLARE_OPERATORS_FOR_FLAGS(TupExportInterface::Formats);

@@ -95,7 +95,7 @@ class TUPI_EXPORT TupExposureHeader: public QHeaderView
     signals:
         void nameChanged(int section, const QString & name);
         void visibilityChanged(int section, bool visibility);
-        void selectionChanged(int section);
+        void headerSelectionChanged(int section);
 
     private:
         QList<ExposureLayerItem> m_sections;

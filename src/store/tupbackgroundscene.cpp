@@ -89,26 +89,26 @@ void TupBackgroundScene::addFrame(TupFrame *frame)
         /*
         QList<int> indexes = frame->itemIndexes();
         for (int i = 0; i < indexes.size(); ++i) {
-             TupGraphicObject *object = frame->graphic(indexes.at(i));
+             TupGraphicObject *object = frame->graphicAt(indexes.at(i));
              addGraphicObject(object);
         }
         */
 
         for (int i = 0; i < frame->graphicItemsCount(); i++) {
-             TupGraphicObject *object = frame->graphic(i);
+             TupGraphicObject *object = frame->graphicAt(i);
              addGraphicObject(object);
         }
 
         /*
         indexes = frame->svgIndexes();
         for (int i = 0; i < indexes.size(); ++i) {
-             TupSvgItem *object = frame->svg(indexes.at(i));
+             TupSvgItem *object = frame->svgAt(indexes.at(i));
              addSvgObject(object);
         }
         */
 
         for (int i = 0; i < frame->svgItemsCount(); i++) {
-             TupSvgItem *object = frame->svg(i);
+             TupSvgItem *object = frame->svgAt(i);
              addSvgObject(object);
         }
     }

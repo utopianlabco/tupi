@@ -18,8 +18,8 @@ Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl
  ,zlib1g-dev
 Standards-Version: 3.9.6
 Homepage: http://www.maefloresta.com/portal
-Vcs-Browser: http://anonscm.debian.org/cgit/collab-maint/tupi.git
-Vcs-Git: git://anonscm.debian.org/collab-maint/tupi.git
+Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/tupi.git
+Vcs-Git: https://anonscm.debian.org/collab-maint/tupi.git
 
 Package: tupi
 Architecture: linux-any

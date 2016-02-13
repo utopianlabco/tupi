@@ -44,7 +44,7 @@
 #include "tupprojectactionbar.h"
 #include "tupproject.h"
 #include "tapplication.h"
-#include "toptionaldialog.h"
+// #include "toptionaldialog.h"
 #include "tupprojectrequest.h"
 #include "tuprequestbuilder.h"
 #include "tupscene.h"
@@ -62,7 +62,7 @@
 #include <QHBoxLayout>
 #include <QList>
 #include <QMenu>
- 
+
 /**
 * @author Jorge Cuadrado
 */
@@ -72,24 +72,27 @@ class TUPI_EXPORT TupExposureSheet : public TupModuleWidgetBase
     Q_OBJECT
 
     public:
-        TupExposureSheet(QWidget *parent = 0);
+        TupExposureSheet(QWidget *parent = 0, TupProject *project = 0);
         ~TupExposureSheet();
-        void updateFramesState(TupProject *project);
+        void updateFramesState();
+        void updateLayerOpacity(int sceneIndex, int layerIndex);
+        double getLayerOpacity(int sceneIndex, int layerIndex);
+        void initLayerVisibility();
 
     private:
         struct Private;
         Private * const k;
         void createMenu();
-        void emitRequestExpandCurrentFrame(int n);
+        void requestExpandCurrentFrame(int n);
         void insertFrames(int n);
         void copyTimeLine(int times);
 
     protected:
-        virtual void sceneResponse(TupSceneResponse *event);
-        virtual void layerResponse(TupLayerResponse *event);
-        virtual void frameResponse(TupFrameResponse *event);
-        virtual void itemResponse(TupItemResponse *event);
-        virtual void libraryResponse(TupLibraryResponse *event);
+        virtual void sceneResponse(TupSceneResponse *response);
+        virtual void layerResponse(TupLayerResponse *response);
+        virtual void frameResponse(TupFrameResponse *response);
+        virtual void itemResponse(TupItemResponse *response);
+        virtual void libraryResponse(TupLibraryResponse *response);
 
     public slots:
         void closeAllScenes();
@@ -100,9 +103,10 @@ class TUPI_EXPORT TupExposureSheet : public TupModuleWidgetBase
         void changeVisibilityLayer(int, bool);
 
     private slots: 
-        void emitRequestChangeScene(int index);
-        void emitRequestCopyCurrentFrame();
-        void emitRequestPasteInCurrentFrame();
+        void requestChangeScene(int index);
+        void requestCopyCurrentFrame();
+        void requestPasteInCurrentFrame();
+        void requestUpdateLayerOpacity(double opacity);
 
         void insertFramesFromMenu(QAction *action);
         void copyTimeLineFromMenu(QAction *action);

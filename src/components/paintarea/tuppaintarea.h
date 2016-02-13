@@ -62,6 +62,7 @@
 #include "tcontrolnode.h"
 #include "tupproject.h"
 #include "tosd.h"
+#include "tupitemgroup.h"
 
 #include <QGraphicsScene>
 #include <QMouseEvent>
@@ -98,7 +99,7 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void paintBackground();
         void updateSpaceContext();
         virtual void keyPressEvent(QKeyEvent *event);
-        virtual void keyReleaseEvent(QKeyEvent *event);
+        // virtual void keyReleaseEvent(QKeyEvent *event);
         void goOneFrameBack();
         void goOneFrameForward();
         void goToFrame(int frameIndex, int layerIndex, int sceneIndex);
@@ -126,6 +127,7 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void updateStatusBgColor(const QColor color);
         void zoomIn();
         void zoomOut();
+        void newPerspective(int index);
 
     public slots:
         void deleteItems();
@@ -148,12 +150,12 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void mousePressEvent(QMouseEvent *event);
         // void tabletEvent(QTabletEvent *event);
 
-        void frameResponse(TupFrameResponse *event);
-        void layerResponse(TupLayerResponse *event);
-        void sceneResponse(TupSceneResponse *event);
-        void itemResponse(TupItemResponse *event);
-        void libraryResponse(TupLibraryResponse *request);
-        void projectResponse(TupProjectResponse *projectResponse);
+        void frameResponse(TupFrameResponse *response);
+        void layerResponse(TupLayerResponse *response);
+        void sceneResponse(TupSceneResponse *response);
+        void itemResponse(TupItemResponse *response);
+        void libraryResponse(TupLibraryResponse *response);
+        void projectResponse(TupProjectResponse *response);
 
         bool canPaint() const;
 

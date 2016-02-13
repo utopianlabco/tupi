@@ -41,15 +41,14 @@
 #include "tapplication.h"
 #include "tupgraphicsscene.h"
 #include "tupcanvasview.h"
-#include "tupexposuredialog.h"
-#include "tuptoolsdialog.h"
-#include "tuponionopacitydialog.h"
+#include "tuponiondialog.h"
 #include "tuppendialog.h"
 #include "timagebutton.h"
 #include "tupbrushmanager.h"
 #include "tupprojectrequest.h"
 #include "tuprequestbuilder.h"
 #include "tupproject.h"
+#include "tuptoolplugin.h"
 
 #include <QFrame>
 #include <QPointF>
@@ -83,10 +82,10 @@ class TUPI_EXPORT TupCanvas : public QFrame
         TupCanvas(QWidget *parent=0, Qt::WindowFlags f=0, TupGraphicsScene *scene=0, 
                   const QPointF centerPoint = QPoint(0, 0) , const QSize &size = QSize(0, 0), 
                   TupProject *project = 0, qreal scaleFactor = 1, int angle=0, 
-                  TupBrushManager *brushManager = 0, bool isNetworked = false, const QStringList &onLineUsers = QStringList());
+                  TupBrushManager *brushManager = 0);
         ~TupCanvas();
         void updateCursor(const QCursor &cursor);
-        void updateOnLineUsers(const QStringList &onLineUsers);
+        void enableRubberBand();
 
    protected:
         void closeEvent(QCloseEvent *event);
@@ -101,15 +100,17 @@ class TUPI_EXPORT TupCanvas : public QFrame
         void colorDialog(const QColor &current);
 
    private slots:
-        void sketchTools();
-        void selectionTools();
+        void wakeUpPencil();
+        void wakeUpPolyline();
+        void wakeUpEllipse();
+        void wakeUpRectangle();
+        void wakeUpSelection();
+        void wakeUpNodes();
 
         void colorDialog();
         void penDialog();
-        void penProperties();
-        void opacityDialog();
-        void setOnionOpacity(double opacity);
-        void exposureDialog();
+        void onionDialog();
+        void setOnionOpacity(double onion);
 
         void oneFrameBack();
         void oneFrameForward();
@@ -118,21 +119,9 @@ class TUPI_EXPORT TupCanvas : public QFrame
         void wakeUpDeleteSelection();
         void wakeUpZoomIn();
         void wakeUpZoomOut();
-        void wakeUpShift();
 
         void undo();
         void redo();
-
-        void updateSketchMenuState();
-        void updateSelectionMenuState();
-        void updateMenuStates();
-        void showInfoWidget();
-        void hideInfoWidget();
-
-        void updateExposureDialogState();
-        void createScene();
-        void createLayer(int sceneIndex, int layerIndex);
-        void createFrame(int sceneIndex, int layerIndex, int layersTotal, int frameIndex);
 
    signals:
         void requestTriggered(const TupProjectRequest *event);
@@ -143,11 +132,8 @@ class TUPI_EXPORT TupCanvas : public QFrame
         void updateZoomFactorFromFullScreen(qreal factor);
         void callAction(int menu, int index);
         void goToFrame(int frame, int layer, int scene);
-        void goToScene(int scene);
-        void closeSketchMenu();
-        void closeSelectionMenu();
-        void closePenPropertiesMenu();
         void rightClick();
+        void closeHugeCanvas();
 };
 
 #endif

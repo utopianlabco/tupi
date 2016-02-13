@@ -39,22 +39,30 @@
 
 struct TupLayer::Private
 {
+    TupScene *scene;
     Frames frames;
+    Frames undoFrames;
     Mouths lipsyncList;
     bool isVisible;
     QString name;
-    int framesCount;
+    int framesCounter;
     bool isLocked;
     int index;
+    double opacity;
+
+    QList<TupGraphicObject *> tweeningGraphicObjects;
+    QList<TupSvgItem *> tweeningSvgObjects;
 };
 
-TupLayer::TupLayer(TupScene *parent, int index) : QObject(parent), k(new Private)
+TupLayer::TupLayer(TupScene *scene, int index) : k(new Private)
 {
+    k->scene = scene;
     k->index = index;
     k->isVisible = true;
     k->name = tr("Layer");
-    k->framesCount = 0;
+    k->framesCounter = 0;
     k->isLocked = false;
+    k->opacity = 1.0;
 }
 
 TupLayer::~TupLayer()
@@ -73,7 +81,7 @@ Frames TupLayer::frames()
 void TupLayer::setFrames(const Frames &frames)
 {
     k->frames = frames;
-    k->framesCount = frames.count();
+    k->framesCounter = frames.count();
 }
 
 void TupLayer::setFrame(int index, TupFrame *frame)
@@ -84,6 +92,11 @@ void TupLayer::setFrame(int index, TupFrame *frame)
 void TupLayer::setLayerName(const QString &name)
 {
     k->name = name;
+}
+
+QString TupLayer::layerName() const
+{
+    return k->name;
 }
 
 void TupLayer::setLocked(bool isLocked)
@@ -99,17 +112,21 @@ bool TupLayer::isLocked() const
 void TupLayer::setVisible(bool isVisible)
 {
     k->isVisible = isVisible;
-    // emit visibilityChanged(isVisible);
-}
-
-QString TupLayer::layerName() const
-{
-    return k->name;
 }
 
 bool TupLayer::isVisible() const
 {
     return k->isVisible;
+}
+
+void TupLayer::setOpacity(double opacity)
+{
+    k->opacity = opacity; 
+}
+
+double TupLayer::opacity()
+{
+    return k->opacity;
 }
 
 TupFrame *TupLayer::createFrame(QString name, int position, bool loaded)
@@ -125,7 +142,7 @@ TupFrame *TupLayer::createFrame(QString name, int position, bool loaded)
         return 0;
 
     TupFrame *frame = new TupFrame(this);
-    k->framesCount++;
+    k->framesCounter++;
     frame->setFrameName(name);
     k->frames.insert(position, frame);
 
@@ -159,15 +176,30 @@ Mouths TupLayer::lipSyncList()
      return k->lipsyncList;
 }
 
+bool TupLayer::restoreFrame(int index)
+{
+    if (k->undoFrames.count() > 0) {
+        TupFrame *frame = k->undoFrames.takeLast();
+        if (frame) {
+            k->frames.insert(index, frame);
+            k->framesCounter++;
+            return true;
+        }
+        return false;
+    }
+
+    return false;
+}
+
 bool TupLayer::removeFrame(int position)
 {
-    TupFrame *toRemove = frame(position);
+    TupFrame *toRemove = frameAt(position);
 
     if (toRemove) {
-        k->frames.removeAt(position);
-        toRemove->setRepeat(toRemove->repeat()-1);
-
-        k->framesCount--;
+        // k->frames.removeAt(position);
+        // toRemove->setRepeat(toRemove->repeat()-1);
+        k->undoFrames << k->frames.takeAt(position);
+        k->framesCounter--;
 
         return true;
     }
@@ -191,10 +223,12 @@ bool TupLayer::removeLipSync(const QString &name)
 
 bool TupLayer::resetFrame(int position)
 {
-    TupFrame *toReset = frame(position);
+    TupFrame *toReset = frameAt(position);
 
     if (toReset) {
         QString label = toReset->frameName();
+        // if (framesCounter() == 1)
+        //     label = tr("Frame") + " 1";
         TupFrame *frame = new TupFrame(this); 
         frame->setFrameName(label);
         k->frames.insert(position, frame);
@@ -230,8 +264,17 @@ bool TupLayer::moveFrame(int from, int to)
 
 bool TupLayer::exchangeFrame(int from, int to)
 {
-    if (from < 0 || from >= k->frames.count() || to < 0 || to > k->frames.count())
+    if (from < 0 || from >= k->frames.count() || to < 0 || to >= k->frames.count()) {
+        #ifdef K_DEBUG
+            QString msg = "TupLayer::exchangeFrame() - Fatal Error: frame indexes are invalid -> from: " + QString::number(from) + " / to: " + QString::number(to);
+            #ifdef Q_OS_WIN
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+        #endif
         return false;
+    }
 
     k->frames.swap(from, to);
 
@@ -243,8 +286,7 @@ bool TupLayer::expandFrame(int position, int size)
     if (position < 0 || position >= k->frames.count())
         return false;
 
-    TupFrame *toExpand = frame(position);
-
+    TupFrame *toExpand = frameAt(position);
     if (toExpand) {
         int limit = position + size;
         for (int i = position + 1; i <= limit; i++)
@@ -256,13 +298,13 @@ bool TupLayer::expandFrame(int position, int size)
 }
 
 
-TupFrame *TupLayer::frame(int position) const
+TupFrame *TupLayer::frameAt(int position) const
 {
     if (position < 0 || position >= k->frames.count()) {        
         #ifdef K_DEBUG
-            QString msg1 = "TupLayer::frame() - FATAL ERROR: frame index out of bound : " + QString::number(position);
-            QString msg2 = "TupLayer::frame() - FATAL ERROR: index limit : " + QString::number(k->frames.count()-1);
-            #ifdef Q_OS_WIN32
+            QString msg1 = "TupLayer::frameAt() - Fatal Error: frame index out of bound : " + QString::number(position);
+            QString msg2 = "TupLayer::frameAt() - Fatal Error: index limit : " + QString::number(k->frames.count()-1);
+            #ifdef Q_OS_WIN
                 qDebug() << msg1;
                 qDebug() << msg2;
             #else
@@ -281,43 +323,36 @@ TupFrame *TupLayer::frame(int position) const
 void TupLayer::fromXml(const QString &xml)
 {
     QDomDocument document;
-
-    if (! document.setContent(xml))
+    if (!document.setContent(xml))
         return;
 
     QDomElement root = document.documentElement();
-
     setLayerName(root.attribute("name", layerName()));
-
+    setOpacity(root.attribute("opacity", "1.0").toDouble());
+    setVisible(root.attribute("visible", "1").toInt());
     QDomNode n = root.firstChild();
 
     while (!n.isNull()) {
            QDomElement e = n.toElement();
-
            if (!e.isNull()) {
                if (e.tagName() == "frame") {
                    TupFrame *frame = createFrame(e.attribute("name"), k->frames.count(), true);
-
                    if (frame) {
                        QString newDoc;
-
                        {
                          QTextStream ts(&newDoc);
                          ts << n;
                        }
-
                        frame->fromXml(newDoc);
                    }
                } else if (e.tagName() == "lipsync") {
                           TupLipSync *lipsync = createLipSync(e.attribute("name"), e.attribute("soundFile"), e.attribute("initFrame").toInt()); 
                           if (lipsync) {
                               QString newDoc;
-
                               {
                                 QTextStream ts(&newDoc);
                                 ts << n;
                               }
-
                               lipsync->fromXml(newDoc);
                           }
                }
@@ -330,10 +365,12 @@ QDomElement TupLayer::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("layer");
     root.setAttribute("name", k->name);
-    doc.appendChild(root);
+    root.setAttribute("opacity", QString::number(k->opacity));
+    root.setAttribute("visible", QString::number(k->isVisible)); 
 
-    int framesTotal = k->frames.size();
-    for (int i = 0; i < framesTotal; i++) {
+    doc.appendChild(root);
+    int framesCounter = k->frames.size();
+    for (int i = 0; i < framesCounter; i++) {
          TupFrame *frame = k->frames.at(i);
          root.appendChild(frame->toXml(doc));
     }
@@ -349,7 +386,8 @@ QDomElement TupLayer::toXml(QDomDocument &doc) const
 
 TupScene *TupLayer::scene() const
 {
-    return static_cast<TupScene *>(parent());
+    return k->scene;
+    // return static_cast<TupScene *>(parent());
 }
 
 TupProject *TupLayer::project() const
@@ -377,7 +415,138 @@ int TupLayer::objectIndex() const
     return scene()->visualIndexOf(const_cast<TupLayer *>(this));
 }
 
-int TupLayer::framesTotal() const
+int TupLayer::framesCount() const
 {
-    return k->framesCount;
+    return k->framesCounter;
 }
+
+void TupLayer::addTweenObject(TupGraphicObject *object)
+{
+    k->tweeningGraphicObjects << object;
+}
+
+void TupLayer::addTweenObject(TupSvgItem *object)
+{
+    k->tweeningSvgObjects << object;
+}
+
+void TupLayer::updateTweenObject(int index, TupGraphicObject *object)
+{
+    k->tweeningGraphicObjects.replace(index, object);
+}
+
+void TupLayer::updateTweenObject(int index, TupSvgItem *object)
+{
+    k->tweeningSvgObjects.replace(index, object);
+}
+
+void TupLayer::removeTweenObject(TupGraphicObject *object)
+{
+    if (k->tweeningGraphicObjects.size() > 0)
+        k->tweeningGraphicObjects.removeAll(object);
+}
+
+void TupLayer::removeTweenObject(TupSvgItem *object)
+{
+    if (k->tweeningSvgObjects.size() > 0)
+        k->tweeningSvgObjects.removeAll(object);
+}
+
+QList<TupGraphicObject *> TupLayer::tweeningGraphicObjects() const
+{
+    return k->tweeningGraphicObjects;
+}
+
+QList<TupSvgItem *> TupLayer::tweeningSvgObjects() const
+{
+    return k->tweeningSvgObjects;
+}
+
+bool TupLayer::tweenExists(const QString &name, TupItemTweener::Type type)
+{
+    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
+             if (TupItemTweener *tween = object->tween()) {
+                 if ((tween->name().compare(name) == 0) && (tween->type() == type))
+                     return true;
+             }
+    }
+
+    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
+             if (TupItemTweener *tween = object->tween()) {
+                 if ((tween->name().compare(name) == 0) && (tween->type() == type))
+                     return true;
+             }
+    }
+
+    return false;
+}
+
+bool TupLayer::removeTween(const QString &name, TupItemTweener::Type type)
+{
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupLayer::removeTween()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
+    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
+             if (TupItemTweener *tween = object->tween()) {
+                 if ((tween->name().compare(name) == 0) && (tween->type() == type)) {
+                     object->removeTween();
+                     removeTweenObject(object);
+                     return true;
+                 }
+             }
+    }
+
+    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
+             if (TupItemTweener *tween = object->tween()) {
+                 if ((tween->name().compare(name) == 0) && (tween->type() == type)) {
+                     object->removeTween();
+                     removeTweenObject(object);
+                     return true;
+                 }
+             }
+    }
+
+    return false;
+}
+
+void TupLayer::removeAllTweens()
+{
+    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
+             object->removeTween();
+             removeTweenObject(object);
+    }
+
+    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
+             object->removeTween();
+             removeTweenObject(object);
+    }
+}
+
+void TupLayer::removeTweensFromFrame(int frameIndex)
+{
+    foreach (TupGraphicObject *object, k->tweeningGraphicObjects) {
+             if (object->frame()->index() == frameIndex) {
+                 object->removeTween();
+                 removeTweenObject(object);
+             }
+    }
+
+    foreach (TupSvgItem *object, k->tweeningSvgObjects) {
+             if (object->frame()->index() == frameIndex) {
+                 object->removeTween();
+                 removeTweenObject(object);
+             }
+    }
+}
+
+/*
+int TupLayer::tweensCount()
+{
+    return k->tweeningGraphicObjects.count() + k->tweeningSvgObjects.count();
+}
+*/

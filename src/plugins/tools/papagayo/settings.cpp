@@ -56,7 +56,7 @@ struct Settings::Private
 
     QString name;
     int initFrame;
-    int framesTotal;
+    int framesCount;
 };
 
 Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
@@ -79,14 +79,8 @@ void Settings::setInnerForm()
     QBoxLayout *innerLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->innerPanel);
     innerLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QFont font = this->font();
-    font.setPointSize(8);
-    setFont(font);
-
     QLabel *nameLabel = new QLabel(tr("Editing") + ": ");
     k->lipSyncName = new QLabel;
-    font.setBold(true);
-    k->lipSyncName->setFont(font);
 
     QHBoxLayout *nameLayout = new QHBoxLayout;
     nameLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
@@ -155,7 +149,7 @@ void Settings::setInnerForm()
     k->textArea = new QTextEdit;
     k->textArea->setReadOnly(true);
 
-    TImageButton *remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"), 22);
+    TImageButton *remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"), 22);
     remove->setToolTip(tr("Close properties"));
     connect(remove, SIGNAL(clicked()), this, SIGNAL(closeLipSyncProperties()));
 
@@ -185,7 +179,7 @@ void Settings::openLipSyncProperties(TupLipSync *lipsync)
 {
     k->name = lipsync->name();
     k->initFrame = lipsync->initFrame();
-    k->framesTotal = lipsync->framesTotal();
+    k->framesCount = lipsync->framesCount();
 
     k->lipSyncName->setText(k->name);
     k->fpsLabel->setText(tr("Lip-Sync FPS") + ": " + QString::number(lipsync->fps()));
@@ -193,21 +187,18 @@ void Settings::openLipSyncProperties(TupLipSync *lipsync)
     k->comboInit->setEnabled(true);
     k->comboInit->setValue(k->initFrame + 1);
 
-    int endIndex = k->initFrame + k->framesTotal;
+    int endIndex = k->initFrame + k->framesCount;
     k->endingLabel->setText(tr("Ending at frame") + ": " + QString::number(endIndex));
-    k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->framesTotal));
+    k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->framesCount));
 
     disconnect(k->mouthsList, SIGNAL(currentRowChanged(int)), this, SLOT(setCurrentMouth(int)));
     k->mouthsList->clear();
-    QFont f = font();
-    f.setPointSize(8);
 
     k->voices = lipsync->voices();
     int total = k->voices.size();
     if (total > 0) {
         for (int i=0; i < total; i++) {
              QListWidgetItem *item = new QListWidgetItem(k->mouthsList);
-             item->setFont(f);
              item->setText(tr("mouth") + "_" + QString::number(i));
              item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         }
@@ -243,6 +234,6 @@ void Settings::updateInitFrame(int index)
 
 void Settings::updateInterfaceRecords()
 {
-    int endIndex = k->initFrame + k->framesTotal;
+    int endIndex = k->initFrame + k->framesCount;
     k->endingLabel->setText(tr("Ending at frame") + ": " + QString::number(endIndex));
 }

@@ -72,7 +72,7 @@ TupViewColorCells::~TupViewColorCells()
 
     #ifdef K_DEBUG
         QString msg = "TupViewColorCells::~TupViewColorCells() - Saving color palettes in: " + brushesDir.path();
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qWarning() << msg;
         #else
             tWarning("palette") << msg;
@@ -83,14 +83,14 @@ TupViewColorCells::~TupViewColorCells()
          TupCellsColor *palette = qobject_cast<TupCellsColor *>(k->containerPalette->widget(i));
          if (palette) {
              if (!palette->isReadOnly())
-                 palette->save(CONFIG_DIR + "palettes" + QDir::separator() + palette->name() + ".tpal");
+                 palette->save(CONFIG_DIR + "palettes/" + palette->name() + ".tpal");
          }
     }
 
     delete k;
 	
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupViewColorCells()]";
         #else
             TEND;
@@ -101,6 +101,7 @@ TupViewColorCells::~TupViewColorCells()
 void TupViewColorCells::setupForm()
 {
     k->chooserPalette = new QComboBox(this);
+    k->chooserPalette->setStyleSheet("combobox-popup: 0;");
 
     k->containerPalette = new QStackedWidget(this);
     layout()->addWidget(k->chooserPalette);
@@ -133,10 +134,10 @@ void TupViewColorCells::setupForm()
     k->customGradientPalette->setType(TupCellsColor::Gradient);
     addPalette(k->customGradientPalette);
 
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
     QString palettesPath = SHARE_DIR + "palettes";
 #else
-    QString palettesPath = SHARE_DIR + "data" + QDir::separator() + "palettes";
+    QString palettesPath = SHARE_DIR + "data/palettes";
 #endif
     readPalettes(palettesPath); // Pre-installed
     readPalettes(CONFIG_DIR + "palettes"); // Locals
@@ -159,7 +160,7 @@ void TupViewColorCells::readPalettes(const QString &paletteDir)
 {
     #ifdef K_DEBUG
         QString msg = "TupViewColorCells::readPalettes() - Reading palettes from: " + paletteDir;
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qWarning() << msg;
         #else
             tWarning("palette") << msg;
@@ -179,7 +180,7 @@ void TupViewColorCells::readPalettes(const QString &paletteDir)
     } else {
         #ifdef K_DEBUG
             QString msg = "TupViewColorCells::readPalettes() - Error: Invalid path -> " + paletteDir;
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError("palette") << msg;
@@ -199,8 +200,8 @@ void TupViewColorCells::readPaletteFile(const QString &file)
         addPalette(name, brushes, editable);
     } else {
         #ifdef K_DEBUG
-            QString msg = "TupViewColorCells::readPaletteFile() - Error while parse palette file: " + file;
-            #ifdef Q_OS_WIN32
+            QString msg = "TupViewColorCells::readPaletteFile() - Fatal error while parsing palette file: " + file;
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -211,6 +212,16 @@ void TupViewColorCells::readPaletteFile(const QString &file)
 
 void TupViewColorCells::addPalette(const QString & name, const QList<QBrush> & brushes, bool editable)
 {
+    /*
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupViewColorCells::addPalette()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+    */
+
     if (name == "Default Palette") {
         QList<QBrush>::ConstIterator it = brushes.begin();
 
@@ -259,7 +270,7 @@ void TupViewColorCells::addPalette(TupCellsColor *palette)
 void TupViewColorCells::changeColor(QTableWidgetItem* item)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupViewColorCells::changeColor()]";
         #else
             T_FUNCINFO;
@@ -349,7 +360,7 @@ void TupViewColorCells::addCurrentColor()
             || (k->currentColor.color().isValid() && palette->type() == TupCellsColor::Gradient)) {
             if (15 <= k->currentColor.style() && k->currentColor.style() < 18) {
                 palette = k->customGradientPalette;
-                k->chooserPalette->setCurrentIndex( k->chooserPalette->findText ( k->customGradientPalette->name()));
+                k->chooserPalette->setCurrentIndex(k->chooserPalette->findText(k->customGradientPalette->name()));
                 k->containerPalette->setCurrentWidget(k->customGradientPalette);
             } else {
                 palette = k->customColorPalette;

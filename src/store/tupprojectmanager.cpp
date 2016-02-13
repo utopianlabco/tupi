@@ -82,7 +82,7 @@ class TupProjectManager::Private
 TupProjectManager::TupProjectManager(QObject *parent) : QObject(parent), k(new Private())
 {	
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager()]";
         #else
             TINIT;
@@ -103,7 +103,7 @@ TupProjectManager::TupProjectManager(QObject *parent) : QObject(parent), k(new P
 TupProjectManager::~TupProjectManager()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupProjectManager()]";
         #else
             TEND;
@@ -157,7 +157,7 @@ TupAbstractProjectHandler *TupProjectManager::handler() const
 void TupProjectManager::setupNewProject()
 {	
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager::setupNewProject()]";
         #else
             T_FUNCINFO;
@@ -167,7 +167,7 @@ void TupProjectManager::setupNewProject()
     if (!k->handler || !k->params) {
         #ifdef K_DEBUG
             QString msg = "TupProjectManager::setupNewProject() - Error: No handler available or no params!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -188,7 +188,7 @@ void TupProjectManager::setupNewProject()
     if (! k->handler->setupNewProject(k->params)) {
         #ifdef K_DEBUG
             QString msg = "TupProjectManager::setupNewProject() - Error: Project params misconfiguration";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -198,7 +198,6 @@ void TupProjectManager::setupNewProject()
     }
 
     if (!k->isNetworked) {
-       
         QString projectPath = CACHE_DIR + k->params->projectName(); 
         cleanProjectPath(projectPath);
 
@@ -210,7 +209,8 @@ void TupProjectManager::setupNewProject()
         request = TupRequestBuilder::createLayerRequest(0, 0, TupProjectRequest::Add, tr("Layer %1").arg(1));
         handleProjectRequest(&request);
 
-        request = TupRequestBuilder::createFrameRequest(0, 0, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
+        // request = TupRequestBuilder::createFrameRequest(0, 0, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
+        request = TupRequestBuilder::createFrameRequest(0, 0, 0, TupProjectRequest::Add, tr("Frame"));
         handleProjectRequest(&request);
     }
 }
@@ -245,7 +245,7 @@ bool TupProjectManager::loadProject(const QString &fileName)
     if (! k->handler) {
 	    #ifdef K_DEBUG
             QString msg = "TupProjectManager::loadProject() - Fatal Error: No project handler available!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -263,7 +263,7 @@ bool TupProjectManager::loadProject(const QString &fileName)
     } else {
 	    #ifdef K_DEBUG
             QString msg = "TupProjectManager::loadProject() - Fatal Error: Can't load project -> " + fileName;
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -300,24 +300,6 @@ bool TupProjectManager::isValid() const
     return k->handler->isValid();
 }
 
-/*
-void TupProjectManager::setupProjectDir()
-{
-    QString name = (k->project->projectName().isEmpty() ? TAlgorithm::randomString(6) : k->project->projectName());
-    QString dataDir = CACHE_DIR + "/" + name;
-    QDir projectDir = dataDir;
-
-    if (!projectDir.exists()) {
-        if (projectDir.mkpath(projectDir.absolutePath())) {
-            QStringList dirs;
-            dirs << "audio" << "video" << "images" << "svg";
-            foreach (QString dir, dirs)
-                     projectDir.mkdir(dir);
-        }
-    }
-}
-*/
-
 /**
  * This function is called when some event is triggered by the project
  * It must be re-implemented if you want to deal with the event in another way, i.ex: send it through the net.
@@ -327,7 +309,7 @@ void TupProjectManager::setupProjectDir()
 void TupProjectManager::handleProjectRequest(const TupProjectRequest *request)
 {	
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager::handleProjectRequest()]";
         #else
             T_FUNCINFO;
@@ -342,9 +324,9 @@ void TupProjectManager::handleProjectRequest(const TupProjectRequest *request)
     if (k->handler) {
         k->handler->handleProjectRequest(request);
     } else {
-	    #ifdef K_DEBUG
+	#ifdef K_DEBUG
             QString msg = "TupProjectManager::handleProjectRequest() - Error: No handler available";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -356,7 +338,7 @@ void TupProjectManager::handleProjectRequest(const TupProjectRequest *request)
 void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager::handleLocalRequest()]";
         #else
             T_FUNCINFO;
@@ -367,17 +349,16 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
 
     if (parser.parse(request->xml())) {
         if (TupFrameResponse *response = static_cast<TupFrameResponse *>(parser.response())) {
-
             k->sceneIndex = response->sceneIndex();
             k->layerIndex = response->layerIndex();
             k->frameIndex = response->frameIndex();
 
             if (response->action() == TupProjectRequest::Copy) {
-                TupScene *scene = k->project->scene(k->sceneIndex);
+                TupScene *scene = k->project->sceneAt(k->sceneIndex);
                 if (scene) {
-                    TupLayer *layer = scene->layer(k->layerIndex);
+                    TupLayer *layer = scene->layerAt(k->layerIndex);
                     if (layer) {
-                        TupFrame *frame = layer->frame(k->frameIndex);
+                        TupFrame *frame = layer->frameAt(k->frameIndex);
                         if (frame) {
                             QDomDocument doc;
                             doc.appendChild(frame->toXml(doc));
@@ -388,10 +369,27 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
                 }
             } else if (response->action() == TupProjectRequest::Paste) {
                        response->setArg(k->copyFrame);
-
                        TupProjectRequest request = TupRequestBuilder::fromResponse(response);
                        handleProjectRequest(&request);
                        return;
+            } else if (response->action() == TupProjectRequest::UpdateOpacity) {
+                       double opacity = response->arg().toReal();
+                       TupScene *scene = k->project->sceneAt(k->sceneIndex);
+                       if (scene) {
+                           TupLayer *layer = scene->layerAt(k->layerIndex);
+                           if (layer) {
+                               layer->setOpacity(opacity);
+                           } else {
+                               #ifdef K_DEBUG
+                                   QString msg = "TupProjectManager::handleLocalRequest() - Fatal Error: Layer pointer is NULL [index = " +  QString::number(k->layerIndex) + "]";
+                                   #ifdef Q_OS_WIN
+                                       qDebug() << msg;
+                                   #else
+                                       tError() << msg;
+                                   #endif
+                               #endif
+                           }
+                       }
             }
         }
 
@@ -403,7 +401,7 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
 /**
  * This function creates a command to execute an action, i.e. add a frame. 
  * The command has the information necessary to undo its effect.
- * Usually this command must be added in the commands stack.
+ * Usually this command must be added into the commands stack.
  * The command created is not deleted by this class, this task depends on the user.
  * @param event 
  * @return 
@@ -411,7 +409,7 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
 void TupProjectManager::createCommand(const TupProjectRequest *request, bool addToStack)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager::createCommand(()]";
         #else
             T_FUNCINFO;
@@ -420,7 +418,6 @@ void TupProjectManager::createCommand(const TupProjectRequest *request, bool add
 
     if (request->isValid()) {
         TupProjectCommand *command = new TupProjectCommand(k->commandExecutor, request);
-
         if (addToStack)
             k->undoStack->push(command);
         else  
@@ -428,7 +425,7 @@ void TupProjectManager::createCommand(const TupProjectRequest *request, bool add
     } else {
         #ifdef K_DEBUG
             QString msg = "TupProjectManager::createCommand() - Invalid request";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 tWarning() << msg;
@@ -437,30 +434,47 @@ void TupProjectManager::createCommand(const TupProjectRequest *request, bool add
     }
 }
 
-// TupProject *TupProjectManager::project() const
+void TupProjectManager::createCommand(TupProjectCommand *command)
+{
+    k->undoStack->push(command);
+}
+
 TupProject *TupProjectManager::project()
 {
     return k->project;
 }
 
-QUndoStack *TupProjectManager::undoHistory() const
+void TupProjectManager::undo()
 {
-    return k->undoStack;
+    k->undoStack->undo();
+}
+
+void TupProjectManager::redo()
+{
+    k->undoStack->redo();    
+}
+
+void TupProjectManager::clearUndoStack()
+{
+    k->undoStack->clear();
 }
 
 void TupProjectManager::emitResponse(TupProjectResponse *response)
 {	
-	#ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
             qDebug() << "[TupProjectManager::emitResponse()] - response->action(): " << response->action();
         #else
             T_FUNCINFO << response->action();
         #endif
     #endif	
 
+    if (response->action() != TupProjectRequest::Select)
+        k->isModified = true;
+
+    /*
     if (response->action() != TupProjectRequest::Select) {
         k->isModified = true;
-        // if (TupSceneResponse *sceneResponse = static_cast<TupSceneResponse *>(response)) {
         if (static_cast<TupSceneResponse *>(response)) {
             if (response->action() == TupProjectRequest::Remove)
                 emit projectHasChanged(true);
@@ -470,6 +484,7 @@ void TupProjectManager::emitResponse(TupProjectResponse *response)
             emit projectHasChanged(false);
         }
     }
+    */
 
     if (!k->handler) {
         // SQA: Check if this is the right way to handle this condition 
@@ -502,9 +517,8 @@ bool TupProjectManager::cleanProjectPath(QString &projectPath)
                 result = QFile::remove(info.absoluteFilePath());
             }
 
-            if (!result) {
+            if (!result)
                 return result;
-            }
         }
         result = dir.rmdir(projectPath);
     }

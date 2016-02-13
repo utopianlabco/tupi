@@ -1,15 +1,6 @@
 # uscan(1) configuration file
 version=3
 
-#opts=\
-#uversionmangle=s/\-git/\+git/ \
-# http://developer.berlios.de/project/showfiles.php?group_id=12151 \
-# .*/tupi_([0-9.\-git]+)\.tar\.(?:gz|bzip2|xz)
-
-opts=\
-uversionmangle=s/\-git/+git/ \
- https://github.com/xtingray/tupi/tags .*/archive/v?(\d[-\d\.git]+)\.tar\.(?:gz|bzip2|xz)
-
 ## Redirector http://qa.debian.org/watch/sf.php/tupi2d/
 opts=\
 uversionmangle=s/\-git/\+git/ \

@@ -94,13 +94,14 @@ struct TupItemTweener::Private
     int opacityReverseLoop;
 
     // Color Tween
+    FillType colorFillType;
     QColor initialColor;
     QColor endingColor;
     int colorIterations;
     int colorLoop;
     int colorReverseLoop;
 
-    // Compound Tween
+    // Composed Tween
     int compPositionInitFrame;
     int compPositionFrames;
     int compRotationInitFrame;
@@ -156,7 +157,7 @@ void TupItemTweener::addStep(const TupTweenerStep &step)
     int counter = step.index();
   
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::addStep() - counter: " << counter;
     #else
         VERIFY_STEP(counter);
@@ -190,7 +191,7 @@ TupTweenerStep * TupItemTweener::stepAt(int index)
 void TupItemTweener::setPosAt(int index, const QPointF &pos)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setPosAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -203,7 +204,7 @@ void TupItemTweener::setPosAt(int index, const QPointF &pos)
 void TupItemTweener::setRotationAt(int index, double angle)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setRotationAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -216,7 +217,7 @@ void TupItemTweener::setRotationAt(int index, double angle)
 void TupItemTweener::setScaleAt(int index, double sx, double sy)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setScaleAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -229,7 +230,7 @@ void TupItemTweener::setScaleAt(int index, double sx, double sy)
 void TupItemTweener::setShearAt(int index, double sx, double sy)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setShearAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -242,7 +243,7 @@ void TupItemTweener::setShearAt(int index, double sx, double sy)
 void TupItemTweener::setOpacityAt(int index, double opacity)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setOpacityAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -255,7 +256,7 @@ void TupItemTweener::setOpacityAt(int index, double opacity)
 void TupItemTweener::setColorAt(int index, const QColor &color)
 {
 #ifdef K_DEBUG
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << "TupItemTweener::setColorAt() - index: " << index;
     #else
         VERIFY_STEP(index);
@@ -299,7 +300,7 @@ void TupItemTweener::fromXml(const QString &xml)
 {
     #ifdef K_DEBUG
         QString msg = "TupItemTweener::fromXml() - Tween content: ";
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
            qWarning() << msg;
            qWarning() << xml;
         #else
@@ -329,7 +330,7 @@ void TupItemTweener::fromXml(const QString &xml)
 
         k->originPoint = QPointF(x, y); 
 
-        if (k->type == TupItemTweener::Compound) {
+        if (k->type == TupItemTweener::Composed) {
             QDomElement settings = root.firstChildElement("settings");
             QDomNode node = settings.firstChild();
 
@@ -389,8 +390,8 @@ void TupItemTweener::fromXml(const QString &xml)
                        }
                        if (e.tagName() == "coloring") {
                            // tError() << "TupItemTweener::fromXml() - Processing coloring settings";
-
                            k->tweenList.append(TupItemTweener::Coloring);
+                           k->colorFillType = FillType(e.attribute("fillType").toInt());
                            k->compColoringInitFrame = e.attribute("init").toInt();
                            k->compColoringFrames = e.attribute("frames").toInt();
                        }
@@ -443,6 +444,7 @@ void TupItemTweener::fromXml(const QString &xml)
             }
 
             if (k->type == TupItemTweener::Coloring) {
+                k->colorFillType = FillType(root.attribute("fillType").toInt());
                 QString colorText = root.attribute("initialColor");
                 QStringList list = colorText.split(",");
                 int red = list.at(0).toInt();
@@ -494,7 +496,7 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
     #ifdef K_DEBUG
         QString msg1 = "TupItemTweener::toXml() - Saving tween: " + k->name;
         QString msg2 = "TupItemTweener::toXml() - Type: " + QString::number(k->type);
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
            qWarning() << msg1;
            qWarning() << msg2;
         #else
@@ -514,7 +516,7 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
 
     root.setAttribute("origin", QString::number(k->originPoint.x()) + "," + QString::number(k->originPoint.y()));
 
-    if (k->type == TupItemTweener::Compound) {
+    if (k->type == TupItemTweener::Composed) {
         QDomElement settings = doc.createElement("settings");
 
         for (int i=0; i < k->tweenList.size(); i++) {
@@ -572,6 +574,7 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
         } 
 
         if (k->type == TupItemTweener::Coloring) {
+            root.setAttribute("fillType", k->colorFillType);
             QString colorText = QString::number(k->initialColor.red()) + "," + QString::number(k->initialColor.green()) 
                                 + "," + QString::number(k->initialColor.blue());
             root.setAttribute("initialColor", colorText); 
@@ -624,8 +627,8 @@ QString TupItemTweener::tweenType()
             case TupItemTweener::Coloring :
                  type = QString(tr("Coloring Tween"));
                  break;
-            case TupItemTweener::Compound :
-                 type = QString(tr("Compound Tween"));
+            case TupItemTweener::Composed :
+                 type = QString(tr("Composed Tween"));
                  break;
             case TupItemTweener::Papagayo :
                  type = QString(tr("Papagayo Lip-sync"));
@@ -743,6 +746,11 @@ int TupItemTweener::tweenOpacityLoop()
 int TupItemTweener::tweenOpacityReverseLoop()
 {
     return k->opacityReverseLoop;
+}
+
+TupItemTweener::FillType TupItemTweener::tweenColorFillType()
+{
+    return k->colorFillType;
 }
 
 QColor TupItemTweener::tweenInitialColor()

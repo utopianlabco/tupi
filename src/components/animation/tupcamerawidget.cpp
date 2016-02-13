@@ -53,7 +53,7 @@ struct TupCameraWidget::Private
 TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupCameraWidget()]";
         #else
             TINIT;
@@ -75,13 +75,11 @@ TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget 
     labelLayout->setSpacing(0);
 
     QFont font = this->font();
-    font.setPointSize(10);
     font.setBold(true);
     QLabel *name = new QLabel(k->project->projectName() + ": ");
     name->setFont(font);
 
-    font = this->font();
-    font.setPointSize(10);
+    font.setBold(false);
     QLabel *description = new QLabel(k->project->description());
     description->setFont(font);
 
@@ -91,6 +89,9 @@ TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget 
     QLabel *icon = new QLabel();
     icon->setPixmap(QPixmap(THEME_DIR + "icons/player.png"));
     QLabel *title = new QLabel(tr("Scene Preview"));
+    font.setBold(true);
+    title->setFont(font);
+    font.setBold(false);
     k->scaleLabel = new QLabel;
     k->scaleLabel->setFont(font);
 
@@ -144,14 +145,13 @@ TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget 
     setLoop();
 
     layout->addWidget(k->status, 0, Qt::AlignCenter|Qt::AlignTop);
-
     setLayout(layout);
 }
 
 TupCameraWidget::~TupCameraWidget()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupCameraWidget()]";
         #else
             TEND;
@@ -236,7 +236,7 @@ void TupCameraWidget::previousFrame()
 bool TupCameraWidget::handleProjectResponse(TupProjectResponse *response)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupCameraWidget::handleProjectResponse()]";
         #else
             T_FUNCINFO;
@@ -258,7 +258,7 @@ bool TupCameraWidget::handleProjectResponse(TupProjectResponse *response)
                  if (index < 0)
                      break;
 
-                 if (index == k->project->scenesTotal())
+                 if (index == k->project->scenesCount())
                      index--;
 
                  k->status->setScenes(k->project);
@@ -289,7 +289,7 @@ bool TupCameraWidget::handleProjectResponse(TupProjectResponse *response)
             {
                  #ifdef K_DEBUG
                      QString msg = "TupCameraWidget::handleProjectResponse() - Unknown/Unhandled project action: " + QString::number(sceneResponse->action());
-                     #ifdef Q_OS_WIN32
+                     #ifdef Q_OS_WIN
                          qDebug() << msg;
                      #else
                          tFatal() << msg;
@@ -322,9 +322,9 @@ void TupCameraWidget::setStatusFPS(int fps)
 
 void TupCameraWidget::updateFramesTotal(int sceneIndex)
 {
-    TupScene *scene = k->project->scene(sceneIndex);
+    TupScene *scene = k->project->sceneAt(sceneIndex);
     if (scene) {
-        int total = scene->framesTotal();
+        int total = scene->framesCount();
         k->status->setFramesTotal(QString::number(total)); 
         k->progressBar->setRange(0, total);
     }

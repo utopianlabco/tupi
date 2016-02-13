@@ -39,6 +39,7 @@
 #include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tupframe.h"
+#include "tupgraphicobject.h"
 #include "tuplipsync.h"
 
 #include <QDomDocument>
@@ -62,74 +63,35 @@ class TUPI_EXPORT TupLayer : public QObject, public TupAbstractSerializable
     Q_OBJECT
 
     public:
-        /**
-         * Default Constructor
-         */
-        TupLayer(TupScene *parent, int index = 0);
-        
-        /**
-         * Destructor
-         */
+        TupLayer();
+        TupLayer(TupScene *scene, int index = 0);
         ~TupLayer();
         
-        /**
-         * Retorna los frames del layer
-         */
         Frames frames();
-        
-        /**
-         * Pone la lista de frames, esta funcion reemplaza los frames anteriores
-         */
         void setFrames(const Frames &frames);
-
-        /**
-         * Actualiza el frame ubicado en la posicion index 
-         */
         void setFrame(int index, TupFrame *frame);
         
-        /**
-         * Pone el nombre del layer
-         */
         void setLayerName(const QString &name);
-        
-        /**
-         * Bloquea el layer
-         */
-        void setLocked(bool isLocked);
-        
-        /**
-         * Pone la visibilidad del layer
-         */
-        void setVisible(bool isVisible);
-        
-        /**
-         * Retorna el nombre del layer
-         */
         QString layerName() const;
         
-        /**
-         * Returna verdadero cuando el layer esta bloqueado
-        */
+        void setLocked(bool isLocked);
         bool isLocked() const;
-        
-        /**
-         * Retorna verdadero si el layer es visible
-         */
+
+        void setVisible(bool isVisible);
         bool isVisible() const;
+
+        void setOpacity(double opacity);
+        double opacity();
         
         TupFrame *createFrame(QString name, int position, bool loaded = false);
-
+        bool restoreFrame(int index);
         bool removeFrame(int position);
-
         bool resetFrame(int position);
-        
         bool moveFrame(int from, int to);
-
         bool exchangeFrame(int from, int to);
-        
         bool expandFrame(int position, int size);
         
-        TupFrame *frame(int position) const;
+        TupFrame *frameAt(int position) const;
 
         TupLipSync *createLipSync(const QString &name, const QString &soundFile, int initFrame);
         void addLipSync(TupLipSync *lipsync);
@@ -142,12 +104,23 @@ class TUPI_EXPORT TupLayer : public QObject, public TupAbstractSerializable
 
         void updateLayerIndex(int index);
         int layerIndex();
-        
         int visualIndexOf(TupFrame *frame) const;
-        
         int objectIndex() const;
+        int framesCount() const;
 
-        int framesTotal() const;
+        void addTweenObject(TupGraphicObject *object);
+        void addTweenObject(TupSvgItem *object);
+        void updateTweenObject(int index, TupGraphicObject *object);
+        void updateTweenObject(int index, TupSvgItem *object);
+        void removeTweenObject(TupGraphicObject *object);
+        void removeTweenObject(TupSvgItem *object);
+        QList<TupGraphicObject *> tweeningGraphicObjects() const;
+        QList<TupSvgItem *> tweeningSvgObjects() const;
+        bool tweenExists(const QString &name, TupItemTweener::Type type);
+        bool removeTween(const QString &name, TupItemTweener::Type type);
+        void removeAllTweens();
+        void removeTweensFromFrame(int frameIndex);
+        // int tweensCount();
 
     public:
         virtual void fromXml(const QString &xml);

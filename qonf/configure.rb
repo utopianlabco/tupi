@@ -142,7 +142,7 @@ module RQonf
       Info.info << "Creating makefiles..." << $endl
 
       if RUBY_PLATFORM.downcase.include?("darwin")
-        qmakeLine = "'CONFIG += console warn_on' 'INCLUDEPATH += /opt/local/include LIBS += -L/opt/local/lib -lavcodec -lavutil -lavformat -framework CoreFoundation'"
+        qmakeLine = "'CONFIG += console warn_on' 'INCLUDEPATH += /usr/local/include LIBS += -L/usr/local/lib -lavcodec -lavutil -lavformat -framework CoreFoundation'"
         @qmake.run(qmakeLine, true)
       else
         @qmake.run("", true)
@@ -299,10 +299,15 @@ module RQonf
 
       newfile = "[Desktop Entry]\n"
       # newfile += "Encoding=UTF-8\n"
+
       newfile += "Name=Tupi: Open 2D Magic\n"
       newfile += "Name[es]=Tupí: Magia 2D Libre\n"
       newfile += "Name[pt]=Tupí: Magia 2D Libre\n"
-      newfile += "Name[ru]=Tupi: Open 2D Magic\n"
+      newfile += "Name[ru]=Tupi: Свободная 2D магия\n"
+      newfile += "GenericName=2D Animation Editor\n"
+      newfile += "GenericName[es]=Editor de Animaciones 2D\n"
+      newfile += "GenericName[pt]=Editor de Animações 2D\n"
+      newfile += "GenericName[ru]=Редактор 2D анимации\n"
       newfile += "Exec=" + launcher_bindir + "/tupi\n"
       newfile += "Icon=tupi\n"
       newfile += "Type=Application\n"

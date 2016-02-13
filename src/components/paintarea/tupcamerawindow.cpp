@@ -61,14 +61,14 @@ void TupCameraWindow::reset()
 {
     QDir dir(k->dir);
     foreach (QString file, dir.entryList(QStringList() << "*.jpg")) {
-             QString absolute = dir.absolutePath() + QDir::separator() + file;
+             QString absolute = dir.absolutePath() + "/" + file;
              QFile::remove(absolute);
     }
 
     if (! dir.rmdir(dir.absolutePath())) {
         #ifdef K_DEBUG
             QString msg = "TupCameraInterface::closeEvent() - Fatal Error: Can't remove pictures directory -> " + dir.absolutePath();
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -136,7 +136,7 @@ void TupCameraWindow::takePicture(int counter)
     if (counter >= 10 && counter < 100)
         prev += "0";
 
-    QString imagePath = k->dir + QDir::separator() + prev + QString::number(counter) + ".jpg";
+    QString imagePath = k->dir + "/" + prev + QString::number(counter) + ".jpg";
 
     //on half pressed shutter button
     k->camera->searchAndLock();

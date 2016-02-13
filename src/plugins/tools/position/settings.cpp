@@ -65,10 +65,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QFont font = this->font();
-    font.setPointSize(8);
-    setFont(font);
-
     QLabel *nameLabel = new QLabel(tr("Name") + ": ");
     k->input = new QLineEdit;
 
@@ -84,10 +80,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -165,7 +161,7 @@ void Settings::activeInnerForm(bool enable)
 
 // Adding new Tween
 
-void Settings::setParameters(const QString &name, int framesTotal, int startFrame)
+void Settings::setParameters(const QString &name, int framesCount, int startFrame)
 {
     k->mode = TupToolPlugin::Add;
     k->input->setText(name);
@@ -176,10 +172,10 @@ void Settings::setParameters(const QString &name, int framesTotal, int startFram
 
     k->comboInit->setEnabled(false);
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
-    initStartCombo(framesTotal, startFrame);
+    initStartCombo(framesCount, startFrame);
 }
 
 // Editing new Tween
@@ -200,11 +196,11 @@ void Settings::setParameters(TupItemTweener *currentTween)
     k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->stepViewer->totalSteps()));
 }
 
-void Settings::initStartCombo(int framesTotal, int currentIndex)
+void Settings::initStartCombo(int framesCount, int currentIndex)
 {
     k->comboInit->clear();
     k->comboInit->setMinimum(1);
-    k->comboInit->setMaximum(framesTotal);
+    k->comboInit->setMaximum(framesCount);
     k->comboInit->setValue(currentIndex);
 }
 
@@ -263,6 +259,7 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
     root.setAttribute("initScene", currentScene);
     root.setAttribute("frames", k->stepViewer->totalSteps());
     root.setAttribute("origin", QString::number(point.x()) + "," + QString::number(point.y()));
+    // root.setAttribute("origin", "0,0");
     root.setAttribute("coords", path);
 
     foreach (TupTweenerStep *step, k->stepViewer->steps())
@@ -331,7 +328,7 @@ void Settings::setEditMode()
 {
     k->mode = TupToolPlugin::Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 

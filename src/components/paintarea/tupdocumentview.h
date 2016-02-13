@@ -111,6 +111,7 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void updateUsersOnLine(const QString &login, int state);
         void resizeProjectDimension(const QSize dimension);
         void updatePerspective();
+        QColor projectBGColor() const;
 
     private slots:
         void setNextOnionSkin(int n);
@@ -135,15 +136,6 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void insertPictureInFrame(int id, const QString path);
         void papagayoManager();
 
-    private:
-        struct Private;
-        Private *const k;
-        void setupDrawActions();
-        void createToolBar();
-        void createMenu();
-        void createLateralToolBar();
-        void updateRotationAngleFromRulers(int angle);
-
     private slots: 
         // Plugins
         void loadPlugins();
@@ -164,6 +156,8 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void selectToolFromMenu(QAction *action);
         void callAutoSave();
         void sendStoryboard(TupStoryboard *storyboard, int sceneIndex);
+        void updateStaticOpacity(double opacity);
+        void updateDynamicOpacity(double opacity);
 
     public slots:
         void undo();
@@ -194,9 +188,18 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void closeLine();
         void projectSizeHasChanged(const QSize dimension);
         void updateFPS(int fps);
+        void newPerspective(int index);
 
-    // protected:
-    // void closeEvent(QCloseEvent *e);
+    private:
+        void setupDrawActions();
+        void createToolBar();
+        void createMenu();
+        void createLateralToolBar();
+        void updateRotationAngleFromRulers(int angle);
+        double backgroundOpacity(TupFrame::FrameType type);
+        struct Private;
+        Private *const k;
+
 };
 
 #endif

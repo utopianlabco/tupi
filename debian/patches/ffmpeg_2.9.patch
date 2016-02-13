@@ -1,0 +1,47 @@
+Last-Update: 2015-11-02
+Forwarded: yes
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=803865
+Author: Andreas Cadhalpun <Andreas.Cadhalpun@googlemail.com>
+Description: Replace deprecated FFmpeg API
+
+--- a/configure.tests/libav/main.cpp
++++ b/configure.tests/libav/main.cpp
+@@ -64,9 +64,9 @@
+     c = st->codec;
+     c->time_base.den = 24;
+     c->time_base.num = 1;
+     c->gop_size = 12;
+-    c->pix_fmt = PIX_FMT_YUV420P;
++    c->pix_fmt = AV_PIX_FMT_YUV420P;
+ 
+     av_free(oc);
+ 
+     return 0;
+--- a/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
++++ b/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
+@@ -306,12 +306,12 @@
+     if (movieFile.endsWith("gif", Qt::CaseInsensitive)) {
+         // c->pix_fmt = AV_PIX_FMT_RGB24;
+         // avpicture_fill((AVPicture *)frame, image.bits(), AV_PIX_FMT_RGB24, w, h);
+     } else {
+-        int size = avpicture_get_size(PIX_FMT_YUV420P, w, h);
++        int size = avpicture_get_size(AV_PIX_FMT_YUV420P, w, h);
+         uint8_t *pic_dat = (uint8_t *) av_malloc(size);
+         RGBtoYUV420P(image.bits(), pic_dat, image.depth()/8, true, w, h);
+-        avpicture_fill((AVPicture *)frame, pic_dat, PIX_FMT_YUV420P, w, h);
++        avpicture_fill((AVPicture *)frame, pic_dat, AV_PIX_FMT_YUV420P, w, h);
+     }
+ 
+     ret = avcodec_encode_video2(c, &pkt, frame, &got_output);
+     if (ret < 0) {
+@@ -360,9 +360,9 @@
+ 
+ void TLibavMovieGenerator::Private::closeVideo(AVStream *st)
+ {
+     avcodec_close(st->codec);
+-    av_free(frame);
++    av_frame_free(&frame);
+ }
+ 
+ TLibavMovieGenerator::TLibavMovieGenerator(TMovieGeneratorInterface::Format format, int width, int height, int fps, double duration)
+  : TMovieGenerator(width, height), k(new Private)

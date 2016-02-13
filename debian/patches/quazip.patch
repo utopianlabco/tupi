@@ -1,33 +1,30 @@
-Last-Update: 2015-01-02
+Last-Update: 2016-02-13
 Forwarded: yes
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=810609
 Author: Dmitry Smirnov <onlyjob@member.fsf.org>
-Description: drop stupid quazip detection.
+Description: correct library name
 
 --- a/qonf/test.rb
 +++ b/qonf/test.rb
-@@ -103,11 +103,7 @@ class Test
+@@ -102,9 +102,9 @@
+                          extraInclude = quazipDir + "/include"
                           qmakeLine = "'LIBS += #{extraLib}'"
                           qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
                        else
--                         if parser.os.eql? "14.10" 
--                            extraLib = "-lquazip-qt5"
--                         else
--                            extraLib = "-lquazip"
--                         end
+-                         extraLib = "-lquazip-qt5"
 +                         extraLib = "-lquazip5"
                           qmakeLine = "'LIBS += #{extraLib}'"
                        end
                     else
-@@ -177,11 +173,7 @@ class Test
-             config.addLib(lib)
-         }
+                       if File.dirname(@rules).end_with?("theora")
+@@ -175,9 +175,9 @@
  
--        if parser.os.eql? "14.10"
+         if conf.hasArgument?("with-quazip")
+            config.addLib("-lquazip")
+         else
 -           config.addLib("-lquazip-qt5")
--        else
--           config.addLib("-lquazip")
--        end
-+        config.addLib("-lquazip5")
++           config.addLib("-lquazip5")
+         end
+ 
+         # config.addLib("-lquazip-qt5")
          
-         parser.defines.each { |define|
-             config.addDefine(define)

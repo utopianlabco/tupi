@@ -52,7 +52,7 @@ TipDialog::TipDialog(QStringList &labels, TipDatabase *database, QWidget *parent
 void TipDialog::setupGUI()
 {
     setWindowTitle(tags.at(0));
-    setWindowIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "today_tip.png"));
+    setWindowIcon(QPixmap(THEME_DIR + "icons/today_tip.png"));
 
     int h;
     int s;
@@ -69,10 +69,10 @@ void TipDialog::setupGUI()
     textBrowser->setOpenExternalLinks(true);
 
     QStringList path;
-#ifdef Q_OS_WIN32
-    QString resources = SHARE_DIR + "help" + QDir::separator();
+#ifdef Q_OS_WIN
+    QString resources = SHARE_DIR + "help/";
 #else
-	QString resources = SHARE_DIR + "data" + QDir::separator() + "help" + QDir::separator();
+	QString resources = SHARE_DIR + "data/help/";
 #endif	
 
     path << resources + "css";

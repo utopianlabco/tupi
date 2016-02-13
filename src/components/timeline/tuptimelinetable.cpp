@@ -181,14 +181,14 @@ TupTimeLineTable::TupTimeLineTable(int sceneIndex, QWidget *parent) : QTableWidg
     k->layerIndex = 0;
 
     k->ruler = new TupTimeLineRuler;
-    connect(k->ruler, SIGNAL(selectionChanged(int)), this, SLOT(frameSelectionFromRuler(int)));
+    connect(k->ruler, SIGNAL(headerSelectionChanged(int)), this, SLOT(frameSelectionFromRuler(int)));
 
     k->removingLayer = false;
     k->removingFrame = false;
 
     k->layerColumn = new TupTimeLineHeader;
     connect(k->layerColumn, SIGNAL(nameChanged(int, const QString &)), this, SIGNAL(layerNameChanged(int, const QString &)));
-    connect(k->layerColumn, SIGNAL(selectionChanged(int)), this, SLOT(frameSelectionFromLayerHeader(int)));
+    connect(k->layerColumn, SIGNAL(headerSelectionChanged(int)), this, SLOT(frameSelectionFromLayerHeader(int)));
     connect(k->layerColumn, SIGNAL(visibilityChanged(int, bool)), this, SIGNAL(visibilityChanged(int, bool)));
     connect(k->layerColumn, SIGNAL(sectionMoved(int, int, int)), this, SLOT(requestLayerMove(int, int, int)));
 
@@ -329,7 +329,7 @@ int TupTimeLineTable::currentLayer()
     return currentRow();
 }
 
-int TupTimeLineTable::layersTotal()
+int TupTimeLineTable::layersCount()
 {
     return rowCount();
 }
@@ -344,10 +344,9 @@ int TupTimeLineTable::lastFrameByLayer(int index)
 
 // FRAMES
 
-void TupTimeLineTable::insertFrame(int layerIndex, const QString &name)
+// void TupTimeLineTable::insertFrame(int layerIndex, const QString &name)
+void TupTimeLineTable::insertFrame(int layerIndex)
 {
-    Q_UNUSED(name);
-
     if (layerIndex < 0 || layerIndex >= rowCount())
         return;
 
@@ -402,7 +401,7 @@ bool TupTimeLineTable::frameIsLocked(int layerIndex, int frameIndex)
     } else {
         #ifdef K_DEBUG
             QString msg = "TupTimeLineTable::frameIsLocked() - Layer: " + QString::number(layerIndex) + QString(", Frame: ") + QString::number(frameIndex) + QString(" doesn't exist");
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -477,23 +476,33 @@ void TupTimeLineTable::mousePressEvent(QMouseEvent *event)
 
 void TupTimeLineTable::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Right) {
+    // tError() << "TupTimeLineTable::keyPressEvent() - event->key() -> " << event->key();
+    // tError() << "TupTimeLineTable::keyPressEvent() - event->modifiers() -> " << event->modifiers();
+
+    // Fn + Left/Right arrow
+    if (event->key() == 16777232 || event->key() == 16777233)
+        return;
+
+    if (event->key() == Qt::Key_Right || event->key() == Qt::Key_PageDown) {
         int limit = columnCount()-1;
         int next = currentColumn()+1;
         if (next <= limit) 
             setCurrentCell(currentRow(), next);
+        return;
     }    
 
-    if (event->key() == Qt::Key_Left) {
+    if (event->key() == Qt::Key_Left || event->key() == Qt::Key_PageUp) {
         int next = currentColumn()-1;
         if (next >= 0) 
             setCurrentCell(currentRow(), next);
+        return;
     }
 
     if (event->key() == Qt::Key_Up) {
         int next = currentRow()-1;
         if (next >= 0) 
             setCurrentCell(next, currentColumn());
+        return;
     }
 
     if (event->key() == Qt::Key_Down) {
@@ -501,7 +510,10 @@ void TupTimeLineTable::keyPressEvent(QKeyEvent *event)
         int next = currentRow()+1;
         if (next <= limit)
             setCurrentCell(next, currentColumn());
+        return;
     }
+
+    QTableWidget::keyPressEvent(event);
 }
 
 void TupTimeLineTable::enterEvent(QEvent *event)

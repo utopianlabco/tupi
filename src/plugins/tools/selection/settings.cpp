@@ -47,17 +47,23 @@ struct Settings::Private
     QPushButton *tips;
     int currentX;
     int currentY;
+    QTextEdit *textArea;
 };
 
 Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
 {
+#ifndef Q_OS_MAC
+    QFont font = this->font();
+    font.setPointSize(8);
+    setFont(font);
+#endif
+
     QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     k->tools = new QWidget(this);
     QBoxLayout *toolsLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->tools);
 
     QLabel *flips = new QLabel(tr("Flips"));
-    flips->setFont(QFont("Arial", 8, QFont::Normal, false));
     flips->setAlignment(Qt::AlignHCenter);
     toolsLayout->addWidget(flips);
 
@@ -65,14 +71,11 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     buttonsLayout->setMargin(0);
     buttonsLayout->setSpacing(0);
 
-    TImageButton *horizontalFlip = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() 
-                                                    + "horizontal_flip.png"), 22);
+    TImageButton *horizontalFlip = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/horizontal_flip.png"), 22);
     horizontalFlip->setToolTip(tr("Horizontal Flip"));
-    TImageButton *verticalFlip = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() 
-                                                  + "vertical_flip.png"), 22);
+    TImageButton *verticalFlip = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/vertical_flip.png"), 22);
     verticalFlip->setToolTip(tr("Vertical Flip"));
-    TImageButton *crossedFlip = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() 
-                                                 + "crossed_flip.png"), 22);
+    TImageButton *crossedFlip = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/crossed_flip.png"), 22);
     crossedFlip->setToolTip(tr("Crossed Flip"));
     connect(horizontalFlip, SIGNAL(clicked()), this, SLOT(hFlip()));
     connect(verticalFlip, SIGNAL(clicked()), this, SLOT(vFlip()));
@@ -83,11 +86,9 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     buttonsLayout->addWidget(crossedFlip);
 
     toolsLayout->addLayout(buttonsLayout);
-
     toolsLayout->addWidget(new TSeparator(Qt::Horizontal));
 
     QLabel *order = new QLabel(tr("Order"));
-    order->setFont(QFont("Arial", 8, QFont::Normal, false));
     order->setAlignment(Qt::AlignHCenter);
     toolsLayout->addWidget(order);
 
@@ -95,16 +96,16 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     orderButtonsLayout->setMargin(0);
     orderButtonsLayout->setSpacing(0);
 
-    TImageButton *toBack = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "to_back.png"), 22);
+    TImageButton *toBack = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/to_back.png"), 22);
     toBack->setToolTip(tr("Send object to back"));
 
-    TImageButton *toBackOneLevel = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "to_back_one.png"), 22);
+    TImageButton *toBackOneLevel = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/to_back_one.png"), 22);
     toBackOneLevel->setToolTip(tr("Send object to back one level"));
 
-    TImageButton *toFront = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "to_front.png"), 22);
+    TImageButton *toFront = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/to_front.png"), 22);
     toFront->setToolTip(tr("Send object to front"));
 
-    TImageButton *toFrontOneLevel = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "to_front_one.png"), 22);
+    TImageButton *toFrontOneLevel = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/to_front_one.png"), 22);
     toFrontOneLevel->setToolTip(tr("Send object to front one level"));
 
     connect(toBack, SIGNAL(clicked()), this, SLOT(sendToBack()));
@@ -124,7 +125,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     // Group/Ungroup actions
 
     QLabel *groupLayer = new QLabel(tr("Group"));
-    groupLayer->setFont(QFont("Arial", 8, QFont::Normal, false));
     groupLayer->setAlignment(Qt::AlignHCenter);
     toolsLayout->addWidget(groupLayer);
 
@@ -132,12 +132,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     groupButtonsLayout->setMargin(0);
     groupButtonsLayout->setSpacing(0);
 
-    TImageButton *groupButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator()
-                                                 + "group.png"), 22);
+    TImageButton *groupButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/group.png"), 22);
     groupButton->setToolTip(tr("Group Objects"));
 
-    TImageButton *ungroupButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator()
-                                                   + "ungroup.png"), 22);
+    TImageButton *ungroupButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/ungroup.png"), 22);
     ungroupButton->setToolTip(tr("Ungroup Objects"));
 
     connect(groupButton, SIGNAL(clicked()), this, SLOT(groupItems()));
@@ -151,7 +149,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     toolsLayout->addWidget(new TSeparator(Qt::Horizontal));
 
     QLabel *position = new QLabel(tr("Position"));
-    position->setFont(QFont("Arial", 8, QFont::Normal, false));
     position->setAlignment(Qt::AlignHCenter);
     toolsLayout->addWidget(position);
 
@@ -178,7 +175,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom);
     k->tips = new QPushButton(tr("Show Tips"));
     k->tips->setToolTip(tr("A little help for the Selection tool")); 
-    k->tips->setFont(QFont("Arial", 8, QFont::Normal, false));
     layout->addWidget(k->tips);
     connect(k->tips, SIGNAL(clicked()), this, SLOT(openTipPanel())); 
 
@@ -188,21 +184,22 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->help->hide();
     QBoxLayout *helpLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->help);
 
-    QTextEdit *textArea = new QTextEdit; 
+    int h = height();
+    k->textArea = new QTextEdit; 
+    // k->textArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // SQA: Check this code with several screen resolutions. It must looks good with everyone! 
-    textArea->setFont(QFont("Arial", 8, QFont::Normal, false));
-    textArea->setHtml("<p><b>" + tr("Rotation mode") + ":</b> " + tr("Double click on any node or shortcut Alt + R") + "</p>"); 
-    textArea->append("<p><b>" + tr("Arrows") + ":</b> " +  tr("Movement on selection") + "</p>");
-    textArea->append("<p><b>" + tr("Shift + Arrows") + ":</b> " +  tr("Slow movement on selection") + "</p>");
-    textArea->append("<p><b>" + tr("Ctrl + Arrows") + ":</b> " +  tr("Fast movement on selection") + "</p>");
-    textArea->append("<p><b>" + tr("Shift + Left Mouse Button") + ":</b> " +  tr("Proportional scaling on selection") + "</p>");
+    k->textArea->setHtml("<p><b>" + tr("Double Click on any node or Shortcut Alt + R") + ":</b> " + tr("Rotation mode") + "</p>"); 
+    k->textArea->append("<p><b>" + tr("Arrows") + ":</b> " +  tr("Movement on selection") + "</p>");
+    k->textArea->append("<p><b>" + tr("Shift + Arrows") + ":</b> " +  tr("Slow movement on selection") + "</p>");
+    k->textArea->append("<p><b>" + tr("Ctrl + Arrows") + ":</b> " +  tr("Fast movement on selection") + "</p>");
+    k->textArea->append("<p><b>" + tr("Shift + Left Mouse Button") + ":</b> " +  tr("Proportional scaling on selection") + "</p>");
 
-    QString text = textArea->document()->toPlainText();
-    int height = (text.length()*270)/200;
-    textArea->setFixedHeight(height);
-
-    helpLayout->addWidget(textArea); 
+    // QString text = textArea->document()->toPlainText();
+    // int height = (text.length()*270)/200;
+    // textArea->setFixedHeight(height);
+    k->help->setFixedHeight(h);
+    helpLayout->addWidget(k->textArea); 
 
     mainLayout->addWidget(k->help);
     mainLayout->addStretch(2);

@@ -55,6 +55,10 @@
 #include "tuprequestbuilder.h"
 #include "tupproxyitem.h"
 #include "tuplibraryobject.h"
+#include "tupitemgroup.h"
+#include "tosd.h"
+#include "tupgraphiclibraryitem.h"
+#include "tuppixmapitem.h"
 
 #include <QObject>
 #include <QSpinBox>
@@ -89,11 +93,8 @@ class TUPI_PLUGIN NodesTool : public TupToolPlugin
         virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         
         virtual QMap<QString, TAction *>actions() const;
-        
         int toolType() const;
-        
         virtual QWidget *configurator();
-        
         void aboutToChangeScene(TupGraphicsScene *scene);
         virtual void aboutToChangeTool();
         
@@ -110,7 +111,9 @@ class TUPI_PLUGIN NodesTool : public TupToolPlugin
         void callForPlugin(int menu, int index);
  
     private:
+        // void reset(TupGraphicsScene *scene);
         void setupActions();
+        TupFrame* currentFrame();
         
     private:
         struct Private;

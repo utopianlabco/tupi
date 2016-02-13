@@ -69,9 +69,6 @@ unix:!mac {
 HEADERS += tupmainwindow.h \
            tupstatusbar.h \
            tupnewproject.h \
-           # tupsplash.h \
-           # tupcrashhandler.h \
-           # tupcrashwidget.h \
            tupapplication.h \
            tuplocalprojectmanagerhandler.h
 
@@ -79,9 +76,6 @@ SOURCES += main.cpp \
            tupmainwindow.cpp \
            tupstatusbar.cpp \
            tupnewproject.cpp \
-           # tupsplash.cpp \
-           # tupcrashhandler.cpp \
-           # tupcrashwidget.cpp \
            tupapplication.cpp \
            tupmainwindow_gui.cpp \
            tuplocalprojectmanagerhandler.cpp
@@ -100,14 +94,14 @@ FRAMEWORK_DIR = ../framework
 include($$FRAMEWORK_DIR/framework.pri)
 
 unix {
-    !include(../../tupiglobal.pri) {
-        error("Please run configure first")
-    }
+!include(../../tupiglobal.pri) {
+         error("Please run configure first")
+}
 }
 
 win32 {
     TARGET = tupi
-    DEFINES += VERSION=\\\"0.2\\\" CODE_NAME=\\\"Amandy\\\" REVISION=\\\"git05\\\"
+    DEFINES += VERSION=\\\"0.2\\\" CODE_NAME=\\\"Kunumi\\\" REVISION=\\\"git06\\\"
     include(../../win.pri)
     include(../../quazip.win.pri)
 }

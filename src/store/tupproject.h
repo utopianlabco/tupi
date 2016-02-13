@@ -99,7 +99,7 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
         void setDataDir(const QString &path);
         QString dataDir() const;
 
-        TupScene *scene(int position) const;
+        TupScene *sceneAt(int position) const;
 
         int visualIndexOf(TupScene *scene) const;
 
@@ -107,13 +107,17 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
 
         TupScene *createScene(QString name, int position, bool loaded = false);
         void updateScene(int position, TupScene *scene);
+        bool restoreScene(int position);
         bool removeScene(int position);
         bool moveScene(int position, int newPosition);
 
         bool createSymbol(int type, const QString &name, const QByteArray &data, const QString &folder = QString());
-        bool removeSymbol(const QString &name, TupLibraryObject::Type symbolType, TupProject::Mode spaceMode, 
+/*
+        bool removeSymbol(const QString &name, TupLibraryObject::Type type, TupProject::Mode spaceMode, 
                           int sceneIndex, int layerIndex, int frameIndex);
-        bool removeSymbol(const QString &name);
+*/
+
+        bool removeSymbol(const QString &name, TupLibraryObject::Type type);
         bool addFolder(const QString &name);
         bool removeFolder(const QString &name);
 
@@ -136,7 +140,7 @@ class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
 
         void setOpen(bool open);
         bool isOpen();
-        int scenesTotal() const;
+        int scenesCount() const;
 
         void updateSpaceContext(TupProject::Mode mode);
         TupProject::Mode spaceContext();

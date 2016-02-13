@@ -1,3 +1,14 @@
+tupi (0.2+git06-1) unstable; urgency=medium
+
+  * New upstream release [February 2016] (Closes: #814511).
+  * Added "ffmpeg_2.9.patch" (Closes: #803865).
+    Thanks, Andreas Cadhalpun.
+  * Dropped obsolete "verbose-build.patch".
+  * Updated Vcs URLs (vcs-field-uses-insecure-uri).
+  * "debian/watch" file clean-up (obsolete-url-in-packaging).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 13 Feb 2016 17:45:17 +1100
+
 tupi (0.2+git05-4) unstable; urgency=medium
 
   * Team upload
