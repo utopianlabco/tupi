@@ -36,11 +36,10 @@
 #ifndef TUPGENERALPREFERENCES_H
 #define TUPGENERALPREFERENCES_H
 
-#include "tglobal.h"
 #include <QLineEdit>
 #include <QGridLayout>
 
-class TUPI_EXPORT TupGeneralPreferences : public QWidget
+class TupGeneralPreferences : public QWidget
 {
     Q_OBJECT
 

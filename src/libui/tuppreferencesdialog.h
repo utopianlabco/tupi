@@ -43,13 +43,16 @@
 
 #include "tglobal.h"
 #include "tconfigurationdialog.h"
+#include "tapplicationproperties.h"
+#include "tupgeneralpreferences.h"
+#include "tuppaintareaconfig.h"
 
 class TUPI_EXPORT TupPreferencesDialog : public TConfigurationDialog
 {
     Q_OBJECT
     
     public:
-        TupPreferencesDialog(QWidget *parent=0);
+        TupPreferencesDialog(QWidget *parent);
         ~TupPreferencesDialog();
 
     protected:
