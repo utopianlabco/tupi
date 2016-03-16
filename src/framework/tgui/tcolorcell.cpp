@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Project TUPI: 2D Magic                                                *
+ *   Project TUPI: Open 2D Magic                                           *
  *   Component: tupi.mobile                                                *
  *   Project Contact: info@maefloresta.com                                 *
  *   Project Website: http://www.maefloresta.com                           *
@@ -36,7 +36,6 @@
  ***************************************************************************/
 
 #include "tcolorcell.h"
-#include "tconfig.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -45,20 +44,14 @@ struct TColorCell::Private
 {
     QBrush brush;
     FillType index;
-    bool enabled;
-    bool checked;
+    bool selected;
     QSize size;
-    QString themeName;
 };
 
 TColorCell::TColorCell(FillType index, const QBrush &brush, const QSize &size) : k(new Private)
 {
-    TCONFIG->beginGroup("General");
-    k->themeName = TCONFIG->value("Theme", "Light").toString();
-
     k->index = index;
-    k->enabled = true;
-    k->checked = false;
+    k->selected = false;
     k->brush = brush;
     k->size = size;
     setFixedSize(k->size);
@@ -81,28 +74,13 @@ void TColorCell::paintEvent(QPaintEvent *event)
     painter.fillRect(rect(), k->brush);
     QRect border = rect();
 
-    if (k->enabled) {
-        if (k->checked) {
-            QColor borderColor1 = QColor(200, 200, 200); 
-            QColor borderColor2 = QColor(190, 190, 190);
-            QColor borderColor3 = QColor(150, 150, 150);
-            if (k->themeName.compare("Dark") == 0) {
-                borderColor1 = QColor(120, 120, 120);
-                borderColor2 = QColor(110, 110, 110);
-                borderColor3 = QColor(70, 70, 70);
-            }
-
-            painter.setPen(QPen(borderColor1, 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            painter.drawRect(border);
-            painter.setPen(QPen(borderColor2, 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            painter.drawRect(border);
-            painter.setPen(QPen(borderColor3, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            painter.drawRect(border);
-        } else {
-            QRect frame = QRect(border.topLeft(), QSize(k->size.width()-1, k->size.height()-1));
-            painter.setPen(QPen(QColor(190, 190, 190), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            painter.drawRect(frame);
-        }
+    if (k->selected) {
+        painter.setPen(QPen(QColor(200, 200, 200), 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter.drawRect(border);
+        painter.setPen(QPen(QColor(190, 190, 190), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter.drawRect(border);
+        painter.setPen(QPen(QColor(150, 150, 150), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter.drawRect(border);
     } else {
         QRect frame = QRect(border.topLeft(), QSize(k->size.width()-1, k->size.height()-1));
         painter.setPen(QPen(QColor(190, 190, 190), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -114,16 +92,8 @@ void TColorCell::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (k->enabled) {
-        setChecked(true);
-        emit clicked(k->index);
-    }
-}
-
-void TColorCell::setEnabled(bool isEnabled)
-{
-    k->enabled = isEnabled;
-    update();
+    emit clicked(k->index);
+    setSelected(true);
 }
 
 QColor TColorCell::color()
@@ -136,15 +106,15 @@ QBrush TColorCell::brush()
     return k->brush;
 }
 
-void TColorCell::setChecked(bool isChecked)
+void TColorCell::setSelected(bool isSelected)
 {
-    k->checked = isChecked;
+    k->selected = isSelected;
     update();
 }
 
-bool TColorCell::isChecked()
+bool TColorCell::isSelected()
 {
-    return k->checked;
+    return k->selected;
 }
 
 void TColorCell::setBrush(const QBrush &brush) 

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Project TUPI: 2D Magic                                                *
+ *   Project TUPI: Open 2D Magic                                           *
  *   Component: tupi.mobile                                                *
  *   Project Contact: info@maefloresta.com                                 *
  *   Project Website: http://www.maefloresta.com                           *
@@ -50,15 +50,14 @@ class TUPI_EXPORT TColorCell : public QWidget
     Q_OBJECT
 
     public:
-        enum FillType{Contour = 0, Inner, Background, PreviousFrames, NextFrames, Layers};
+        enum FillType{Contour = 0, Inner};
         TColorCell(FillType index, const QBrush &brush, const QSize &size);
         ~TColorCell();
         QSize sizeHint() const;
         QBrush brush();
         QColor color();
-        void setEnabled(bool isEnabled);
-        void setChecked(bool isChecked);
-        bool isChecked();
+        void setSelected(bool isSelected);
+        bool isSelected();
         void setBrush(const QBrush &brush);
 
     protected:
