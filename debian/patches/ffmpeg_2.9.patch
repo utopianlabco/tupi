@@ -19,7 +19,7 @@ Description: Replace deprecated FFmpeg API
      return 0;
 --- a/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
 +++ b/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
-@@ -306,12 +306,12 @@
+@@ -301,12 +301,12 @@
      if (movieFile.endsWith("gif", Qt::CaseInsensitive)) {
          // c->pix_fmt = AV_PIX_FMT_RGB24;
          // avpicture_fill((AVPicture *)frame, image.bits(), AV_PIX_FMT_RGB24, w, h);
@@ -34,7 +34,7 @@ Description: Replace deprecated FFmpeg API
  
      ret = avcodec_encode_video2(c, &pkt, frame, &got_output);
      if (ret < 0) {
-@@ -360,9 +360,9 @@
+@@ -355,9 +355,9 @@
  
  void TLibavMovieGenerator::Private::closeVideo(AVStream *st)
  {

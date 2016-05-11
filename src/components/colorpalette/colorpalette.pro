@@ -1,4 +1,6 @@
 QT += opengl core gui svg xml network
+TEMPLATE = lib
+TARGET = tupicolorpalette
 
 INSTALLS += tpal 
 
@@ -12,29 +14,25 @@ target.path = /lib/
 
 macx {
     CONFIG += staticlib warn_on
+} else {
+    CONFIG += dll warn_on
 }
 
 HEADERS += tupcolorpicker.h \
            tupcolorpalette.h \
            tupviewcolorcells.h \
-           tupluminancepicker.h \
            tupcellscolor.h \
            tuppaletteparser.h \
-           tupcolorvalue.h
+           tupformitem.h \
+           tupcolorform.h
+
 SOURCES += tupcolorpicker.cpp \
            tupcolorpalette.cpp \
            tupviewcolorcells.cpp \
-           tupluminancepicker.cpp \
            tupcellscolor.cpp \
            tuppaletteparser.cpp \
-           tupcolorvalue.cpp
-
-*:!macx{
-    CONFIG += dll warn_on
-}
-
-TEMPLATE = lib
-TARGET = tupicolorpalette
+           tupformitem.cpp \
+           tupcolorform.cpp
 
 FRAMEWORK_DIR = "../../framework"
 include($$FRAMEWORK_DIR/framework.pri)

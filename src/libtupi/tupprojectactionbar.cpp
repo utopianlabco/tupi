@@ -95,13 +95,23 @@ void TupProjectActionBar::setup(Actions actions)
         button->setToolTip(tr("Insert frame"));
         // SQA: This short-cut has been moved to Zoom In feature
         button->setShortcut(QKeySequence(Qt::Key_9));
-        
         k->actions.addButton(button, InsertFrame);
         
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
     }
-    
+
+    if (actions & ExtendFrame) {
+        TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/extend_frame.png"), size);
+        button->setToolTip(tr("Extend frame"));
+        // button->setShortcut(QKeySequence());
+
+        k->actions.addButton(button, ExtendFrame);
+
+        k->buttonLayout->addWidget(button);
+        button->setAnimated(k->isAnimated);
+    }
+
     if (actions & RemoveFrame) {
         TImageButton *button = new TImageButton(QIcon(THEME_DIR + "icons/remove_frame.png"), size);
         button->setToolTip(tr("Remove frame"));
@@ -113,7 +123,7 @@ void TupProjectActionBar::setup(Actions actions)
         k->buttonLayout->addWidget(button);
         button->setAnimated(k->isAnimated);
     }
-     
+
     if (actions & MoveFrameBackward) {
         TImageButton *button = 0;
         if (k->container.compare("Exposure") == 0) {
@@ -341,10 +351,10 @@ void TupProjectActionBar::emitActionSelected(int action)
     {
         case RemoveFrame:
         {
-            TCONFIG->beginGroup("ExposureSheet");
-            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveFrameWithoutAsk", false));
+            TCONFIG->beginGroup("General");
+            bool ask = TCONFIG->value("ConfirmRemoveFrame", true).toBool();
 
-            if (! noAsk) {
+            if (ask) {
                 TOptionalDialog dialog(tr("Do you want to remove this frame?"), tr("Confirmation"), this);
                 dialog.setModal(true);
                 QDesktopWidget desktop;
@@ -354,18 +364,18 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("ExposureSheet");
-                TCONFIG->setValue("RemoveFrameWithoutAsk", dialog.shownAgain());
+                TCONFIG->beginGroup("General");
+                TCONFIG->setValue("ConfirmRemoveFrame", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }
         break;
         case RemoveLayer:
         {
-            TCONFIG->beginGroup("ExposureSheet");
-            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveLayerWithoutAsk", false));
+            TCONFIG->beginGroup("General");
+            bool ask = TCONFIG->value("ConfirmRemoveLayer", true).toBool();
 
-            if (! noAsk) {
+            if (ask) {
                 TOptionalDialog dialog(tr("Do you want to remove this layer?"), tr("Confirmation"), this);
                 QDesktopWidget desktop;
                 dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
@@ -374,18 +384,18 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("ExposureSheet");
-                TCONFIG->setValue("RemoveLayerWithoutAsk", dialog.shownAgain());
+                TCONFIG->beginGroup("General");
+                TCONFIG->setValue("ConfirmRemoveLayer", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }
         break;
         case RemoveScene:
         {
-            TCONFIG->beginGroup("ExposureSheet");
-            bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveSceneWithoutAsk", false));
+            TCONFIG->beginGroup("General");
+            bool ask = TCONFIG->value("ConfirmRemoveScene", true).toBool();
 
-            if (! noAsk) {
+            if (ask) {
                 TOptionalDialog dialog(tr("Do you want to remove this scene?"), tr("Confirmation"), this);
                 QDesktopWidget desktop;
                 dialog.move((int) (desktop.screenGeometry().width() - dialog.sizeHint().width())/2,
@@ -394,8 +404,8 @@ void TupProjectActionBar::emitActionSelected(int action)
                 if (dialog.exec() == QDialog::Rejected)
                     return;
 
-                TCONFIG->beginGroup("ExposureSheet");
-                TCONFIG->setValue("RemoveSceneWithoutAsk", dialog.shownAgain());
+                TCONFIG->beginGroup("General");
+                TCONFIG->setValue("ConfirmRemoveScene", dialog.shownAgain());
                 TCONFIG->sync();
             }
         }

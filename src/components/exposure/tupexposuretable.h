@@ -86,7 +86,8 @@ class TUPI_EXPORT TupExposureTable : public QTableWidget
         void insertLayer(int index, const QString &name);
         void insertFrame(int layerIndex, int frameIndex, const QString &name, bool external);
         void removeLayer(int layerIndex);
-        void removeFrame(int layerIndex, int frameIndex, bool fromMenu);
+        // void removeFrame(int layerIndex, int frameIndex, bool fromMenu);
+        void removeFrame(int layerIndex, int frameIndex);
         void exchangeFrame(int oldPosLayer, int oldPosFrame, int newPosLayer, int newPosFrame, bool external);
         void moveLayer(int oldPosLayer, int newPosLayer);
 
@@ -133,10 +134,15 @@ class TUPI_EXPORT TupExposureTable : public QTableWidget
         void frameUsed(int layerIndex, int frameIndex);
         void frameRenamed(int layerIndex, int frameIndex,const QString & name);
         void frameSelected(int layerIndex, int frameIndex);
+        // void frameRemoved(int layerIndex, int frameIndex);
+        void frameRemoved();
+        void frameCopied(int layerIndex, int frameIndex);
 
         void layerNameChanged(int layerIndex, const QString & name);
         void layerMoved(int oldIndex, int newIndex);
         void layerVisibilityChanged(int visualIndexLayer, bool visibility);
+
+        // void newPerspective(int);
 
     private:
         bool layerIndexIsValid(int layerIndex);

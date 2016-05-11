@@ -125,6 +125,8 @@ void TupMainWindow::createGUI()
 
     // Adding the exposure sheet to the right side of the interface
     m_exposureSheet = new TupExposureSheet(this, m_projectManager->project());
+    // connect(m_exposureSheet, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
+
     exposureView = addToolView(m_exposureSheet, Qt::RightDockWidgetArea, Animation, "Exposure Sheet", QKeySequence(tr("Shift+E")));
     m_actionManager->insert(exposureView->toggleViewAction(), "show_exposure");
     addToPerspective(exposureView->toggleViewAction(), Animation);
@@ -134,6 +136,8 @@ void TupMainWindow::createGUI()
 
     // Adding the time line widget to the bottom side of the interface
     m_timeLine = new TupTimeLine(m_projectManager->project());
+    connect(m_timeLine, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
+
     timeView = addToolView(m_timeLine, Qt::BottomDockWidgetArea, Animation, "Time Line", QKeySequence(tr("Shift+T")));
     m_actionManager->insert(timeView->toggleViewAction(), "show_timeline");
     addToPerspective(timeView->toggleViewAction(), Animation);
@@ -176,26 +180,29 @@ void TupMainWindow::setupMenu()
 
     // Menu File	
     m_fileMenu = menuBar()->addMenu(tr("&File"));
-    m_fileMenu->addAction(m_actionManager->find("newproject"));
-    m_fileMenu->addAction(m_actionManager->find("openproject"));
+    m_fileMenu->addAction(m_actionManager->find("new_project"));
+    m_fileMenu->addAction(m_actionManager->find("open_project"));
 
     // SQA: This code has been disabled temporary
     // m_fileMenu->addAction(m_actionManager->find("opennetproject"));
     // m_fileMenu->addAction(m_actionManager->find("exportprojectserver"));
 
     // Adding Option Open Recent	
-    m_recentProjectsMenu = new QMenu(tr("Recents"), this);
+    m_recentProjectsMenu = new QMenu(tr("Open recent"), this);
 
-    // TCONFIG->beginGroup("General");
-    QStringList recents = TCONFIG->value("Recents").toString().split(';');
+    TCONFIG->beginGroup("General");
+    QString files = TCONFIG->value("Recents").toString();
+    QStringList recents = files.split(';');
+    if (files.isEmpty())
+        recents.clear();
     updateOpenRecentMenu(m_recentProjectsMenu, recents);	
     m_fileMenu->addMenu(m_recentProjectsMenu);
 
     // Adding Options save, save as, close, export, import palettes and exit	
-    m_fileMenu->addAction(m_actionManager->find("saveproject"));
+    m_fileMenu->addAction(m_actionManager->find("save_project"));
 
-    m_fileMenu->addAction(m_actionManager->find("saveprojectas"));
-    m_fileMenu->addAction(m_actionManager->find("closeproject"));
+    m_fileMenu->addAction(m_actionManager->find("save_project_as"));
+    m_fileMenu->addAction(m_actionManager->find("close_project"));
 
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_actionManager->find("export"));
@@ -203,13 +210,13 @@ void TupMainWindow::setupMenu()
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_actionManager->find("Exit"));
 
-    // Setting up the Settings menu
-    setupSettingsActions();
+    // Setting up the Preferences menu
+    setPreferencesAction();
     m_settingsMenu = menuBar()->addMenu(tr("&Edit"));
 
     m_settingsMenu->addAction(m_actionManager->find("preferences"));
     // Temporary out while SQA is done
-    m_actionManager->enable("preferences", false);
+    // m_actionManager->enable("preferences", false);
 
     // Temporary out while SQA is done
     // Setting up the insert menu
@@ -297,14 +304,14 @@ void TupMainWindow::setupMenu()
 
 void TupMainWindow::setMenuItemsContext(bool flag)
 {
-    m_actionManager->enable("saveproject", flag);
-    m_actionManager->enable("saveprojectas", flag);
-    m_actionManager->enable("closeproject", flag);
+    m_actionManager->enable("save_project", flag);
+    m_actionManager->enable("save_project_as", flag);
+    m_actionManager->enable("close_project", flag);
     m_actionManager->enable("hideaction", flag);
     m_actionManager->enable("export", flag);
     m_actionManager->enable("importBitmap", flag);
 
-    m_settingsMenu->setEnabled(flag);
+    // m_settingsMenu->setEnabled(flag);
     m_insertMenu->setEnabled(flag);
     m_windowMenu->setEnabled(flag);
     m_viewMenu->setEnabled(flag);
@@ -324,11 +331,11 @@ void TupMainWindow::setupFileActions()
     TAction *newProject = new TAction(QPixmap(THEME_DIR + "icons/new.png"), tr("New project"), QKeySequence(tr("Ctrl+N")),
 				      this, SLOT(newProject()), m_actionManager);
     newProject->setStatusTip(tr("Open new project"));
-    m_actionManager->insert(newProject, "newproject", "file");
+    m_actionManager->insert(newProject, "new_project", "file");
 
     TAction *openFile = new TAction(QPixmap(THEME_DIR + "icons/open.png"), tr("Open project"), QKeySequence(tr("Ctrl+O")), 
 				    this, SLOT(openProject()), m_actionManager);
-    m_actionManager->insert(openFile, "openproject", "file");
+    m_actionManager->insert(openFile, "open_project", "file");
     openFile->setStatusTip(tr("Load existent project"));
 
     // SQA: This code has been disabled temporary
@@ -344,18 +351,18 @@ void TupMainWindow::setupFileActions()
 
     TAction *save = new TAction(QPixmap(THEME_DIR + "icons/save.png"), tr( "Save project" ),
 				QKeySequence(tr("Ctrl+S")), this, SLOT(saveProject()), m_actionManager);
-    m_actionManager->insert(save, "saveproject", "file");
+    m_actionManager->insert(save, "save_project", "file");
     save->setStatusTip(tr("Save current project in current location"));
 
     TAction *saveAs = new TAction(QPixmap(THEME_DIR + "icons/save_as.png"), tr("Save project as..."),
 				  QKeySequence(tr("Ctrl+Shift+S")), this, SLOT(saveAs()), m_actionManager);
     saveAs->setStatusTip(tr("Open dialog box to save current project in any location"));
-    m_actionManager->insert(saveAs, "saveprojectas", "file");
+    m_actionManager->insert(saveAs, "save_project_as", "file");
 
     TAction *close = new TAction(QPixmap(THEME_DIR + "icons/close.png"), tr("Cl&ose project"), QKeySequence(tr("Ctrl+W")),
 				 this, SLOT(closeProject()), m_actionManager);
     close->setStatusTip(tr("Close active project"));
-    m_actionManager->insert(close, "closeproject", "file");
+    m_actionManager->insert(close, "close_project", "file");
 
     // Import Palette action
 
@@ -394,10 +401,10 @@ void TupMainWindow::setupFileActions()
  * @endif
 */
 
-void TupMainWindow::setupSettingsActions()
+void TupMainWindow::setPreferencesAction()
 {
     TAction *preferences = new TAction(QPixmap(THEME_DIR + "icons/properties.png"), tr("Pr&eferences..."), 
-                                        QKeySequence(tr("Ctrl+P")), this, SLOT( preferences()),
+                                        QKeySequence(tr("Ctrl+P")), this, SLOT(preferences()),
                                         m_actionManager, "preferences");
     preferences->setStatusTip(tr("Opens the preferences dialog box"));
 }
@@ -415,7 +422,7 @@ void TupMainWindow::setupHelpActions()
 {
     new TAction(QPixmap(THEME_DIR + "icons/help_mode.png"), tr("Help Content"), QKeySequence(tr("F1")),
                 this, SLOT(showHelp()), m_actionManager, "help");
-    new TAction(QPixmap(THEME_DIR + "icons/today_tip.png"), tr("Tip of the day"), QKeySequence(tr("Ctrl+T")),
+    new TAction(QPixmap(THEME_DIR + "icons/tip.png"), tr("Tip of the day"), QKeySequence(tr("Ctrl+T")),
                 this, SLOT(showTipDialog()), m_actionManager, "tip_of_day");
     new TAction(QPixmap(THEME_DIR + "icons/about.png"), tr("About Tupi"), QKeySequence(tr("Ctrl+K")), 
                 this, SLOT(aboutTupi()), m_actionManager, "about_tupi");
@@ -436,15 +443,15 @@ void TupMainWindow::setupToolBar()
     mainToolBar->setIconSize(QSize(22, 22));
     addToolBar(Qt::TopToolBarArea, mainToolBar);
 
-    mainToolBar->addAction(m_actionManager->find("newproject"));
-    mainToolBar->addAction(m_actionManager->find("openproject"));
+    mainToolBar->addAction(m_actionManager->find("new_project"));
+    mainToolBar->addAction(m_actionManager->find("open_project"));
 
     // SQA: This code has been disabled temporary
     // mainToolBar->addAction(m_actionManager->find("opennetproject"));
 
-    mainToolBar->addAction(m_actionManager->find("saveproject"));
-    mainToolBar->addAction(m_actionManager->find("saveprojectas"));
-    mainToolBar->addAction(m_actionManager->find("closeproject"));
+    mainToolBar->addAction(m_actionManager->find("save_project"));
+    mainToolBar->addAction(m_actionManager->find("save_project_as"));
+    mainToolBar->addAction(m_actionManager->find("close_project"));
 }
 
 /**
@@ -458,33 +465,32 @@ void TupMainWindow::setupToolBar()
 
 void TupMainWindow::updateOpenRecentMenu(QMenu *menu, QStringList recents)
 {
-    if (recents.count() > 10) {
-        int limit = recents.count() - 10;
-        for(int i=0; i<limit; i++)
-            recents.removeLast();
-    }
-
-    int i = 0;
-    QAction *action[recents.length()];
-
     menu->clear();
     m_recentProjects.clear();
 
-    foreach (QString recent, recents) {
-             if (!recent.isEmpty()) {
-                 m_recentProjects << recent;
-                 action[i] = new QAction(QPixmap(THEME_DIR + "icons/recent_files.png"), recent, this); 
-                 action[i]->setIconVisibleInMenu(true);
-                 menu->addAction(action[i]);
-                 connect(action[i], SIGNAL(triggered()), this, SLOT(openRecentProject()));
-                 i++;
-             } else {
-                 m_recentProjectsMenu->setEnabled(false);
-                 return; 
-             }
+    if (recents.count() == 0) {
+        m_recentProjectsMenu->setEnabled(false);
+        return;
+    } else {
+        if (recents.count() > 5) {
+            QStringList list; 
+            list << recents.mid(0, 4);
+            recents = list;
+        }
     }
 
-    if (i>0 && !m_recentProjectsMenu->isEnabled())
+    int i = 0;
+    QAction *action[5];
+    foreach (QString recent, recents) {
+             m_recentProjects << recent;
+             action[i] = new QAction(QPixmap(THEME_DIR + "icons/recent_files.png"), recent, this); 
+             action[i]->setIconVisibleInMenu(true);
+             menu->addAction(action[i]);
+             connect(action[i], SIGNAL(triggered()), this, SLOT(openRecentProject()));
+             i++;
+    }
+
+    if (!m_recentProjectsMenu->isEnabled())
         m_recentProjectsMenu->setEnabled(true);
 }
 

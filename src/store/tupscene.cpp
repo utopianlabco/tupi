@@ -280,9 +280,26 @@ TupSoundLayer *TupScene::soundLayer(int position) const
 
 void TupScene::fromXml(const QString &xml)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupScene::fromXml()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     QDomDocument document;
-    if (!document.setContent(xml))
+    if (!document.setContent(xml)) {
+		#ifdef K_DEBUG
+            QString msg = "TupScene::fromXml() - Error while processing XML file";
+            #ifdef Q_OS_WIN
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+        #endif  
         return;
+    }
 
     QDomElement root = document.documentElement();
     setSceneName(root.attribute("name", sceneName()));
@@ -692,6 +709,27 @@ void TupScene::reset(QString &name)
     layer->createFrame(tr("Frame"), 0, false);
 
     k->layers.insert(0, layer);
+}
+
+void TupScene::clear()
+{
+    if (k->background) {
+        k->background->clear();
+        delete k->background;
+        k->background = NULL;
+    }
+
+    for (int i=0; i<k->layers.count(); i++) {
+         TupLayer *layer = k->layers.takeAt(i);
+         layer->clear();
+         delete layer;
+         layer = NULL;
+    }
+
+    k->layerCount = 1;
+    k->layers.clear();
+    k->tweeningGraphicObjects.clear();
+    k->tweeningSvgObjects.clear();
 }
 
 void TupScene::setStoryboard(TupStoryboard *storyboard)

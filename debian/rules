@@ -61,7 +61,7 @@ override_dh_makeshlibs:
 	dh_makeshlibs --noscripts
 
 override_dh_strip:
-	dh_strip --dbg-package=tupi-dbg
+	dh_strip --dbgsym-migration='tupi-dbg (<< 0.2+git07~)'
 
 PKD  = $(abspath $(dir $(MAKEFILE_LIST)))
 PKG  = $(word 2,$(shell dpkg-parsechangelog -l$(PKD)/changelog | grep ^Source))

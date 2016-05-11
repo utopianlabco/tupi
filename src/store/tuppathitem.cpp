@@ -38,7 +38,7 @@
 #include "tupgraphicalgorithm.h"
 #include "tupserializer.h"
 
-TupPathItem::TupPathItem(QGraphicsItem * parent) : QGraphicsPathItem(parent), m_dragOver(false)
+TupPathItem::TupPathItem(QGraphicsItem *parent) : QGraphicsPathItem(parent), m_dragOver(false)
 {
     setAcceptDrops(true);
 }
@@ -55,56 +55,10 @@ void TupPathItem::fromXml(const QString &xml)
 QDomElement TupPathItem::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("path");
-    
-    QString strPath = "";
-    QChar t;
-    
-    for(int i=0; i < path().elementCount(); i++) {
-        QPainterPath::Element e = path().elementAt(i);
-        switch (e.type) {
-            case QPainterPath::MoveToElement:
-            {
-                if (t != 'M') {
-                    t = 'M';
-                    strPath += "M " + QString::number(e.x) + " " + QString::number(e.y) + " ";
-                } else {
-                    strPath += QString::number(e.x) + " " + QString::number(e.y) + " ";
-                }
-                
-            }
-            break;
-            case QPainterPath::LineToElement:
-            {
-                if (t != 'L') {
-                    t = 'L';
-                    strPath += " L " + QString::number(e.x) + " " + QString::number(e.y) + " ";
-                } else {
-                    strPath += QString::number(e.x) + " " + QString::number(e.y) + " ";
-                }
-            }
-            break;
-            case QPainterPath::CurveToElement:
-            {
-                
-                if (t != 'C') {
-                    t = 'C';
-                    strPath += " C " + QString::number(e.x) + " " + QString::number(e.y) + " ";
-                } else {
-                    strPath += "  " + QString::number(e.x) + " " + QString::number(e.y) + " ";
-                }
-            }
-            break;
-            case QPainterPath::CurveToDataElement:
-            {
-                if (t == 'C')
-                    strPath +=  " " +QString::number(e.x) + "  " + QString::number(e.y) + " ";
-            }
-            break;
-        }
-    }
-    
+
+    QString strPath = pathToString();
     root.setAttribute("coords", strPath);
-    
+
     root.appendChild(TupSerializer::properties(this, doc));
     
     QBrush brush = this->brush();
@@ -118,7 +72,7 @@ QDomElement TupPathItem::toXml(QDomDocument &doc) const
 
 void TupPathItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-    QGraphicsPathItem::paint(painter, option,widget);
+    QGraphicsPathItem::paint(painter, option, widget);
 }
 
 bool TupPathItem::contains(const QPointF & point) const
@@ -185,4 +139,99 @@ void TupPathItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 
     update();
+}
+
+QString TupPathItem::pathToString() const
+{
+    QPainterPath route = path();
+    QString strPath = "";
+    QChar t;
+    int total = route.elementCount();
+
+    for(int i=0; i < total; i++) {
+        QPainterPath::Element e = route.elementAt(i);
+        switch (e.type) {
+            case QPainterPath::MoveToElement:
+            {
+                if (t != 'M') {
+                    t = 'M';
+                    strPath += "M " + QString::number(e.x) + " " + QString::number(e.y) + " ";
+                } else {
+                    strPath += QString::number(e.x) + " " + QString::number(e.y) + " ";
+                }
+            }
+            break;
+            case QPainterPath::LineToElement:
+            {
+                if (t != 'L') {
+                    t = 'L';
+                    strPath += " L " + QString::number(e.x) + " " + QString::number(e.y) + " ";
+                } else {
+                    strPath += QString::number(e.x) + " " + QString::number(e.y) + " ";
+                }
+            }
+            break;
+            case QPainterPath::CurveToElement:
+            {
+                if (t != 'C') {
+                    t = 'C';
+                    strPath += " C " + QString::number(e.x) + " " + QString::number(e.y) + " ";
+                } else {
+                    strPath += "  " + QString::number(e.x) + " " + QString::number(e.y) + " ";
+                }
+            }
+            break;
+            case QPainterPath::CurveToDataElement:
+            {
+                if (t == 'C')
+                    strPath +=  " " + QString::number(e.x) + "  " + QString::number(e.y) + " ";
+            }
+            break;
+        }
+    }
+
+    return strPath;
+}
+
+bool TupPathItem::isNotEdited()
+{
+    return doList.isEmpty() && undoList.isEmpty();
+}
+
+void TupPathItem::saveOriginalPath()
+{
+    QString original = pathToString();
+    doList << original;
+}
+
+void TupPathItem::setPathFromString(const QString &route)         
+{
+    QPainterPath qPath;
+    TupSvg2Qt::svgpath2qtpath(route, qPath);
+    setPath(qPath);
+    doList << route;
+}
+
+void TupPathItem::undoPath()
+{
+    if (doList.count() > 1) {
+        undoList << doList.takeLast();
+        if (!doList.isEmpty()) {
+            QString route = doList.last();
+            QPainterPath qPath;
+            TupSvg2Qt::svgpath2qtpath(route, qPath);
+            setPath(qPath);
+        }
+    }
+}
+
+void TupPathItem::redoPath()
+{
+    if (!undoList.isEmpty()) {
+        QString route = undoList.takeLast();
+        doList << route;
+        QPainterPath qPath;
+        TupSvg2Qt::svgpath2qtpath(route, qPath);
+        setPath(qPath);
+    }
 }

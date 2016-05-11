@@ -199,7 +199,9 @@ void TupProjectManager::setupNewProject()
 
     if (!k->isNetworked) {
         QString projectPath = CACHE_DIR + k->params->projectName(); 
-        cleanProjectPath(projectPath);
+        QDir projectDir(projectPath); 
+        if (projectDir.exists())
+            removeProjectPath(projectPath);
 
         k->project->setDataDir(projectPath);
 
@@ -209,7 +211,6 @@ void TupProjectManager::setupNewProject()
         request = TupRequestBuilder::createLayerRequest(0, 0, TupProjectRequest::Add, tr("Layer %1").arg(1));
         handleProjectRequest(&request);
 
-        // request = TupRequestBuilder::createFrameRequest(0, 0, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
         request = TupRequestBuilder::createFrameRequest(0, 0, 0, TupProjectRequest::Add, tr("Frame"));
         handleProjectRequest(&request);
     }
@@ -217,13 +218,20 @@ void TupProjectManager::setupNewProject()
 
 void TupProjectManager::closeProject()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupProjectManager::closeProject()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     if (!k->handler)
         return;
 
     if (k->project->isOpen()) {
-        if (! k->handler->closeProject())
+        if (!k->handler->closeProject())
             return;
-
         k->project->clear();
     }
 
@@ -234,6 +242,14 @@ void TupProjectManager::closeProject()
 
 bool TupProjectManager::saveProject(const QString &fileName)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupProjectManager::saveProject()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     bool result = k->handler->saveProject(fileName, k->project);
     k->isModified = !result;
 
@@ -314,8 +330,8 @@ void TupProjectManager::handleProjectRequest(const TupProjectRequest *request)
         #else
             T_FUNCINFO;
             // SQA: Enable these lines only for hard/tough debugging
-            // tWarning() << "Package: ";
-            // tWarning() << request->xml();			
+            tWarning() << "Package: ";
+            tWarning() << request->xml();			
         #endif
     #endif
 
@@ -344,7 +360,7 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
             T_FUNCINFO;
         #endif
     #endif	
-	
+
     TupRequestParser parser;
 
     if (parser.parse(request->xml())) {
@@ -502,8 +518,12 @@ void TupProjectManager::setOpen(bool isOpen)
     k->project->setOpen(isOpen);
 }
 
-bool TupProjectManager::cleanProjectPath(QString &projectPath)
+bool TupProjectManager::removeProjectPath(const QString &projectPath)
 {
+    #ifdef K_DEBUG
+        qDebug() << "[TupProjectManager::removeProjectPath()] - Removing path: " <<  projectPath;
+    #endif
+
     bool result = true;
     QDir dir(projectPath);
 
@@ -511,7 +531,7 @@ bool TupProjectManager::cleanProjectPath(QString &projectPath)
         Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
             if (info.isDir()) {
                 QString path = info.absoluteFilePath();
-                result = cleanProjectPath(path);
+                result = removeProjectPath(path);
             }
             else {
                 result = QFile::remove(info.absoluteFilePath());
@@ -522,6 +542,10 @@ bool TupProjectManager::cleanProjectPath(QString &projectPath)
         }
         result = dir.rmdir(projectPath);
     }
+	
+    #ifdef K_DEBUG
+        qDebug() << "[TupProjectManager::removeProjectPath()] - Result: " <<  result;
+    #endif
 
     return result;
 }

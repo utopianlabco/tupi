@@ -46,6 +46,9 @@ struct TupSvgItem::Private
     TupItemTweener *tween;
     bool hasTween;
     QPointF lastTweenPos;
+
+    QStringList doList;
+    QStringList undoList;
 };
 
 TupSvgItem::TupSvgItem(QGraphicsItem * parent) : QGraphicsSvgItem(parent), k(new Private)
@@ -53,7 +56,7 @@ TupSvgItem::TupSvgItem(QGraphicsItem * parent) : QGraphicsSvgItem(parent), k(new
     setAcceptHoverEvents(true);
 }
 
-TupSvgItem::TupSvgItem(QString &file, TupFrame *frame) : QGraphicsSvgItem(file), k(new Private)
+TupSvgItem::TupSvgItem(const QString &file, TupFrame *frame) : QGraphicsSvgItem(file), k(new Private)
 {
     setAcceptHoverEvents(true);
     k->path = file;
@@ -199,4 +202,45 @@ void TupSvgItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void TupSvgItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     QGraphicsSvgItem::hoverLeaveEvent(event);
+}
+
+bool TupSvgItem::transformationIsNotEdited()
+{
+    return k->doList.isEmpty() && k->undoList.isEmpty();
+}
+
+void TupSvgItem::saveInitTransformation()
+{
+    QDomDocument doc;
+    doc.appendChild(TupSerializer::properties(this, doc));
+    k->doList << doc.toString();
+}
+
+void TupSvgItem::storeItemTransformation(const QString &properties)
+{
+    k->doList << properties;
+}
+
+void TupSvgItem::undoTransformation()
+{
+    if (k->doList.count() > 1) {
+        k->undoList << k-> doList.takeLast();
+        if (!k->doList.isEmpty()) {
+            QString properties = k->doList.last();
+            QDomDocument doc;
+            doc.setContent(properties);
+            TupSerializer::loadProperties(this, doc.documentElement());
+        }
+    }
+}
+
+void TupSvgItem::redoTransformation()
+{
+    if (!k->undoList.isEmpty()) {
+        QString properties = k->undoList.takeLast();
+        k->doList << properties;
+        QDomDocument doc;
+        doc.setContent(properties);
+        TupSerializer::loadProperties(this, doc.documentElement());
+    }
 }

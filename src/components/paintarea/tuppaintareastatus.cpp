@@ -48,9 +48,11 @@ struct TupPaintAreaStatus::Private
     QCheckBox *antialiasHint;
     QLabel *positionLabel;
 
-    TupBrushStatus *brushStatus;
-    TupBrushStatus *bgStatus;
+    TupBrushStatus *contourStatus;
+    TupBrushStatus *fillStatus;
+
     TupToolStatus *toolStatus;
+    TColorCell::FillType colorContext;
     qreal scaleFactor;
     int angle;
     int currentFrame;
@@ -63,6 +65,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     k->scaleFactor = 100;
     k->angle = 0;
     k->currentFrame = 1;
+    k->colorContext = TColorCell::Contour;
 
     QWidget *empty = new QWidget();
     empty->setFixedWidth(5);
@@ -77,7 +80,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     QPushButton *resetWSButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/reset_workspace.png")), "");
     resetWSButton->setIconSize(QSize(16, 16));
     resetWSButton->setToolTip(tr("Reset WorkSpace"));
-    resetWSButton->setShortcut(QKeySequence(tr("+")));
+    resetWSButton->setShortcut(QKeySequence(Qt::Key_3));
     connect(resetWSButton, SIGNAL(clicked()), k->documentView, SLOT(resetWorkSpaceTransformations()));
 
     addPermanentWidget(resetWSButton);
@@ -85,7 +88,8 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     QPushButton *actionSafeAreaButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/safe_area.png")), "");
     actionSafeAreaButton->setIconSize(QSize(16, 16));
     actionSafeAreaButton->setToolTip(tr("Action Safe Area"));
-    actionSafeAreaButton->setShortcut(QKeySequence(tr("+")));
+    // SQA: pending shortcut
+    // actionSafeAreaButton->setShortcut(QKeySequence(tr(" ")));
     actionSafeAreaButton->setCheckable(true);
     connect(actionSafeAreaButton, SIGNAL(clicked()), k->documentView, SLOT(drawActionSafeArea()));
 
@@ -94,7 +98,8 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     QPushButton *gridButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/subgrid.png")), "");
     gridButton->setIconSize(QSize(16, 16));
     gridButton->setToolTip(tr("Show grid"));
-    gridButton->setShortcut(QKeySequence(tr("#")));
+    // SQA: pending shortcut
+    gridButton->setShortcut(QKeySequence(Qt::Key_G));
     gridButton->setCheckable(true);
     connect(gridButton, SIGNAL(clicked()), k->documentView, SLOT(drawGrid()));
 
@@ -199,23 +204,19 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     connect(k->antialiasHint, SIGNAL(clicked()), this, SLOT(selectAntialiasingHint()));
 
-    k->bgStatus = new TupBrushStatus(tr("Background Color"), QPixmap(THEME_DIR + "icons/background_color.png"), true);
-    k->bgStatus->setTooltip(tr("Click here to change background color"));
-    addPermanentWidget(k->bgStatus);
-    k->bgStatus->setColor(k->documentView->projectBGColor());
+    k->contourStatus = new TupBrushStatus(tr("Contour Color"), TColorCell::Contour, QPixmap(THEME_DIR + "icons/contour_color.png"));
+    k->contourStatus->setTooltip(tr("Contour Color"));
+    addPermanentWidget(k->contourStatus);
 
-    connect(k->bgStatus, SIGNAL(colorUpdated(const QColor)), this, SIGNAL(colorUpdated(const QColor)));
-
-    k->brushStatus = new TupBrushStatus(tr("Brush Color"), QPixmap(THEME_DIR + "icons/brush_color.png"), false);
-    k->brushStatus->setTooltip(tr("Click here to change brush color"));
-    addPermanentWidget(k->brushStatus);
-
-    connect(k->brushStatus, SIGNAL(colorRequested()), this, SIGNAL(colorRequested())); 
+    k->fillStatus = new TupBrushStatus(tr("Fill Color"), TColorCell::Inner, QPixmap(THEME_DIR + "icons/fill_color.png"));
+    k->fillStatus->setTooltip(tr("Fill Color"));
+    addPermanentWidget(k->fillStatus);
 
     //connect(k->antialiasHint, SIGNAL(toggled(bool)), this, SLOT(selectAntialiasingHint(bool)));
     //connect(k->antialiasHint, SIGNAL(clicked()), this, SLOT(selectAntialiasingHint(bool)));
 
-    k->brushStatus->setForeground(k->documentView->brushManager()->pen());
+    k->contourStatus->setColor(k->documentView->contourPen());
+    k->fillStatus->setColor(k->documentView->fillBrush());
 
     k->toolStatus = new TupToolStatus;
     addPermanentWidget(k->toolStatus);
@@ -233,23 +234,28 @@ void TupPaintAreaStatus::selectAntialiasingHint()
     k->documentView->setAntialiasing(k->antialiasHint->isChecked()); 
 }
 
+/*
 void TupPaintAreaStatus::selectRenderer(int id)
 {
-  Q_UNUSED(id);
+    Q_UNUSED(id);
 
-  /*
     Tupi::RenderType type = Tupi::RenderType(k->renderer->itemData(id ).toInt());
 
     if (type == Tupi::OpenGL)
         k->documentView->setOpenGL(true);
     else
         k->documentView->setOpenGL(false);
-   */
 }
+*/
 
 void TupPaintAreaStatus::setPen(const QPen &pen)
 {
-    k->brushStatus->setForeground(pen);
+    k->contourStatus->setColor(pen);
+}
+
+void TupPaintAreaStatus::setBrush(const QBrush &brush)
+{
+    k->fillStatus->setColor(brush);
 }
 
 void TupPaintAreaStatus::applyRotation(const QString &text)
@@ -385,11 +391,6 @@ void TupPaintAreaStatus::updateRotationAngle(int angle)
     else
         k->rotation->setEditText(text);
     k->rotation->blockSignals(false);
-}
-
-void TupPaintAreaStatus::setBgColor(QColor color)
-{
-    k->bgStatus->setColor(color);
 }
 
 void TupPaintAreaStatus::enableFullScreenFeature(bool flag)

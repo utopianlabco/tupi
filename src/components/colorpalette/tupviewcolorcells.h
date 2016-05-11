@@ -63,7 +63,8 @@ class TUPI_EXPORT TupViewColorCells : public QFrame
         TupViewColorCells(QWidget *parent = 0);
         virtual ~TupViewColorCells();
         void readPaletteFile(const QString &file);
-        void setColor(const QBrush & b);
+        void setColor(const QBrush & brush);
+        void clearSelection();
 
     private:
         struct Private;
@@ -72,7 +73,6 @@ class TUPI_EXPORT TupViewColorCells : public QFrame
     private:
         void setupForm();
         void setupButtons();
-        // void fillDefaultColors();
         void addDefaultColor(int i, int j, const QColor &);
         void fillNamedColor();
         void readPalettes(const QString &paletteDir);
@@ -82,7 +82,7 @@ class TUPI_EXPORT TupViewColorCells : public QFrame
     //     QSize sizeHint() const;
 
     signals:
-        void selectColor(const QBrush &);
+        void colorSelected(const QBrush &);
 
     public slots:
         virtual void addCurrentColor();

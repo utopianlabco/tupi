@@ -116,14 +116,12 @@ class QMake
     end
     
     def run(args = "", recur = false)
-
         options = ""
         if recur
-            options += "-r"
+            options += "-recursive"
         end
+        output = `#{@path} #{options} #{args}`
 
-        output = `#{@path} #{args} #{options}`
-        
         if output.strip.empty?
             return true
         end

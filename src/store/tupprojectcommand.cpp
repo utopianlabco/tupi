@@ -189,6 +189,16 @@ QString TupProjectCommand::actionString(int action)
             return QObject::tr("edit node");
         }
         break;
+        case TupProjectRequest::Pen:
+        {
+            return QObject::tr("pen");
+        }
+        break;
+        case TupProjectRequest::Brush:
+        {
+            return QObject::tr("brush");
+        }
+        break;
         case TupProjectRequest::View:
         {
             return QObject::tr("view");
@@ -217,15 +227,17 @@ TupProjectCommand::~TupProjectCommand()
 
 void TupProjectCommand::redo()
 {
+    /*
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
             qDebug() << "[TupProjectCommand::redo()] - Executing REDO action...";
-            // qDebug() << "[TupProjectCommand::redo()] - k->response->part(): " << k->response->part();
+            qDebug() << "[TupProjectCommand::redo()] - k->response->part(): " << k->response->part();
         #else
             T_FUNCINFO << "[TupProjectCommand::redo()] - Executing REDO action...";
-            // T_FUNCINFO << k->response->part();
+            T_FUNCINFO << k->response->part();
         #endif
     #endif
+    */
 	
     if (k->executed) {
         k->response->setMode(TupProjectResponse::Redo);
@@ -620,6 +632,16 @@ void TupProjectCommand::itemCommand()
             case TupProjectRequest::EditNodes:
             {
                  k->executor->setPathItem(response);
+            }
+            break;
+            case TupProjectRequest::Pen:
+            {
+                 k->executor->setPen(response);
+            }
+            break;
+            case TupProjectRequest::Brush:
+            {
+                 k->executor->setBrush(response);
             }
             break;
             case TupProjectRequest::Select:

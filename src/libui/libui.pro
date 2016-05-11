@@ -1,4 +1,12 @@
 QT += opengl core gui svg xml network
+TEMPLATE = lib
+TARGET = tupigui
+
+macx {
+    CONFIG += plugin warn_on
+} else {
+    CONFIG += dll warn_on
+}
 
 unix {
     !include(../../tupiglobal.pri) {
@@ -27,25 +35,17 @@ contains("DEFINES", "ADD_HEADERS") {
     headers.path = /include/tupigui
 }
 
-macx {
-    CONFIG += plugin warn_on
-}
-
-HEADERS += tupthemeselector.h \
-           tupabout.h \
-           tuppreferences.h \
-           tuppaintareaconfig.h 
-SOURCES += tupthemeselector.cpp \
-           tupabout.cpp \
-           tuppreferences.cpp \
-           tuppaintareaconfig.cpp 
-
-*:!macx{
-    CONFIG += dll warn_on
-}
-
-TEMPLATE = lib
-TARGET = tupigui
+HEADERS += tupabout.h \
+           tupthemepreferences.h \
+           tuppaintareapreferences.h \
+           tupgeneralpreferences.h \
+           tuppreferencesdialog.h
+ 
+SOURCES += tupabout.cpp \
+           tupthemepreferences.cpp \
+           tuppaintareapreferences.cpp \
+           tupgeneralpreferences.cpp \
+           tuppreferencesdialog.cpp 
 
 STORE_DIR = ../store
 LIBTUPI_DIR = ../libtupi

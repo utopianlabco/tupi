@@ -56,8 +56,8 @@ class TUPI_EXPORT TupEllipseItem: public TupAbstractSerializable, public QGraphi
         bool contains(const QPointF & point) const;
           
     protected:
-        virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
-        virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent * event);
+        virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+        virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
         virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
           
     private:

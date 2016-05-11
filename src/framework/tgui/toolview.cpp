@@ -38,6 +38,7 @@
 ToolView::ToolView(const QString &title, const QIcon &icon, const QString &code, QWidget * parent)
           : QDockWidget(title, parent), m_size(-1), m_perspective(0)
 {
+    setFeatures(AllDockWidgetFeatures);
     setWindowIcon(icon);
     setup(title);
     setObjectName("ToolView-" + code);
@@ -50,7 +51,6 @@ ToolView::~ToolView()
 
 void ToolView::setup(const QString &label)
 {
-    setFeatures(AllDockWidgetFeatures);
     m_button = new TViewButton(this);
     m_button->setToolTip(label);
 
@@ -65,14 +65,11 @@ TViewButton *ToolView::button() const
 void ToolView::expandDock(bool flag)
 {
     expanded = flag;
-
-    if (flag) {
+    if (flag)
         show();
-    } else { 
+    else 
         close();
-    }
 
-    //m_button->setChecked(flag);
     m_button->setActivated(flag);
 }
 
@@ -81,14 +78,18 @@ bool ToolView::isExpanded()
     return expanded;
 }
 
-void ToolView::setExpandingFlag() {
+void ToolView::setExpandingFlag() 
+{
     if (expanded)
         expanded = false;
-    else
+    else 
         expanded = true;
+
+    // emit dockExpanded(expanded); 
 }
 
-void ToolView::setSizeHint() {
+void ToolView::setSizeHint() 
+{
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
@@ -147,16 +148,16 @@ void ToolView::setFixedSize(int s)
     m_size = s;
 }
 
-void ToolView::showEvent(QShowEvent *e)
+void ToolView::showEvent(QShowEvent *event)
 {
     if (TMainWindow *mw = dynamic_cast<TMainWindow *>(parentWidget())) {
         if (!(mw->currentPerspective() & m_perspective)) {
-            e->ignore(); // make sure!
+            event->ignore(); // make sure!
             return;
         }
     }
 
-    QDockWidget::showEvent(e);
+    QDockWidget::showEvent(event);
 }
 
 void ToolView::enableButton(bool flag)
@@ -164,7 +165,8 @@ void ToolView::enableButton(bool flag)
     m_button->setEnabled(flag);
 }
 
-QString ToolView::getObjectID() {
+QString ToolView::getObjectID() 
+{
     return objectName();
 }
 
@@ -175,32 +177,3 @@ bool ToolView::isChecked()
 
     return false;
 }
-
-/*
-#if QT_VERSION < 0x040200
-
-bool ToolView::event(QEvent *e)
-{
-    bool toReturn =  QDockWidget::event(e);
-
-    if (e->type() == QEvent::MouseButtonPress) {
-        if (QMainWindow *mw = dynamic_cast<QMainWindow *>(parentWidget())) {
-            m_area = mw->dockWidgetArea(this);
-        }
-    } else if (e->type() == QEvent::MouseButtonRelease) {
-               if (QMainWindow *mw = dynamic_cast<QMainWindow *>(parentWidget())) {
-                   Qt::DockWidgetArea newArea = mw->dockWidgetArea(this);
-                   if (m_area != newArea) {
-                       mw->removeDockWidget(this);
-                       mw->addDockWidget(newArea, this);
-                       emit topLevelChanged(false);
-                   }
-               }
-    }
-
-    return toReturn;
-}
-
-#endif
-*/
-

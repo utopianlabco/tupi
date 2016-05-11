@@ -222,6 +222,7 @@ void TupExportWizard::disableButton()
 void TupExportWizard::closeDialog()
 {
     close();
+    emit isDone();
 }
 
 void TupExportWizard::setFormat(int code, const QString &extension)

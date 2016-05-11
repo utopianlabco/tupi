@@ -108,6 +108,14 @@ TupProject::~TupProject()
  */
 void TupProject::loadLibrary(const QString &filename)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupProject::loadLibrary()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     QFile file(filename);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -130,6 +138,13 @@ void TupProject::loadLibrary(const QString &filename)
  */
 void TupProject::clear()
 {
+    for (int i=0; i<k->scenes.count(); i++) {
+         TupScene *scene = k->scenes.takeAt(i);
+         scene->clear();
+         delete scene;
+         scene = NULL;
+    }
+
     k->scenes.clear();
     k->sceneCounter = 0;
 
@@ -244,6 +259,14 @@ QString TupProject::dataDir() const
 
 TupScene *TupProject::createScene(QString name, int position, bool loaded)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupProject::createScene()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     if (position < 0 || position > k->scenes.count())
         return 0;
 
@@ -516,16 +539,17 @@ bool TupProject::createSymbol(int type, const QString &name, const QByteArray &d
             #endif
         #endif    
 
-    } else {        
-        #ifdef K_DEBUG
-            QString msg = "TupProject::createSymbol() - Object added successfully -> " + name;
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
-            #endif
-        #endif    
-    }
+        return false;
+    }         
+
+    #ifdef K_DEBUG
+        QString msg = "TupProject::createSymbol() - Object added successfully -> " + name;
+        #ifdef Q_OS_WIN
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
+    #endif    
 
     return true;
 }
@@ -614,7 +638,7 @@ bool TupProject::removeSound(const QString &name)
 }
 
 bool TupProject::insertSymbolIntoFrame(TupProject::Mode spaceMode, const QString &name, int sceneIndex, 
-                                   int layerIndex, int frameIndex)
+                                       int layerIndex, int frameIndex)
 {    
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
@@ -965,20 +989,38 @@ bool TupProject::deleteDataDir()
                          dir.cd(subdir);
                          foreach (QString file, dir.entryList()) {
                                   QString absolute = dir.absolutePath() + "/" + file;
-
                                   if (!file.startsWith(".")) {
                                       QFileInfo finfo(absolute);
-                                      if (finfo.isFile())
-                                          QFile::remove(absolute);
+                                      if (finfo.isFile()) {
+                                          if (!QFile::remove(absolute)) {
+                                              #ifdef K_DEBUG
+                                                  QString msg = "TupProject::deleteDataDir() - Fatal Error: Can't remove item! -> " + absolute;
+                                                  #ifdef Q_OS_WIN
+                                                      qDebug() << msg;
+                                                  #else
+                                                      tError() << msg;
+                                                  #endif
+                                              #endif		  
+										  }
+									  }
                                   }
                           }
                           dir.cdUp();
-                          dir.rmdir(subdir);
+                          if (!dir.rmdir(subdir)) {
+                              #ifdef K_DEBUG
+                                  QString msg = "TupProject::deleteDataDir() - Fatal Error: Can't remove directory! -> " + subdir;
+                                  #ifdef Q_OS_WIN
+                                      qDebug() << msg;
+                                  #else
+                                      tError() << msg;
+                                  #endif
+                              #endif							  
+						  }
                      }
             }
         }
 
-        if (! dir.rmdir(dir.absolutePath())) {
+        if (!dir.rmdir(dir.absolutePath())) {
             #ifdef K_DEBUG
                 QString msg = "TupProject::deleteDataDir() - Fatal Error: Can't remove project data directory! -> " + dataDir();
                 #ifdef Q_OS_WIN

@@ -55,14 +55,14 @@ TItemSelector::TItemSelector(QWidget *parent) : QWidget(parent), k(new Private)
     controlBox->addStretch();
 
     QToolButton *nextButton = new QToolButton;
-    nextButton->setIcon(QPixmap(THEME_DIR + "icons/export_scene.png"));
+    nextButton->setIcon(QPixmap(THEME_DIR + "icons/select_scene.png"));
     connect(nextButton, SIGNAL(clicked()), this, SLOT(addCurrent()));
 
     controlBox->addWidget(nextButton);
     controlBox->setSpacing(5);
 
     QToolButton *previousButton = new QToolButton;
-    previousButton->setIcon(QPixmap(THEME_DIR + "icons/unexport_scene.png"));
+    previousButton->setIcon(QPixmap(THEME_DIR + "icons/unselect_scene.png"));
     connect(previousButton, SIGNAL(clicked()), this, SLOT(removeCurrent()));
 
     controlBox->addWidget(previousButton);

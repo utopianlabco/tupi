@@ -40,7 +40,7 @@ typedef QList<QImage> photoArray;
 struct TupScreen::Private
 {
     QWidget *container;
-    QImage renderCamera;
+    QImage currentPhotogram;
     QPoint imagePos;
     bool firstShoot;
     bool isScaled;
@@ -53,7 +53,6 @@ struct TupScreen::Private
     QTimer *playBackTimer;
 
     QList<TupSoundLayer *> sounds;
-  
     QList<QImage> photograms; 
     QList<photoArray> animationList;
     QList<bool> renderControl;
@@ -113,6 +112,12 @@ TupScreen::~TupScreen()
     k->timer->stop();
     k->playBackTimer->stop();
 
+    k->photograms.clear();
+    k->animationList.clear();
+    k->sounds.clear();
+    k->renderControl.clear();
+
+    delete k->soundPlayer;
     delete k->timer;
     delete k->playBackTimer;
     delete k;
@@ -202,19 +207,18 @@ void TupScreen::paintEvent(QPaintEvent *)
 
     if (!k->firstShoot) {
         if (k->currentFramePosition > -1 && k->currentFramePosition < k->photograms.count())
-            k->renderCamera = k->photograms[k->currentFramePosition];
+            k->currentPhotogram = k->photograms[k->currentFramePosition];
     } else {
         k->firstShoot = false;
     }
 
     QPainter painter;
     painter.begin(this);
-
-    painter.drawImage(k->imagePos, k->renderCamera);
+    painter.drawImage(k->imagePos, k->currentPhotogram);
 
     // SQA: Border for the player. Useful for some tests
     // painter.setPen(QPen(Qt::gray, 0.5, Qt::SolidLine));
-    // painter.drawRect(x, y, k->renderCamera.size().width()-1, k->renderCamera.size().height()-1);
+    // painter.drawRect(x, y, k->currentPhotogram.size().width()-1, k->renderCamera.size().height()-1);
 }
 
 void TupScreen::play()
@@ -228,9 +232,12 @@ void TupScreen::play()
         #endif
     #endif
 
+    if (k->photograms.count() == 1)
+        return;
+
     k->isPlaying = true;
 
-    if (k->playBackTimer->isActive()) 
+    if (k->playBackTimer->isActive())
         stop();
 
     k->currentFramePosition = 0;
@@ -243,7 +250,7 @@ void TupScreen::play()
         }
 
         if (k->renderControl.at(k->currentSceneIndex))
-            k->timer->start(1000 / k->fps);
+            k->timer->start(1000/k->fps);
     }
 }
 
@@ -537,7 +544,7 @@ QSize TupScreen::sizeHint() const
         #endif
     #endif
 
-    return k->renderCamera.size();
+    return k->currentPhotogram.size();
 }
 
 void TupScreen::resizeEvent(QResizeEvent *event)
@@ -555,9 +562,13 @@ void TupScreen::resizeEvent(QResizeEvent *event)
     if (k->currentSceneIndex > -1) {
         k->currentFramePosition = 0;
         k->photograms = k->animationList.at(k->currentSceneIndex);
-        stop();
-        updateFirstFrame();
-        update();
+        /*
+        if (k->timer->isActive() || k->playBackTimer->isActive()) {
+            stop();
+        }
+        */
+        // updateFirstFrame();
+        // update();
     } else {
         #ifdef K_DEBUG
             QString msg = "TupScreen::resizeEvent() - [ Error ] - Current index is invalid -> " + QString::number(k->currentSceneIndex);
@@ -698,13 +709,13 @@ void TupScreen::updateFirstFrame()
 
             if (k->isScaled) {
                 QImage resized = firstFrame.scaledToWidth(k->screenDimension.width(), Qt::SmoothTransformation);
-                k->renderCamera = resized;
+                k->currentPhotogram = resized;
             } else {
-                k->renderCamera = firstFrame;
+                k->currentPhotogram = firstFrame;
             }
 
-            int x = (frameSize().width() - k->renderCamera.size().width()) / 2;
-            int y = (frameSize().height() - k->renderCamera.size().height()) / 2;
+            int x = (frameSize().width() - k->currentPhotogram.size().width()) / 2;
+            int y = (frameSize().height() - k->currentPhotogram.size().height()) / 2;
             k->imagePos = QPoint(x, y);
 
             k->firstShoot = true;
