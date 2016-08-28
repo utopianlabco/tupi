@@ -67,10 +67,15 @@
 
 #ifdef K_DEBUG
 #ifdef Q_OS_WIN
-#include <QDebug>
+  #include <QDebug>
 #else
-#include "tdebug.h"
-#include "tupdebugwidget.h"
+  #include "tdebug.h"
+#endif
+#endif
+
+#ifdef K_DEBUG
+#ifdef Q_OS_LINUX
+  #include "tupdebugwidget.h"
 #endif
 #endif
 
@@ -179,7 +184,7 @@ class TupMainWindow : public TabbedMainWindow
     public slots:
         void openProject(const QString &path);
         void updatePenColor(const QColor &color);
-        void updatePenWidth(int width);
+        void updatePenThickness(int thickness);
 
     private slots:
         void addTwitterPage();
@@ -225,6 +230,7 @@ class TupMainWindow : public TabbedMainWindow
         void updateUsersOnLine(const QString &login, int state);
         void importPapagayoLipSync();
         void hideTopPanels();
+        void showWebMessage();
 
     private:
         TupProjectManager *m_projectManager;
@@ -264,7 +270,7 @@ class TupMainWindow : public TabbedMainWindow
         TupScenesWidget *m_scenes;
         TupTimeLine *m_timeLine;
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
         TupDebugWidget *m_debug;
 #endif
         // TupHelpWidget *m_helper;
@@ -291,6 +297,8 @@ class TupMainWindow : public TabbedMainWindow
         QString projectName;
         QString author;
         QString netUser;
+        QString webContent;
+        QSize webMsgSize;
 
     signals:
         void responsed(TupProjectResponse *);

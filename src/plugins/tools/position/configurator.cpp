@@ -132,6 +132,9 @@ void Configurator::setPropertiesPanel()
     connect(k->settingsPanel, SIGNAL(clickedApplyTween()), this, SLOT(applyItem()));
     connect(k->settingsPanel, SIGNAL(clickedResetTween()), this, SLOT(closeTweenProperties()));
 
+    connect(k->settingsPanel, SIGNAL(framesTotalChanged()), this, SIGNAL(framesTotalChanged()));
+
+
     k->settingsLayout->addWidget(k->settingsPanel);
 
     activePropertiesPanel(false);
@@ -139,10 +142,12 @@ void Configurator::setPropertiesPanel()
 
 void Configurator::activePropertiesPanel(bool enable)
 {
-    if (enable)
+    if (enable) {
         k->settingsPanel->show();
-    else
+    } else {
+        k->settingsPanel->clearData();
         k->settingsPanel->hide();
+    }
 }
 
 void Configurator::setTweenManagerPanel()
@@ -227,14 +232,19 @@ int Configurator::totalSteps()
     return k->settingsPanel->totalSteps();
 }
 
+QList<QPointF> Configurator::tweenPoints()
+{
+    return k->settingsPanel->tweenPoints();
+}
+
 void Configurator::activateMode(TupToolPlugin::EditMode mode)
 {
     k->settingsPanel->activateMode(mode);
 }
 
-void Configurator::cleanData()
+void Configurator::clearData()
 {
-    k->settingsPanel->cleanData();
+    k->settingsPanel->clearData();
 }
 
 void Configurator::addTween(const QString &name)

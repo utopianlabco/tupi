@@ -51,6 +51,7 @@ struct PolyLineTool::Private
     QPointF center;
     QPointF right;
     QPointF mirror;
+    QPointF lastPoint; 
     
     TNodeGroup *nodeGroup;
     QPainterPath path;
@@ -66,6 +67,7 @@ struct PolyLineTool::Private
     QCursor cursor;
     qreal realFactor;
     bool cutterOn;
+    bool movingOn;
 };
 
 PolyLineTool::PolyLineTool(): k(new Private)
@@ -74,6 +76,7 @@ PolyLineTool::PolyLineTool(): k(new Private)
     k->nodeGroup = 0;
     k->item = 0;
     k->cutterOn = false;
+    k->movingOn = false;
 
     k->cursor = QCursor(kAppProp->themeDir() + "cursors/polyline.png", 4, 4);
     
@@ -106,6 +109,14 @@ QMap<QString, TAction *> PolyLineTool::actions() const
 
 void PolyLineTool::init(TupGraphicsScene *scene)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[PolyLineTool::init()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     if (scene) {
         k->scene = scene;
     } else {
@@ -120,6 +131,9 @@ void PolyLineTool::init(TupGraphicsScene *scene)
 
         return;
     }
+
+    foreach (QGraphicsView *view, scene->views())
+             view->setDragMode(QGraphicsView::NoDrag);
 
     k->cutterOn = false;
     initEnv();
@@ -143,7 +157,7 @@ void PolyLineTool::press(const TupInputDeviceInformation *input, TupBrushManager
     if (k->cutterOn)
         return;
 
-    scene->clearSelection();
+    // scene->clearSelection();
 
     if (k->begin) { // This condition happens only in the beginning of the polyline 
         k->path = QPainterPath();
@@ -156,7 +170,12 @@ void PolyLineTool::press(const TupInputDeviceInformation *input, TupBrushManager
         if (!scene->items().contains(k->item))
             scene->includeObject(k->item, true); // SQA: Polyline hack
 
-        k->path.cubicTo(k->right, k->mirror, input->pos());
+        if (k->movingOn) {
+            k->path.cubicTo(k->right, k->mirror, input->pos());
+            k->movingOn = false;
+        } else {
+            k->path.cubicTo(k->lastPoint, k->lastPoint, k->lastPoint);
+        }
         k->item->setPath(k->path);
     }
     
@@ -177,6 +196,7 @@ void PolyLineTool::move(const TupInputDeviceInformation *input, TupBrushManager 
     if (k->cutterOn)
         return;
 
+    k->movingOn = true;
     k->mirror = k->center - (input->pos() - k->center);
     if (k->begin) {
         k->right = input->pos();
@@ -431,14 +451,22 @@ void PolyLineTool::keyReleaseEvent(QKeyEvent *event)
 
 void PolyLineTool::initEnv()
 {
-    if (!k->item)
-        return;
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[PolyLineTool::initEnv()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
 
-    clearSelection();
+    if (k->item) {
+        clearSelection();
+        k->item = 0;
+    }
 
     k->begin = true;
+    k->movingOn = false;
     k->path = QPainterPath();
-    k->item = 0;
 
     if (k->line1) {
         if (k->scene->items().contains(k->line1))
@@ -580,12 +608,12 @@ QWidget *PolyLineTool::configurator()
 
 void PolyLineTool::aboutToChangeScene(TupGraphicsScene *)
 {
-
 }
 
 void PolyLineTool::aboutToChangeTool()
 {
-
+    k->nodeGroup = 0;
+    k->item = 0;
 }
 
 void PolyLineTool::saveConfig()
@@ -617,3 +645,7 @@ void PolyLineTool::clearSelection()
     }
 }
 
+void PolyLineTool::updatePos(QPointF pos)
+{
+    k->lastPoint = pos;
+}

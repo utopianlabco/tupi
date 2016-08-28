@@ -306,7 +306,9 @@ void TupPaintArea::mousePressEvent(QMouseEvent *event)
 void TupPaintArea::frameResponse(TupFrameResponse *response)
 {
     #ifdef K_DEBUG
-        QString msg = "TupPaintArea::frameResponse() - [" + QString::number(response->sceneIndex()) + ", " + QString::number(response->layerIndex()) + ", " + QString::number(response->frameIndex()) + "]";
+        QString msg = "TupPaintArea::frameResponse() - [" + QString::number(response->sceneIndex()) 
+                      + ", " + QString::number(response->layerIndex()) + ", " 
+                      + QString::number(response->frameIndex()) + "]";
         #ifdef Q_OS_WIN
             qDebug() << msg;
         #else
@@ -329,8 +331,6 @@ void TupPaintArea::frameResponse(TupFrameResponse *response)
 
     if (!guiScene->isDrawing()) {
         switch (response->action()) {
-                // case TupProjectRequest::Add:
-                // case TupProjectRequest::Remove:
                 case TupProjectRequest::Exchange:
                     {
                         if (k->spaceMode == TupProject::FRAMES_EDITION)
@@ -1097,20 +1097,19 @@ void TupPaintArea::addSelectedItemsToLibrary()
     foreach (QGraphicsItem *item, selected)
              dialog.addItem(item);
 
-    if (dialog.exec() != QDialog::Accepted)
-        return;
+    if (dialog.exec() == QDialog::Accepted) {
+        foreach (QGraphicsItem *item, selected) {
+            if (TupAbstractSerializable *itemSerializable = dynamic_cast<TupAbstractSerializable *>(item)) {
+                QString symName = dialog.symbolName(item) + ".tobj";
 
-    foreach (QGraphicsItem *item, selected) {
-             if (TupAbstractSerializable *itemSerializable = dynamic_cast<TupAbstractSerializable *>(item)) {
-                 QString symName = dialog.symbolName(item) + ".obj";
+                QDomDocument doc;
+                doc.appendChild(itemSerializable->toXml(doc));
 
-                 QDomDocument doc;
-                 doc.appendChild(itemSerializable->toXml(doc));
-
-                 TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, 
-                                             symName, TupLibraryObject::Item, k->spaceMode, doc.toString().toLocal8Bit(), QString());
-                 emit requestTriggered(&request);
-             }
+                TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, 
+                                            symName, TupLibraryObject::Item, k->spaceMode, doc.toString().toLocal8Bit(), QString());
+                emit requestTriggered(&request);
+            }
+        }
     }
 }
 

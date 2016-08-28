@@ -739,6 +739,7 @@ void TupDocumentView::loadPlugins()
     tweenTools.clear();
 
     k->pencilAction->trigger();
+    k->paintArea->setFocus();
 }
 
 void TupDocumentView::loadPlugin(int menu, int index)
@@ -913,13 +914,14 @@ void TupDocumentView::selectTool()
         QString toolName = tr("%1").arg(action->text());
 
         if (k->currentTool) {
-            if (toolName.compare(k->currentTool->name()) == 0)
+            QString currentName = k->currentTool->name();
+            if (toolName.compare(currentName) == 0)
                 return;
 
-            if (toolName.compare(tr("Pencil")) == 0)
+            if (currentName.compare(tr("Pencil")) == 0)
                 disconnect(k->currentTool, SIGNAL(penWidthChanged(int)), this, SIGNAL(penWidthChanged(int)));
 
-            if (k->currentTool->name().compare(tr("Papagayo Lip-sync")) == 0)
+            if (currentName.compare(tr("Papagayo Lip-sync")) == 0)
                 disconnect(k->currentTool, SIGNAL(importLipSync()), this, SLOT(importPapagayoLipSync()));
 
             k->currentTool->saveConfig();
@@ -1980,7 +1982,6 @@ void TupDocumentView::insertPictureInFrame(int id, const QString path)
 
             TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->paintArea->currentSceneIndex(), k->paintArea->currentLayerIndex(), 
                                                                               frameIndex, TupProjectRequest::Add, tr("Frame"));
-                                                                              // frameIndex, TupProjectRequest::Add, tr("Frame %1").arg(frameIndex + 1));
             emit requestTriggered(&request);
 
             request = TupRequestBuilder::createFrameRequest(k->paintArea->currentSceneIndex(), k->paintArea->currentLayerIndex(), frameIndex,
@@ -2018,6 +2019,8 @@ void TupDocumentView::importPapagayoLipSync()
     dialog->show();
 
     if (dialog->exec() != QDialog::Rejected) {
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
         QString file = dialog->getPGOFile();
         QFileInfo info(file);
         QString folder = info.fileName().toLower();
@@ -2034,6 +2037,7 @@ void TupDocumentView::importPapagayoLipSync()
                        tError() << msg;
                    #endif
             #endif
+            QApplication::restoreOverrideCursor();
             return;
         }
 
@@ -2044,23 +2048,15 @@ void TupDocumentView::importPapagayoLipSync()
                 QDir dir(imagesDir);
                 QStringList imagesList = dir.entryList(QStringList() << "*.png" << "*.jpg" << "*.jpeg" << "*.gif" << "*.svg");
                 if (imagesList.count() > 0) {
-                    QSize mouthSize;
                     QString extension = ".svg";
                     QString firstImage = imagesList.at(0);
-                    QString pic = imagesDir + "/" + firstImage;
-                    if (firstImage.endsWith(".svg")) {
-                        QSvgRenderer *renderer = new QSvgRenderer(pic);
-                        QRect rect = renderer->viewBox();
-                        mouthSize = rect.size();
-                    } else {
-                        QImage *image = new QImage(pic);
-                        mouthSize = image->size();
+                    if (!firstImage.endsWith(".svg")) {
                         int dot = firstImage.lastIndexOf(".");
                         extension = firstImage.mid(dot);
                     }
 
                     int currentIndex = k->paintArea->currentFrameIndex();
-                    TupPapagayoImporter *parser = new TupPapagayoImporter(file, k->project->dimension(), mouthSize, extension, currentIndex);
+                    TupPapagayoImporter *parser = new TupPapagayoImporter(file, k->project->dimension(), extension, currentIndex);
                     if (parser->fileIsValid()) {
                         int layerIndex = k->paintArea->currentLayerIndex();
                         QString mouthPath = imagesDir;
@@ -2100,6 +2096,7 @@ void TupDocumentView::importPapagayoLipSync()
                         // Adding Papagayo project
                         parser->setSoundFile(soundKey);
                         QString xml = parser->file2Text();
+
                         request = TupRequestBuilder::createLayerRequest(sceneIndex, layerIndex, TupProjectRequest::AddLipSync, xml);
                         emit requestTriggered(&request);
 
@@ -2113,7 +2110,6 @@ void TupDocumentView::importPapagayoLipSync()
                                 int layersCount = scene->layersCount();
                                 for (int i = sceneFrames; i < lipSyncFrames; i++) {
                                      for (int j = 0; j < layersCount; j++) {
-                                          // request = TupRequestBuilder::createFrameRequest(sceneIndex, j, i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
                                           request = TupRequestBuilder::createFrameRequest(sceneIndex, j, i, TupProjectRequest::Add, tr("Frame"));
                                           emit requestTriggered(&request);
                                      }
@@ -2173,6 +2169,7 @@ void TupDocumentView::importPapagayoLipSync()
                 #endif
             #endif
         }
+        QApplication::restoreOverrideCursor();
     }
 }
 

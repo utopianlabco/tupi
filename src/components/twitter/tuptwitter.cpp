@@ -35,11 +35,19 @@
 
 #include "tuptwitter.h"
 #include "tconfig.h"
+#include "talgorithm.h"
+
+#include <QDomDocument>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QNetworkAccessManager>
+#include <QFile>
 
 QString TupTwitter::NEWS_HOST = QString("http://www.maefloresta.com");
 QString TupTwitter::IS_HOST_UP_URL = QString("/updates/test.xml");
 QString TupTwitter::USER_TIMELINE_URL = QString("/updates/tweets.html");
 QString TupTwitter::TUPI_VERSION_URL = QString("/updates/current_version.xml");
+QString TupTwitter::TUPI_WEB_MSG = QString("/updates/web_msg.");
 QString TupTwitter::BROWSER_FINGERPRINT = QString("Tupi_Browser 1.0");
 
 struct TupTwitter::Private
@@ -53,8 +61,10 @@ struct TupTwitter::Private
     QString codeName;
     QString word;
     QString url;
+    QString webMsg;
     bool update;
     QString themeName;
+    QString locale;
 };
 
 TupTwitter::TupTwitter(QWidget *parent) : QWidget(parent), k(new Private)
@@ -62,6 +72,16 @@ TupTwitter::TupTwitter(QWidget *parent) : QWidget(parent), k(new Private)
     k->update = false;
     TCONFIG->beginGroup("General");
     k->themeName = TCONFIG->value("Theme", "Light").toString();
+
+    k->locale = QString(QLocale::system().name()).left(2);
+    if (k->locale.length() < 2) {
+        k->locale = "en";
+    } else {
+        QList<QString> localeSupport;
+        localeSupport << "en" << "es" << "pt";
+        if (!localeSupport.contains(k->locale))
+            k->locale = "en";
+    }
 }
 
 void TupTwitter::start()
@@ -97,10 +117,14 @@ TupTwitter::~TupTwitter()
         #endif
     #endif
 
-    // delete k;
+    delete k->manager;
+    k->manager = NULL;
+    delete k->reply;
+    k->reply = NULL;
+    delete k;
 }
 
-void TupTwitter::requestFile(QString target)
+void TupTwitter::requestFile(const QString &target)
 {
     #ifdef K_DEBUG
         QString msg = "TupTwitter::requestFile() - Requesting url -> " + target;
@@ -132,24 +156,46 @@ void TupTwitter::closeRequest(QNetworkReply *reply)
     answer.chop(1);
 
     if (answer.length() > 0) {
-        if (answer.compare("<ok>true</ok>") == 0) {
+        if (answer.compare("<ok>true</ok>") == 0) { // The webserver data is available! 
             requestFile(NEWS_HOST + TUPI_VERSION_URL);
         } else {
-            if (answer.startsWith("<version>")) {
+            if (answer.startsWith("<version>")) { // Processing Tupi versioning data
                 checkSoftwareUpdates(array);
-                requestFile(NEWS_HOST +  USER_TIMELINE_URL);
+
+                TCONFIG->beginGroup("General");
+                QString id = TCONFIG->value("ClientID", "0").toString();
+                if (id.compare("0") == 0) {
+                    id = TAlgorithm::randomString(20); 
+                    TCONFIG->setValue("ClientID", id);
+                }
+
+                QString os = "unknown" ;
+                #ifdef Q_OS_LINUX
+                    os = "linux";
+                #elif defined(Q_OS_MAC)
+                    os = "osx";
+                #elif defined(Q_OS_WIN)
+                    os = "win";
+                #endif
+
+                requestFile(NEWS_HOST + USER_TIMELINE_URL + "?id=" + id + "&os=" + os + "&v=" + kAppProp->codeName());
             } else {
-                if (answer.startsWith("<div")) {
+                if (answer.startsWith("<div")) { // Getting Twitter records 
                     formatStatus(array);
+                    requestFile(NEWS_HOST + TUPI_WEB_MSG + k->locale + ".html");
                 } else {
-                    #ifdef K_DEBUG
-                        QString msg = "TupTwitter::closeRequest() - Network Error: Invalid data!";
-                        #ifdef Q_OS_WIN
-                            qDebug() << msg;
-                        #else
-                            tError() << msg;
+                    if (answer.startsWith("<webmsg>")) { // Getting web msg
+                        saveWebMsg(answer);
+                    } else {
+                        #ifdef K_DEBUG
+                            QString msg = "TupTwitter::closeRequest() - Network Error: Invalid data!";
+                            #ifdef Q_OS_WIN
+                                qDebug() << msg;
+                            #else
+                                tError() << msg;
+                            #endif
                         #endif
-                    #endif
+                    }
                 }
             }
         }
@@ -321,14 +367,11 @@ void TupTwitter::formatStatus(QByteArray array)
 
     QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
     QFile file(twitterPath);
-    if (file.open(QIODevice::WriteOnly)) {
-        QByteArray data = html.toUtf8();
-        file.write(data, qstrlen(data));
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << html;
         file.close();
     }
-
-    k->reply->deleteLater(); 
-    k->manager->deleteLater();
 
     #ifdef K_DEBUG
         msg = "TupTwitter::formatStatus() - Saving file -> " + twitterPath;
@@ -340,4 +383,18 @@ void TupTwitter::formatStatus(QByteArray array)
     #endif
 
     emit pageReady();
+}
+
+void TupTwitter::saveWebMsg(const QString &answer)
+{
+    QString msgPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/webmsg.html";
+    QFile file(msgPath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << answer;
+        file.close();
+    }
+
+    k->reply->deleteLater();
+    k->manager->deleteLater();
 }

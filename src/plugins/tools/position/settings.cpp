@@ -130,7 +130,7 @@ void Settings::setInnerForm()
     startLayout->addWidget(k->comboInit);
 
     k->stepViewer = new StepsViewer;
-    k->stepViewer->verticalHeader()->hide();
+    connect(k->stepViewer, SIGNAL(totalHasChanged(int)), this, SLOT(updateTotalLabel(int)));
 
     k->totalLabel = new QLabel(tr("Frames Total") + ": 0");
     k->totalLabel->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
@@ -167,7 +167,7 @@ void Settings::setParameters(const QString &name, int framesCount, int startFram
     k->input->setText(name);
 
     activateMode(TupToolPlugin::Selection);
-    k->stepViewer->cleanRows();
+    k->stepViewer->clearInterface();
     k->totalLabel->setText(tr("Frames Total") + ": 0");
 
     k->comboInit->setEnabled(false);
@@ -178,7 +178,7 @@ void Settings::setParameters(const QString &name, int framesCount, int startFram
     initStartCombo(framesCount, startFrame);
 }
 
-// Editing new Tween
+// Editing selected Tween
 
 void Settings::setParameters(TupItemTweener *currentTween)
 {
@@ -192,7 +192,7 @@ void Settings::setParameters(TupItemTweener *currentTween)
 
     initStartCombo(currentTween->frames(), currentTween->initFrame());
 
-    k->stepViewer->setPath(currentTween->graphicsPath());
+    k->stepViewer->loadPath(currentTween->graphicsPath(), currentTween->intervals());
     k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->stepViewer->totalSteps()));
 }
 
@@ -259,8 +259,8 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
     root.setAttribute("initScene", currentScene);
     root.setAttribute("frames", k->stepViewer->totalSteps());
     root.setAttribute("origin", QString::number(point.x()) + "," + QString::number(point.y()));
-    // root.setAttribute("origin", "0,0");
     root.setAttribute("coords", path);
+    root.setAttribute("intervals", k->stepViewer->intervals());
 
     foreach (TupTweenerStep *step, k->stepViewer->steps())
              root.appendChild(step->toXml(doc));
@@ -275,30 +275,31 @@ int Settings::totalSteps()
     return k->stepViewer->totalSteps();
 }
 
-/*
-void Settings::activatePathMode()
+QList<QPointF> Settings::tweenPoints()
 {
-    k->options->setCurrentIndex(1);
+    return k->stepViewer->tweenPoints();
 }
-
-void Settings::activateSelectionMode()
-{
-    k->options->setCurrentIndex(0);
-}
-*/
 
 void Settings::activateMode(TupToolPlugin::EditMode mode)
 {
     k->options->setCurrentIndex(mode);
 }
 
-void Settings::cleanData()
+void Settings::clearData()
 {
-    k->stepViewer->cleanRows();
+    k->stepViewer->clearInterface();
 }
 
 void Settings::notifySelection(bool flag)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Settings::notifySelection()]";
+        #else
+            T_FUNCINFO << flag;
+        #endif
+    #endif
+
     k->selectionDone = flag;
 }
 
@@ -310,12 +311,14 @@ void Settings::applyTween()
         return;
     }
 
+    /*
     if (totalSteps() <= 2) {
         TOsd::self()->display(tr("Info"), tr("You must define a path for this Tween!"), TOsd::Info);
         return;
     }
+    */
 
-    // SQA: Verify Tween is really well applied before call setEditMode!
+    // SQA: Verify if Tween is already saved before calling setEditMode!
     setEditMode();
 
     if (!k->comboInit->isEnabled())
@@ -339,4 +342,10 @@ QString Settings::currentTweenName() const
         k->input->setFocus();
 
     return tweenName;
+}
+
+void Settings::updateTotalLabel(int total)
+{
+    k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(total));
+    emit framesTotalChanged(); 
 }

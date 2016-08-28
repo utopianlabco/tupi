@@ -1,3 +1,10 @@
+tupi (0.2+git08-1) unstable; urgency=medium
+
+  * New upstream release [August 2016].
+  * Corrected Vcs-Git URL.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 28 Aug 2016 11:16:40 +1000
+
 tupi (0.2+git07-1) unstable; urgency=medium
 
   * New upstream release [May 2016].

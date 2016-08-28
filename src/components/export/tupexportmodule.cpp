@@ -49,6 +49,7 @@ TupExportModule::TupExportModule(TupProject *project, TupExportWidget::OutputFor
 
     output = outputFormat;
     transparency = false;
+    browserWasOpened = false;
 
     if (output == TupExportWidget::Animation) {
         setTag("ANIMATION");
@@ -62,8 +63,8 @@ TupExportModule::TupExportModule(TupProject *project, TupExportWidget::OutputFor
 
     QWidget *container = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(container);
-    // path = getenv("HOME");
-    path = QDir::homePath();
+    TCONFIG->beginGroup("General");
+    path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
 
     ////////////////
 
@@ -103,6 +104,7 @@ TupExportModule::TupExportModule(TupProject *project, TupExportWidget::OutputFor
 
     QToolButton *button = new QToolButton;
     button->setIcon(QIcon(THEME_DIR + "icons/open.png"));
+    button->setToolTip(tr("Choose another path"));
 
     if (output == TupExportWidget::ImagesArray)
         connect(button, SIGNAL(clicked()), this, SLOT(chooseDirectory()));
@@ -177,11 +179,6 @@ void TupExportModule::reset()
 {
 }
 
-void TupExportModule::aboutToFinish()
-{
-    // exportIt();
-}
-
 void TupExportModule::setScenesIndexes(const QList<int> &indexes)
 {
     m_indexes = indexes;
@@ -206,7 +203,6 @@ void TupExportModule::setCurrentFormat(int currentFormat, const QString &value)
         filename += m_project->projectName();
         filename += extension;
     } else { // Images Array
-        // filename = getenv("HOME");
         filename = QDir::homePath();
 
         if (m_currentFormat == TupExportInterface::JPEG || m_currentFormat == TupExportInterface::SVG) {
@@ -217,12 +213,6 @@ void TupExportModule::setCurrentFormat(int currentFormat, const QString &value)
                 bgTransparency->setEnabled(true);
         }
     } 
-
-/*
-#ifdef Q_OS_WIN
-    filename.replace(QString("/"), QString("\\"));
-#endif
-*/
 
     m_filePath->setText(filename);
 }
@@ -240,23 +230,43 @@ void TupExportModule::enableTransparency(bool flag)
 
 void TupExportModule::chooseFile()
 {
-    QFileDialog dialog(this);
-    dialog.setDirectory(filename);
-    const char *filter = "Video File (*" + extension.toLocal8Bit() + ")";
-    filename = dialog.getSaveFileName(this, tr("Choose a file name..."), QString(), tr(filter));
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupExportModule::chooseFile()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
 
-    if (filename.length() > 0) {
-        if (!filename.toLower().endsWith(extension)) 
+    filename = QFileDialog::getSaveFileName(this, tr("Export video as..."), path,
+                                            tr("Video File") + " (*" + extension.toLocal8Bit() + ")");
+
+    if (!filename.isEmpty()) {
+        browserWasOpened = true;
+        if (!filename.toLower().endsWith(extension))
             filename += extension;
 
         m_filePath->setText(filename);
+
+        int last = filename.lastIndexOf("/");
+        QString dir = filename.left(last);
+        TCONFIG->beginGroup("General");
+        TCONFIG->setValue("DefaultPath", dir);
+        TCONFIG->sync();
     }
 }
 
 void TupExportModule::chooseDirectory()
 {
-    QString dir = QDir::homePath();
-    filename = QFileDialog::getExistingDirectory(this, tr("Choose a directory..."), dir,
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupExportModule::chooseDirectory()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
+    filename = QFileDialog::getExistingDirectory(this, tr("Choose a directory..."), path,
                                                  QFileDialog::ShowDirsOnly
                                                  | QFileDialog::DontResolveSymlinks);
 
@@ -336,20 +346,21 @@ void TupExportModule::exportIt()
             name += extension;
 
         if (path.length() == 0) {
-            //path = getenv("HOME");
             path = QDir::homePath();
             filename = path + "/" + name;
         }
 
-        if (QFile::exists(filename)) {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, tr("Warning!"),
-                                          tr("File exists. Overwrite it?"),
-                                          QMessageBox::Yes | QMessageBox::No);
+        if (!browserWasOpened) {
+            if (QFile::exists(filename)) {
+                QMessageBox::StandardButton reply;
+                reply = QMessageBox::question(this, tr("Warning!"),
+                                              tr("File exists. Overwrite it?"),
+                                              QMessageBox::Yes | QMessageBox::No);
 
-            if (reply == QMessageBox::No)
-                return;
-        } 
+                if (reply == QMessageBox::No)
+                    return;
+            } 
+        }
     }
 
     QDir directory(path);

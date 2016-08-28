@@ -43,8 +43,8 @@ struct TupPapagayoImporter::Private
     TupLipSync *lipsync;
 };
 
-TupPapagayoImporter::TupPapagayoImporter(const QString &file, const QSize &projectSize, 
-                                         const QSize &mouthSize, const QString &extension, int initFrame) : QObject(), k(new Private)
+TupPapagayoImporter::TupPapagayoImporter(const QString &file, const QSize &projectSize, const QString &extension, 
+                                         int initFrame) : QObject(), k(new Private)
 {
     k->framesCount = 0;
     k->isValid = true;
@@ -98,38 +98,44 @@ TupPapagayoImporter::TupPapagayoImporter(const QString &file, const QSize &proje
                i++;
         }
 
-        int x = projectSize.width()/(voicesNumber+1) - (mouthSize.width()/2);
-        int y = projectSize.height()/2 - (mouthSize.height()/2); 
+        int x = projectSize.width()/(voicesNumber+1);
+        int y = projectSize.height()/2;
 
         for(int j=1; j<=voicesNumber; j++) {
             TupVoice *voice = new TupVoice(); 
             x = x*j;
-            voice->setMouthPos(QPoint(x, y));
+
+            QPointF point(x, y);
+            voice->setMouthPos(point);
             voice->setVoiceTitle(stream.readLine().trimmed());
             voice->setText(stream.readLine().trimmed());
             int numPhrases = stream.readLine().toInt();
             int numPhonemes = 0;
             int numWords;
             QString str;
+            int firstFrame = 0;
+            int lastFrame = 0;
+
             for (int p = 0; p < numPhrases; p++) {
                  QString text = stream.readLine().trimmed();
-                 int initFrame = stream.readLine().toInt();
-                 // int endFrame = stream.readLine().toInt();
+                 int phInitFrame = stream.readLine().toInt();
+                 if (p == 0)
+                     phInitFrame = 0;
                  stream.readLine();
-                 TupPhrase *phrase = new TupPhrase(initFrame);
+                 TupPhrase *phrase = new TupPhrase(phInitFrame);
                  numWords = stream.readLine().toInt();
+
                  for (int w = 0; w < numWords; w++) {
                       QString str = stream.readLine().trimmed();
                       QStringList strList = str.split(' ', QString::SkipEmptyParts);
                       QString strWord; 
-                      int firstFrame = 0;
-                      int lastFrame = 0;
                       TupWord *word = 0;
                       if (strList.size() >= 4) {
                           strWord = strList.at(0);   
                           firstFrame = strList.at(1).toInt();
                           word = new TupWord(firstFrame);
                           lastFrame = strList.at(2).toInt();
+                          word->setEndFrame(lastFrame);
                           numPhonemes = strList.at(3).toInt();
                       }
                       QList<int> frames;
@@ -145,13 +151,29 @@ TupPapagayoImporter::TupPapagayoImporter(const QString &file, const QSize &proje
 
                       for (int ph = 0; ph < numPhonemes-1; ph++) {
                            int total = frames.at(ph+1) - frames.at(ph);
-                           TupPhoneme *phoneme = new TupPhoneme(blocks.at(ph), total);
-                           word->addPhoneme(phoneme);
+                           for (int i=0; i<total; i++) {
+                                TupPhoneme *phoneme = new TupPhoneme(blocks.at(ph), point);
+                                word->addPhoneme(phoneme);
+                           }
                       } // for ph
 
-                      int total = (lastFrame - frames.at(numPhonemes-1)) + 1;
-                      TupPhoneme *phoneme = new TupPhoneme(blocks.at(numPhonemes-1), total);
-                      word->addPhoneme(phoneme);
+                      if (!frames.isEmpty()) {
+                          int total = (lastFrame - frames.at(numPhonemes-1)) + 1;
+                          for (int i=0; i<total; i++) {
+                               TupPhoneme *phoneme = new TupPhoneme(blocks.at(numPhonemes-1), point);
+                               word->addPhoneme(phoneme);
+                          }
+                      } else {
+                          #ifdef K_DEBUG
+                              QString msg = "TupPapagayoImporter() - Fatal Error: frames size is less than numPhonemes -> ";
+                              msg += QString::number(frames.count()) + " < " + QString::number(numPhonemes);
+                              #ifdef Q_OS_WIN
+                                  qDebug() << msg;
+                              #else
+                                  tError() << msg;
+                              #endif
+                          #endif
+                      }
 
                       if (w == numWords - 1) {
                           if (lastFrame > k->framesCount)
@@ -159,12 +181,14 @@ TupPapagayoImporter::TupPapagayoImporter(const QString &file, const QSize &proje
                       }
                       phrase->addWord(word);
                  } // for w
+                 phrase->setEndFrame(k->framesCount);
                  voice->addPhrase(phrase); 
             }
             k->lipsync->addVoice(voice);
         }
         k->framesCount++;
         k->lipsync->setFramesCount(k->framesCount);
+        k->lipsync->verifyStructure();
     } else {
         k->isValid = false;
         #ifdef K_DEBUG

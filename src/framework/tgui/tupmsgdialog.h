@@ -33,60 +33,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPBACKGROUND_H
-#define TUPBACKGROUND_H
+#ifndef TUPMSGDIALOG_H
+#define TUPMSGDIALOG_H
 
 #include "tglobal.h"
-#include "tupabstractserializable.h"
-#include "tupscene.h"
 
-#include <QImage>
-#include <QPixmap>
+#include <QDialog>
+#include <QTextBrowser>
 
 /**
- * @author Gustav Gonzalez
-*/
+ * @class TupMsgDialog
+ */
 
-class TUPI_EXPORT TupBackground : public QObject, public TupAbstractSerializable
+class T_GUI_EXPORT TupMsgDialog : public QDialog
 {
     Q_OBJECT
 
     public:
-        enum Direction { Right = 0, Left = 1, Top, Bottom };
-        TupBackground(TupScene *parent, const QSize dimension, const QColor bgColor);
-        ~TupBackground();
-
-        void setBgColor(const QColor color);
-        TupFrame* staticFrame();
-        TupFrame* dynamicFrame(); 
-        void renderDynamicView();
-        QPixmap dynamicView(int frameIndex);
-        void setDyanmicDirection(int direction);
-        void setDyanmicShift(int shift);
-        Direction dyanmicDirection();
-        int dyanmicShift();
-        void setDynamicRaster(QImage bg);
-        QImage dynamicRaster();
-        bool dynamicBgIsEmpty();
-        bool staticBgIsEmpty();
-        bool rasterRenderIsPending();
-        void setDynamicOpacity(double opacity); 
-        double dynamicOpacity();
-        void setStaticOpacity(double opacity);
-        double staticOpacity();
-        TupScene * scene();
-        TupProject * project();
-
-        virtual void fromXml(const QString &xml);
-        virtual QDomElement toXml(QDomDocument &doc) const;
-
+        TupMsgDialog(const QString &message, QSize dialogSize, QWidget *parent = 0);
+        ~TupMsgDialog();
+        
     private:
-        QSize dimension;
-        QColor bgColor;
-        TupFrame *staticBg;
-        TupFrame *dynamicBg;
-        QImage raster;
-        bool noRender;
+        void setupGUI();
+        
+    private:
+        QString msg;
+        QSize size;
+        QTextBrowser *textBrowser;
 };
 
 #endif

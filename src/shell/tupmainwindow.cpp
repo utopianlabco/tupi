@@ -44,6 +44,7 @@
 
 // Tupi Framework
 #include "tipdialog.h"
+#include "tupmsgdialog.h"
 #include "tosd.h"
 // #include "taudioplayer.h"
 
@@ -103,6 +104,11 @@ TupMainWindow::TupMainWindow() : TabbedMainWindow(), m_projectManager(0), animat
         #endif
     #endif
 
+    // Naming the main frame...
+    setWindowTitle(tr("Tupi: 2D Magic"));
+    setWindowIcon(QIcon(THEME_DIR + "icons/about.png"));
+    setObjectName("TupMainWindow_");
+
     isNetworked = false;
     exportWidget = NULL;
 
@@ -127,12 +133,6 @@ TupMainWindow::TupMainWindow() : TabbedMainWindow(), m_projectManager(0), animat
     // Loading audio player plugin
     // TAudioPlayer::instance()->loadEngine("gstreamer"); // FIXME: Move this to the settings 
 
-    setObjectName("TupMainWindow_");
-
-    // Naming the main frame...
-    setWindowTitle(tr("Tupi: Open 2D Magic"));
-    setWindowIcon(QIcon(THEME_DIR + "icons/about.png"));
-
     // Defining the render type for the drawings
     // m_renderType = Tupi::RenderType(TCONFIG->value("RenderType").toInt());
 
@@ -147,13 +147,57 @@ TupMainWindow::TupMainWindow() : TabbedMainWindow(), m_projectManager(0), animat
     setupMenu();
     setupToolBar();
 
-    // Check if user wants to see a Tupi tip for every time he launches the program
-    TCONFIG->beginGroup("General");
-    bool showTips = TCONFIG->value("ShowTipOfDay", true).toBool();
+    // SQA: Web announcement comes here
+    QString webMsgPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/webmsg.html";
+    QFile webMsgFile(webMsgPath);
+    QString fileContent = "";
+    if (webMsgFile.exists()) {
+        if (webMsgFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&webMsgFile);
+            while (!in.atEnd())
+                   fileContent += in.readLine();
+        }
+    }
 
-    // If option is enabled, then, show a little dialog with a nice tip
-    if (showTips)
-        QTimer::singleShot(0, this, SLOT(showTipDialog()));
+    // Processing web msg content
+    bool showWebMsg = false;
+    webContent = "";
+    if (!fileContent.isEmpty()) {
+        QDomDocument doc;
+        if (doc.setContent(fileContent)) {
+            QDomElement root = doc.documentElement();
+            QDomNode n = root.firstChild();
+            while (!n.isNull()) {
+                   QDomElement e = n.toElement();
+                   if (e.tagName() == "show") {
+                       QString flag = e.text();
+                       if (flag.compare("true") == 0)
+                           showWebMsg = true;
+                       else
+                           break;
+                   } else if (e.tagName() == "size") {
+                       QStringList numbers = e.text().split(",");
+                       if (numbers.size() == 2) {
+                           webMsgSize = QSize(numbers.at(0).toInt(), numbers.at(1).toInt());
+                       }
+                   } else if (e.tagName() == "text") {
+                       webContent = e.text();
+                   }
+                   n = n.nextSibling();
+            }
+        }
+    }
+
+    if (showWebMsg) {
+        QTimer::singleShot(0, this, SLOT(showWebMessage()));
+    } else {
+        // Check if user wants to see a Tupi tip for every time he launches the program
+        TCONFIG->beginGroup("General");
+        bool showTips = TCONFIG->value("ShowTipOfDay", true).toBool();
+        // If option is enabled, then, show a little dialog with a nice tip
+        if (showTips)
+            QTimer::singleShot(0, this, SLOT(showTipDialog()));
+    }
 
     // Time to load plugins... 
     TupPluginManager::instance()->loadPlugins();
@@ -239,7 +283,7 @@ void TupMainWindow::createNewNetProject(const QString &title, const QStringList 
 {
     isNetworked = true;
     projectName = title;
-    setWindowTitle(tr("Tupi: Open 2D Magic") + " - " + projectName + " " + tr("[ by %1 | net mode ]").arg(netUser));
+    setWindowTitle(tr("Tupi: 2D Magic") + " - " + projectName + " " + tr("[ by %1 | net mode ]").arg(netUser));
 
     if (m_viewChat) {
         removeToolView(m_viewChat);
@@ -276,10 +320,14 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         #endif
     #endif
 
-    // Downloading maefloresta Twitter status
-    TupTwitter *twitter = new TupTwitter();
-    twitter->start();
-    connect(twitter, SIGNAL(pageReady()), this, SLOT(addTwitterPage()));
+    TCONFIG->beginGroup("General");
+    bool getNews = TCONFIG->value("GetNews", true).toBool();
+    if (getNews) {
+        // Downloading maefloresta Twitter status
+        TupTwitter *twitter = new TupTwitter();
+        twitter->start();
+        connect(twitter, SIGNAL(pageReady()), this, SLOT(addTwitterPage()));
+    }
 
     if (m_projectManager->isOpen()) {
         if (TupMainWindow::requestType == NewLocalProject || TupMainWindow::requestType == NewNetProject)
@@ -313,7 +361,7 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         connect(animationTab, SIGNAL(contourColorChanged(const QColor &)), m_colorPalette, SLOT(updateContourColor(const QColor &))); 
         connect(animationTab, SIGNAL(fillColorChanged(const QColor &)), m_colorPalette, SLOT(updateFillColor(const QColor &)));
         connect(animationTab, SIGNAL(bgColorChanged(const QColor &)), m_colorPalette, SLOT(updateBgColor(const QColor &)));
-        connect(animationTab, SIGNAL(penWidthChanged(int)), this, SLOT(updatePenWidth(int)));
+        connect(animationTab, SIGNAL(penWidthChanged(int)), this, SLOT(updatePenThickness(int)));
 
         animationTab->setAntialiasing(true);
 
@@ -372,7 +420,7 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         m_colorPalette->setBgColor(project->bgColor());
 
         TCONFIG->beginGroup("PenParameters");
-        int thickness = TCONFIG->value("Thickness", -1).toInt();
+        int thickness = TCONFIG->value("Thickness", 3).toInt();
         m_penWidget->init(thickness);
         // m_penWidget->setThickness(thickness);
 
@@ -388,41 +436,35 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
 
 void TupMainWindow::addTwitterPage()
 {
-    QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
-    if (QFile::exists(twitterPath)) {
-        #ifdef K_DEBUG
-            QString msg = "TupMainWindow::addTwitterPage() - Loading page -> " + twitterPath;
-            #ifdef Q_OS_WIN
-                qWarning() << msg;
-            #else
-                tWarning() << msg;
+    if (tabCount() == 2) {
+        QString twitterPath = QDir::homePath() + "/." + QCoreApplication::applicationName() + "/twitter.html";
+        if (QFile::exists(twitterPath)) {
+            #ifdef K_DEBUG
+                QString msg = "TupMainWindow::addTwitterPage() - Loading page -> " + twitterPath;
+                #ifdef Q_OS_WIN
+                    qWarning() << msg;
+                #else
+                    tWarning() << msg;
+                #endif
             #endif
-        #endif
 
-        internetOn = true;
-        newsTab = new TupTwitterWidget(this);
-        newsTab->setSource(twitterPath);
-        connect(newsTab, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
-        addWidget(newsTab);
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupMainWindow::addTwitterPage() - Warning: Couldn't load page -> " + twitterPath;
-            #ifdef Q_OS_WIN
-                qDebug() << msg;
-            #else
-                tWarning() << msg;
+            internetOn = true;
+            newsTab = new TupTwitterWidget(this);
+            newsTab->setSource(twitterPath);
+            connect(newsTab, SIGNAL(newPerspective(int)), this, SLOT(changePerspective(int)));
+            addWidget(newsTab);
+        } else {
+            #ifdef K_DEBUG
+                QString msg = "TupMainWindow::addTwitterPage() - Warning: Couldn't load page -> " + twitterPath;
+                #ifdef Q_OS_WIN
+                    qDebug() << msg;
+                #else
+                    tWarning() << msg;
+                #endif
             #endif
-        #endif
+        }
     }
 }
-
-/*
-void TupMainWindow::updateTabContext(int tab)
-{
-    if (tab == 0)
-        animationTab->updatePerspective();
-}
-*/
 
 /**
  * @if english
@@ -460,7 +502,7 @@ void TupMainWindow::newProject()
             setupLocalProject(wizard->parameters());
             createNewLocalProject();
         }
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && !defined(Q_OS_WIN)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
     m_debug->setProjectStatus(true); 
 #endif
     }
@@ -549,7 +591,7 @@ void TupMainWindow::resetUI()
     scenesView->expandDock(false);
     timeView->expandDock(false);
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && !defined(Q_OS_WIN)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
     debugView->expandDock(false);
 #endif
 
@@ -622,7 +664,7 @@ void TupMainWindow::resetUI()
 
     setUpdatesEnabled(true);
 
-    setWindowTitle(tr("Tupi: Open 2D Magic"));
+    setWindowTitle(tr("Tupi: 2D Magic"));
 
     if (isNetworked) { 
         m_viewChat->expandDock(false);
@@ -634,7 +676,7 @@ void TupMainWindow::resetUI()
 
     resetMousePointer();
 
-#if defined(QT_GUI_LIB) && defined(K_DEBUG) && !defined(Q_OS_WIN)
+#if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_LINUX)
     m_debug->setProjectStatus(false);
 #endif
 }
@@ -725,7 +767,7 @@ void TupMainWindow::setupLocalProject(TupProjectManagerParams *params)
         m_projectManager->setParams(params);
         projectName = params->projectName();
         author = params->author();
-        setWindowTitle(tr("Tupi: Open 2D Magic") +  " - " + projectName + " [ " + tr("by") + " " + author + " ]");
+        setWindowTitle(tr("Tupi: 2D Magic") +  " - " + projectName + " [ " + tr("by") + " " + author + " ]");
     }
 }
 
@@ -805,7 +847,7 @@ void TupMainWindow::openProject(const QString &path)
             if (author.length() <= 0)
                 author = "Anonymous";
 
-            setWindowTitle(tr("Tupi: Open 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
+            setWindowTitle(tr("Tupi: 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
             setWorkSpace();
 
             m_exposureSheet->updateLayerOpacity(0, 0);
@@ -1156,7 +1198,7 @@ void TupMainWindow::saveAs()
     if (isNetworked) {
         isNetworked = false;
         m_projectManager->setHandler(new TupLocalProjectManagerHandler, false);
-        setWindowTitle(tr("Tupi: Open 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
+        setWindowTitle(tr("Tupi: 2D Magic") + " - " + projectName + " [ " + tr("by") + " " + author + " ]");
     }
 
     saveProject();
@@ -1205,7 +1247,7 @@ void TupMainWindow::saveProject()
             int indexDot = name.lastIndexOf(".");
             name = name.left(indexDot);
 
-            setWindowTitle(tr("Tupi: Open 2D Magic") +  " - " + name + " [ " + tr("by") +  " " +  author + " ]");
+            setWindowTitle(tr("Tupi: 2D Magic") +  " - " + name + " [ " + tr("by") +  " " +  author + " ]");
 
             int last = m_fileName.lastIndexOf("/");
             QString dir = m_fileName.left(last);
@@ -1335,8 +1377,8 @@ void TupMainWindow::createPaintCommand(const TupPaintAreaEvent *event)
         if (event->action() == TupPaintAreaEvent::ChangePenColor)
             m_penWidget->setPenColor(qvariant_cast<QColor>(event->data()));
 
-        if (event->action() == TupPaintAreaEvent::ChangePenWidth)
-            m_penWidget->setPenWidth(qvariant_cast<int>(event->data()));
+        if (event->action() == TupPaintAreaEvent::ChangePenThickness)
+            m_penWidget->setPenThickness(qvariant_cast<int>(event->data()));
     } 
 }
 
@@ -1354,17 +1396,17 @@ void TupMainWindow::updatePenColor(const QColor &color)
     createPaintCommand(event);
 }
 
-void TupMainWindow::updatePenWidth(int width)
+void TupMainWindow::updatePenThickness(int thickness)
 {
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
-            qDebug() << "[TupMainWindow::updatePenWidth()]";
+            qDebug() << "[TupMainWindow::updatePenThickness()]";
         #else
-            T_FUNCINFO;
+            T_FUNCINFO << "thickness: " << thickness;
         #endif
     #endif
 
-    TupPaintAreaEvent *event = new TupPaintAreaEvent(TupPaintAreaEvent::ChangePenWidth, width);
+    TupPaintAreaEvent *event = new TupPaintAreaEvent(TupPaintAreaEvent::ChangePenThickness, thickness);
     createPaintCommand(event);
 }
 
@@ -1564,4 +1606,14 @@ void TupMainWindow::saveDefaultPath(const QString &dir)
     TCONFIG->beginGroup("General");
     TCONFIG->setValue("DefaultPath", dir);
     TCONFIG->sync();
+}
+
+void TupMainWindow::showWebMessage()
+{
+    TupMsgDialog *msgDialog = new TupMsgDialog(webContent, webMsgSize, this);
+    msgDialog->show();
+
+    QDesktopWidget desktop;
+    msgDialog->move((int) (desktop.screenGeometry().width() - msgDialog->width())/2 ,
+                    (int) (desktop.screenGeometry().height() - msgDialog->height())/2);
 }

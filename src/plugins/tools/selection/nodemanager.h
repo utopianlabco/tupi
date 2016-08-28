@@ -64,14 +64,14 @@ class TUPI_PLUGIN NodeManager : public QObject
         
         void show();
         
-        void setAnchor(const QPointF& point);
-        QPointF anchor() const;
-        
         void scale(float sx, float sy);
-        void rotate(double a);
+        void rotate(double angle);
+        void horizontalFlip();
+        void verticalFlip();
+        void crossedFlip();
         
-        void setPress(bool press);
-        bool isPress();
+        void setPressedStatus(bool isPressed);
+        bool isPressed();
         
         void toggleAction();
         
@@ -88,17 +88,8 @@ class TUPI_PLUGIN NodeManager : public QObject
         void resizeNodes(qreal factor);
 
     private:
-        QHash<Node::TypeNode, Node *> m_nodes;
-        QGraphicsItem *m_parent;
-        QGraphicsScene *m_scene;
-        
-        QMatrix m_origMatrix;
-        QPointF m_origPos;
-        QPointF m_anchor;
-        
-        bool m_press;
-        bool m_proportional;
-        double m_rotation;
+        struct Private;
+        Private *const k;
 };
 
 #endif

@@ -84,23 +84,32 @@ bool TupCommandExecutor::createFrame(TupFrameResponse *response)
 
 bool TupCommandExecutor::removeFrame(TupFrameResponse *response)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupCommandExecutor::removeFrame()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     int sceneIndex = response->sceneIndex();
     int layerIndex = response->layerIndex();
-    int position = response->frameIndex();
-    int realPosition = response->arg().toInt();
+    int frameIndex = response->frameIndex();
+    // int realPosition = response->arg().toInt();
 
     TupScene *scene = m_project->sceneAt(sceneIndex);
     if (scene) {
-        scene->removeStoryBoardScene(position);
+        scene->removeStoryBoardScene(frameIndex);
         TupLayer *layer = scene->layerAt(layerIndex);
         if (layer) {
-            TupFrame *frame = layer->frameAt(position);
+            TupFrame *frame = layer->frameAt(frameIndex);
             if (frame) {
                 QDomDocument doc;
                 doc.appendChild(frame->toXml(doc));
-                scene->removeTweensFromFrame(layerIndex, realPosition);
+                // scene->removeTweensFromFrame(layerIndex, realPosition);
+                scene->removeTweensFromFrame(layerIndex, frameIndex);
                 
-                if (layer->removeFrame(position)) {
+                if (layer->removeFrame(frameIndex)) {
                     response->setState(doc.toString(0));
                     emit responsed(response);
                     
