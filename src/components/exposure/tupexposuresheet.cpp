@@ -1033,8 +1033,6 @@ void TupExposureSheet::frameResponse(TupFrameResponse *response)
                 break;
                 case TupProjectRequest::Select:
                   {
-                      tError() << "TupExposureSheet::frameResponse() - Select Index: " << frameIndex;
-                      tError() << "argument: " << response->getArg().toString();
                       table->blockSignals(true);
                       table->selectFrame(layerIndex, frameIndex, response->getArg().toString());
                       table->blockSignals(false);
