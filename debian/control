@@ -1,8 +1,8 @@
 Source: tupi
 Section: graphics
 Priority: optional
-Maintainer: Dmitry Smirnov <onlyjob@debian.org>
-Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl
+Maintainer: Debian QA Group <packages@qa.debian.org>
+Build-Depends: debhelper-compat (= 12), ruby (>= 4.9), perl
  ,imagemagick ,rdfind ,symlinks
  ,libaspell-dev (>= 0.60.7~)
  ,libavformat-dev
@@ -16,10 +16,8 @@ Build-Depends: debhelper (>= 9), ruby (>= 4.9), perl
  ,libquazip5-dev
  ,libtheora-dev
  ,zlib1g-dev
-Standards-Version: 3.9.8
+Standards-Version: 4.5.0
 Homepage: http://www.maefloresta.com/portal
-Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/tupi.git
-Vcs-Git: https://anonscm.debian.org/git/collab-maint/tupi.git
 
 Package: tupi
 Architecture: linux-any

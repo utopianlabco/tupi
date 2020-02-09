@@ -1,0 +1,36 @@
+Description: compare version as integer
+
+ When a string is split it will create substring and a comparison between
+ them will compare the ascii. And so, 5.12.0 was turning out to be
+ smaller than 5.4.0. Compare the integer value of the substrings.
+
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Forwarded: no
+
+---
+
+--- tupi-0.2+git08.orig/qonf/qmake.rb
++++ tupi-0.2+git08/qonf/qmake.rb
+@@ -83,19 +83,19 @@ class QMake
+ 
+         version.size.times { |i|
+                 if i == 0
+-                   if version[i] < minver[i]
++                   if version[i].to_i < minver[i].to_i
+                       return false 
+                    end
+                 end
+ 
+                 if i == 1
+-                   if version[i] < minver[i]
++                   if version[i].to_i < minver[i].to_i
+                       return false
+                    end
+                 end
+ 
+                 if i == 2
+-                   if version[i] < minver[i]
++                   if version[i].to_i < minver[i].to_i
+                       return false
+                    end
+                 end

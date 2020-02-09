@@ -1,3 +1,14 @@
+tupi (0.2+git08-2) unstable; urgency=medium
+
+  * QA upload.
+  * Remove non-salsa Vcs link
+  * Update compat level to 12
+  * Update Standards-Version to 4.5.0
+  * Orphan the package. (See: #885983)
+  * Fix ftbfs. (Closes: #873023)
+
+ -- Sudip Mukherjee <sudipm.mukherjee@gmail.com>  Sun, 09 Feb 2020 17:39:12 +0000
+
 tupi (0.2+git08-1) unstable; urgency=medium
 
   * New upstream release [August 2016].

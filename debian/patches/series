@@ -1,2 +1,5 @@
 quazip.patch
 ffmpeg_2.9.patch
+compare_version.patch
+include.patch
+codec.patch

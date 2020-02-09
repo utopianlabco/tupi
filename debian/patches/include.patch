@@ -1,0 +1,17 @@
+Description: Include QtGui
+
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Forwarded: no
+
+---
+
+--- tupi-0.2+git08.orig/src/store/tupabstractserializable.h
++++ tupi-0.2+git08/src/store/tupabstractserializable.h
+@@ -41,6 +41,7 @@
+ #include <QString>
+ #include <QDomDocument>
+ #include <QDomElement>
++#include <QtGui>
+ 
+ /**
+  * @if spanish

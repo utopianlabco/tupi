@@ -1,0 +1,20 @@
+Description: use AV_CODEC_FLAG_GLOBAL_HEADER
+
+ Inspired by ffmpeg_4.patch
+
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Forwarded: no
+
+---
+
+--- tupi-0.2+git08.orig/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
++++ tupi-0.2+git08/src/plugins/export/libavplugin/tlibavmoviegenerator.cpp
+@@ -153,7 +153,7 @@ static AVStream *addVideoStream(AVFormat
+     }
+ 
+     if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+-        c->flags |= CODEC_FLAG_GLOBAL_HEADER;
++        c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+ 	
+     return st;
+ }
