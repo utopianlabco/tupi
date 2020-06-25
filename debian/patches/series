@@ -3,3 +3,4 @@ ffmpeg_2.9.patch
 compare_version.patch
 include.patch
 codec.patch
+fix_quazip_path.patch

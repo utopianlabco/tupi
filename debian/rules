@@ -8,7 +8,7 @@ export QT_SELECT=5
 QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
 
 %:
-	dh $@ --parallel
+	dh $@
 
 override_dh_auto_clean:
 	$(RM) -v configure.tests/*/Makefile $(QM_FILES)
@@ -62,11 +62,3 @@ override_dh_makeshlibs:
 
 override_dh_strip:
 	dh_strip --dbgsym-migration='tupi-dbg (<< 0.2+git07~)'
-
-PKD  = $(abspath $(dir $(MAKEFILE_LIST)))
-PKG  = $(word 2,$(shell dpkg-parsechangelog -l$(PKD)/changelog | grep ^Source))
-VER ?= $(shell dpkg-parsechangelog -l$(PKD)/changelog | perl -ne 'print $$1 if m{Version:\s*([\d\.]+)}')
-.PHONY: get-orig-source
-get-orig-source:
-	@echo "# Downloading..."
-	uscan --noconf --verbose --rename --destdir=$(CURDIR) --check-dirname-level=0 --force-download --download-version $(VER) $(PKD)

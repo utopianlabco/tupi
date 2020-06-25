@@ -1,0 +1,65 @@
+Description: Fix FTBFS.
+ The include files of quazip are now available at /usr/include/quazip5.
+
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Bug-Debian: https://bugs.debian.org/963386
+
+---
+
+--- tupi-0.2+git08.orig/configure.tests/quazip/main.cpp
++++ tupi-0.2+git08/configure.tests/quazip/main.cpp
+@@ -33,8 +33,8 @@
+  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+  ***************************************************************************/
+ 
+-#include "quazip/quazip.h"
+-#include "quazip/quazipfile.h"
++#include "quazip5/quazip.h"
++#include "quazip5/quazipfile.h"
+ #include <QFile>
+ 
+ int main()
+--- tupi-0.2+git08.orig/configure.tests/quazip/quazip.pro
++++ tupi-0.2+git08/configure.tests/quazip/quazip.pro
+@@ -10,7 +10,7 @@ macx {
+ }
+ 
+ unix:!macx {
+-  INCLUDEPATH += /usr/include/quazip
++  INCLUDEPATH += /usr/include/quazip5
+ }
+ 
+ LIBS += -lz
+--- tupi-0.2+git08.orig/configure.tests/quazip/quazip.qonf
++++ tupi-0.2+git08/configure.tests/quazip/quazip.qonf
+@@ -8,7 +8,7 @@
+ 			<define value="HAVE_QUAZIP" />
+ 		</defines>
+                 <includes>
+-                        <include path="/usr/include/quazip/" />
++                        <include path="/usr/include/quazip5/" />
+                 </includes>
+ 	</provide>
+ 	<solution>
+--- tupi-0.2+git08.orig/src/libtupi/tuppackagehandler.h
++++ tupi-0.2+git08/src/libtupi/tuppackagehandler.h
+@@ -38,8 +38,8 @@
+ 
+ #include "tglobal.h"
+ #include "tapplicationproperties.h"
+-#include "quazip/quazip.h"
+-#include "quazip/quazipfile.h"
++#include "quazip5/quazip.h"
++#include "quazip5/quazipfile.h"
+ 
+ // SQA: Pending to enable in the future
+ // #include "quazip/JlCompress.h"
+--- tupi-0.2+git08.orig/tupiglobal.pri
++++ tupi-0.2+git08/tupiglobal.pri
+@@ -1,5 +1,5 @@
+ # Generated automatically at 2016-08-01 18:07:32 -0500! PLEASE DO NOT EDIT!
+-INCLUDEPATH += /usr/local/include /usr/include/libavformat/ /usr/include/libavcodec/ /usr/include/quazip/
++INCLUDEPATH += /usr/local/include /usr/include/libavformat/ /usr/include/libavcodec/ /usr/include/quazip5/
+ LIBS += -L/usr/local/lib -lavformat -lavcodec -lquazip -lz -ltheora -ltheoraenc -ltheoradec -logg -ltupifwgui -ltupifwcore
+ QT += opengl core gui svg xml network
+ DEFINES += HAVE_LIBAV HAVE_QUAZIP HAVE_ZLIB HAVE_MULTIMEDIA HAVE_THEORA K_NODEBUG VERSION=\\\"0.2\\\" CODE_NAME=\\\"Beraba\\\" REVISION=\\\"git08\\\" CONFIG_VERSION=\\\"2\\\"

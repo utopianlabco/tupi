@@ -1,3 +1,14 @@
+tupi (0.2+git08-3) unstable; urgency=medium
+
+  * QA upload.
+  * Update compat level to 13.
+  * Remove parallel from d/rules, which is default now.
+  * Use https with copyright-format-uri.
+  * Remove unnecessary get-orig-source from d/rules.
+  * Fix FTBFS. (Closes: #963386)
+
+ -- Sudip Mukherjee <sudipm.mukherjee@gmail.com>  Thu, 25 Jun 2020 10:32:35 +0100
+
 tupi (0.2+git08-2) unstable; urgency=medium
 
   * QA upload.
