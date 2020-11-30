@@ -1,0 +1,31 @@
+Description: include QPainterPath
+
+Thanks to Gustav Gonzalez for pointing it out.
+
+Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Forwarded: no
+Bug-Debian: https://bugs.debian.org/975133
+
+---
+
+--- tupi-0.2+git08.orig/src/components/exposure/tupexposuretable.cpp
++++ tupi-0.2+git08/src/components/exposure/tupexposuretable.cpp
+@@ -36,6 +36,8 @@
+ #include "tupexposuretable.h"
+ #include "tconfig.h"
+ 
++#include <QPainterPath>
++
+ /**
+  * @author Jorge Cuadrado
+  */
+--- tupi-0.2+git08.orig/src/framework/tgui/tslider.cpp
++++ tupi-0.2+git08/src/framework/tgui/tslider.cpp
+@@ -38,6 +38,7 @@
+ #include "tapplicationproperties.h" 
+ 
+ #include <QDesktopWidget>
++#include <QPainterPath>
+ #include <QDebug>
+ 
+ struct TSlider::Private

@@ -1,3 +1,12 @@
+tupi (0.2+git08-4) unstable; urgency=medium
+
+  * QA upload.
+  * Fix FTBFS due to QPainterPath. (Closes: #975133)
+    - Thanks to Gustav Gonzalez.
+  * Update Standards-Version to 4.5.1
+
+ -- Sudip Mukherjee <sudipm.mukherjee@gmail.com>  Mon, 30 Nov 2020 19:37:49 +0000
+
 tupi (0.2+git08-3) unstable; urgency=medium
 
   * QA upload.

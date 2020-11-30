@@ -4,3 +4,4 @@ compare_version.patch
 include.patch
 codec.patch
 fix_quazip_path.patch
+include-qpainter.patch
