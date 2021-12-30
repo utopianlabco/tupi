@@ -1194,7 +1194,7 @@ void TupExposureSheet::libraryResponse(TupLibraryResponse *response)
         qDebug() << "[TupExposureSheet::libraryResponse()] - symbol type -> " << response->symbolType();
     #endif
 
-    if (response->symbolType() == TupLibraryObject::Folder || response->symbolType() == TupLibraryObject::Sound)
+    if (response->symbolType() == TupLibraryObject::Folder || response->symbolType() == TupLibraryObject::Audio)
         return;
 
     switch (response->getAction()) {
