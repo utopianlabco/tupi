@@ -391,7 +391,6 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         cameraWidget->setVisible(false);
         connect(m_libraryWidget, SIGNAL(soundUpdated()), cameraWidget, SLOT(updateSoundItems()));
         m_libraryWidget->setNetworking(isNetworked);
-        // Autosave event
         connect(animationTab, SIGNAL(autoSave()), this, SLOT(callSave()));
 
         /*
@@ -414,9 +413,8 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         connect(exposureView, SIGNAL(visibilityChanged(bool)), this, SLOT(checkTimeLineVisibility(bool)));
         connect(timeView, SIGNAL(visibilityChanged(bool)), this, SLOT(checkExposureVisibility(bool)));
 
-        // SQA: Implement the Preferences option to choose between the Exposure view and the Timeline view
-        exposureView->expandDock(true);
-        // timeView->expandDock(true);
+        // exposureView->expandDock(true);
+        timeView->expandDock(true);
 
         currentDock = TupDocumentView::ExposureSheet;
 
@@ -436,6 +434,8 @@ void TupMainWindow::setWorkSpace(const QStringList &users)
         connect(this, SIGNAL(tabHasChanged(int)), this, SLOT(updateCurrentTab(int)));
 
         m_projectManager->clearUndoStack();
+
+        // m_timeLine->adjustCellsSize();
     }
 }
 

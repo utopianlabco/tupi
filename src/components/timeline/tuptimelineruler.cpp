@@ -65,11 +65,9 @@ void TupTimeLineRuler::updateFPS(int value)
 
 void TupTimeLineRuler::paintSection(QPainter *painter, const QRect & rect, int logicalIndex) const
 {
-    /*
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineRuler::paintSection()] - rect.size() -> " << rect.size();
+        qDebug() << "[TupTimeLineRuler::paintSection()] - RECT SIZE -> " << rect.size();
     #endif
-    */
 
     if (!model() || !rect.isValid())
         return;

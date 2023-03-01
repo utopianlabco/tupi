@@ -44,7 +44,7 @@ class TupTimeLineTableItemDelegate : public QItemDelegate
         TupTimeLineTableItemDelegate(QObject *parent = nullptr);
         ~TupTimeLineTableItemDelegate();
 
-        // virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     private:
@@ -61,7 +61,6 @@ TupTimeLineTableItemDelegate::~TupTimeLineTableItemDelegate()
 {
 }
 
-/*
 QSize TupTimeLineTableItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option)
@@ -69,7 +68,6 @@ QSize TupTimeLineTableItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
     return QSize(5, 5);
 }
-*/
 
 void TupTimeLineTableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -145,6 +143,8 @@ void TupTimeLineTableItemDelegate::paint(QPainter *painter, const QStyleOptionVi
                     painter->drawEllipse(option.rect.x() + ((option.rect.width() - offset)/2),
                                          option.rect.y() + ((option.rect.height() - offset)/2),
                                          offset, offset);
+
+                    qDebug() << "TupTimeLineTableItemDelegate::paint() - RECT -> " << option.rect.size();
                 }
             } else {
                 painter->setBrush(QColor(0, 136, 0));
@@ -254,6 +254,13 @@ void TupTimeLineTable::setTableHeaders(int fps)
     #ifdef TUP_DEBUG
         qDebug() << "[TupTimeLineTable::setTableHeaders()]";
     #endif
+
+    /*
+    setItemDelegate(new TupTimeLineTableItemDelegate(this));
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    */
 
     TupTimeLineRuler *ruler = new TupTimeLineRuler(fps, this);
     setHorizontalHeader(ruler);
