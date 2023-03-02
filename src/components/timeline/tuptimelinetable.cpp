@@ -143,8 +143,6 @@ void TupTimeLineTableItemDelegate::paint(QPainter *painter, const QStyleOptionVi
                     painter->drawEllipse(option.rect.x() + ((option.rect.width() - offset)/2),
                                          option.rect.y() + ((option.rect.height() - offset)/2),
                                          offset, offset);
-
-                    qDebug() << "TupTimeLineTableItemDelegate::paint() - RECT -> " << option.rect.size();
                 }
             } else {
                 painter->setBrush(QColor(0, 136, 0));
@@ -613,8 +611,8 @@ void TupTimeLineTable::updateFrameState(int layerIndex, int frameIndex, bool val
         frame->setData(TupTimeLineTableItem::IsEmpty, value);
     } else {
         #ifdef TUP_DEBUG
-            qDebug() << "[TupTimeLineTable::updateFrameState()] - Error: No frame at ["
-                     << layerIndex << "," << frameIndex << "]";
+            qWarning() << "[TupTimeLineTable::updateFrameState()] - Error: No frame at ["
+                       << layerIndex << "," << frameIndex << "]";
         #endif
     }
 }
@@ -830,7 +828,7 @@ void TupTimeLineTable::selectFrame(int layerIndex, int frameIndex, const QString
         }
     } else {
         #ifdef TUP_DEBUG
-            qDebug() << "[TupTimeLineTable::selectFrame()] - Error: Selection coords are invalid!";
+            qWarning() << "[TupTimeLineTable::selectFrame()] - Error: Selection coords are invalid!";
         #endif
     }
 }
