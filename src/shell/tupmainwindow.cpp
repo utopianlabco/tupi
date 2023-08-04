@@ -96,7 +96,9 @@ TupMainWindow::TupMainWindow(const QString &winKey) : TabbedMainWindow(winKey), 
     setAcceptDrops(true);
     setContextMenuPolicy(Qt::NoContextMenu);
 
-    screen = QGuiApplication::screens().at(0);
+    QPair<int, int> dimension = TAlgorithm::screenDimension();
+    screenWidth = dimension.first;
+    screenHeight = dimension.second;
     isNetworked = false;
     exportWidget = nullptr;
 
@@ -480,8 +482,8 @@ void TupMainWindow::newProject()
     TupNewProject *wizard = new TupNewProject(this);
     wizard->show();
 
-    wizard->move(static_cast<int> ((screen->geometry().width() - wizard->width()) / 2),
-                 static_cast<int> ((screen->geometry().height() - wizard->height()) / 2));
+    wizard->move(static_cast<int> ((screenWidth - wizard->width()) / 2),
+                 static_cast<int> ((screenHeight - wizard->height()) / 2));
 
     wizard->focusProjectLabel();
 
@@ -519,8 +521,8 @@ bool TupMainWindow::cancelChanges()
         msgBox.addButton(QString(tr("Cancel")), QMessageBox::DestructiveRole);
         msgBox.show();
 
-        msgBox.move(static_cast<int> ((screen->geometry().width() - msgBox.width()) / 2),
-                     static_cast<int> ((screen->geometry().height() - msgBox.height()) / 2));
+        msgBox.move(static_cast<int> ((screenWidth - msgBox.width()) / 2),
+                     static_cast<int> ((screenHeight - msgBox.height()) / 2));
 
         int ret = msgBox.exec();
         switch (ret) {
@@ -669,8 +671,8 @@ void TupMainWindow::setupNetworkProject()
     TupConnectDialog *netDialog = new TupConnectDialog(this);
     netDialog->show();
 
-    netDialog->move(static_cast<int> ((screen->geometry().width() - netDialog->width()) / 2),
-                    static_cast<int> ((screen->geometry().height() - netDialog->height()) / 2));
+    netDialog->move(static_cast<int> ((screenWidth - netDialog->width()) / 2),
+                    static_cast<int> ((screenHeight - netDialog->height()) / 2));
 
     TupNetProjectManagerParams *params = new TupNetProjectManagerParams();
 
@@ -908,8 +910,8 @@ void TupMainWindow::preferences()
     TupPreferencesDialog *dialog = new TupPreferencesDialog(this);
     dialog->show();
 
-    dialog->move(static_cast<int> ((screen->geometry().width() - dialog->width()) / 2),
-                 static_cast<int> ((screen->geometry().height() - dialog->height()) / 2));
+    dialog->move(static_cast<int> ((screenWidth - dialog->width()) / 2),
+                 static_cast<int> ((screenHeight - dialog->height()) / 2));
 
     if (dialog->exec() == QDialog::Accepted) {
         if (animationTab)
@@ -1421,8 +1423,8 @@ void TupMainWindow::exportProject()
         connect(exportWidget, SIGNAL(isDone()), animationTab, SLOT(updatePaintArea()));
         exportWidget->show();
 
-        exportWidget->move(static_cast<int> ((screen->geometry().width() - exportWidget->width()) / 2),
-                           static_cast<int> ((screen->geometry().height() - exportWidget->height()) / 2));
+        exportWidget->move(static_cast<int> ((screenWidth - exportWidget->width()) / 2),
+                           static_cast<int> ((screenHeight - exportWidget->height()) / 2));
 
         exportWidget->exec();
     }
@@ -1456,8 +1458,8 @@ void TupMainWindow::postProject()
                 if (username.isEmpty() || password.isEmpty() || !storePasswd) {
                     TupSignDialog *dialog = new TupSignDialog(this);
                     dialog->show();
-                    dialog->move(static_cast<int> ((screen->geometry().width() - dialog->width()) / 2),
-                                 static_cast<int> ((screen->geometry().height() - dialog->height()) / 2));
+                    dialog->move(static_cast<int> ((screenWidth - dialog->width()) / 2),
+                                 static_cast<int> ((screenHeight - dialog->height()) / 2));
 
                     if (dialog->exec() != QDialog::Rejected) {
                         username = dialog->getUsername();
@@ -1481,8 +1483,8 @@ void TupMainWindow::postProject()
             connect(exportWidget, SIGNAL(isDone()), animationTab, SLOT(updatePaintArea()));
             exportWidget->show();
 
-            exportWidget->move(static_cast<int> ((screen->geometry().width() - exportWidget->width()) / 2),
-                               static_cast<int> ((screen->geometry().height() - exportWidget->height()) / 2));
+            exportWidget->move(static_cast<int> ((screenWidth - exportWidget->width()) / 2),
+                               static_cast<int> ((screenHeight - exportWidget->height()) / 2));
 
             exportWidget->exec();
         } else {
@@ -1508,8 +1510,8 @@ void TupMainWindow::postFrame(const QString &imagePath)
             if (username.isEmpty() || password.isEmpty() || !storePasswd) {
                 TupSignDialog *dialog = new TupSignDialog(this);
                 dialog->show();
-                dialog->move(static_cast<int> ((screen->geometry().width() - dialog->width()) / 2),
-                             static_cast<int> ((screen->geometry().height() - dialog->height()) / 2));
+                dialog->move(static_cast<int> ((screenWidth - dialog->width()) / 2),
+                             static_cast<int> ((screenHeight - dialog->height()) / 2));
 
                 if (dialog->exec() != QDialog::Rejected) {
                     username = dialog->getUsername();
@@ -1541,8 +1543,8 @@ void TupMainWindow::postFrame(const QString &imagePath)
                 connect(exportWidget, SIGNAL(isDone()), animationTab, SLOT(updatePaintArea()));
                 exportWidget->show();
 
-                exportWidget->move(static_cast<int> ((screen->geometry().width() - exportWidget->width()) / 2),
-                                   static_cast<int> ((screen->geometry().height() - exportWidget->height()) / 2));
+                exportWidget->move(static_cast<int> ((screenWidth - exportWidget->width()) / 2),
+                                   static_cast<int> ((screenHeight - exportWidget->height()) / 2));
 
                 exportWidget->exec();
             } else {
@@ -1653,8 +1655,8 @@ void TupMainWindow::unexpectedClose()
     msgBox.addButton(QString(tr("Close")), QMessageBox::DestructiveRole);
 
     msgBox.show();
-    msgBox.move(static_cast<int> ((screen->geometry().width() - msgBox.width()) / 2),
-                 static_cast<int> ((screen->geometry().height() - msgBox.height()) / 2));
+    msgBox.move(static_cast<int> ((screenWidth - msgBox.width()) / 2),
+                 static_cast<int> ((screenHeight - msgBox.height()) / 2));
 
     msgBox.exec();
 }
@@ -1735,8 +1737,8 @@ void TupMainWindow::showWebMessage()
     TMsgDialog *msgDialog = new TMsgDialog(webContent, webMsgSize, isImageMsg, this);
     msgDialog->show();
 
-    msgDialog->move(static_cast<int> ((screen->geometry().width() - msgDialog->width()) / 2),
-                    static_cast<int> ((screen->geometry().height() - msgDialog->height()) / 2));
+    msgDialog->move(static_cast<int> ((screenWidth - msgDialog->width()) / 2),
+                    static_cast<int> ((screenHeight - msgDialog->height()) / 2));
 }
 
 void TupMainWindow::setUpdateFlag(bool update)
