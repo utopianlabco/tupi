@@ -1135,8 +1135,6 @@ bool TupMainWindow::storeProcedure()
             this, SLOT(updateSoundsPath()));
     connect(m_projectManager, SIGNAL(soundPathsChanged()),
             m_libraryWidget, SLOT(updateCurrentSoundPath()));
-    // connect(m_projectManager, SIGNAL(soundPathsChanged()),
-    //         m_libraryWidget, SLOT(updateSoundPlayer()));
 
     if (m_projectManager->saveProject(m_fileName)) {
         updateRecentProjectList();
