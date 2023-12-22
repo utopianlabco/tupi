@@ -1,3 +1,12 @@
+tupi (0.2+git08-5) unstable; urgency=medium
+
+  * QA upload.
+  * Drop menu file and its pixmap, since tupi already provides a .desktop file
+    - drop the imagemagick build dependency, no more needed now
+  * Switch tupi back to architecture: any. (Closes: #819820)
+
+ -- Pino Toscano <pino@debian.org>  Fri, 22 Dec 2023 17:54:37 +0100
+
 tupi (0.2+git08-4) unstable; urgency=medium
 
   * QA upload.

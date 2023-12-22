@@ -2,4 +2,3 @@ usr/share/man
 usr/share/mime
 usr/share/pixmaps
 usr/share/tupi
-debian/*.xpm             /usr/share/pixmaps/

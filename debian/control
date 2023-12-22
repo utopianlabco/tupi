@@ -3,7 +3,7 @@ Section: graphics
 Priority: optional
 Maintainer: Debian QA Group <packages@qa.debian.org>
 Build-Depends: debhelper-compat (= 13), ruby (>= 4.9), perl
- ,imagemagick ,rdfind ,symlinks
+ ,rdfind ,symlinks
  ,libaspell-dev (>= 0.60.7~)
  ,libavformat-dev
  ,libavutil-dev
@@ -20,7 +20,7 @@ Standards-Version: 4.5.1
 Homepage: http://www.maefloresta.com/portal
 
 Package: tupi
-Architecture: linux-any
+Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}, tupi-data (= ${source:Version})
 Replaces: ktoon
 Description: 2D Animation design and authoring tool

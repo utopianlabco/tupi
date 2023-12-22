@@ -1,4 +1,3 @@
-debian/*.xpm
 bin/tupi.bin
 tupiglobal.pri
 launcher/tupi

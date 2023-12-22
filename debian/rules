@@ -36,7 +36,6 @@ $(QM_FILES):
 	lrelease $(@:.qm=.ts)
 
 override_dh_auto_build: $(QM_FILES)
-	convert -monitor launcher/icons/tupi_32x32.png debian/tupi_32x32.xpm
 	cd src/components/help/man && gzip -9 -c tupi.man > tupi.1.gz
 	dh_auto_build
 
