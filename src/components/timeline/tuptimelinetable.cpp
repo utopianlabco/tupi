@@ -223,8 +223,8 @@ TupTimeLineTable::~TupTimeLineTable()
 void TupTimeLineTable::setItemSize(int w, int h)
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::setItemSize()] - w -> " << w;
-        qDebug() << "[TupTimeLineTable::setItemSize()] - h -> " << h;
+        qDebug() << "[TupTimeLineTable::setItemSize()] - w ->" << w;
+        qDebug() << "[TupTimeLineTable::setItemSize()] - h ->" << h;
     #endif
 
     rectWidth = w;
@@ -234,8 +234,8 @@ void TupTimeLineTable::setItemSize(int w, int h)
 void TupTimeLineTable::adjustCellsSize()
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::adjustCellsSize()] - rectWidth -> " << rectWidth;
-        qDebug() << "[TupTimeLineTable::adjustCellsSize()] - rectHeight -> " << rectHeight;
+        qDebug() << "[TupTimeLineTable::adjustCellsSize()] - rectWidth ->" << rectWidth;
+        qDebug() << "[TupTimeLineTable::adjustCellsSize()] - rectHeight ->" << rectHeight;
     #endif
 
     int framesTotal = columnCount();
@@ -318,7 +318,7 @@ bool TupTimeLineTable::isSoundLayer(int layerIndex)
 void TupTimeLineTable::insertLayer(int layerIndex, const QString &name)
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::insertLayer()] - layerIndex -> " << layerIndex;
+        qDebug() << "[TupTimeLineTable::insertLayer()] - layerIndex ->" << layerIndex;
     #endif
 
     insertRow(layerIndex);
@@ -336,7 +336,7 @@ void TupTimeLineTable::insertSoundLayer(int layerIndex, const QString &name)
 void TupTimeLineTable::removeLayer(int layerIndex)
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::removeLayer()] - layerIndex -> " << layerIndex;
+        qDebug() << "[TupTimeLineTable::removeLayer()] - layerIndex ->" << layerIndex;
     #endif
 
     removingLayer = true;
@@ -416,7 +416,7 @@ int TupTimeLineTable::lastFrameByLayer(int layerIndex)
 void TupTimeLineTable::insertFrame(int layerIndex)
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::insertFrame()] - layerIndex -> " << layerIndex;
+        qDebug() << "[TupTimeLineTable::insertFrame()] - layerIndex ->" << layerIndex;
     #endif
 
     if (layerIndex < 0 || layerIndex >= rowCount())
@@ -555,7 +555,7 @@ void TupTimeLineTable::setAttribute(int layerIndex, int frameIndex, TupTimeLineT
 {
     /*
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::setAttribute()] - attribute -> " << att << " - value -> " << value;
+        qDebug() << "[TupTimeLineTable::setAttribute()] - attribute ->" << att << " - value ->" << value;
     #endif
     */
 
@@ -598,8 +598,8 @@ void TupTimeLineTable::updateFrameState(int layerIndex, int frameIndex, bool val
 {
     /*
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::updateFrameState()] - layerIndex -> " << layerIndex;
-        qDebug() << "[TupTimeLineTable::updateFrameState()] - frameIndex -> " << frameIndex;
+        qDebug() << "[TupTimeLineTable::updateFrameState()] - layerIndex ->" << layerIndex;
+        qDebug() << "[TupTimeLineTable::updateFrameState()] - frameIndex ->" << frameIndex;
     #endif
     */
 
@@ -650,8 +650,8 @@ void TupTimeLineTable::mouseMoveEvent(QMouseEvent *event)
 void TupTimeLineTable::keyPressEvent(QKeyEvent *event)
 {
     /*
-      qDebug() << "TupTimeLineTable::keyPressEvent() - event->key() -> " << event->key();
-      qDebug() << "TupTimeLineTable::keyPressEvent() - event->modifiers() -> " << event->modifiers();
+      qDebug() << "TupTimeLineTable::keyPressEvent() - event->key() ->" << event->key();
+      qDebug() << "TupTimeLineTable::keyPressEvent() - event->modifiers() ->" << event->modifiers();
     */
 
     // SQA: Check if this piece of code is obsolete 
@@ -804,8 +804,8 @@ void TupTimeLineTable::selectFrame(int layerIndex, int frameIndex)
 void TupTimeLineTable::selectFrame(int layerIndex, int frameIndex, const QString &selection)
 {
     #ifdef TUP_DEBUG
-        qDebug() << "[TupTimeLineTable::selectFrame()] - layerIndex -> " << layerIndex
-                 << " - frameIndex -> " << frameIndex << " - selection -> " << selection;
+        qDebug() << "[TupTimeLineTable::selectFrame()] - layerIndex ->" << layerIndex
+                 << " - frameIndex ->" << frameIndex << " - selection ->" << selection;
     #endif
 
     blockSignals(true);
