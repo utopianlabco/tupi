@@ -1,15 +1,15 @@
 /***************************************************************************
- *   Project TUPITUBE DESK                                                *
- *   Project Contact: info@maefloresta.com                                 *
- *   Project Website: http://www.maefloresta.com                           *
- *   Project Leader: Gustav Gonzalez <info@maefloresta.com>                *
+ *   Project TupiTube Desk                                                 *
+ *   Project Contact: info@tupitube.com                                    *
+ *   Project Website: http://www.tupitube.com                              * 
  *                                                                         *
  *   Developers:                                                           *
+ *   2025:                                                                 *
+ *    Naara's Development Team                                             *
  *   2010:                                                                 *
- *    Gustavo Gonzalez / xtingray                                          *
- *                                                                         *
- *   KTooN's versions:                                                     * 
- *                                                                         *
+ *    Gustav Gonzalez                                                      *
+ *   ---                                                                   *
+ *   KTooN's versions:                                                     *
  *   2006:                                                                 *
  *    David Cuadrado                                                       *
  *    Jorge Cuadrado                                                       *
@@ -17,7 +17,6 @@
  *    Fernado Roldan                                                       *
  *    Simena Dinas                                                         *
  *                                                                         *
- *   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       *
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,7 +30,7 @@
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- ***************************************************************************/
+ ***************************************************************************/ 
 
 #include "tuptimelinetable.h"
 #include "tconfig.h"
@@ -44,7 +43,7 @@ class TupTimeLineTableItemDelegate : public QItemDelegate
         TupTimeLineTableItemDelegate(QObject *parent = nullptr);
         ~TupTimeLineTableItemDelegate();
 
-        virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+        // virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
         virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     private:
@@ -61,6 +60,7 @@ TupTimeLineTableItemDelegate::~TupTimeLineTableItemDelegate()
 {
 }
 
+/*
 QSize TupTimeLineTableItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option)
@@ -68,6 +68,7 @@ QSize TupTimeLineTableItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 
     return QSize(5, 5);
 }
+*/
 
 void TupTimeLineTableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -252,13 +253,6 @@ void TupTimeLineTable::setTableHeaders(int fps)
     #ifdef TUP_DEBUG
         qDebug() << "[TupTimeLineTable::setTableHeaders()]";
     #endif
-
-    /*
-    setItemDelegate(new TupTimeLineTableItemDelegate(this));
-    setSelectionBehavior(QAbstractItemView::SelectItems);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
-    */
 
     TupTimeLineRuler *ruler = new TupTimeLineRuler(fps, this);
     setHorizontalHeader(ruler);
