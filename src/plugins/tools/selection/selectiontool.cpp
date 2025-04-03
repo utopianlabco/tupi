@@ -93,10 +93,10 @@ void SelectionTool::init(TupGraphicsScene *scene)
         #endif
     #endif
 
-    k->targetIsIncluded = false; 
-    clearSelection();
-
     k->scene = scene;
+    k->targetIsIncluded = false; 
+
+    clearSelection();
     k->scene->clearSelection();
     k->nodeZValue = (2*ZLAYER_LIMIT) + (scene->scene()->layersCount() * ZLAYER_LIMIT);
     initItems(scene);
@@ -151,7 +151,7 @@ void SelectionTool::press(const TupInputDeviceInformation *input, TupBrushManage
     // If Control key is pressed / allow multiple selection picking items one by one 
     if (input->keyModifiers() != Qt::ControlModifier) {
         foreach (NodeManager *nodeManager, k->nodeManagers) {
-                 if (!nodeManager->isPress()) {
+                 if (!nodeManager->isPressed()) {
                      nodeManager->parentItem()->setSelected(false);
                      k->nodeManagers.removeAll(nodeManager);
                      scene->drawCurrentPhotogram();
@@ -348,6 +348,7 @@ void SelectionTool::setupActions()
 {
     k->targetIsIncluded = false;
     k->activeSelection = false;
+    k->nodeManagers.clear();
     k->scaleFactor = 1;
     k->realFactor = 1;
 
@@ -391,12 +392,13 @@ void SelectionTool::aboutToChangeScene(TupGraphicsScene *scene)
         #endif
     #endif
 
-    init(scene);
+    Q_UNUSED(scene);
+
+    clearSelection();
 }
 
 void SelectionTool::aboutToChangeTool()
 {
-    /*
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
             qDebug() << "[SelectionTool::aboutToChangeTool()]";
@@ -404,7 +406,8 @@ void SelectionTool::aboutToChangeTool()
             T_FUNCINFOX("tools");
         #endif
     #endif
-    */
+
+    init(k->scene);
 }
 
 void SelectionTool::itemResponse(const TupItemResponse *response)
@@ -616,32 +619,19 @@ void SelectionTool::applyFlip(Settings::Flip flip)
     k->selectedObjects = k->scene->selectedItems();
 
     foreach (QGraphicsItem *item, k->selectedObjects) {
-             QRectF rect = item->sceneBoundingRect();
-             QPointF point = rect.topLeft();
-             QMatrix m;
-             m.translate(point.x(), point.y());
+             foreach (NodeManager *manager, k->nodeManagers) {
+                      if (flip == Settings::Horizontal)
+                          manager->horizontalFlip();
+                      else if (flip == Settings::Vertical)
+                               manager->verticalFlip();
+                      else if (flip == Settings::Crossed)
+                               manager->crossedFlip();
 
-             if (flip == Settings::Horizontal)
-                 m.scale(-1.0, 1.0);
-             else if (flip == Settings::Vertical)
-                      m.scale(1.0, -1.0);
-             else if (flip == Settings::Crossed)
-                      m.scale(-1.0, -1.0);
-
-             m.translate(-point.x(), -point.y());
-             item->setMatrix(m, true);
-             rect = item->sceneBoundingRect();
-             QPointF point2 = rect.topLeft();
-
-             QPointF result = point - point2;
-             item->moveBy(result.x(), result.y());
-
-             foreach (NodeManager *node, k->nodeManagers) {
-                      if (node->isModified()) {
+                      if (manager->isModified()) {
                           QDomDocument doc;
                           doc.appendChild(TupSerializer::properties(item, doc));
 
-                          TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(node->parentItem());
+                          TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(manager->parentItem());
                           int position = -1;
                           TupLibraryObject::Type type = TupLibraryObject::Item;
                           TupFrame *frame = currentFrame();
@@ -649,7 +639,7 @@ void SelectionTool::applyFlip(Settings::Flip flip)
                               type = TupLibraryObject::Svg;
                               position = frame->indexOf(svg);
                           } else {
-                              position = frame->indexOf(node->parentItem());
+                              position = frame->indexOf(manager->parentItem());
                           }
 
                           TupProjectRequest event = TupRequestBuilder::createItemRequest(
@@ -934,15 +924,16 @@ void SelectionTool::requestTransformation(QGraphicsItem *item, TupFrame *frame)
 
 void SelectionTool::clearSelection()
 {
-    if (!k->nodeManagers.isEmpty()) {
-        foreach (NodeManager *nodeManager, k->nodeManagers) {
-                 nodeManager->parentItem()->setSelected(false);
-                 k->nodeManagers.removeAll(nodeManager);
+    if (k->activeSelection) {
+        if (!k->nodeManagers.isEmpty()) {
+            foreach (NodeManager *nodeManager, k->nodeManagers) {
+                     nodeManager->parentItem()->setSelected(false);
+                     k->nodeManagers.removeAll(nodeManager);
+            }
+            k->nodeManagers.clear();
         }
-        k->nodeManagers.clear();
         k->selectedObjects.clear();
-        if (k->activeSelection)
-            k->activeSelection = false;
+        k->activeSelection = false;
         k->scene->drawCurrentPhotogram();
     }
 }

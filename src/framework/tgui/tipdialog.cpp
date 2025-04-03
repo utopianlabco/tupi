@@ -54,12 +54,14 @@ void TipDialog::setupGUI()
     setWindowTitle(tags.at(0));
     setWindowIcon(QPixmap(THEME_DIR + "icons/bubble.png"));
 
+    /*
     int h;
     int s;
     int v;
     QColor baseColor = palette().base().color();
     baseColor.getHsv(&h,&s,&v);
     baseColor.setHsv(h, int(s*(71/76.0)), int(v*(67/93.0)));
+    */
     
     QVBoxLayout *layout = new QVBoxLayout(this);
     textBrowser = new QTextBrowser;
@@ -72,7 +74,7 @@ void TipDialog::setupGUI()
 #ifdef Q_OS_WIN
     QString resources = SHARE_DIR + "help/";
 #else
-	QString resources = SHARE_DIR + "data/help/";
+    QString resources = SHARE_DIR + "data/help/";
 #endif	
 
     path << resources + "css";

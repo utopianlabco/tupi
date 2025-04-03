@@ -33,110 +33,75 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupanimationrenderer.h"
-#include "tupgraphicsscene.h"
-#include "tuplayer.h"
-#include "tupframe.h"
-#include "tupscene.h"
-#include "tupgraphicobject.h"
+#include "tupmsgdialog.h"
+#include "tapplicationproperties.h"
+#include "tseparator.h"
+#include "talgorithm.h"
 
-struct TupAnimationRenderer::Private
+#include <QVBoxLayout>
+#include <QPushButton>
+
+TupMsgDialog::TupMsgDialog(const QString &message, QSize dialogSize, QWidget *parent) : QDialog(parent)
 {
-    TupGraphicsScene *scene;
-    int totalPhotograms;
-    int currentPhotogram;
-    QColor bgColor;
+    setModal(true);
+    msg = message;
+    size = dialogSize;
+    if (size == QSize(0, 0))
+        size = QSize(200, 100);
 
-    Private() : scene(0), totalPhotograms(-1), currentPhotogram(0) {}
-
-    ~Private() {
-         delete scene;
-    }
-
-    int calculateTotalPhotograms(TupScene *scene);
-};
-
-TupAnimationRenderer::TupAnimationRenderer(const QColor color, TupLibrary *library) : k(new Private)
-{
-    k->bgColor = color;
-    k->scene = new TupGraphicsScene;
-    k->scene->setLibrary(library);
-    k->scene->setBackgroundBrush(k->bgColor);
+    setupGUI();
 }
 
-TupAnimationRenderer::~TupAnimationRenderer()
+TupMsgDialog::~TupMsgDialog()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~TupAnimationRenderer()]";
-        #else
-            TEND;
-        #endif
-    #endif
-
-    // SQA: Check why this instruction crashes the application 
-    // delete k;
 }
 
-int TupAnimationRenderer::Private::calculateTotalPhotograms(TupScene *scene)
+void TupMsgDialog::setupGUI()
 {
-    Layers layers = scene->layers();
+    setWindowTitle(tr("Breaking News!"));
+    setWindowIcon(QPixmap(THEME_DIR + "icons/bubble.png"));
 
-    int total = 0;
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    textBrowser = new QTextBrowser;
+    textBrowser->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    textBrowser->setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    textBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    textBrowser->setOpenExternalLinks(true);
+    QStringList path;
+#ifdef Q_OS_WIN
+    QString resources = SHARE_DIR + "help/";
+#else
+    QString resources = SHARE_DIR + "data/help/";
+#endif
+    path << resources + "css";
+    path << resources + "images";
+    textBrowser->setSearchPaths(path);
 
-    int totalLayers = layers.size();
-    for (int i = 0; i < totalLayers; i++) {
-         TupLayer *layer = layers.at(i);
-         if (layer)
-             total = qMax(total, layer->frames().count());
-    }
+    int index = TAlgorithm::random() % 3;
+    QString html = "<html>\n";
+    html += "<head>\n";
+    html += "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html;charset=utf-8\">\n";
+    html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"file:tupi.css\" />\n";
+    html += "</head>\n";
+    html += "<body class=\"tip_background0" + QString::number(index) + "\">\n";
+    html += msg;
+    html += "\n</body>\n";
+    html += "</html>";
 
-    return total;
+    textBrowser->setHtml(html);
+
+    QPushButton *closeButton = new QPushButton(tr("Close"));
+    layout->addWidget(closeButton);
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(closeButton, 1, Qt::AlignHCenter);
+
+    layout->addWidget(textBrowser);
+    layout->addWidget(new TSeparator);
+    layout->addLayout(buttonLayout);
+
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
+    setFixedSize(size);
 }
-
-void TupAnimationRenderer::setScene(TupScene *scene, QSize dimension)
-{
-    k->scene->setCurrentScene(scene);
-    k->scene->setSceneRect(QRectF(QPointF(0,0), dimension));
-
-    // k->scene->drawPhotogram(0, false); // ### SQA: Why whithout this doesn't work?
-    k->currentPhotogram = -1;
-
-    k->totalPhotograms = k->calculateTotalPhotograms(scene);
-}
-
-bool TupAnimationRenderer::nextPhotogram()
-{
-    if (k->totalPhotograms < 0) 
-        return false;
-
-    k->currentPhotogram++;
-
-    if (k->currentPhotogram == k->totalPhotograms)
-        return false;
-
-    k->scene->drawPhotogram(k->currentPhotogram, TupGraphicsScene::Player);
-
-    return true;
-}
-
-void TupAnimationRenderer::renderPhotogram(int index) 
-{
-    k->scene->drawPhotogram(index, TupGraphicsScene::Player);
-}
-
-void TupAnimationRenderer::render(QPainter *painter)
-{
-    k->scene->render(painter, k->scene->sceneRect().toRect(), k->scene->sceneRect().toRect(), Qt::IgnoreAspectRatio);
-}
-
-int TupAnimationRenderer::currentPhotogram() const
-{
-    return k->currentPhotogram;
-}
-
-int TupAnimationRenderer::totalPhotograms() const
-{
-    return k->totalPhotograms;
-}
-

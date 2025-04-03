@@ -102,7 +102,6 @@ void TipDatabase::loadTips(const QString &filePath)
     QDomNode n = docElem.firstChild();
 
     while(!n.isNull()) {
-
         QDomElement e = n.toElement();
 
         if(!e.isNull()) {

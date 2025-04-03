@@ -62,6 +62,7 @@ struct TupItemTweener::Private
 
     // Position Tween
     QString path;
+    QString intervals;
 
     // Rotation Tween
     TupItemTweener::RotationType rotationType;
@@ -346,6 +347,7 @@ void TupItemTweener::fromXml(const QString &xml)
                            k->compPositionFrames = e.attribute("frames").toInt();
 
                            k->path = e.attribute("coords");
+                           k->intervals = e.attribute("intervals");
                        }
                        if (e.tagName() == "rotation") {
                            // tError() << "TupItemTweener::fromXml() - Processing rotation settings";
@@ -356,14 +358,13 @@ void TupItemTweener::fromXml(const QString &xml)
 
                            k->rotationType = TupItemTweener::RotationType(root.attribute("rotationType").toInt());
                            k->rotateSpeed = root.attribute("rotateSpeed").toInt();
+                           k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
 
-                           if (k->rotationType == TupItemTweener::Continuos) {
-                               k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
-                           } else if (k->rotationType == TupItemTweener::Partial) {
-                                      k->rotateLoop = root.attribute("rotateLoop").toInt();
-                                      k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
-                                      k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
-                                      k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
+                           if (k->rotationType == TupItemTweener::Partial) {
+                               k->rotateLoop = root.attribute("rotateLoop").toInt();
+                               k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
+                               k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
+                               k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
                            }
                        }
 
@@ -401,21 +402,21 @@ void TupItemTweener::fromXml(const QString &xml)
             }
 
         } else {
-
-            if (k->type == TupItemTweener::Position)
+            if (k->type == TupItemTweener::Position) {
                 k->path = root.attribute("coords");
+                k->intervals = root.attribute("intervals");
+            }
 
             if (k->type == TupItemTweener::Rotation) {
                 k->rotationType = TupItemTweener::RotationType(root.attribute("rotationType").toInt()); 
                 k->rotateSpeed = root.attribute("rotateSpeed").toInt();
+                k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
 
-                if (k->rotationType == TupItemTweener::Continuos) {
-                    k->rotateDirection = TupItemTweener::RotateDirection(root.attribute("rotateDirection").toInt());
-                } else if (k->rotationType == TupItemTweener::Partial) {
-                           k->rotateLoop = root.attribute("rotateLoop").toInt();
-                           k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
-                           k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
-                           k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
+                if (k->rotationType == TupItemTweener::Partial) {
+                    k->rotateLoop = root.attribute("rotateLoop").toInt();
+                    k->rotateStartDegree = root.attribute("rotateStartDegree").toInt();
+                    k->rotateEndDegree = root.attribute("rotateEndDegree").toInt();
+                    k->rotateReverseLoop = root.attribute("rotateReverseLoop").toInt();
                 }
             }
 
@@ -525,6 +526,7 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
                  position.setAttribute("init", QString::number(k->compPositionInitFrame));
                  position.setAttribute("frames", QString::number(k->compPositionFrames));
                  position.setAttribute("coords", k->path);
+                 position.setAttribute("intervals", k->intervals);
                  settings.appendChild(position);
              }
         }
@@ -532,20 +534,21 @@ QDomElement TupItemTweener::toXml(QDomDocument &doc) const
         root.appendChild(settings); 
 
     } else { 
-        if (k->type == TupItemTweener::Position)
+        if (k->type == TupItemTweener::Position) {
             root.setAttribute("coords", k->path);
+            root.setAttribute("intervals", k->intervals);
+        }
 
         if (k->type == TupItemTweener::Rotation) {
             root.setAttribute("rotationType", k->rotationType);
             root.setAttribute("rotateSpeed", QString::number(k->rotateSpeed));
+            root.setAttribute("rotateDirection", k->rotateDirection);
 
-            if (k->rotationType == TupItemTweener::Continuos) {
-                root.setAttribute("rotateDirection", k->rotateDirection); 
-            } else if (k->rotationType == TupItemTweener::Partial) {
-                       root.setAttribute("rotateLoop", QString::number(k->rotateLoop));
-                       root.setAttribute("rotateStartDegree", QString::number(k->rotateStartDegree));
-                       root.setAttribute("rotateEndDegree", QString::number(k->rotateEndDegree)); 
-                       root.setAttribute("rotateReverseLoop", QString::number(k->rotateReverseLoop));
+            if (k->rotationType == TupItemTweener::Partial) {
+                root.setAttribute("rotateLoop", QString::number(k->rotateLoop));
+                root.setAttribute("rotateStartDegree", QString::number(k->rotateStartDegree));
+                root.setAttribute("rotateEndDegree", QString::number(k->rotateEndDegree)); 
+                root.setAttribute("rotateReverseLoop", QString::number(k->rotateReverseLoop));
             }
         }
 
@@ -603,6 +606,16 @@ QGraphicsPathItem *TupItemTweener::graphicsPath() const
     item->setPath(path);
 
     return item;
+}
+
+QList<int> TupItemTweener::intervals()
+{
+    QList<int> sections;
+    QStringList list = k->intervals.split(",");
+    foreach (QString section, list)
+             sections << section.toInt();
+
+    return sections;
 }
 
 QString TupItemTweener::tweenType()

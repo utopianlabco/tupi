@@ -124,6 +124,7 @@ class TUPI_EXPORT TupLibraryWidget : public TupModuleWidgetBase
         void openMyPaintToEdit(QTreeWidgetItem *item);
         void updateItemFromSaveAction();
         void updateItemEditionState();
+        void importNativeObjects();
 
     public slots:
         void addFolder(const QString &folderName = QString());
@@ -150,6 +151,8 @@ class TUPI_EXPORT TupLibraryWidget : public TupModuleWidgetBase
         void verifyFramesAvailability(int filesTotal);
         void setDefaultPath(const QString &path);
         void saveDefaultPath(const QString &dir);
+        void importNativeObject(const QString &object);
+        QStringList naturalSort(QStringList photograms);
 
         struct Private;
         Private *const k;

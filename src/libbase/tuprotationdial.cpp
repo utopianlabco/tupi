@@ -6,9 +6,9 @@
  *                                                                         *
  *   Developers:                                                           *
  *   2010:                                                                 *
- *    Gustavo Gonzalez / xtingray                                          *
+ *    Gustavo Gonzalez                                                     *
  *                                                                         *
- *   KTooN's versions:                                                     * 
+ *   KTooN's versions:                                                     *
  *                                                                         *
  *   2006:                                                                 *
  *    David Cuadrado                                                       *
@@ -33,41 +33,56 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPANIMATIONRENDERER_H
-#define TUPANIMATIONRENDERER_H
+#include "tuprotationdial.h"
 
-#include "tglobal.h"
+#include <QBoxLayout>
+#include <QDial>
+#include <QLabel>
 
-#include <QColor>
-#include <QSize>
-#include <QPainter>
-
-class QPainter;
-class TupScene;
-class TupLibrary;
-
-/**
- * @author David Cuadrado
-*/
-
-class TUPI_EXPORT TupAnimationRenderer
+struct TupRotationDial::Private
 {
-    public:
-        TupAnimationRenderer(const QColor color, TupLibrary *library=0);
-        ~TupAnimationRenderer();
-
-        void setScene(TupScene *scene, QSize dimension);
-
-        bool nextPhotogram();
-        void renderPhotogram(int index);
-        void render(QPainter *painter);
-
-        int currentPhotogram() const;
-        int totalPhotograms() const;
-
-    private:
-        struct Private;
-        Private *const k;
+    QDial *dial;
+    QLabel *label;
 };
 
-#endif
+TupRotationDial::TupRotationDial(QWidget *parent) : QDialog(parent, Qt::CustomizeWindowHint), k(new Private)
+{
+    setModal(true);
+    setAttribute(Qt::WA_TranslucentBackground);
+
+    QBoxLayout *layout = new QVBoxLayout(this);
+    k->dial = new QDial;
+    connect(k->dial, SIGNAL(valueChanged(int)), this, SLOT(updateAngle(int)));
+    k->dial->setRange(0, 360);
+    layout->addWidget(k->dial);
+    k->label = new QLabel;
+    k->label->setAttribute(Qt::WA_TranslucentBackground);
+    k->label->setAlignment(Qt::AlignHCenter);
+    QFont f = font();
+    f.setBold(true);
+    f.setPointSize(f.pointSizeF() + 5);
+    k->label->setFont(f);
+    layout->addWidget(k->label);
+}
+
+TupRotationDial::~TupRotationDial()
+{
+}
+
+void TupRotationDial::updateAngle(int angle)
+{
+    k->label->setText(QString::number(angle));
+    emit valueChanged(angle);
+}
+
+void TupRotationDial::setAngle(int angle)
+{
+    k->dial->setSliderPosition(angle);
+    k->label->setText(QString::number(angle)); 
+}
+
+void TupRotationDial::keyReleaseEvent(QKeyEvent *event)
+{
+    Q_UNUSED(event);
+    close();
+}

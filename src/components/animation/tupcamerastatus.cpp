@@ -37,11 +37,13 @@
 
 struct TupCameraStatus::Private
 {
-    QSpinBox *fps;
+    QSpinBox *fpsBox;
     QComboBox *scenes;
     QLabel *framesCount;
+    QLabel *duration;
     QCheckBox *loopBox;
     bool loop;
+    int framesTotal;
 };
 
 TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWidget *parent) : QFrame(parent), k(new Private)
@@ -54,28 +56,14 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
         #endif
     #endif
 
+    k->framesTotal = 1;
+
     setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
-    // setMidLineWidth(2);
-    // setLineWidth(1);
 
     QBoxLayout *sceneInfoLayout = new QBoxLayout(QBoxLayout::LeftToRight, parent);
-    // sceneInfoLayout->addStretch(1);
 
-    // sceneInfoLayout->setSpacing(0);
-    // sceneInfoLayout->setMargin(3);
-
-    // QFont font = this->font();
-// #ifndef Q_OS_MAC
-    // font.setPointSize(8);
-// #endif
-
-    QLabel *sceneNameText = new QLabel("<B>" + tr("Scene name") + ":</B> ");
-    // sceneNameText->setFont(font);
-
+    QLabel *sceneNameText = new QLabel("<B>" + tr("Scene") + ":</B> ");
     k->scenes = new QComboBox();
-    // k->scenes->setIconSize(QSize(15, 15));
-    // k->scenes->setMaximumWidth(120);
-    // k->scenes->setFont(font);
     connect(k->scenes, SIGNAL(activated(int)), this, SIGNAL(sceneIndexChanged(int)));
 
     sceneInfoLayout->addWidget(sceneNameText, 1);
@@ -83,10 +71,7 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
     sceneInfoLayout->addSpacing(20);
 
     QLabel *label = new QLabel("<B>" + tr("Frames total") + ":</B> ");
-    // label->setFont(font);
-
     k->framesCount = new QLabel;
-    // k->framesCount->setFont(font);
 
     sceneInfoLayout->addWidget(label, 1);
     sceneInfoLayout->addWidget(k->framesCount, 1);
@@ -94,24 +79,27 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
     sceneInfoLayout->addSpacing(20);
 
     QLabel *fpsText = new QLabel("<B>" + tr("FPS") + ":</B> ");
-    // fpsText->setFont(font);
 
-    k->fps = new QSpinBox();
-    // k->fps->setMinimum(1);
-    // k->fps->setMaximum(100);
-    k->fps->setValue(24);
+    k->fpsBox = new QSpinBox();
+    k->fpsBox->setMinimum(1);
+    k->fpsBox->setValue(24);
 
-    connect(k->fps, SIGNAL(valueChanged(int)), camera, SLOT(setFPS(int)));
+    connect(k->fpsBox, SIGNAL(valueChanged(int)), camera, SLOT(setFPS(int)));
+    connect(k->fpsBox, SIGNAL(valueChanged(int)), this, SLOT(setDuration()));
 
     sceneInfoLayout->addWidget(fpsText, 1);
-    sceneInfoLayout->addWidget(k->fps, 1);
+    sceneInfoLayout->addWidget(k->fpsBox, 1);
+    sceneInfoLayout->addSpacing(20);
 
+    QLabel *durationLabel = new QLabel("<B>" + tr("Duration") + ":</B> ");
+    k->duration = new QLabel();
+    sceneInfoLayout->addWidget(durationLabel, 1);
+    sceneInfoLayout->addWidget(k->duration, 1);
     sceneInfoLayout->addSpacing(20);
 
     k->loopBox = new QCheckBox();
-    QPixmap pix(THEME_DIR + "icons/loop.png");
     k->loopBox->setToolTip(tr("Loop"));
-    k->loopBox->setIcon(pix); 
+    k->loopBox->setIcon(QPixmap(THEME_DIR + "icons/loop.png")); 
     k->loopBox->setFocusPolicy(Qt::NoFocus);
 
     k->loopBox->setShortcut(QKeySequence(tr("Ctrl+L")));
@@ -129,7 +117,6 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
 
     QPushButton *exportButton = new QPushButton(tr("Export"));
     exportButton->setIcon(QIcon(THEME_DIR + "icons/export_button.png"));
-    // exportButton->setFont(font);
     exportButton->setFocusPolicy(Qt::NoFocus);
 
     connect(exportButton, SIGNAL(pressed()), camera, SLOT(exportDialog()));
@@ -139,7 +126,6 @@ TupCameraStatus::TupCameraStatus(TupCameraWidget *camera, bool isNetworked, QWid
         sceneInfoLayout->addSpacing(5);
         QPushButton *postButton = new QPushButton(tr("Post"));
         postButton->setIcon(QIcon(THEME_DIR + "icons/import_project.png"));
-        // postButton->setFont(font);
         postButton->setFocusPolicy(Qt::NoFocus);
 
         connect(postButton, SIGNAL(pressed()), camera, SLOT(postDialog()));
@@ -162,15 +148,27 @@ TupCameraStatus::~TupCameraStatus()
 
 void TupCameraStatus::setFPS(int frames)
 {
+    /*
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupScreen::setFPS()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+    */
+
     if (frames > 0 && frames < 101)
-        k->fps->setValue(frames);
+        k->fpsBox->setValue(frames);
     else
-        k->fps->setValue(24);
+        k->fpsBox->setValue(24);
+
+    setDuration();
 }
 
 int TupCameraStatus::getFPS()
 {
-    return k->fps->value();
+    return k->fpsBox->value();
 }
 
 void TupCameraStatus::setCurrentScene(int index)
@@ -189,13 +187,14 @@ void TupCameraStatus::setScenes(TupProject *project)
          TupScene *scene = project->scenes().at(i);
          if (scene)
              k->scenes->addItem(scene->sceneName());
-
     }
 }
 
 void TupCameraStatus::setFramesTotal(const QString &frames)
 {
     k->framesCount->setText(frames);
+    k->framesTotal = frames.toInt();
+    setDuration();
 }
 
 bool TupCameraStatus::isLooping()
@@ -205,4 +204,11 @@ bool TupCameraStatus::isLooping()
     TCONFIG->setValue("Loop", k->loop);
 
     return k->loop;
+}
+
+void TupCameraStatus::setDuration()
+{
+    int fps = k->fpsBox->value();
+    qreal duration = (qreal) k->framesTotal / (qreal) fps;
+    k->duration->setText(QString::number(duration, 'f', 2) + QString(" " + tr("secs")));
 }

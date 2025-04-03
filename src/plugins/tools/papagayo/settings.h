@@ -63,6 +63,9 @@ class TUPI_PLUGIN Settings : public QWidget
         void openLipSyncProperties(TupLipSync *lipsync);
         void updateInterfaceRecords();
 
+        void setPhoneme(const QString &phoneme);
+        void setPos(const QPointF &point);
+
     private slots:
         void setCurrentMouth(int index);
         void updateInitFrame(int index);
@@ -71,6 +74,8 @@ class TUPI_PLUGIN Settings : public QWidget
         void initFrameHasChanged(int index);
         void selectMouth(const QString &id, int index);
         void closeLipSyncProperties();
+        void xPosChanged(int x);
+        void yPosChanged(int y);
 
     private:
         void setInnerForm();

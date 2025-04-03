@@ -53,12 +53,13 @@ struct Settings::Private
 
 Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
 {
+/*    
 #ifndef Q_OS_MAC
     QFont font = this->font();
     font.setPointSize(8);
     setFont(font);
 #endif
-
+*/
     QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QLabel *toolTitle = new QLabel;
@@ -161,10 +162,16 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     position->setAlignment(Qt::AlignHCenter);
     toolsLayout->addWidget(position);
 
+    QLabel *xLabel = new QLabel(tr("X") + ": ");
+    xLabel->setMaximumWidth(20);
+
     k->xPosField = new QSpinBox;
     k->xPosField->setMinimum(-5000);
     k->xPosField->setMaximum(5000);
     connect(k->xPosField, SIGNAL(valueChanged(int)), this, SLOT(notifyXMovement(int))); 
+
+    QLabel *yLabel = new QLabel(tr("Y") + ": ");
+    yLabel->setMaximumWidth(20);
 
     k->yPosField = new QSpinBox;
     k->yPosField->setMinimum(-5000);
@@ -174,8 +181,21 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->xPosField->setEnabled(false);
     k->yPosField->setEnabled(false);
 
-    toolsLayout->addWidget(k->xPosField);
-    toolsLayout->addWidget(k->yPosField);
+    QBoxLayout *xLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    xLayout->setMargin(0);
+    xLayout->setSpacing(0);
+    xLayout->addWidget(xLabel);
+    xLayout->addWidget(k->xPosField);
+
+    toolsLayout->addLayout(xLayout);
+
+    QBoxLayout *yLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    yLayout->setMargin(0);
+    yLayout->setSpacing(0);
+    yLayout->addWidget(yLabel);
+    yLayout->addWidget(k->yPosField);
+
+    toolsLayout->addLayout(yLayout);
 
     toolsLayout->addWidget(new TSeparator(Qt::Horizontal));
 

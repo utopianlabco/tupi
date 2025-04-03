@@ -55,6 +55,7 @@
 #include "tuplibraryobject.h"
 #include "tupscene.h"
 #include "tuplayer.h"
+// #include "talgorithm.h"
 
 struct Tweener::Private
 {
@@ -79,6 +80,8 @@ struct Tweener::Private
     QPointF itemObjectReference;
     QPointF pathOffset;
     QPointF firstNode;
+    QPointF objectPos;
+    QList<TupEllipseItem *> dots; 
 
     int baseZValue;
 };
@@ -87,6 +90,7 @@ Tweener::Tweener() : TupToolPlugin(), k(new Private)
 {
     setupActions();
 
+    k->isPathInScene = false;
     k->configurator = 0;
     k->path = 0;
     k->nodesGroup = 0;
@@ -114,22 +118,25 @@ void Tweener::init(TupGraphicsScene *scene)
         #endif
     #endif
 
-    if (k->nodesGroup) {
-        k->nodesGroup->clear();
-        delete k->nodesGroup;
-        k->nodesGroup = 0;
-    }
+    if (k->isPathInScene) {
+        if (k->nodesGroup) {
+            k->nodesGroup->clear();
+            delete k->nodesGroup;
+            k->nodesGroup = 0;
+        }
 
-    if (k->path) {
-        delete k->path;
-        k->path = 0;
+        if (k->path) {
+            delete k->path;
+            k->path = 0;
+        }
+
+        k->isPathInScene = false;
     }
 
     k->scene = scene;
     k->objects.clear();
     k->baseZValue = (2*ZLAYER_LIMIT) + (scene->scene()->layersCount() * ZLAYER_LIMIT);
 
-    k->isPathInScene = false;
     k->pathOffset = QPointF(0, 0); 
     k->firstNode = QPointF(0, 0);
     k->itemObjectReference = QPointF(0, 0);
@@ -242,6 +249,8 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
 
                     k->firstNode = newPos;
                 }
+
+                updateTweenPoints();
             }
         } else {
             if (scene->selectedItems().size() > 0) {
@@ -274,8 +283,9 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
                     int distanceX = newPos.x() - oldPos.x();
                     int distanceY = newPos.y() - oldPos.y();
                     k->path->moveBy(distanceX, distanceY);
-
                     k->pathOffset = QPointF(distanceX, distanceY);
+
+                    // k->firstNode = newPos;
                 }
             } 
         }
@@ -312,6 +322,7 @@ QWidget *Tweener::configurator()
         connect(k->configurator, SIGNAL(setMode(TupToolPlugin::Mode)), this, SLOT(updateMode(TupToolPlugin::Mode)));
         connect(k->configurator, SIGNAL(clickedApplyTween()), this, SLOT(applyTween()));
         connect(k->configurator, SIGNAL(getTweenData(const QString &)), this, SLOT(setCurrentTween(const QString &)));
+        connect(k->configurator, SIGNAL(framesTotalChanged()), this, SLOT(updateTweenPoints()));
     } else {
         k->mode = k->configurator->mode();
     }
@@ -330,11 +341,29 @@ void Tweener::aboutToChangeScene(TupGraphicsScene *scene)
 
 void Tweener::aboutToChangeTool()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::aboutToChangeTool()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     resetGUI();
 }
 
 void Tweener::resetGUI()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::resetGUI()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
+    k->configurator->clearData();
+
     if (k->editMode == TupToolPlugin::Selection) {
         clearSelection();
         disableSelection();
@@ -349,6 +378,9 @@ void Tweener::resetGUI()
                 k->nodesGroup->clear();
                 k->nodesGroup = 0;
             }
+
+            delete k->path;
+            k->path = 0;
         }
         return;
     }
@@ -369,6 +401,14 @@ void Tweener::setupActions()
 
 void Tweener::setTweenPath()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::setTweenPath()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     if (k->path) {
         k->pathOffset = QPointF(0, 0);
 
@@ -386,6 +426,8 @@ void Tweener::setTweenPath()
         }
         k->nodesGroup->show();
         k->nodesGroup->expandAllNodes();
+
+        paintTweenPoints();
     }
 
     k->editMode = TupToolPlugin::Properties;
@@ -446,8 +488,10 @@ QString Tweener::pathToCoords()
     int offsetX = k->pathOffset.x();
     int offsetY = k->pathOffset.y();
 
-    for (int i=0; i < k->path->path().elementCount(); i++) {
-         QPainterPath::Element e = k->path->path().elementAt(i);
+    QPainterPath path = k->path->path();
+    int total = path.elementCount(); 
+    for (int i=0; i < total; i++) {
+         QPainterPath::Element e = path.elementAt(i);
          switch (e.type) {
              case QPainterPath::MoveToElement:
              {
@@ -495,6 +539,14 @@ QString Tweener::pathToCoords()
 
 void Tweener::applyReset()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::applyReset()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     k->mode = TupToolPlugin::View;
     k->editMode = TupToolPlugin::None;
 
@@ -507,8 +559,7 @@ void Tweener::applyReset()
     }
 
     if (k->path) {
-        // if (k->initFrame == k->scene->currentFrameIndex())
-        // if (k->path)
+        removeTweenPoints();
         k->scene->removeItem(k->path);
         k->isPathInScene = false;
         k->path = 0;
@@ -518,7 +569,7 @@ void Tweener::applyReset()
     k->initLayer = k->scene->currentLayerIndex();
     k->initScene = k->scene->currentSceneIndex();
 
-    k->configurator->cleanData();
+    k->configurator->clearData();
 }
 
 /* This method applies to the project, the Tween created from this plugin */
@@ -577,6 +628,13 @@ void Tweener::applyTween()
                  TupLayer *layer = scene->layerAt(k->initLayer);
                  TupFrame *frame = layer->frameAt(k->currentTween->initFrame());
                  int objectIndex = frame->indexOf(item);
+
+                 /*
+                 QPainterPath path = k->path->path();
+                 QPolygonF points = path.toFillPolygon(); 
+                 QPointF point = points.at(0) - QPointF(item->boundingRect().width(), item->boundingRect().height());
+                 */
+
                  QPointF point = item->pos();
                  TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item); 
 
@@ -631,12 +689,13 @@ void Tweener::applyTween()
     }
 
     int framesNumber = framesCount();
-    int total = k->initFrame + k->configurator->totalSteps() - 1;
+    // int total = k->initFrame + k->configurator->totalSteps() - 1;
+    int total = k->initFrame + k->configurator->totalSteps();
     TupProjectRequest request;
 
     if (total > framesNumber) {
         int layersCount = k->scene->scene()->layersCount();
-        for (int i = framesNumber; i <= total; i++) {
+        for (int i = framesNumber; i < total; i++) {
              for (int j = 0; j < layersCount; j++) {
                   request = TupRequestBuilder::createFrameRequest(k->initScene, j, i, TupProjectRequest::Add, tr("Frame"));
                   emit requested(&request);
@@ -650,6 +709,21 @@ void Tweener::applyTween()
 
     setCurrentTween(name);
     TOsd::self()->display(tr("Info"), tr("Tween %1 applied!").arg(name), TOsd::Info);
+
+    /*
+    // SQA: Debugging code
+    // QColor color = TAlgorithm::randomColor(false);
+    QColor color = Qt::red;
+    QPolygonF points = k->path->path().toFillPolygon();
+    points.removeLast();
+    for (int i=0; i<points.size(); i++) {
+        QPen inkPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        TupEllipseItem *ellipse = new TupEllipseItem(QRectF(points.at(i), QSize(3, 3)));
+        ellipse->setPen(inkPen);
+        ellipse->setBrush(inkPen.brush());
+        k->scene->addItem(ellipse);
+    }
+    */
 }
 
 /* This method updates the data of the path into the tool panel 
@@ -666,7 +740,29 @@ void Tweener::updatePath()
         #endif
     #endif
 
+    QPainterPath::Element e = k->path->path().elementAt(0);
+    QPointF point = QPointF(e.x, e.y);
+    if (point != k->firstNode) {
+        int distanceX = point.x() - k->firstNode.x();
+        int distanceY = point.y() - k->firstNode.y();
+        k->firstNode = point;
+        k->pathOffset = QPointF(distanceX, distanceY);
+
+        if (k->objects.size() > 0) {
+            int i = 0;
+            foreach (QGraphicsItem *item, k->objects) {
+                     item->moveBy(distanceX, distanceY);
+                     if (i == 0) {
+                         QRectF rect = item->sceneBoundingRect();
+                         k->itemObjectReference = rect.center();
+                     }
+                     i++;
+            }
+        }
+    }
+
     k->configurator->updateSteps(k->path);
+    updateTweenPoints();
 }
 
 /* This method saves the settings of this plugin */
@@ -699,12 +795,14 @@ void Tweener::updateScene(TupGraphicsScene *scene)
                     k->nodesGroup->createNodes(k->path);
                     k->nodesGroup->show();
                     k->nodesGroup->expandAllNodes();
+
+                    k->dots.clear();
+                    paintTweenPoints();
                 }
             }
         } 
 
         int framesNumber = framesCount();
-
         if (k->configurator->startComboSize() < framesNumber)
             k->configurator->initStartCombo(framesNumber, k->initFrame);
 
@@ -719,7 +817,7 @@ void Tweener::updateScene(TupGraphicsScene *scene)
 
            if (k->editMode == TupToolPlugin::Properties) {
                k->path = 0;
-               k->configurator->cleanData();
+               k->configurator->clearData();
                k->configurator->activateMode(TupToolPlugin::Selection);
                clearSelection();
                setSelection();
@@ -785,6 +883,14 @@ void Tweener::setCurrentTween(const QString &name)
 
 void Tweener::setEditEnv()
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::setEditEnv()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     k->initFrame = k->currentTween->initFrame();
     k->initLayer = k->currentTween->initLayer();
     k->initScene = k->currentTween->initScene();
@@ -897,16 +1003,24 @@ void Tweener::frameResponse(const TupFrameResponse *event)
 {
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
-            qDebug() << "[Tweener::frameResponse()]";
+            qDebug() << "[Tweener::frameResponse()] " << event->frameIndex();
         #else
-            T_FUNCINFO;
+            T_FUNCINFO << event->frameIndex();
         #endif
     #endif
 
-    if (event->action() == TupProjectRequest::Remove && k->scene->currentLayerIndex() == event->layerIndex())
+    if (event->action() == TupProjectRequest::Remove && k->scene->currentLayerIndex() == event->layerIndex()) {
+        k->isPathInScene = false;
         init(k->scene);
+        return;
+    }
 
     if (event->action() == TupProjectRequest::Select) {
+        if (k->mode == TupToolPlugin::Edit) {
+            if (k->editMode == TupToolPlugin::Properties)
+                paintTweenPoints();
+        }
+
         if (k->initLayer != event->layerIndex() || k->initScene != event->sceneIndex()) {
             resetGUI();
             init(k->scene);
@@ -923,3 +1037,51 @@ TupToolPlugin::EditMode Tweener::currentEditMode()
 {
     return k->editMode;
 }
+
+void Tweener::removeTweenPoints()
+{
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::removeTweenPoints()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
+    int total = k->dots.size();
+    for (int i=0; i<total; i++)
+         k->scene->removeItem(k->dots.at(i));
+    k->dots.clear();
+}
+
+void Tweener::paintTweenPoints()
+{
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[Tweener::paintTweenPoints()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
+    if (k->dots.isEmpty()) {
+        QColor color = Qt::black;
+        QList<QPointF> points = k->configurator->tweenPoints();
+        int total = points.size();
+        for (int i=0; i<total; i++) {
+             QPen inkPen(color, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+             TupEllipseItem *ellipse = new TupEllipseItem(QRectF(points.at(i) - QPointF(2,2), QSize(4, 4)));
+             ellipse->setPen(inkPen);
+             ellipse->setBrush(inkPen.brush());
+             k->scene->addItem(ellipse);
+             k->dots << ellipse;
+        }
+    } 
+}
+
+void Tweener::updateTweenPoints()
+{
+    removeTweenPoints();
+    paintTweenPoints();
+}
+
