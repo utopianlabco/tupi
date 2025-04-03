@@ -1,3 +1,20 @@
+tupi (0.2+git08-6) unstable; urgency=medium
+
+  * QA upload.
+
+  * Added d/gbp.conf to describe branch layout.
+  * Updated vcs in d/control to Salsa.
+  * Updated d/gbp.conf to enforce the use of pristine-tar.
+  * Updated Standards-Version from 4.5.1 to 4.7.0.
+  * Use wrap-and-sort -at for debian control files.
+  * Update lintian override info to new format.
+  * Drop custom source compression.
+  * Drop transition for old debug package migration.
+  * Added 1070-ruby-3.2.patch to adjust ruby code to work with
+    Ruby 3.2 (Closes: #1094073).
+
+ -- Petter Reinholdtsen <pere@debian.org>  Thu, 03 Apr 2025 17:56:21 +0200
+
 tupi (0.2+git08-5) unstable; urgency=medium
 
   * QA upload.
