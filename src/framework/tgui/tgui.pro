@@ -3,14 +3,18 @@
 # Subdir relative project main directory: ./src/framework/tgui
 # Target is a library: tupifwgui 
 
-!include(../tupconfig.pri){
+!include(../tupconfig.pri) {
     error("Run ./configure first!")
 }
 
-INSTALLS += include target 
-target.path = /lib/ 
-include.files += *.h 
-include.path = /include/tupigui 
+INSTALLS += target
+target.path = /lib/
+
+contains(DEFINES, ADD_HEADERS) {
+    INSTALLS += headers 
+    headers.files += *.h
+    headers.path = /include/tupigui
+}
 
 macx {
     CONFIG += plugin warn_on
@@ -40,7 +44,6 @@ HEADERS += taction.h \
            ticon.h \
            tideality.h \
            timagebutton.h \
-           timageeffect.h \
            titemselector.h \
            tmainwindow.h \
            tmainwindowabstractsettings.h \
@@ -48,13 +51,13 @@ HEADERS += taction.h \
            tmoviegenerator.h \
            tmoviegeneratorinterface.h \
            tnodegroup.h \
+           tseparator.h \
            toptionaldialog.h \
            tosd.h \
            tpathhelper.h \
            tpushbutton.h \
            tradiobuttongroup.h \
            trulerbase.h \
-           tseparator.h \
            tstackedmainwindow.h \
            tstylecombobox.h \
            tabbedmainwindow.h \
@@ -101,19 +104,18 @@ SOURCES += taction.cpp \
            tformvalidator.cpp \
            ticon.cpp \ 
            timagebutton.cpp \
-           timageeffect.cpp \
            titemselector.cpp \
            tmainwindow.cpp \
            tmainwindowfactory.cpp \
            tmoviegenerator.cpp \
            tnodegroup.cpp \
+           tseparator.cpp \
            toptionaldialog.cpp \
            tosd.cpp \
            tpathhelper.cpp \
            tpushbutton.cpp \
            tradiobuttongroup.cpp \
            trulerbase.cpp \
-           tseparator.cpp \
            tstackedmainwindow.cpp \
            tstylecombobox.cpp \
            tabbedmainwindow.cpp \
@@ -134,11 +136,6 @@ SOURCES += taction.cpp \
            texportwizard.cpp \
            tworkspacemainwindow.cpp \
            txyspinbox.cpp
-
-#contains(DEFINES, HAVE_FFMPEG){
-#    HEADERS += tffmpegmoviegenerator.h
-#    SOURCES += tffmpegmoviegenerator.cpp
-#}
 
 *:!macx{
     CONFIG += warn_on dll

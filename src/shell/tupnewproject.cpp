@@ -210,8 +210,8 @@ void TupNewProject::setupNetOptions()
 
     TConfig *config = kApp->config("Network");
 
-    k->server->setText(config->value("Server", "tupitube.com").toString());
-    k->port->setValue(config->value("Port", 5000).toInt());
+    k->server->setText(config->value("Server", "tupitu.be").toString());
+    k->port->setValue(config->value("Port", 8080).toInt());
 
     k->login->setText(config->value("Login", "").toString());
     k->password->setText(config->value("Password", "").toString());

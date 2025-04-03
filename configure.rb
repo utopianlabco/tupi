@@ -1,11 +1,47 @@
 #!/usr/bin/ruby
 
+###########################################################################
+#   Project TUPI: Magia 2D                                                #
+#   Project Contact: info@maefloresta.com                                 #
+#   Project Website: http://www.maefloresta.com                           #
+#   Project Leader: Gustav Gonzalez <info@maefloresta.com>                #
+#                                                                         #
+#   Developers:                                                           #
+#   2010:                                                                 #
+#    Gustavo Gonzalez / xtingray                                          #
+#                                                                         #
+#   KTooN's versions:                                                     #
+#                                                                         #
+#   2006:                                                                 #
+#    David Cuadrado                                                       #
+#    Jorge Cuadrado                                                       #
+#   2003:                                                                 #
+#    Fernado Roldan                                                       #
+#    Simena Dinas                                                         #
+#                                                                         #
+#   Copyright (C) 2010 Gustav Gonzalez - http://www.maefloresta.com       #
+#   License:                                                              #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 3 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>. #
+###########################################################################
+
 # TODO: This script must detect if every command line given is valid 
 #       Currently, it just try to check if some of them are included or not
 
-require './qonf/configure'
-require './qonf/info'
-require './qonf/defaults'
+require 'fileutils'
+require_relative 'qonf/configure'
+require_relative 'qonf/info'
+require_relative 'qonf/defaults'
 
 begin
     conf = RQonf::Configure.new(ARGV)
@@ -15,18 +51,26 @@ begin
 Use: ./configure [options]
   options:
   --help:               Show this message
-  --prefix=[path]:      Sets installation path [/usr/local]
-  --bindir=[path]:      Set binaries path [/usr/local/bin]
-  --libdir=[path]:      Set library path [/usr/local/lib]
-  --includedir=[path]:  Set include path [/usr/local/include]
-  --sharedir=[path]:    Set data path [/usr/local/share]
+  --prefix=[path]:      Sets installation path [/usr]
+  --bindir=[path]:      Set binaries path [/usr/bin]
+  --libdir=[path]:      Set library path [/usr/lib/tupi | /usr/lib64/tupi]
+  --sharedir=[path]:    Set data path [/usr/share]
   --with-ffmpeg=[path]: Set ffmpeg installation path [/usr]
-  --with-debug:         Enable debug
+  --without-ffmpeg:     Disable ffmpeg support
+  --without-debug:      Disable debug
   --with-qtdir=[path]:  Set Qt directory [i.e. /usr/local/qt]
-  --debian-build:       Option exclusive for Debian maintainer
+  --package-build:      Option exclusive for package maintainers
+  --install-headers:    Include header files as part of installation
 _EOH_
         exit 0
     end
+
+    if conf.hasArgument?("with-ffmpeg") and conf.hasArgument?("without-ffmpeg")  
+       Info.error << " ERROR: Options --with-ffmpeg and --without-ffmpeg are mutually exclusive\n"
+       exit 0
+    end
+
+    config = RQonf::Config.new
 
     distro = ""
     if FileTest.exists?("/etc/lsb-release")
@@ -34,9 +78,13 @@ _EOH_
        if conf.hasProperty?("DISTRIB_CODENAME")
           distro = conf.propertyValue("DISTRIB_CODENAME")
        end
+       if conf.hasProperty?("DISTRIB_ID")
+          distroName = conf.propertyValue("DISTRIB_ID") 
+          if distroName == "Ubuntu"
+             config.addDefine("UBUNTU")
+          end
+       end
     end
-
-    config = RQonf::Config.new
 
     if conf.hasArgument?("with-qtdir")
        qtdir = conf.argumentValue("with-qtdir")
@@ -54,19 +102,58 @@ _EOH_
        end
     end
 
+    avcodecFile = "/usr/include/libavcodec/version.h"
+
     if conf.hasArgument?("with-ffmpeg")
-       ffmpegLib = conf.argumentValue("with-ffmpeg") + "/lib"
-       ffmpegInclude = conf.argumentValue("with-ffmpeg") + "/include"
-       config.addLib("-L" + ffmpegLib)
-       config.addIncludePath(ffmpegInclude)
+       ffmpegDir = conf.argumentValue("with-ffmpeg")
+       if File.directory? ffmpegDir 
+          ffmpegLib = conf.argumentValue("with-ffmpeg") + "/lib"
+          ffmpegInclude = conf.argumentValue("with-ffmpeg") + "/include"
+          avcodecFile = ffmpegInclude + "/libavcodec/version.h"
+          config.addLib("-L" + ffmpegLib)
+          config.addIncludePath(ffmpegInclude)
+       else
+          Info.error << " ERROR: ffmpeg directory does not exist!\n"
+          exit 0
+       end
     end
 
-    debug = 0
-    if conf.hasArgument?("with-debug")
-       debug = 1
-       if File.readlines("3rdparty/quazip/quazip.pro").grep(/K_DEBUG/).size === 0
-          system("echo \"DEFINES += K_DEBUG\" >> 3rdparty/quazip/quazip.pro")
+    if FileTest.exists?(avcodecFile)
+       major = `egrep LIBAVCODEC_VERSION_MAJOR #{avcodecFile} | head -n 1`
+       minor = `egrep LIBAVCODEC_VERSION_MINOR #{avcodecFile} | head -n 1`
+       majorVersion = major.split
+       minorVersion = minor.split
+       destination = "src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.cpp"
+
+       if FileTest.exists?("/etc/debian_version")
+          if FileTest.exists?("/etc/lsb-release") # Ubuntu
+             if majorVersion[2] >= "54" and minorVersion[2] >= "35"
+                FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.new.cpp", destination)
+             else
+                FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.old.cpp", destination)
+             end
+          else # Debian
+             if majorVersion[2] >= "54" and minorVersion[2] == "35"
+                FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.debian.cpp", destination)
+             end
+          end
+       else # Other distros
+          if majorVersion[2] >= "54" and minorVersion[2] >= "35"
+             FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.new.cpp", destination)
+          else
+             FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.old.cpp", destination)
+          end
        end
+    end
+
+    debug = 1
+    if conf.hasArgument?("without-debug")
+       debug = 0
+    end
+
+    if conf.hasArgument?("without-ffmpeg")
+       Info.warn << "Disabling ffmpeg support: " << $endl
+       conf.disableFFmpeg()
     end
 
     conf.createTests
@@ -86,15 +173,15 @@ _EOH_
 
     config.addLib("-ltupifwgui")
     config.addLib("-ltupifwcore")
-    config.addLib("-ltupifwsound")
-    config.addLib("-lz")
-    
-    # config.addLib("-L#{RQonf::CONFIG["libdir"]}")
-    # config.addIncludePath(RQonf::CONFIG["includepath"])
+    # config.addLib("-ltupifwsound")
     
     config.addDefine('VERSION=\\\\\"0.2\\\\\"')
-    config.addDefine('CODE_NAME=\\\\\"Obi\\\\\"')
-    config.addDefine('REVISION=\\\\\"1\\\\\"')
+    config.addDefine('CODE_NAME=\\\\\"Ajuba\\\\\"')
+    config.addDefine('REVISION=\\\\\"git02\\\\\"')
+
+    if conf.hasArgument?("install-headers")
+       config.addDefine("ADD_HEADERS");
+    end
 
     Info.info << "Debug support... "
 
@@ -115,6 +202,17 @@ _EOH_
     # The file tupiglobal.pri contains all the global variables for the compilation process        
     config.save("tupiglobal.pri")
     conf.createMakefiles
+
+    binaries = `find configure.tests -mindepth 1 -type d`
+    array = binaries.split
+    for item in array
+        name = item.split("\/")
+        file = item + "\/" + name[1]
+        if FileTest.exists?(file)
+           File.delete(file)
+        end
+    end
+    exec('find configure.tests -iname main.o -exec rm -f {} \;')
     
 rescue => err
     Info.error << "Configure failed. error was: #{err.message}\n"

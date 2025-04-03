@@ -35,8 +35,8 @@
 
 #ifdef __cplusplus
 extern "C" {
-#include "libavformat/avformat.h"
-#include "libavcodec/avcodec.h"
+    #include "libavformat/avformat.h"
+    #include "libavcodec/avcodec.h"
 }
 #endif
 
@@ -44,32 +44,31 @@ extern "C" {
 
 int main()
 {
-	av_register_all();
+    av_register_all();
 
-        #if defined(K_LUCID)
-               AVOutputFormat *fmt = guess_format("mpeg", NULL, NULL);
-        #else
-               AVOutputFormat *fmt = av_guess_format("mpeg", NULL, NULL);
-        #endif
+    #if defined(K_LUCID)
+        AVOutputFormat *fmt = guess_format("mpeg", NULL, NULL);
+    #else
+        AVOutputFormat *fmt = av_guess_format("mpeg", NULL, NULL);
+    #endif
 
-        AVFormatContext *oc = avformat_alloc_context();
-	oc->oformat = fmt;
-	
-	AVCodecContext *c;
-	AVStream *st;
-	
-	st = av_new_stream(oc, 0);
-	
-	c = st->codec;
-	c->time_base.den = 24;
-	c->time_base.num = 1;
-	c->gop_size = 12;
-	c->pix_fmt = PIX_FMT_YUV420P;
-	
-	
-	av_free(oc);
-	
-	
-	return 0;
+    AVFormatContext *oc = avformat_alloc_context();
+    oc->oformat = fmt;
+
+    AVCodecContext *c;
+    AVStream *st;
+
+    // st = av_new_stream(oc, 0);
+    st = avformat_new_stream(oc, 0);
+
+    c = st->codec;
+    c->time_base.den = 24;
+    c->time_base.num = 1;
+    c->gop_size = 12;
+    c->pix_fmt = PIX_FMT_YUV420P;
+
+    av_free(oc);
+
+    return 0;
 }
 
