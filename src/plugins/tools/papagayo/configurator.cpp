@@ -50,7 +50,6 @@ Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
 
     QLabel *title = new QLabel(tr("Papagayo LipSync Files"));
     title->setAlignment(Qt::AlignHCenter);
-    title->setFont(QFont("Arial", 8, QFont::Bold));
 
     layout->addWidget(title);
 

@@ -52,7 +52,7 @@ struct TupItemFactory::Private
 {
     QGraphicsItem *item;
     QGradient *gradient;
-    QString loading; //brush or pen
+    QString loading; // brush or pen
 
     QStack<TupItemGroup *> groups;
     QStack<QGraphicsItem *> objects;
@@ -100,7 +100,7 @@ QGraphicsItem* TupItemFactory::createItem(const QString &root)
                item = new TupLineItem;
     } else if (root == "group") {
                item = new TupItemGroup;
-    } else if(root == "symbol") {
+    } else if (root == "symbol") {
                item = new TupGraphicLibraryItem;
                k->type = TupItemFactory::Library;
     }
@@ -112,7 +112,7 @@ bool TupItemFactory::startTag(const QString& qname, const QXmlAttributes& atts)
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupItemFactory::startTag()] - qname: " << qname;
         #else
             T_FUNCINFOX("items") << qname;
@@ -178,7 +178,7 @@ bool TupItemFactory::startTag(const QString& qname, const QXmlAttributes& atts)
                    k->objects.push(item);
                } else {
                    if (!k->item)
-                       k->item = createItem( qname );
+                       k->item = createItem(qname);
 
                    k->objects.push(k->item);
                }
@@ -215,11 +215,8 @@ bool TupItemFactory::startTag(const QString& qname, const QXmlAttributes& atts)
     } else if (qname == "symbol") {
                if (k->addToGroup) {
                    TupGraphicLibraryItem *item = qgraphicsitem_cast<TupGraphicLibraryItem *>(createItem(qname));
-
                    QString id = atts.value("id");
-
                    item->setSymbolName(id);
-
                    if (k->library)
                        item->setObject(k->library->getObject(id));
 
@@ -290,7 +287,7 @@ bool TupItemFactory::endTag(const QString& qname)
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupItemFactory::endTag()] - qname: " << qname;
         #else
             T_FUNCINFOX("items") << qname;
@@ -345,7 +342,7 @@ bool TupItemFactory::endTag(const QString& qname)
     } else {
                #ifdef K_DEBUG
                    QString msg = "TupItemFactory::endTag() - Unknown tag: " + qname;
-                   #ifdef Q_OS_WIN32
+                   #ifdef Q_OS_WIN
                        qWarning() << msg;
                    #else
                        tWarning("items") << msg;

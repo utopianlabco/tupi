@@ -38,7 +38,10 @@
 struct TupSceneTabWidget::Private
 {
     QList<TupExposureTable *> tables;
+    QList<TupExposureTable *> undoTables;
     QTabWidget *tabber;
+    QList<QDoubleSpinBox *> opacityControl;
+    QList<QDoubleSpinBox *> undoOpacities;
 };
 
 TupSceneTabWidget::TupSceneTabWidget(QWidget *parent) : QFrame(parent), k(new Private)
@@ -64,20 +67,65 @@ void TupSceneTabWidget::removeAllTabs()
          delete k->tabber->currentWidget();
 
     k->tables.clear();
+    k->opacityControl.clear();
 }
 
-void TupSceneTabWidget::addScene(int index, const QString &name, TupExposureTable *table) {
-
+void TupSceneTabWidget::addScene(int index, const QString &name, TupExposureTable *table) 
+{
     QFrame *frame = new QFrame;
     QVBoxLayout *layout = new QVBoxLayout(frame);
     layout->setMargin(1);
 
+    QHBoxLayout *opacityLayout = new QHBoxLayout;
+    opacityLayout->setAlignment(Qt::AlignHCenter);
+
     QLabel *header = new QLabel();
-    QPixmap pix(THEME_DIR + "icons/background_foreground.png");
-    header->setToolTip(tr("Layers"));
+    QPixmap pix(THEME_DIR + "icons/layer_opacity.png");
+    header->setToolTip(tr("Current Layer Opacity"));
     header->setPixmap(pix);
 
-    layout->addWidget(header, 0, Qt::AlignHCenter);
+    QDoubleSpinBox *opacitySpinBox = new QDoubleSpinBox(this);
+    opacitySpinBox->setRange(0.1, 1.0);
+    opacitySpinBox->setSingleStep(0.1);
+    opacitySpinBox->setValue(1.0);
+    opacitySpinBox->setToolTip(tr("Current Layer Opacity"));
+    connect(opacitySpinBox, SIGNAL(valueChanged(double)), this, SIGNAL(updateLayerOpacity(double)));
+
+    k->opacityControl << opacitySpinBox;
+
+    opacityLayout->addWidget(header);
+    opacityLayout->addWidget(opacitySpinBox);
+
+    layout->addLayout(opacityLayout);
+    layout->addWidget(table);
+    frame->setLayout(layout);
+
+    k->tables.insert(index, table);
+    k->tabber->insertTab(index, frame, name);
+}
+
+void TupSceneTabWidget::restoreScene(int index, const QString &name)
+{
+    QFrame *frame = new QFrame;
+    QVBoxLayout *layout = new QVBoxLayout(frame);
+    layout->setMargin(1);
+
+    QHBoxLayout *opacityLayout = new QHBoxLayout;
+    opacityLayout->setAlignment(Qt::AlignHCenter);
+
+    QLabel *header = new QLabel();
+    QPixmap pix(THEME_DIR + "icons/layer_opacity.png");
+    header->setToolTip(tr("Current Layer Opacity"));
+    header->setPixmap(pix);
+
+    TupExposureTable *table = k->undoTables.takeLast();
+    QDoubleSpinBox *opacitySpinBox = k->undoOpacities.takeLast();
+    k->opacityControl << opacitySpinBox;
+
+    opacityLayout->addWidget(header);
+    opacityLayout->addWidget(opacitySpinBox);
+
+    layout->addLayout(opacityLayout);
     layout->addWidget(table);
     frame->setLayout(layout);
 
@@ -87,15 +135,15 @@ void TupSceneTabWidget::addScene(int index, const QString &name, TupExposureTabl
 
 void TupSceneTabWidget::removeScene(int index) 
 {
-    // k->tables.remove(index);
-    k->tables.removeAt(index);
+    // k->tables.removeAt(index);
+    // k->opacityControl.removeAt(index);
+
+    k->undoTables << k->tables.takeAt(index);
+    k->undoOpacities << k->opacityControl.takeAt(index);
 
     blockSignals(true);
     k->tabber->removeTab(index);
     blockSignals(false);
-
-    // tError() << "TupSceneTabWidget::removeScene() - Removing scene at index: " << index;
-    // tError() << "TupSceneTabWidget::removeScene() - Scenes count: " << k->tables.count();
 }
 
 void TupSceneTabWidget::renameScene(int index, const QString &name)
@@ -106,29 +154,36 @@ void TupSceneTabWidget::renameScene(int index, const QString &name)
 TupExposureTable* TupSceneTabWidget::getCurrentTable() 
 {
     int index = currentIndex();
-
-    // tError() << "TupSceneTabWidget::getCurrentTable() - Getting table at index: " << index;
-
     return getTable(index);
 }
 
 TupExposureTable* TupSceneTabWidget::getTable(int index)
 {
-    // TupExposureTable *table = k->tables.value(index);
-    TupExposureTable *table = k->tables.at(index);
+    if (isTableIndexValid(index)) {
+        TupExposureTable *table = k->tables.at(index);
 
-    if (table) {
-        return table;
-    } else {
-        #ifdef K_DEBUG
-            QString msg = "TupSceneTabWidget::getTable() - [ Fatal Error ] - Invalid table index: " + QString::number(index);
-            #ifdef Q_OS_WIN32
-                qDebug() << msg;
-            #else
-                tError() << msg;
+        if (table) {
+            return table;
+        } else {
+            #ifdef K_DEBUG
+                QString msg = "TupSceneTabWidget::getTable() - [ Fatal Error ] - Table pointer is NULL!";
+                #ifdef Q_OS_WIN
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
             #endif
-        #endif
+        }
     }
+
+    #ifdef K_DEBUG
+        QString msg = "TupSceneTabWidget::getTable() - [ Fatal Error ] - Invalid table index: " + QString::number(index);
+        #ifdef Q_OS_WIN
+            qDebug() << msg;
+        #else
+            tError() << msg;
+        #endif
+    #endif
 
     return 0;
 }
@@ -144,8 +199,37 @@ int TupSceneTabWidget::currentIndex()
     return index;
 }
 
+bool TupSceneTabWidget::isTableIndexValid(int index)
+{
+    if (index > -1 && index < k->tables.count())
+        return true;
+    return false;
+}
+
 int TupSceneTabWidget::count()
 {
-    // return k->tabber->count();
     return k->tables.count();
 }
+
+void TupSceneTabWidget::setLayerOpacity(int sceneIndex, double opacity)
+{
+    k->opacityControl.at(sceneIndex)->setValue(opacity);
+}
+
+void TupSceneTabWidget::setLayerVisibility(int sceneIndex, int layerIndex, bool visibility)
+{
+    if (isTableIndexValid(sceneIndex)) {
+        TupExposureTable *table = k->tables.at(sceneIndex);
+        table->setLayerVisibility(layerIndex, visibility);
+    } else {
+        #ifdef K_DEBUG
+            QString msg = "TupSceneTabWidget::setLayerVisibility() - [ Fatal Error ] - Invalid table index: " + QString::number(sceneIndex);
+            #ifdef Q_OS_WIN
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
+        #endif
+    }
+}
+

@@ -35,6 +35,7 @@
 
 #include "tupsvgitem.h"
 #include "tupserializer.h"
+#include "tuplayer.h"
 
 struct TupSvgItem::Private
 {
@@ -85,6 +86,20 @@ TupFrame *TupSvgItem::frame() const
     return k->frame;
 }
 
+int TupSvgItem::frameIndex()
+{
+    return k->frame->index();
+}
+
+bool TupSvgItem::layerIsVisible()
+{
+    TupLayer *layer = k->frame->layer();
+    if (layer->isVisible())
+        return true;
+
+    return false;
+}
+
 TupItemTweener *TupSvgItem::tween() const
 {
     return k->tween;
@@ -106,7 +121,7 @@ QDomElement TupSvgItem::toXml(QDomDocument &doc) const
     if (k->name.length() == 0) {
         #ifdef K_DEBUG
             QString msg = "TupFrame::fromXml() - Error: Object ID is null!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -128,15 +143,6 @@ void TupSvgItem::setTween(TupItemTweener *tween)
 {
     k->tween = tween;
     k->hasTween = true;
-
-    /*
-    if (!update) {
-        if (k->tween)
-            k->frame->scene()->addTweenObject(this);
-        else
-            k->frame->scene()->removeTweenObject(this);
-    }
-    */
 }
 
 bool TupSvgItem::hasTween()

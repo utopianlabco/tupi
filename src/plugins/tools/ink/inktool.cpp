@@ -82,7 +82,7 @@ InkTool::InkTool() : k(new Private)
 {
     k->configurator = 0;
     k->item = 0;
-    k->cursor = QCursor(kAppProp->themeDir() + "cursors/contour.png", 0, 15);
+    k->cursor = QCursor(kAppProp->themeDir() + "cursors/ink.png", 0, 16);
 
     setupActions();
 }
@@ -93,6 +93,8 @@ InkTool::~InkTool()
 
 void InkTool::init(TupGraphicsScene *scene)
 {
+    Q_UNUSED(scene);
+
     k->spacing = k->configurator->spacingValue();
 
     TCONFIG->beginGroup("PenParameters");
@@ -110,6 +112,7 @@ void InkTool::init(TupGraphicsScene *scene)
     tError() << "InkTool::init() - k->widthVar: " << k->widthVar;
     */
 
+    /*
     foreach (QGraphicsView * view, scene->views()) {
              view->setDragMode(QGraphicsView::NoDrag);
              Q_CHECK_PTR(view->scene());
@@ -120,6 +123,7 @@ void InkTool::init(TupGraphicsScene *scene)
                  }
              }
     }
+    */
 }
 
 QStringList InkTool::keys() const
@@ -190,8 +194,8 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 
         // tError() << "InkTool::move() - Flag 1";
 
-        qreal slopeVar = abs(k->oldSlope - m);
-        qreal distance = sqrt(pow(abs(currentPoint.x() - k->oldPos.x()), 2) + pow(abs(currentPoint.y() - k->oldPos.y()), 2));
+        qreal slopeVar = std::abs(k->oldSlope - m);
+        qreal distance = sqrt(pow(std::abs(currentPoint.x() - k->oldPos.x()), 2) + pow(std::abs(currentPoint.y() - k->oldPos.y()), 2));
 
         if ((k->dotsCounter > k->firstArrow) && ((k->dotsCounter % k->spacing == 0) || ((slopeVar >= 1) && (distance > 10)))) {
 
@@ -229,14 +233,14 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 					   
                    if (m == 100) {
                        QString msg = "InkTool::move() - M: NAN";
-                       #ifdef Q_OS_WIN32
+                       #ifdef Q_OS_WIN
                            qDebug() << msg;
                        #else
                            tError() << msg;
                        #endif
                    } else {
                        QString msg = "InkTool::move() - M: " + QString::number(m);
-                       #ifdef Q_OS_WIN32
+                       #ifdef Q_OS_WIN
                            qDebug() << msg;
                        #else
                            tError() << msg;
@@ -245,14 +249,14 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 
                    if (isNAN) {
                        QString msg = "InkTool::move() - M(inv): NAN";
-                       #ifdef Q_OS_WIN32
+                       #ifdef Q_OS_WIN
                            qDebug() << msg;
                        #else
                            tError() << msg;
                        #endif
                    } else {
                        QString msg = "InkTool::move() - M(inv): " + QString::number(pm);
-                       #ifdef Q_OS_WIN32
+                       #ifdef Q_OS_WIN
                            qDebug() << msg;
                        #else
                            tError() << msg;
@@ -343,7 +347,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 if (k->previewPoint.y() < currentPoint.y()) {
                     #ifdef K_DEBUG
                         QString msg = "    -> InkTool::move() - Going down-right";
-                        #ifdef Q_OS_WIN32
+                        #ifdef Q_OS_WIN
                             qDebug() << msg;
                         #else
                             tDebug() << msg;
@@ -365,7 +369,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 } else if (k->previewPoint.y() > currentPoint.y()) {
                            #ifdef K_DEBUG
                                QString msg = "    -> InkTool::move() - Going up-right";
-                               #ifdef Q_OS_WIN32
+                               #ifdef Q_OS_WIN
                                    qDebug() << msg;
                                #else
                                    tDebug() << msg;
@@ -386,7 +390,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 } else {
                      #ifdef K_DEBUG
                          QString msg = "    -> InkTool::move() - Going right";
-                         #ifdef Q_OS_WIN32
+                         #ifdef Q_OS_WIN
                              qDebug() << msg;
                          #else
                              tDebug() << msg;
@@ -409,7 +413,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 if (k->previewPoint.y() < currentPoint.y()) {
                     #ifdef K_DEBUG
                         QString msg = "    -> InkTool::move() - Going down-left";
-                        #ifdef Q_OS_WIN32
+                        #ifdef Q_OS_WIN
                             qDebug() << msg;
                         #else
                             tDebug() << msg;
@@ -431,7 +435,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 } else if (k->previewPoint.y() > currentPoint.y()) {
                            #ifdef K_DEBUG
                                QString msg = "    -> InkTool::move() - Going up-left";
-                               #ifdef Q_OS_WIN32
+                               #ifdef Q_OS_WIN
                                    qDebug() << msg;
                                #else
                                    tDebug() << msg;
@@ -463,7 +467,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                 } else {
                      #ifdef K_DEBUG
                          QString msg = "    -> InkTool::move() - Going left";
-                         #ifdef Q_OS_WIN32
+                         #ifdef Q_OS_WIN
                              qDebug() << msg;
                          #else
                              tDebug() << msg;
@@ -485,7 +489,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                        if (k->previewPoint.y() > currentPoint.y()) {
                            #ifdef K_DEBUG
                                QString msg = "    -> InkTool::move() - Going up";
-                               #ifdef Q_OS_WIN32
+                               #ifdef Q_OS_WIN
                                    qDebug() << msg;
                                #else
                                    tDebug() << msg;
@@ -505,7 +509,7 @@ void InkTool::move(const TupInputDeviceInformation *input, TupBrushManager *brus
                        } else {
                            #ifdef K_DEBUG
                                QString msg = "    -> InkTool::move() - Going down";
-                               #ifdef Q_OS_WIN32
+                               #ifdef Q_OS_WIN
                                    qDebug() << msg;
                                #else
                                    tDebug() << msg;
@@ -580,7 +584,7 @@ void InkTool::release(const TupInputDeviceInformation *input, TupBrushManager *b
         QDomDocument doc;
         doc.appendChild(line->toXml(doc));
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                                         0, QPointF(), scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                         0, QPointF(), scene->spaceContext(), TupLibraryObject::Item, TupProjectRequest::Add, 
                                                                          doc.toString());
         emit requested(&request);
 
@@ -594,7 +598,7 @@ void InkTool::release(const TupInputDeviceInformation *input, TupBrushManager *b
         QDomDocument doc;
         doc.appendChild(blackEllipse->toXml(doc));
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                                         0, currentPoint, scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                         0, currentPoint, scene->spaceContext(), TupLibraryObject::Item, TupProjectRequest::Add, 
                                                                          doc.toString());
         emit requested(&request);
     }

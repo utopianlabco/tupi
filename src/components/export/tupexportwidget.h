@@ -37,42 +37,10 @@
 #define TUPEXPORTWIDGET_H
 
 #include "tglobal.h"
-#include "tupmodulewidgetbase.h"
 #include "tupproject.h"
-#include "tupexportpluginobject.h"
 #include "tupexportwizard.h"
-#include "titemselector.h"
-#include "txyspinbox.h"
 #include "tuppluginmanager.h"
-
-#include <QListWidget>
-#include <QHash>
-#include <QApplication>
-#include <QPluginLoader>
-#include <QRadioButton>
-#include <QButtonGroup>
-#include <QGroupBox>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QPushButton>
-#include <QLabel>
-#include <QIntValidator>
-#include <QToolButton>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QtDebug>
-#include <QLocale>
-#include <QDir>
-#include <QSpinBox>
-#include <QTextEdit>
-
-// class QButtonGroup;
-// class QLineEdit;
-class SelectPlugin;
-class SelectScenes;
-class ExportTo;
-class VideoProperties;
+#include "tosd.h"
 
 /**
  * @author David Cuadrado
@@ -91,7 +59,6 @@ class TUPI_EXPORT TupExportWidget : public TupExportWizard
         QString videoDescription() const;
         QList<int> videoScenes() const;
         bool isComplete();
-        // TupExportWidget::Format workType();
 
     private slots:
         void setExporter(const QString &plugin);
@@ -100,15 +67,8 @@ class TUPI_EXPORT TupExportWidget : public TupExportWizard
         void loadPlugins();
 		
     private:
-        SelectPlugin *m_pluginSelectionPage;
-        SelectScenes *m_scenesSelectionPage;
-        ExportTo *m_exportAnimation;
-        ExportTo *m_exportImagesArray;
-        ExportTo *m_exportAnimatedImage;
-        VideoProperties *videoProperties;
-        const TupProject *m_project;
-        QHash<QString, TupExportInterface *> m_plugins;
-        const QString tag;
+        struct Private;
+        Private *const k;
 };
 
 #endif

@@ -50,10 +50,6 @@ LipSyncManager::LipSyncManager(QWidget *parent) : QWidget(parent), k(new Private
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QFont f = font();
-    f.setPointSize(8);
-    setFont(f);
-
     QBoxLayout *listLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     listLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
@@ -66,15 +62,15 @@ LipSyncManager::LipSyncManager(QWidget *parent) : QWidget(parent), k(new Private
 
     listLayout->addWidget(k->lipSyncList);
 
-    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "plus_sign.png"), 22);
+    k->addButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/plus_sign.png"), 22);
     k->addButton->setToolTip(tr("Import LipSync"));
     connect(k->addButton, SIGNAL(clicked()), this, SIGNAL(importLipSync()));
 
-    k->editButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "edit_sign.png"), 22);
+    k->editButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/edit_sign.png"), 22);
     k->editButton->setToolTip(tr("Edit LipSync"));
     connect(k->editButton, SIGNAL(clicked()), this, SLOT(editLipSync()));
 
-    k->delButton = new TImageButton(QPixmap(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "minus_sign.png"), 22);
+    k->delButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/icons/minus_sign.png"), 22);
     k->delButton->setToolTip(tr("Remove LipSync"));
     connect(k->delButton, SIGNAL(clicked()), this, SLOT(removeLipSync()));
 
@@ -97,13 +93,10 @@ LipSyncManager::~LipSyncManager()
 void LipSyncManager::loadLipSyncList(QList<QString> list)
 {
     k->lipSyncList->clear();
-    QFont f = font();
-    f.setPointSize(8);
 
     int total = list.size();
     for (int i=0; i < total; i++) {
         QListWidgetItem *item = new QListWidgetItem(k->lipSyncList);
-        item->setFont(f);
         item->setText(list.at(i));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
@@ -166,7 +159,6 @@ void LipSyncManager::addNewRecord(const QString &name)
     f.setPointSize(8);
 
     QListWidgetItem *item = new QListWidgetItem(k->lipSyncList);
-    item->setFont(f);
     item->setText(name);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 

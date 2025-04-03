@@ -127,12 +127,12 @@ QRectF TControlNode::boundingRect() const
 
     if (k->rightNode) {
         if (k->rightNode->isVisible())
-            rect.united(k->rightNode->boundingRect());
+            rect = rect.united(k->rightNode->boundingRect());
     }
 
     if (k->leftNode) {
         if (k->leftNode->isVisible())
-           rect.united(k->leftNode->boundingRect());
+           rect = rect.united(k->leftNode->boundingRect());
     }
 
     return rect;
@@ -217,7 +217,7 @@ void TControlNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void TControlNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TControlNode::mouseReleaseEvent()]";
         #else
            T_FUNCINFO;
@@ -332,4 +332,3 @@ void TControlNode::resize(qreal factor)
 {
     setScale(factor);
 }
-

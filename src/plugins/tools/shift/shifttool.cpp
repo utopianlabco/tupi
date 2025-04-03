@@ -74,6 +74,7 @@ void ShiftTool::init(TupGraphicsScene *scene)
 {
     k->scene = scene;
 
+    /*
     foreach (QGraphicsView *view, scene->views()) {
              k->currentCenter =  view->sceneRect().center();
              view->setDragMode(QGraphicsView::NoDrag);
@@ -82,6 +83,7 @@ void ShiftTool::init(TupGraphicsScene *scene)
                       item->setFlag(QGraphicsItem::ItemIsMovable, false);
              }
     }
+    */
 }
 
 QStringList ShiftTool::keys() const
@@ -94,6 +96,7 @@ void ShiftTool::setupActions()
     TAction *shiftAction = new TAction(QIcon(kAppProp->themeDir() + "icons/shift.png"), tr("Shift"), this);
     shiftAction->setShortcut(QKeySequence(tr("H")));
     shiftAction->setToolTip(tr("Shift") + " - " + "H");
+
     k->shiftCursor = QCursor(kAppProp->themeDir() + "cursors/shift.png");
     shiftAction->setCursor(k->shiftCursor);
 

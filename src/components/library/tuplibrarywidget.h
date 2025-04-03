@@ -52,6 +52,7 @@
 #include "tuprequestbuilder.h"
 #include "tosd.h"
 #include "talgorithm.h"
+#include "toptionaldialog.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -130,8 +131,8 @@ class TUPI_EXPORT TupLibraryWidget : public TupModuleWidgetBase
         void importBitmap(const QString &image);
         void importSvgGroup();
         void importSvg(const QString &svgPath);
-        void importBitmapArray();
-        void importSvgArray();
+        void importBitmapSequence();
+        void importSvgSequence();
         void importSound();
 
     signals:
@@ -146,6 +147,7 @@ class TUPI_EXPORT TupLibraryWidget : public TupModuleWidgetBase
         QString nameForClonedItem(QString &name, QString &extension, int index, QString &path) const;
         QString nameForClonedItem(QString &smallId, QString &extension, QString &path) const;
         QString verifyNameAvailability(QString &name, QString &extension, bool isCloningAction);
+        void verifyFramesAvailability(int filesTotal);
 
         struct Private;
         Private *const k;

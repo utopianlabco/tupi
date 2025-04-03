@@ -99,8 +99,8 @@ class TUPI_PLUGIN SelectionTool : public TupToolPlugin
         void callForPlugin(int menu, int index);
 
     private slots:
+        void initItems(TupGraphicsScene *scene);
         void syncNodes();
-        void updateItems(TupGraphicsScene *scene);
         void applyFlip(Settings::Flip flip);
         void applyOrderAction(Settings::Order order);
         void applyGroupAction(Settings::Group action);
@@ -109,8 +109,10 @@ class TUPI_PLUGIN SelectionTool : public TupToolPlugin
     private:
         void setupActions();
         bool selectionIsActive();
-        void reset(TupGraphicsScene *scene);
         void updateItemPosition();
+        void removeTarget();
+        TupFrame* currentFrame();
+        TupFrame* frameAt(int sceneIndex, int layerIndex, int frameIndex);
 
         struct Private;
         Private *const k;

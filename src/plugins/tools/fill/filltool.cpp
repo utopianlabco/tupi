@@ -55,10 +55,15 @@ FillTool::~FillTool()
 void FillTool::init(TupGraphicsScene *scene)
 {
     /*
+    int zBottomLimit = (scene->currentLayerIndex() + 2)*ZLAYER_LIMIT;
+    int zTopLimit = zBottomLimit + ZLAYER_LIMIT;
+
     foreach (QGraphicsItem *item, scene->items()) {
-             if (scene->spaceMode() == TupProject::FRAMES_EDITION) {
-                 if (item->zValue() >= 20000 && item->toolTip().length()==0) {
-                     // item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
+             if (scene->spaceContext() == TupProject::FRAMES_EDITION) {
+                 int zValue = item->zValue();
+                 qreal opacity = item->opacity();
+                 if ((zValue >= zBottomLimit) && (zValue < zTopLimit) && (item->toolTip().length()==0) && (opacity == 1)) {
+                     item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
                  } else {
                      item->setFlag(QGraphicsItem::ItemIsSelectable, false);
                      item->setFlag(QGraphicsItem::ItemIsFocusable, false);
@@ -74,28 +79,36 @@ void FillTool::init(TupGraphicsScene *scene)
 
 QStringList FillTool::keys() const
 {
-    return QStringList() << tr("Internal fill") << tr("Line fill");
+    return QStringList() << tr("Internal Fill") << tr("Line Fill");
 }
 
 void FillTool::setupActions()
 {
-    TAction *action1 = new TAction(QIcon(kAppProp->themeDir() + "icons/inside.png"), tr("Internal fill"), this);
+    TAction *action1 = new TAction(QIcon(kAppProp->themeDir() + "icons/internal_fill.png"), tr("Internal Fill"), this);
     action1->setShortcut(QKeySequence(tr("I")));
-    action1->setToolTip(tr("Internal fill") + " - " + "I");
-    k->insideCursor = QCursor(kAppProp->themeDir() + "cursors/paint.png");
+    action1->setToolTip(tr("Internal Fill") + " - " + "I");
+    k->insideCursor = QCursor(kAppProp->themeDir() + "cursors/internal_fill.png", 0, 11);
     action1->setCursor(k->insideCursor);
-    k->actions.insert(tr("Internal fill"), action1);
+    k->actions.insert(tr("Internal Fill"), action1);
     
-    TAction *action2 = new TAction(QIcon(kAppProp->themeDir() + "icons/contour.png"), tr("Line fill"), this);
+    TAction *action2 = new TAction(QIcon(kAppProp->themeDir() + "icons/line_fill.png"), tr("Line Fill"), this);
     action2->setShortcut(QKeySequence(tr("B")));
-    action2->setToolTip(tr("Line fill") + " - " + "B");
-    k->contourCursor = QCursor(kAppProp->themeDir() + "cursors/contour_fill.png");
+    action2->setToolTip(tr("Line Fill") + " - " + "B");
+    k->contourCursor = QCursor(kAppProp->themeDir() + "cursors/line_fill.png", 0, 13);
     action2->setCursor(k->contourCursor);
-    k->actions.insert(tr("Line fill"), action2);
+    k->actions.insert(tr("Line Fill"), action2);
 }
 
 void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[FillTool::press()]";
+        #else
+            T_FUNCINFOX("tools");
+        #endif
+    #endif
+
     if (input->buttons() == Qt::LeftButton) {
         // SQA: Enhance this plugin to support several items with one click 
         // QList<QGraphicsItem *> list = scene->items(input->pos(), Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform());
@@ -105,7 +118,7 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
         if (!item) {
             #ifdef K_DEBUG
                 QString msg = "FillTool::press() - No item found";
-                #ifdef Q_OS_WIN32
+                #ifdef Q_OS_WIN
                     qDebug() << msg;
                 #else
                     tError() << msg;
@@ -114,10 +127,12 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
             return;
         } else {
             if (TupGraphicLibraryItem *libraryItem = qgraphicsitem_cast<TupGraphicLibraryItem *>(item)) {
-                if (libraryItem->type() == TupLibraryObject::Image) {
+                // This condition only applies for images
+                if (libraryItem->type() != TupLibraryObject::Item) {
+                    TOsd::self()->display(tr("Error"), tr("Sorry, only native objects can be filled"), TOsd::Error);
                     #ifdef K_DEBUG
                         QString msg = "FillTool::press() - Warning: item is a RASTER object!";
-                        #ifdef Q_OS_WIN32
+                        #ifdef Q_OS_WIN
                             qWarning() << msg;
                         #else
                             tWarning() << msg;
@@ -126,11 +141,13 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
                     return;
                 }
             } else {
+                // Testing if object is a SVG file
                 TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item);
                 if (svg) {
+                    TOsd::self()->display(tr("Error"), tr("Sorry, only native objects can be filled"), TOsd::Error);
                     #ifdef K_DEBUG
                         QString msg = "FillTool::press() - Warning: item is a SVG object!";
-                        #ifdef Q_OS_WIN32
+                        #ifdef Q_OS_WIN
                             qWarning() << msg;
                         #else
                             tWarning() << msg;
@@ -139,17 +156,41 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
                     return;
                 }
 
-                if (item->zValue() < 20000 && scene->spaceMode() == TupProject::FRAMES_EDITION) {
-                    #ifdef K_DEBUG
-                        QString msg = "FillTool::press() - Warning: Object belongs to the background frames";
-                        #ifdef Q_OS_WIN32
-                            qWarning() << msg;
-                        #else
-                            tWarning() << msg;
+                int zValue = item->zValue();
+
+                if (scene->spaceContext() == TupProject::FRAMES_EDITION) {
+                    int zBottomLimit = (scene->currentLayerIndex() + 2)*ZLAYER_LIMIT;
+                    int zTopLimit = zBottomLimit + ZLAYER_LIMIT;
+                    qreal opacity = item->opacity();
+
+                    if ((zValue < zBottomLimit) || (zValue >= zTopLimit) || (item->toolTip().length()!=0) || (opacity < 1)) {
+                        #ifdef K_DEBUG
+                            QString msg = "FillTool::press() - Warning: Object belongs to other frame/layer or to background frames";
+                            #ifdef Q_OS_WIN
+                                qWarning() << msg;
+                            #else
+                                tWarning() << msg;
+                            #endif
                         #endif
-                    #endif
-                    return;
+                        return;
+                    }
+                } else {
+                    if (scene->spaceContext() == TupProject::STATIC_BACKGROUND_EDITION) {
+                        if ((zValue < ZLAYER_LIMIT) || (zValue >= (2*ZLAYER_LIMIT))) {
+                            #ifdef K_DEBUG
+                                QString msg = "FillTool::press() - Warning: Object belongs to dynamic background frame";
+                                #ifdef Q_OS_WIN
+                                    qWarning() << msg;
+                                #else
+                                    tWarning() << msg;
+                                #endif
+                            #endif
+                            return;
+                        }
+                    }
                 }
+
+
             }
         }
 
@@ -161,20 +202,20 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
         if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(item)) {
             int position = -1;
 
-            if (scene->spaceMode() == TupProject::FRAMES_EDITION) {
+            if (scene->spaceContext() == TupProject::FRAMES_EDITION) {
                 position = scene->currentFrame()->indexOf(shape);
             } else {
                 TupBackground *bg = scene->scene()->background();
-                if (scene->spaceMode() == TupProject::STATIC_BACKGROUND_EDITION) {
+                if (scene->spaceContext() == TupProject::STATIC_BACKGROUND_EDITION) {
                     TupFrame *frame = bg->staticFrame();
                     position = frame->indexOf(shape);
-                } else if (scene->spaceMode() == TupProject::DYNAMIC_BACKGROUND_EDITION) {
+                } else if (scene->spaceContext() == TupProject::DYNAMIC_BACKGROUND_EDITION) {
                            TupFrame *frame = bg->dynamicFrame();
                            position = frame->indexOf(shape);
                 } else {
                     #ifdef K_DEBUG
-                        QString msg = "FillTool::press() - Fatal Error: Invalid spaceMode!"; 
-                        #ifdef Q_OS_WIN32
+                        QString msg = "FillTool::press() - Fatal Error: Invalid spaceContext!"; 
+                        #ifdef Q_OS_WIN
                             qDebug() << msg;
                         #else
                             tError() << msg;
@@ -185,9 +226,9 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
             }
                 
             if (position >= 0) {
-                if (name() == tr("Internal fill")) {
+                if (name() == tr("Internal Fill")) {
                     shape->setBrush(brushManager->pen().brush());
-                } else if (name() == tr("Line fill")) {
+                } else if (name() == tr("Line Fill")) {
                            QPen pen = shape->pen();
                            pen.setBrush(brushManager->pen().brush());
                            shape->setPen(pen);
@@ -195,18 +236,18 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
                     
                 QDomDocument doc;
                 doc.appendChild(TupSerializer::properties(shape, doc));
-                    
+
                 TupProjectRequest event = TupRequestBuilder::createItemRequest( 
                           scene->currentSceneIndex(), scene->currentLayerIndex(),
                           scene->currentFrameIndex(), position, QPointF(), 
-                          scene->spaceMode(), TupLibraryObject::Item, 
+                          scene->spaceContext(), TupLibraryObject::Item, 
                           TupProjectRequest::Transform, doc.toString());
 
                 emit requested(&event);
             } else {
                 #ifdef K_DEBUG
                     QString msg = "FillTool::press() - Fatal Error: Invalid object index [ " + QString::number(position) + " ]";
-                    #ifdef Q_OS_WIN32
+                    #ifdef Q_OS_WIN
                         qDebug() << msg;
                     #else
                         tError() << msg;
@@ -216,7 +257,7 @@ void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *br
         } else {
             #ifdef K_DEBUG
                 QString msg = "FillTool::press() - Fatal Error: QAbstractGraphicsShapeItem cast has failed!";
-                #ifdef Q_OS_WIN32
+                #ifdef Q_OS_WIN
                     qDebug() << msg;
                 #else
                     tError() << msg;
@@ -295,9 +336,9 @@ void FillTool::keyPressEvent(QKeyEvent *event)
 
 QCursor FillTool::cursor() const
 {
-    if (name() == tr("Internal fill")) {
+    if (name() == tr("Internal Fill")) {
         return k->insideCursor;
-    } else if (name() == tr("Line fill")) {
+    } else if (name() == tr("Line Fill")) {
                return k->contourCursor;
     }
 

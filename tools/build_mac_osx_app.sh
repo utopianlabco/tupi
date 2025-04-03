@@ -38,8 +38,8 @@
 #Usage:
 # ./tools/build_mac_osx_app.sh /Users/username/Projects/tupi /Users/username/Projects/dist
 
-export PATH=/Users/parquesoft/Qt5.3.0/5.3/clang_64/bin:$PATH
-export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
+export PATH=/Users/xtingray/Qt/5.5/clang_64/bin:$PATH
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/usr/local/lib
 
 TUPI_GIT_REPOSITORY=$1
 TUPI_INSTALL=$2

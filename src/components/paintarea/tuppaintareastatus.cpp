@@ -64,14 +64,17 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     k->angle = 0;
     k->currentFrame = 1;
 
+    QWidget *empty = new QWidget();
+    empty->setFixedWidth(5);
+    addPermanentWidget(empty, 1);
+
     k->positionLabel = new QLabel; 
     QFont font = this->font();
     font.setPointSize(8);
     k->positionLabel->setFont(font);
+    addPermanentWidget(k->positionLabel, 2);
 
-    addPermanentWidget(k->positionLabel, 1);
-
-    QPushButton *resetWSButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "reset_workspace.png")), "");
+    QPushButton *resetWSButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/reset_workspace.png")), "");
     resetWSButton->setIconSize(QSize(16, 16));
     resetWSButton->setToolTip(tr("Reset WorkSpace"));
     resetWSButton->setShortcut(QKeySequence(tr("+")));
@@ -79,7 +82,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     addPermanentWidget(resetWSButton);
 
-    QPushButton *actionSafeAreaButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "safe_area.png")), "");
+    QPushButton *actionSafeAreaButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/safe_area.png")), "");
     actionSafeAreaButton->setIconSize(QSize(16, 16));
     actionSafeAreaButton->setToolTip(tr("Action Safe Area"));
     actionSafeAreaButton->setShortcut(QKeySequence(tr("+")));
@@ -88,7 +91,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     addPermanentWidget(actionSafeAreaButton);
 
-    QPushButton *gridButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "subgrid.png")), "");
+    QPushButton *gridButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/subgrid.png")), "");
     gridButton->setIconSize(QSize(16, 16));
     gridButton->setToolTip(tr("Show grid"));
     gridButton->setShortcut(QKeySequence(tr("#")));
@@ -97,7 +100,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     addPermanentWidget(gridButton);
 
-    k->fullScreenButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "full_screen.png")), "");
+    k->fullScreenButton = new QPushButton(QIcon(QPixmap(THEME_DIR + "icons/full_screen.png")), "");
     k->fullScreenButton->setIconSize(QSize(16, 16));
     k->fullScreenButton->setToolTip(tr("Full screen"));
     k->fullScreenButton->setShortcut(QKeySequence(tr("F11")));
@@ -112,7 +115,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     frameLayout->setMargin(1);
     QLabel *frameLabel = new QLabel("");
     frameLabel->setToolTip(tr("Current Frame"));
-    QPixmap framePix(THEME_DIR + "icons" + QDir::separator() + "frame_number.png");
+    QPixmap framePix(THEME_DIR + "icons/frame_number.png");
     frameLabel->setPixmap(framePix);
 
     k->frameField = new QLineEdit(frameContainer);
@@ -133,7 +136,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     QLabel *zoomTool = new QLabel("");
     zoomTool->setToolTip(tr("Zoom"));
-    QPixmap pix(THEME_DIR + "icons" + QDir::separator() + "zoom_small.png");
+    QPixmap pix(THEME_DIR + "icons/zoom_small.png");
     zoomTool->setPixmap(pix);
 
     zoomLayout->addWidget(zoomTool);
@@ -165,7 +168,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     QLabel *rotateLabel = new QLabel("");
     rotateLabel->setToolTip(tr("Rotate Workspace"));
-    QPixmap rotatePix(THEME_DIR + "icons" + QDir::separator() + "rotate_workspace.png");
+    QPixmap rotatePix(THEME_DIR + "icons/rotate_workspace.png");
     rotateLabel->setPixmap(rotatePix);
 
     rotLayout->addWidget(rotateLabel);
@@ -186,7 +189,7 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
     connect(k->rotation, SIGNAL(activated(const QString &)), this, SLOT(applyRotation(const QString &)));
 
     k->antialiasHint = new QCheckBox;
-    k->antialiasHint->setIcon(QIcon(QPixmap(THEME_DIR + "icons" + QDir::separator() + "antialiasing.png")));
+    k->antialiasHint->setIcon(QIcon(QPixmap(THEME_DIR + "icons/antialiasing.png")));
     k->antialiasHint->setToolTip(tr("Antialiasing"));
     k->antialiasHint->setCheckable(true);
     k->antialiasHint->setChecked(true);
@@ -196,14 +199,14 @@ TupPaintAreaStatus::TupPaintAreaStatus(TupDocumentView *parent) : QStatusBar(par
 
     connect(k->antialiasHint, SIGNAL(clicked()), this, SLOT(selectAntialiasingHint()));
 
-    k->bgStatus = new TupBrushStatus(tr("Background Color"), QPixmap(THEME_DIR + "icons" + QDir::separator() + "background_color.png"), true);
+    k->bgStatus = new TupBrushStatus(tr("Background Color"), QPixmap(THEME_DIR + "icons/background_color.png"), true);
     k->bgStatus->setTooltip(tr("Click here to change background color"));
     addPermanentWidget(k->bgStatus);
-    k->bgStatus->setColor(k->documentView->project()->bgColor());
+    k->bgStatus->setColor(k->documentView->projectBGColor());
 
     connect(k->bgStatus, SIGNAL(colorUpdated(const QColor)), this, SIGNAL(colorUpdated(const QColor)));
 
-    k->brushStatus = new TupBrushStatus(tr("Brush Color"), QPixmap(THEME_DIR + "icons" + QDir::separator() + "brush_color.png"), false);
+    k->brushStatus = new TupBrushStatus(tr("Brush Color"), QPixmap(THEME_DIR + "icons/brush_color.png"), false);
     k->brushStatus->setTooltip(tr("Click here to change brush color"));
     addPermanentWidget(k->brushStatus);
 
@@ -261,9 +264,16 @@ void TupPaintAreaStatus::applyRotation(const QString &text)
 
 void TupPaintAreaStatus::applyZoom(const QString &text)
 {
-    int input = text.toInt();
-    qreal factor = (qreal)input / (qreal)k->scaleFactor;
+    bool ok;
+    int input = text.toInt(&ok, 10);
 
+    if (!ok) { // Conversion has failed
+        QStringList list = text.split(".");
+        if (list.size() > 1)
+            input = list.at(0).toInt();
+    }
+
+    qreal factor = (qreal)input / (qreal)k->scaleFactor;
     k->documentView->setZoomFactor(factor);
     k->scaleFactor = input;
 }

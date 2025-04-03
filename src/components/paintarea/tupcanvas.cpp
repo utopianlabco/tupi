@@ -45,23 +45,15 @@ struct TupCanvas::Private
     QSize size;
     TupGraphicsScene *scene;
     TupProject *project;
-    bool sketchMenuIsOpen;
-    bool selectionMenuIsOpen;
-    bool propertiesMenuIsOpen;
-    bool exposureDialogIsOpen;
     UserHand hand;
-    // TupInfoWidget *display;
-    bool isNetworked;
-    QStringList onLineUsers;
-    TupExposureDialog *exposureDialog;
 };
 
 TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *scene, 
                    const QPointF centerPoint, const QSize &screenSize, TupProject *project, qreal scaleFactor,
-                   int angle, TupBrushManager *brushManager, bool isNetworked, const QStringList &onLineUsers) : QFrame(parent, flags), k(new Private)
+                   int angle, TupBrushManager *brushManager) : QFrame(parent, flags), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupCanvas()]";
         #else
             TINIT;
@@ -72,102 +64,119 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/animation_mode.png")));
 
     k->hand = Right;
-    // k->hand = Left;
- 
     k->scene = scene;
-    // connect(k->scene, SIGNAL(showInfoWidget()), this, SLOT(showInfoWidget()));
   
-    k->isNetworked = isNetworked;
-    k->onLineUsers = onLineUsers;
     k->size = project->dimension();
     k->currentColor = brushManager->penColor();
     k->brushManager = brushManager;
     k->project = project;
 
-    k->sketchMenuIsOpen = false;
-    k->selectionMenuIsOpen = false;
-    k->propertiesMenuIsOpen = false;
-    k->exposureDialogIsOpen = false;
-
-    graphicsView = new TupCanvasView(this, screenSize, k->size, project->bgColor());
+    graphicsView = new TupCanvasView(this, scene, screenSize, k->size, project->bgColor());
     connect(graphicsView, SIGNAL(rightClick()), this, SIGNAL(rightClick()));
+    connect(graphicsView, SIGNAL(zoomIn()), this, SLOT(wakeUpZoomIn()));
+    connect(graphicsView, SIGNAL(zoomOut()), this, SLOT(wakeUpZoomOut()));
+    connect(graphicsView, SIGNAL(frameBackward()), this, SLOT(oneFrameBack()));
+    connect(graphicsView, SIGNAL(frameForward()), this, SLOT(oneFrameForward()));
 
-    graphicsView->setScene(scene);
     graphicsView->centerOn(centerPoint);
     graphicsView->scale(scaleFactor, scaleFactor);
     graphicsView->rotate(angle);
 
-    TImageButton *sketchTools = new TImageButton(QPixmap(THEME_DIR + "icons/pencil_big.png"), 60, this, true);
-    sketchTools->setToolTip(tr("Sketch Tools"));
-    connect(sketchTools, SIGNAL(clicked()), this, SLOT(sketchTools()));
+    TImageButton *frameBackward = new TImageButton(QPixmap(THEME_DIR + "icons/frame_backward_big.png"), 50, this, true);
+    frameBackward->setToolTip(tr("Frame Backward"));
+    connect(frameBackward, SIGNAL(clicked()), this, SLOT(oneFrameBack()));
 
-    TImageButton *images = new TImageButton(QPixmap(THEME_DIR + "icons/bitmap_big.png"), 60, this, true);
-    images->setToolTip(tr("Images"));
-    connect(images, SIGNAL(clicked()), this, SLOT(wakeUpLibrary()));
+    TImageButton *frameForward = new TImageButton(QPixmap(THEME_DIR + "icons/frame_forward_big.png"), 50, this, true);
+    frameForward->setToolTip(tr("Frame Forward"));
+    connect(frameForward, SIGNAL(clicked()), this, SLOT(oneFrameForward()));
 
-    TImageButton *selectionTools = new TImageButton(QPixmap(THEME_DIR + "icons/selection_big.png"), 60, this, true);
-    selectionTools->setToolTip(tr("Selection Tools"));
-    connect(selectionTools, SIGNAL(clicked()), this, SLOT(selectionTools()));
+    TImageButton *pencil = new TImageButton(QPixmap(THEME_DIR + "icons/pencil_big.png"), 50, this, true);
+    pencil->setToolTip(tr("Pencil"));
+    connect(pencil, SIGNAL(clicked()), this, SLOT(wakeUpPencil()));
 
-    TImageButton *undo = new TImageButton(QPixmap(THEME_DIR + "icons/undo_big.png"), 60, this, true);
-    undo->setToolTip(tr("Undo"));
-    connect(undo, SIGNAL(clicked()), this, SLOT(undo()));
+    TImageButton *polyline = new TImageButton(QPixmap(THEME_DIR + "icons/polyline_big.png"), 50, this, true);
+    polyline->setToolTip(tr("Polyline"));
+    connect(polyline, SIGNAL(clicked()), this, SLOT(wakeUpPolyline()));
 
-    TImageButton *redo = new TImageButton(QPixmap(THEME_DIR + "icons/redo_big.png"), 60, this, true);
-    redo->setToolTip(tr("Redo"));
-    connect(redo, SIGNAL(clicked()), this, SLOT(redo()));
+    TImageButton *rectangle = new TImageButton(QPixmap(THEME_DIR + "icons/square_big.png"), 50, this, true);
+    rectangle->setToolTip(tr("Rectangle"));
+    connect(rectangle, SIGNAL(clicked()), this, SLOT(wakeUpRectangle()));
 
-    TImageButton *trash = new TImageButton(QPixmap(THEME_DIR + "icons/delete_big.png"), 60, this, true);
+    TImageButton *ellipse = new TImageButton(QPixmap(THEME_DIR + "icons/ellipse_big.png"), 50, this, true);
+    ellipse->setToolTip(tr("Ellipse"));
+    connect(ellipse, SIGNAL(clicked()), this, SLOT(wakeUpEllipse()));
+
+    TImageButton *selection = new TImageButton(QPixmap(THEME_DIR + "icons/selection_big.png"), 50, this, true);
+    selection->setToolTip(tr("Selection"));
+    connect(selection, SIGNAL(clicked()), this, SLOT(wakeUpSelection()));
+
+    TImageButton *trash = new TImageButton(QPixmap(THEME_DIR + "icons/delete_big.png"), 50, this, true);
     trash->setToolTip(tr("Delete Selection"));
     connect(trash, SIGNAL(clicked()), this, SLOT(wakeUpDeleteSelection()));
 
-    TImageButton *zoomIn = new TImageButton(QPixmap(THEME_DIR + "icons/zoom_in_big.png"), 60, this, true);
+    TImageButton *nodes = new TImageButton(QPixmap(THEME_DIR + "icons/nodes_big.png"), 50, this, true);
+    nodes->setToolTip(tr("Nodes"));
+    connect(nodes, SIGNAL(clicked()), this, SLOT(wakeUpNodes()));
+
+    TImageButton *undo = new TImageButton(QPixmap(THEME_DIR + "icons/undo_big.png"), 50, this, true);
+    undo->setToolTip(tr("Undo"));
+    connect(undo, SIGNAL(clicked()), this, SLOT(undo()));
+
+    TImageButton *redo = new TImageButton(QPixmap(THEME_DIR + "icons/redo_big.png"), 50, this, true);
+    redo->setToolTip(tr("Redo"));
+    connect(redo, SIGNAL(clicked()), this, SLOT(redo()));
+
+    TImageButton *zoomIn = new TImageButton(QPixmap(THEME_DIR + "icons/zoom_in_big.png"), 50, this, true);
     zoomIn->setToolTip(tr("Zoom In"));
     connect(zoomIn, SIGNAL(clicked()), this, SLOT(wakeUpZoomIn()));
 
-    TImageButton *zoomOut = new TImageButton(QPixmap(THEME_DIR + "icons/zoom_out_big.png"), 60, this, true);
+    TImageButton *zoomOut = new TImageButton(QPixmap(THEME_DIR + "icons/zoom_out_big.png"), 50, this, true);
     zoomOut->setToolTip(tr("Zoom Out"));
     connect(zoomOut, SIGNAL(clicked()), this, SLOT(wakeUpZoomOut()));
 
-    TImageButton *shift = new TImageButton(QPixmap(THEME_DIR + "icons/hand_big.png"), 60, this, true);
-    shift->setToolTip(tr("Shift"));
-    connect(shift, SIGNAL(clicked()), this, SLOT(wakeUpShift()));
+    TImageButton *images = new TImageButton(QPixmap(THEME_DIR + "icons/bitmap_big.png"), 50, this, true);
+    images->setToolTip(tr("Images"));
+    connect(images, SIGNAL(clicked()), this, SLOT(wakeUpLibrary()));
 
-    TImageButton *penProperties = new TImageButton(QPixmap(THEME_DIR + "icons/color_palette_big.png"), 60, this, true);
-    penProperties->setToolTip(tr("Pen Properties"));
-    connect(penProperties, SIGNAL(clicked()), this, SLOT(penProperties()));
+    TImageButton *color = new TImageButton(QPixmap(THEME_DIR + "icons/color_palette_big.png"), 50, this, true);
+    color->setToolTip(tr("Color Palette"));
+    connect(color, SIGNAL(clicked()), this, SLOT(colorDialog()));
 
-    TImageButton *exposure = new TImageButton(QPixmap(THEME_DIR + "icons/exposure_sheet_big.png"), 60, this, true);
-    exposure->setToolTip(tr("Exposure Sheet"));
-    connect(exposure, SIGNAL(clicked()), this, SLOT(exposureDialog()));
+    TImageButton *size = new TImageButton(QPixmap(THEME_DIR + "icons/pen_properties.png"), 50, this, true);
+    size->setToolTip(tr("Pen Size"));
+    connect(size, SIGNAL(clicked()), this, SLOT(penDialog()));
+
+    TImageButton *onion = new TImageButton(QPixmap(THEME_DIR + "icons/onion_big.png"), 50, this, true);
+    onion->setToolTip(tr("Onion Skin Factor"));
+    connect(onion, SIGNAL(clicked()), this, SLOT(onionDialog()));
+
+    TImageButton *close = new TImageButton(QPixmap(THEME_DIR + "icons/close_big.png"), 50, this, true);
+    close->setToolTip(tr("Close Full Screen"));
+    connect(close, SIGNAL(clicked()), this, SIGNAL(closeHugeCanvas()));
 
     QBoxLayout *controls = new QBoxLayout(QBoxLayout::TopToBottom);
     controls->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     controls->setContentsMargins(3, 10, 3, 3);
-    controls->setSpacing(7);
+    controls->setSpacing(5);
 
-    controls->addWidget(sketchTools);
-    controls->addWidget(images);
-    controls->addWidget(selectionTools);
+    controls->addWidget(frameBackward);
+    controls->addWidget(frameForward);
+    controls->addWidget(pencil);
+    controls->addWidget(polyline);
+    controls->addWidget(rectangle);
+    controls->addWidget(ellipse);
+    controls->addWidget(selection);
+    controls->addWidget(trash);
+    controls->addWidget(nodes);
     controls->addWidget(undo);
     controls->addWidget(redo);
-    controls->addWidget(trash);
     controls->addWidget(zoomIn);
     controls->addWidget(zoomOut);
-    controls->addWidget(shift);
-    controls->addWidget(penProperties);
-    controls->addWidget(exposure);
-
-    QBoxLayout *infoLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    infoLayout->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    infoLayout->setContentsMargins(0, 0, 0, 0);
-    infoLayout->setSpacing(5);
-
-    // SQA: Experimental code
-    // k->display = new TupInfoWidget(this);
-    // connect(k->display, SIGNAL(closePanel()), this, SLOT(hideInfoWidget()));
-    // infoLayout->addWidget(k->display);
-    // k->display->hide();
+    controls->addWidget(images);
+    controls->addWidget(color);
+    controls->addWidget(size);
+    controls->addWidget(onion);
+    controls->addWidget(close);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -175,15 +184,11 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
 
     if (k->hand == Right)
         layout->addLayout(controls);
-    else
-        layout->addLayout(infoLayout);
 
     layout->addWidget(graphicsView);
 
     if (k->hand == Left)
         layout->addLayout(controls);
-    else
-        layout->addLayout(infoLayout);
 
     setLayout(layout);
 }
@@ -205,9 +210,6 @@ void TupCanvas::closeEvent(QCloseEvent *event)
 
 void TupCanvas::colorDialog(const QColor &current)
 {
-    emit closePenPropertiesMenu();
-    k->propertiesMenuIsOpen = false;
-
     QColor color = QColorDialog::getColor(current, this);
     k->currentColor = color;
     emit updateColorFromFullScreen(color);
@@ -215,132 +217,12 @@ void TupCanvas::colorDialog(const QColor &current)
 
 void TupCanvas::colorDialog()
 {
-    emit closePenPropertiesMenu();
-    k->propertiesMenuIsOpen = false;
-
     QColor color = QColorDialog::getColor(k->currentColor, this);
     emit updateColorFromFullScreen(color);
 }
 
-void TupCanvas::sketchTools()
-{
-    if (k->selectionMenuIsOpen) {
-        emit closeSelectionMenu();
-        k->selectionMenuIsOpen = false;
-    }
-
-    if (k->propertiesMenuIsOpen) {
-        emit closePenPropertiesMenu();
-        k->propertiesMenuIsOpen = false;
-    }
-
-    if (!k->sketchMenuIsOpen) {
-        QList<QString> toolsList;
-        // toolsList << "PencilTool";
-        toolsList << "PolyLineTool";
-        toolsList << "EllipseTool";
-        toolsList << "RectangleTool";
-
-        TupToolsDialog *dialog = new TupToolsDialog(toolsList, this);
-        connect(dialog, SIGNAL(callAction(int, int)), this, SIGNAL(callAction(int, int)));
-        connect(dialog, SIGNAL(isClosed()), this, SLOT(updateSketchMenuState()));
-        connect(this, SIGNAL(closeSketchMenu()), dialog, SLOT(close()));
-
-        dialog->show();
-
-        if (k->hand == Right)
-            dialog->move(72, 0);
-        else
-            dialog->move(1072, 0);
-
-        k->sketchMenuIsOpen = true;
-    } else {
-        emit callAction(TupToolPlugin::BrushesMenu, TupToolPlugin::PencilTool);
-        emit closeSketchMenu();
-        k->sketchMenuIsOpen = false;
-    } 
-}
-
-void TupCanvas::selectionTools()
-{
-    if (k->sketchMenuIsOpen) {
-        emit closeSketchMenu();
-        k->sketchMenuIsOpen = false;
-    }
-
-    if (k->propertiesMenuIsOpen) {
-        emit closePenPropertiesMenu();
-        k->propertiesMenuIsOpen = false;
-    }
-
-    if (!k->selectionMenuIsOpen) {
-        QList<QString> toolsList;
-        // toolsList << "ObjectsTool";
-        toolsList << "NodesTool";
-
-        TupToolsDialog *dialog = new TupToolsDialog(toolsList, this);
-        connect(dialog, SIGNAL(callAction(int, int)), this, SIGNAL(callAction(int, int)));
-        connect(dialog, SIGNAL(isClosed()), this, SLOT(updateSelectionMenuState()));
-        connect(this, SIGNAL(closeSelectionMenu()), dialog, SLOT(close()));
-
-        dialog->show();
-
-        if (k->hand == Right)
-            dialog->move(72, 132);
-        else
-            dialog->move(1212, 132);
-
-        k->selectionMenuIsOpen = true;
-    } else {
-        emit callAction(TupToolPlugin::SelectionMenu, TupToolPlugin::ObjectsTool);
-        emit closeSelectionMenu();
-        k->selectionMenuIsOpen = false;
-    }
-}
-
-void TupCanvas::penProperties()
-{
-    if (k->sketchMenuIsOpen) {
-        emit closeSketchMenu();
-        k->sketchMenuIsOpen = false;
-    }
-
-    if (k->selectionMenuIsOpen) {
-        emit closeSelectionMenu();
-        k->selectionMenuIsOpen = false;
-    }
-
-    if (!k->propertiesMenuIsOpen) {
-        QList<QString> toolsList;
-        toolsList << "PenSize";
-        toolsList << "Opacity";
-
-        TupToolsDialog *dialog = new TupToolsDialog(toolsList, this);
-        connect(dialog, SIGNAL(openColorDialog()), this, SLOT(colorDialog()));
-        connect(dialog, SIGNAL(openPenDialog()), this, SLOT(penDialog()));
-        connect(dialog, SIGNAL(openOpacityDialog()), this, SLOT(opacityDialog()));
-        connect(this, SIGNAL(closePenPropertiesMenu()), dialog, SLOT(close()));
-
-        dialog->show();
-
-        if (k->hand == Right)
-            dialog->move(72, 610);
-        else
-            dialog->move(1182, 610);
-
-        k->propertiesMenuIsOpen = true;
-    } else {
-        colorDialog();
-        emit closeSelectionMenu();
-        k->propertiesMenuIsOpen = false;
-    }
-}
-
 void TupCanvas::penDialog()
 {
-    emit closePenPropertiesMenu();
-    k->propertiesMenuIsOpen = false;
-
     QDesktopWidget desktop;
     TupPenDialog *dialog = new TupPenDialog(k->brushManager, this);
     connect(dialog, SIGNAL(updatePen(int)), this, SIGNAL(updatePenThicknessFromFullScreen(int)));
@@ -352,13 +234,10 @@ void TupCanvas::penDialog()
                         (int) (desktop.screenGeometry().height() - dialog->height())/2);
 }
 
-void TupCanvas::opacityDialog()
+void TupCanvas::onionDialog()
 {
-    emit closePenPropertiesMenu();
-    k->propertiesMenuIsOpen = false;
-
     QDesktopWidget desktop;
-    TupOnionOpacityDialog *dialog = new TupOnionOpacityDialog(k->brushManager->penColor(), k->scene->opacity(), this);
+    TupOnionDialog *dialog = new TupOnionDialog(k->brushManager->penColor(), k->scene->opacity(), this);
     connect(dialog, SIGNAL(updateOpacity(double)), this, SLOT(setOnionOpacity(double)));
 
     QApplication::restoreOverrideCursor();
@@ -372,29 +251,6 @@ void TupCanvas::setOnionOpacity(double opacity)
 {
     k->scene->setOnionFactor(opacity);
     emit updateOnionOpacityFromFullScreen(opacity); 
-}
-
-void TupCanvas::exposureDialog()
-{
-    updateMenuStates();
-    k->exposureDialogIsOpen = true;
-
-    QDesktopWidget desktop;
-    k->exposureDialog = new TupExposureDialog(k->project, k->scene->currentSceneIndex(), 
-                                                      k->scene->currentLayerIndex(), k->scene->currentFrameIndex(), 
-                                                      k->isNetworked, k->onLineUsers, this);
-    connect(k->exposureDialog, SIGNAL(goToFrame(int, int, int)), this, SIGNAL(goToFrame(int, int, int)));
-    connect(k->exposureDialog, SIGNAL(goToScene(int)), this, SIGNAL(goToScene(int)));
-    connect(k->exposureDialog, SIGNAL(callNewScene()), this, SLOT(createScene()));
-    connect(k->exposureDialog, SIGNAL(callNewLayer(int, int)), this, SLOT(createLayer(int, int)));
-    connect(k->exposureDialog, SIGNAL(callNewFrame(int, int, int, int)), this, SLOT(createFrame(int, int, int, int)));
-    connect(k->exposureDialog, SIGNAL(windowHasBeenClosed()), this, SLOT(updateExposureDialogState()));
-
-    QApplication::restoreOverrideCursor();
-
-    k->exposureDialog->show();
-    k->exposureDialog->move((int) (desktop.screenGeometry().width() - k->exposureDialog->width())/2 ,
-                        (int) (desktop.screenGeometry().height() - k->exposureDialog->height())/2);
 }
 
 void TupCanvas::oneFrameBack()
@@ -411,17 +267,28 @@ void TupCanvas::oneFrameForward()
     emit callAction(TupToolPlugin::Arrows, TupToolPlugin::FrameForward);
 }
 
-/*
-void TupCanvas::updateThickness(int value)
+void TupCanvas::wakeUpPencil()
 {
-    emit updatePenThicknessFromFullScreen(value);
+    emit callAction(TupToolPlugin::BrushesMenu, TupToolPlugin::PencilTool);
 }
-*/
+
+void TupCanvas::wakeUpPolyline()
+{
+    emit callAction(TupToolPlugin::BrushesMenu, TupToolPlugin::PolyLineTool);
+}
+
+void TupCanvas::wakeUpRectangle()
+{
+    emit callAction(TupToolPlugin::BrushesMenu, TupToolPlugin::RectangleTool);
+}
+
+void TupCanvas::wakeUpEllipse()
+{
+    emit callAction(TupToolPlugin::BrushesMenu, TupToolPlugin::EllipseTool);
+}
 
 void TupCanvas::wakeUpLibrary()
 {
-    updateMenuStates();
-
     QString graphicPath = QFileDialog::getOpenFileName (this, tr("Import a SVG file..."), QDir::homePath(),
                                                     tr("Vector") + " (*.svg *.png *.jpg *.jpeg *.gif)");
     if (graphicPath.isEmpty())
@@ -436,9 +303,6 @@ void TupCanvas::wakeUpLibrary()
         if (f.open(QIODevice::ReadOnly)) {
             QByteArray data = f.readAll();
             f.close();
-            // int projectWidth = k->size.width();
-            // int projectHeight = k->size.height();
-
             TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, tag,
                                         TupLibraryObject::Svg, TupProject::FRAMES_EDITION, data, QString(),
                                         k->scene->currentSceneIndex(), k->scene->currentLayerIndex(), k->scene->currentFrameIndex());
@@ -475,7 +339,6 @@ void TupCanvas::wakeUpLibrary()
                 if (answer == QMessageBox::Yes) {
                     pixmap = new QPixmap();
                     QString extension = fileInfo.suffix().toUpper();
-                    // QByteArray ba = extension.toAscii();
                     QByteArray ba = extension.toLatin1();
                     const char* ext = ba.data();
                     if (pixmap->loadFromData(data, ext)) {
@@ -503,15 +366,24 @@ void TupCanvas::wakeUpLibrary()
     }
 }
 
+
+void TupCanvas::wakeUpSelection()
+{
+    emit callAction(TupToolPlugin::SelectionMenu, TupToolPlugin::ObjectsTool);
+}
+
+void TupCanvas::wakeUpNodes()
+{
+    emit callAction(TupToolPlugin::SelectionMenu, TupToolPlugin::NodesTool);
+}
+
 void TupCanvas::wakeUpDeleteSelection()
 {
-    updateMenuStates();
     emit callAction(TupToolPlugin::SelectionMenu, TupToolPlugin::Delete);
 }
 
 void TupCanvas::wakeUpZoomIn()
 {
-    updateMenuStates();
     graphicsView->scale(1.3, 1.3);
 
     emit updateZoomFactorFromFullScreen(1.3);
@@ -519,22 +391,13 @@ void TupCanvas::wakeUpZoomIn()
 
 void TupCanvas::wakeUpZoomOut()
 {
-    updateMenuStates();
     graphicsView->scale(0.7, 0.7);
 
     emit updateZoomFactorFromFullScreen(0.7);
 }
 
-void TupCanvas::wakeUpShift()
-{
-    updateMenuStates();
-    emit callAction(TupToolPlugin::ZoomMenu, TupToolPlugin::ShiftTool);
-}
-
 void TupCanvas::undo()
 {
-    updateMenuStates();
-
     QAction *undo = kApp->findGlobalAction("undo");
     if (undo) 
         undo->trigger();
@@ -542,113 +405,13 @@ void TupCanvas::undo()
 
 void TupCanvas::redo()
 {
-    updateMenuStates();
-
     QAction *redo = kApp->findGlobalAction("redo");
     if (redo) 
         redo->trigger();
 }
 
-void TupCanvas::updateSketchMenuState()
+void TupCanvas::enableRubberBand()
 {
-    k->sketchMenuIsOpen = false;
+    graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
 }
 
-void TupCanvas::updateSelectionMenuState()
-{
-    k->selectionMenuIsOpen = false; 
-}
-
-void TupCanvas::updateMenuStates()
-{
-    if (k->sketchMenuIsOpen) {
-        emit closeSketchMenu();
-        k->sketchMenuIsOpen = false;
-        return;
-    }
-
-    if (k->selectionMenuIsOpen) {
-        emit closeSelectionMenu();
-        k->selectionMenuIsOpen = false;
-        return;
-    }
-
-    if (k->propertiesMenuIsOpen) {
-        emit closePenPropertiesMenu();
-        k->propertiesMenuIsOpen = false;
-        return;
-    }
-}
-
-void TupCanvas::showInfoWidget()
-{
-    // k->display->show();
-}
-
-void TupCanvas::hideInfoWidget()
-{
-    // k->display->hide();
-}
-
-void TupCanvas::updateOnLineUsers(const QStringList &onLineUsers)
-{
-    k->onLineUsers = onLineUsers;
-    if (k->exposureDialogIsOpen)
-        k->exposureDialog->updateUsersList(onLineUsers);
-}
-
-void TupCanvas::updateExposureDialogState()
-{
-    k->exposureDialogIsOpen = false;
-}
-
-void TupCanvas::createScene()
-{
-    int sceneIndex = k->project->scenesTotal();
-
-    TupProjectRequest request = TupRequestBuilder::createSceneRequest(sceneIndex, TupProjectRequest::Add, tr("Scene %1").arg(sceneIndex + 1));
-    emit requestTriggered(&request);
-
-    request = TupRequestBuilder::createLayerRequest(sceneIndex, 0, TupProjectRequest::Add, tr("Layer 1"));
-    emit requestTriggered(&request);
-
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, 0, 0, TupProjectRequest::Add, tr("Frame 1"));
-    emit requestTriggered(&request);
-
-    request = TupRequestBuilder::createSceneRequest(sceneIndex, TupProjectRequest::Select);
-    // emit requestTriggered(&request);
-    emit localRequestTriggered(&request);
-
-    // request = TupRequestBuilder::createFrameRequest(sceneIndex, 0, 0, TupProjectRequest::Select, "1");
-    // emit requestTriggered(&request);
-}
-
-void TupCanvas::createLayer(int sceneIndex, int layerIndex)
-{
-    TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layerIndex, TupProjectRequest::Add, tr("Layer %1").arg(layerIndex + 1));
-    emit requestTriggered(&request);
-
-    // tError() << "TupCanvas::createLayer() - Creating layer at [ " << sceneIndex << ", " << layerIndex << " ]";
-
-    int oneRow = k->scene->framesTotal();
-    for(int i=0; i<oneRow; i++) {
-        request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
-        emit requestTriggered(&request);
-    }
-
-    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, 0, TupProjectRequest::Select);
-    // emit requestTriggered(&request);
-    emit localRequestTriggered(&request);
-}
-
-void TupCanvas::createFrame(int sceneIndex, int layerIndex, int layersTotal, int frameIndex)
-{
-    for(int i=0; i<layersTotal; i++) {
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, i, frameIndex, TupProjectRequest::Add, tr("Frame %1").arg(frameIndex + 1));
-        emit requestTriggered(&request);
-    }
-
-    TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Select);
-    // emit requestTriggered(&request);
-    emit localRequestTriggered(&request);
-}

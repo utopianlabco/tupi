@@ -34,7 +34,8 @@
  ***************************************************************************/
 
 #include "tupgraphicobject.h"
-#include "tupframe.h"
+// #include "tupframe.h"
+#include "tuplayer.h"
 #include "tupscene.h"
 #include "tupitemtweener.h"
 
@@ -52,7 +53,7 @@ TupGraphicObject::TupGraphicObject(QGraphicsItem *item, TupFrame *parent) : QObj
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TupGraphicObject()]";
         #else
             TINIT;
@@ -72,7 +73,7 @@ TupGraphicObject::~TupGraphicObject()
 {
     /*
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TupGraphicObject()]";
         #else
             TEND;
@@ -101,8 +102,8 @@ QDomElement TupGraphicObject::toXml(QDomDocument &doc) const
 {
     QDomElement object = doc.createElement("object");
 
-    if (TupAbstractSerializable *is = dynamic_cast<TupAbstractSerializable *>(k->item))
-        object.appendChild(is->toXml(doc));
+    if (TupAbstractSerializable *serialData = dynamic_cast<TupAbstractSerializable *>(k->item))
+        object.appendChild(serialData->toXml(doc));
 
     if (k->tween)
         object.appendChild(k->tween->toXml(doc));
@@ -118,7 +119,7 @@ void TupGraphicObject::setItem(QGraphicsItem *item)
     } else {
         #ifdef K_DEBUG
             QString msg = "TupGraphicObject::setItem() - Fatal Error: QGraphicsItem is null!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -190,6 +191,20 @@ TupFrame *TupGraphicObject::frame() const
 void TupGraphicObject::setFrame(TupFrame *frame) 
 {
     k->frame = frame;
+}
+
+int TupGraphicObject::frameIndex()
+{
+    return k->frame->index();
+}
+
+bool TupGraphicObject::layerIsVisible()
+{
+    TupLayer *layer = k->frame->layer();
+    if (layer->isVisible())
+        return true;
+
+    return false;
 }
 
 int TupGraphicObject::objectIndex() const

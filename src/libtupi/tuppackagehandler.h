@@ -38,11 +38,11 @@
 
 #include "tglobal.h"
 #include "tapplicationproperties.h"
-#include "quazip.h"
-#include "quazipfile.h"
+#include "quazip/quazip.h"
+#include "quazip/quazipfile.h"
 
 // SQA: Pending to enable in the future
-// #include <JlCompress.h>
+// #include "quazip/JlCompress.h"
 
 #include <QString>
 #include <QFile>

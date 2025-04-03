@@ -103,11 +103,7 @@ class Test
                          qmakeLine = "'LIBS += #{extraLib}'"
                          qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
                       else
-                         if parser.os.eql? "14.10" 
-                            extraLib = "-lquazip-qt5"
-                         else
-                            extraLib = "-lquazip"
-                         end
+                         extraLib = "-lquazip-qt5"
                          qmakeLine = "'LIBS += #{extraLib}'"
                       end
                    else
@@ -177,11 +173,13 @@ class Test
             config.addLib(lib)
         }
 
-        if parser.os.eql? "14.10"
-           config.addLib("-lquazip-qt5")
-        else
+        if conf.hasArgument?("with-quazip")
            config.addLib("-lquazip")
+        else
+           config.addLib("-lquazip-qt5")
         end
+
+        # config.addLib("-lquazip-qt5")
         
         parser.defines.each { |define|
             config.addDefine(define)

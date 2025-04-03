@@ -46,7 +46,6 @@ struct StepsViewer::Private
 
 StepsViewer::StepsViewer(QWidget *parent) : QTableWidget(parent), k(new Private)
 {
-    setFont(QFont("Arial", 8, QFont::Normal, false));
     setColumnCount(4);
     setColumnWidth(0, 70);
     setColumnWidth(1, 60);
@@ -83,8 +82,6 @@ QSize StepsViewer::sizeHint() const
 
 void StepsViewer::setPath(const QGraphicsPathItem *path)
 {
-    // kFatal() << "StepsViewer::setPath() - Just tracing!";
-
     // Set of key points which define the path 
     QPolygonF points = path->path().toFillPolygon();
 

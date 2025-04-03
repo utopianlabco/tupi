@@ -77,7 +77,7 @@ void TupToolPlugin::begin()
 {
 #ifdef K_DEBUG
     QString msg = "TupToolPlugin::begin() - Begin: " + k->currentTool;
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << msg;
     #else
         tWarning() << msg;
@@ -89,7 +89,7 @@ void TupToolPlugin::end()
 {
 #ifdef K_DEBUG
     QString msg = "TupToolPlugin::end() - End: " + k->currentTool;
-    #ifdef Q_OS_WIN32
+    #ifdef Q_OS_WIN
         qWarning() << msg;
     #else
         tWarning("tools") << msg;
@@ -252,12 +252,12 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
                  else
                      tool = TupToolPlugin::ZoomInTool;
             break;
-            */
 
             case Qt::Key_H:
                  menu = TupToolPlugin::ZoomMenu;
                  tool = TupToolPlugin::ShiftTool;
             break;
+            */
 
             case Qt::Key_Right:
                  menu = TupToolPlugin::Arrows;

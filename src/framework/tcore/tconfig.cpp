@@ -55,30 +55,21 @@ TConfig* TConfig::m_instance = 0;
 TConfig::TConfig() : QObject(), k(new Private)
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[TConfig()]";
         #else
             TINIT;
         #endif
     #endif
 
-    QString base = QDir::homePath() + QDir::separator();
-
-	/*
-    #ifdef Q_OS_WIN32
-            k->configDirectory.setPath(base + QCoreApplication::applicationName());
-    #else
-            k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
-    #endif
-	*/
-	
-	k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
+    QString base = QDir::homePath() + "/";
+    k->configDirectory.setPath(base + "." + QCoreApplication::applicationName());
 
     if (!k->configDirectory.exists()) {
         k->firstTime = true;
         #ifdef K_DEBUG
             QString msg = "TConfig::TConfig() - Config file doesn't exist. Creating path: " + k->configDirectory.path();
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qWarning() << msg;
             #else
                 tWarning() << msg;
@@ -88,7 +79,7 @@ TConfig::TConfig() : QObject(), k(new Private)
         if (!k->configDirectory.mkdir(k->configDirectory.path())) {
             #ifdef K_DEBUG
                 QString msg = "TConfig::TConfig() - Fatal Error: Can't create path -> " + k->configDirectory.path();
-                #ifdef Q_OS_WIN32
+                #ifdef Q_OS_WIN
                     qDebug() << msg;
                 #else
                     tError() << msg;
@@ -99,14 +90,14 @@ TConfig::TConfig() : QObject(), k(new Private)
         k->firstTime = false;
     }
 
-    k->path = k->configDirectory.path() + QDir::separator() + QCoreApplication::applicationName().toLower() + ".cfg";
+    k->path = k->configDirectory.path() + "/" + QCoreApplication::applicationName().toLower() + ".cfg";
     init();
 }
 
 TConfig::~TConfig()
 {
     #ifdef K_DEBUG
-        #ifdef Q_OS_WIN32
+        #ifdef Q_OS_WIN
             qDebug() << "[~TConfig()]";
         #else
             TEND;
@@ -141,7 +132,7 @@ void TConfig::init()
             #ifdef K_DEBUG
                 QString msg1 = "TConfig::init() - Fatal Error: Configuration file is corrupted - Line: " + QString::number(errorLine) + " - Column: " + QString::number(errorColumn);
                 QString msg2 = "TConfig::init() - Message: " + errorMsg;
-                #ifdef Q_OS_WIN32
+                #ifdef Q_OS_WIN
                     qDebug() << msg1;
                     qDebug() << msg2;
                 #else

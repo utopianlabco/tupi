@@ -77,106 +77,75 @@ class TUPI_EXPORT TupScene : public QObject, public TupAbstractSerializable
     Q_OBJECT
 
     public:
-        /**
-          * Default Constructor
-          */
         TupScene(TupProject *parent, const QSize dimension, const QColor bgColor);
-
-        /**
-          * Destructor
-          */
         ~TupScene();
 
-        /**
-          * Sets scene name
-          */
         void setSceneName(const QString &name);
-
-        /**
-          * Sets background color 
-          */
-        void setBgColor(const QColor bgColor);
-
-        /**
-          * Locks the scene
-          */
-        void setLocked(bool isLocked);
-
-        /**
-          * Returns scene name
-          */
         QString sceneName() const;
 
-        /**
-          * Returns true if scene is locked
-          */
+        void setBgColor(const QColor bgColor);
+
+        void setLocked(bool isLocked);
         bool isLocked() const;
+
         void setVisible(bool isVisible);
         bool isVisible() const;
 
-        /**
-          * Returns layers list
-          */
         Layers layers() const;
-        int layersTotal() const;
+        int layersCount() const;
         SoundLayers soundLayers() const;
 
-        TupLayer *layer(int position) const;
+        TupLayer *layerAt(int position) const;
         TupSoundLayer *soundLayer(int position) const;
 
         void setLayers(const Layers &);
 
-        /**
-          * Removes the layer at index
-          */
         bool removeLayer(int index);
 
-        /**
-          * Adds a layer, if addToEnd is true, the layer will be set at the end, otherwise next to the current layer
-          */
         TupLayer *createLayer(QString name, int position, bool loaded = false);
-
         TupSoundLayer *createSoundLayer(int position, bool loaded = false);
 
-        /**
-          * Moves the layer to the index
-          */
+        bool restoreLayer(int index);
+
         bool moveLayer(int from, int to);
 
         int objectIndex() const;
         int visualIndexOf(TupLayer *layer) const;
 
         TupProject *project() const;
-        void addTweenObject(TupGraphicObject *object);
-        void addTweenObject(TupSvgItem *object);
+        void addTweenObject(int layerIndex, TupGraphicObject *object);
+        void addTweenObject(int layerIndex, TupSvgItem *object);
 
-        void updateTweenObject(int index, TupGraphicObject *object);
-        void updateTweenObject(int index, TupSvgItem *object);
+        void updateTweenObject(int layerIndex, int objectIndex, TupGraphicObject *object);
+        void updateTweenObject(int layerIndex, int objectIndex, TupSvgItem *object);
 
-        void removeTweenObject(TupGraphicObject *object);
-        void removeTweenObject(TupSvgItem *object);
+        void removeTweenObject(int layerIndex, TupGraphicObject *object);
+        void removeTweenObject(int layerIndex, TupSvgItem *object);
 
         bool tweenExists(const QString &name, TupItemTweener::Type type);
-        void removeTween(const QString &name, TupItemTweener::Type type);
+        bool removeTween(const QString &name, TupItemTweener::Type type);
 
         TupItemTweener * tween(const QString &name, TupItemTweener::Type type);
 
         QList<QString> getTweenNames(TupItemTweener::Type type);
         QList<QGraphicsItem *> getItemsFromTween(const QString &name, TupItemTweener::Type type);
 
-        int getTotalTweens();
+        // int getTotalTweens();
 
-        QList<TupGraphicObject *> tweeningGraphicObjects() const;
-        QList<TupSvgItem *> tweeningSvgObjects() const;
+        // QList<TupGraphicObject *> tweeningGraphicObjects() const;
+        QList<TupGraphicObject *> tweeningGraphicObjects(int layerIndex) const;
 
-        int framesTotal();
+        // QList<TupSvgItem *> tweeningSvgObjects() const;
+        QList<TupSvgItem *> tweeningSvgObjects(int layerIndex) const; 
+
+        int framesCount();
 
         TupBackground *background();
 
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;
 
-        void removeTweensFromFrame(int frame);
+        void removeTweensFromFrame(int layerIndex, int frameIndex);
         void reset(QString &name);
 
         void setStoryboard(TupStoryboard *storyboard);
@@ -198,7 +167,7 @@ class TUPI_EXPORT TupScene : public QObject, public TupAbstractSerializable
         Mouths getLipSyncList();
 
     private:
-        void removeTweensFromLayer(int layer);
+        void removeTweensFromLayer(int layerIndex);
 
         struct Private;
         Private *const k;

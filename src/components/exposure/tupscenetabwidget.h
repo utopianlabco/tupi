@@ -47,6 +47,7 @@
 #include <QWheelEvent>
 #include <QTabBar>
 #include <QVBoxLayout>
+#include <QDoubleSpinBox>
 
 /**
  * @author Gustav Gonzalez 
@@ -60,19 +61,24 @@ class T_GUI_EXPORT TupSceneTabWidget : public QFrame
         TupSceneTabWidget(QWidget *parent = 0);
         ~TupSceneTabWidget();
         void addScene(int index, const QString &name, TupExposureTable *table = 0);
+        void restoreScene(int index, const QString &name);
         void removeScene(int index);
         void renameScene(int index, const QString &name);
         TupExposureTable* getCurrentTable();
         TupExposureTable* getTable(int index);
         void setCurrentIndex(int index);
         int currentIndex();
+        bool isTableIndexValid(int index);
         int count();
+        void setLayerOpacity(int sceneIndex, double opacity);
+        void setLayerVisibility(int sceneIndex, int layerIndex, bool visibility);
 
     public slots:
         void removeAllTabs();
 
     signals:
         void currentChanged(int index);
+        void updateLayerOpacity(double opacity);
 
     private:
         struct Private;

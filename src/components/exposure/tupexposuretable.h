@@ -48,11 +48,9 @@
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QLineEdit>
-
 #include <cmath>
 
 class TupExposureVerticalHeader;
-// class QMenu;
 
 /**
  * @author Jorge Cuadrado
@@ -103,9 +101,9 @@ class TUPI_EXPORT TupExposureTable : public QTableWidget
 
         bool frameIsLocked(int layerIndex, int frameIndex);
         void selectFrame(int layerIndex, int frameIndex);
-        int layersTotal();
-        int framesTotal();
-        int framesTotalAtCurrentLayer();
+        int layersCount();
+        int framesCount();
+        int framesCountAtCurrentLayer();
 
         void setMenu(QMenu *menu);
         void notifyCellClicked(int frame, int layer);
@@ -113,7 +111,7 @@ class TUPI_EXPORT TupExposureTable : public QTableWidget
 
         TupExposureTable::FrameType frameState(int layerIndex, int frameIndex);
         void updateFrameState(int layerIndex, int frameIndex, TupExposureTable::FrameType value);
-		
+
     private slots:
         void markUsedFrames(int frameIndex,  int layerIndex);
         void requestFrameRenaming(QTableWidgetItem *item);
@@ -141,6 +139,8 @@ class TUPI_EXPORT TupExposureTable : public QTableWidget
         void layerVisibilityChanged(int visualIndexLayer, bool visibility);
 
     private:
+        bool layerIndexIsValid(int layerIndex);
+        bool frameIndexIsValid(int frameIndex);
         struct Private;
         Private *const k;
 };

@@ -85,10 +85,6 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     k->layout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    QFont font = this->font();
-    font.setPointSize(8);
-    setFont(font);
-
     QLabel *nameLabel = new QLabel(tr("Name") + ": ");
     k->input = new QLineEdit;
 
@@ -104,10 +100,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons/close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -154,9 +150,8 @@ void Settings::setInnerForm()
 
     k->comboEnd = new QSpinBox();
     k->comboEnd->setEnabled(true);
-    k->comboEnd->setMinimum(1);
-    k->comboEnd->setMaximum(999);
     k->comboEnd->setValue(1);
+    k->comboEnd->setMaximum(999);
     connect(k->comboEnd, SIGNAL(valueChanged(int)), this, SLOT(checkTopLimit(int)));
 
     QHBoxLayout *startLayout = new QHBoxLayout;
@@ -365,7 +360,7 @@ void Settings::activeRangeForm(bool enable)
 
 // Adding new Tween
 
-void Settings::setParameters(const QString &name, int framesTotal, int initFrame)
+void Settings::setParameters(const QString &name, int framesCount, int initFrame)
 {
     k->mode = TupToolPlugin::Add;
     k->input->setText(name);
@@ -373,10 +368,10 @@ void Settings::setParameters(const QString &name, int framesTotal, int initFrame
     activateMode(TupToolPlugin::Selection);
 
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
-    initStartCombo(framesTotal, initFrame);
+    initStartCombo(framesCount, initFrame);
 }
 
 // Editing new Tween
@@ -392,6 +387,8 @@ void Settings::setParameters(TupItemTweener *currentTween)
     k->comboInit->setValue(currentTween->initFrame());
 
     k->comboEnd->setValue(currentTween->initFrame() + currentTween->frames());
+
+    // tError() << "Settings::setParameters() - Tracing comboEnd - comboEnd: " << currentTween->initFrame() + currentTween->frames();
 
     checkFramesRange();
 
@@ -409,17 +406,17 @@ void Settings::setParameters(TupItemTweener *currentTween)
     }
 }
 
-void Settings::initStartCombo(int framesTotal, int currentIndex)
+void Settings::initStartCombo(int framesCount, int currentIndex)
 {
     k->comboInit->clear();
     k->comboEnd->clear();
 
     k->comboInit->setMinimum(1);
-    k->comboInit->setMaximum(framesTotal);
+    k->comboInit->setMaximum(framesCount);
     k->comboInit->setValue(currentIndex + 1);
 
     k->comboEnd->setMinimum(1);
-    k->comboEnd->setValue(framesTotal);
+    k->comboEnd->setValue(framesCount);
 }
 
 void Settings::setStartFrame(int currentIndex)
@@ -449,7 +446,7 @@ void Settings::setEditMode()
 {
     k->mode = TupToolPlugin::Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons/close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 
@@ -459,7 +456,7 @@ void Settings::applyTween()
         TOsd::self()->display(tr("Info"), tr("You must select at least one object!"), TOsd::Info); 
         #ifdef K_DEBUG
             QString msg = "Settings::applyTween() - You must select at least one object!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -473,7 +470,7 @@ void Settings::applyTween()
         TOsd::self()->display(tr("Info"), tr("You must set Tween properties first!"), TOsd::Info);
         #ifdef K_DEBUG
             QString msg = "Settings::applyTween() - You must set Tween properties first!";
-            #ifdef Q_OS_WIN32
+            #ifdef Q_OS_WIN
                 qDebug() << msg;
             #else
                 tError() << msg;
@@ -524,7 +521,7 @@ void Settings::emitOptionChanged(int option)
                     TOsd::self()->display(tr("Info"), tr("Select objects for Tweening first!"), TOsd::Info);
                     #ifdef K_DEBUG
                         QString msg = "Settings::emitOptionChanged() - You must set Tween properties first!";
-                        #ifdef Q_OS_WIN32
+                        #ifdef Q_OS_WIN
                             qDebug() << msg;
                         #else
                             tError() << msg;
@@ -637,7 +634,6 @@ QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFram
                    }
                }
     }
-
     doc.appendChild(root);
 
     return doc.toString();
@@ -677,8 +673,11 @@ void Settings::checkFramesRange()
 {
     int begin = k->comboInit->value();
     int end = k->comboEnd->value();
-        
+       
     if (begin > end) {
+        // tError() << "Settings::checkFramesRange() - begin: " << begin;
+        // tError() << "Settings::checkFramesRange() - end: " << end;
+        // tError() << "Settings::checkFramesRange() - Updating comboEnd value...";
         k->comboEnd->setValue(k->comboEnd->maximum() - 1);
         end = k->comboEnd->value();
     }

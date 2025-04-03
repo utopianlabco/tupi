@@ -75,8 +75,10 @@ void TupExposureHeader::setSectionVisibility(int section, bool visibility)
 void TupExposureHeader::showTitleEditor(int section)
 {
     if (section >= 0) {
-        QFont font("Arial", 8, QFont::Normal, false);
+        QFont font = this->font();
+        font.setPointSize(8);
         m_editor->setFont(font);
+        // QFont font("Arial", 8, QFont::Normal, false);
 
         int x = sectionViewportPosition(section);
         m_editor->setGeometry(x, 0, sectionSize(section), height());
@@ -104,6 +106,7 @@ void TupExposureHeader::insertSection(int section, const QString &text)
     layer.lastFrame = 0;
     layer.isVisible = true;
     layer.isLocked = false;
+
     m_sections.insert(section, layer);
 }
 
@@ -151,25 +154,36 @@ void TupExposureHeader::setLastFrame(int section, int num)
     m_sections[section].lastFrame = num;
 }
 
-void TupExposureHeader::mousePressEvent(QMouseEvent * event)
+void TupExposureHeader::mousePressEvent(QMouseEvent *event)
 {
     int section = logicalIndexAt(event->pos());
-    int x = sectionViewportPosition(section) + 3;
+    if (section > -1 && section < count()) {
+        int x = sectionViewportPosition(section) + 3;
+        QFont font = this->font();
+        font.setPointSize(8);
+        QFontMetrics fm(font);
+        QString text = m_sections[section].title;
+        int w = fm.width(text);
+        int limit = sectionSize(section)/2 - w/2;
 
-    QFont font("Arial", 8, QFont::Normal, false);
-    QFontMetrics fm(font);
-    QString text = m_sections[section].title;
-    int w = fm.width(text);
-    int limit = sectionSize(section)/2 - w/2;
+        QRect rect(x + limit - 12, 3, 12, height()-3);
+        if (rect.contains(event->pos())) {
+            notifyVisibilityChange(section);
+        } else {
+            if (m_currentSection != section)
+                emit headerSelectionChanged(section);
 
-    QRect rect(x + limit - 12, 3, 12, height()-3);
-    if (rect.contains(event->pos())) {
-        notifyVisibilityChange(section);
+            QHeaderView::mousePressEvent(event);
+        }
     } else {
-        if (m_currentSection != section)
-            emit selectionChanged(section);
-
-        QHeaderView::mousePressEvent(event);
+        #ifdef K_DEBUG
+            QString msg = "TupExposureHeader::mousePressEvent() - Fatal Error: Section index is invalid -> " + QString::number(section);
+            #ifdef Q_OS_WIN
+                qDebug() << msg;
+            #else
+                tFatal() << msg;
+            #endif
+        #endif
     }
 }
 
@@ -195,7 +209,9 @@ void TupExposureHeader::paintSection(QPainter *painter, const QRect & rect, int 
     style()->drawControl(QStyle::CE_HeaderSection, &headerOption, painter);
 
     QString text = m_sections[section].title;
-    QFont font("Arial", 8, QFont::Normal, false);
+    QFont font = this->font();
+    font.setPointSize(8);
+    // QFont font("Arial", 8, QFont::Normal, false);
     QFontMetrics fm(font);
 
     if (((section == m_currentSection) || (m_sections.size() == 1)) && m_sections[section].isVisible) { // Header selected

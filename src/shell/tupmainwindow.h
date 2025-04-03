@@ -40,6 +40,7 @@
 #include "tupdocumentview.h"
 #include "tupanimationspace.h"
 #include "tuppreferences.h"
+#include "tuphelpdialog.h"
 
 // modules
 #include "tupexposuresheet.h"
@@ -65,7 +66,7 @@
 #include "tupnetprojectmanagerhandler.h"
 
 #ifdef K_DEBUG
-#ifdef Q_OS_WIN32
+#ifdef Q_OS_WIN
 #include <QDebug>
 #else
 #include "tdebug.h"
@@ -103,9 +104,9 @@ class TupMainWindow : public TabbedMainWindow
         enum Perspective {
              Animation = 0x01,
              Player = 0x02,
-             Help = 0x04,
-             News = 0x08,
-             All = Animation | Player | Help | News
+             News = 0x04,
+             // Play = 0x08,
+             All = Animation | Player | News
         };
 
         enum RequestType {
@@ -127,7 +128,7 @@ class TupMainWindow : public TabbedMainWindow
          void setupFileActions();
          void setupSettingsActions();
          // void setupWindowActions();
-         void setupInsertActions();
+         // void setupInsertActions();
 
         /**
          * Sets up the actions in the toolbar
@@ -140,7 +141,7 @@ class TupMainWindow : public TabbedMainWindow
          void setupMenu();
 
          void setupHelpActions();
-         void setupActions();
+         // void setupActions();
          void setMenuItemsContext(bool flag);
 
          void connectWidgetToManager(QWidget *widget);
@@ -189,17 +190,12 @@ class TupMainWindow : public TabbedMainWindow
           void openProjectFromServer();
           void importProjectToServer();
           void exportProject();
-
-          void save();
           void saveAs();
-
-          void showHelpPage(const QString &document);
-          void showWidgetPage();
 
           void showAnimationMenu(const QPoint &p);
 
           void changePerspective(QAction *a);
-          void setHelpPerspective();
+          void changePerspective(int index);
 
           void addPage(QWidget *widget);
           void updateCurrentTab(int index);
@@ -214,6 +210,7 @@ class TupMainWindow : public TabbedMainWindow
 
     private slots:
           void preferences();
+          void showHelp();
           void aboutTupi();
           void showTipDialog();
           void importPalettes();
@@ -223,10 +220,10 @@ class TupMainWindow : public TabbedMainWindow
           void callSave();
           void expandExposureView(TupProject::Mode contextMode);
           void expandColorView();
-          // void postVideo(const QString &title, const QString &topics, const QString &description, int fps, const QList<int> sceneIndexes);
           void resetMousePointer();
           void updateUsersOnLine(const QString &login, int state);
           void importPapagayoLipSync();
+          void hideTopPanels();
 
     private:
           TupProjectManager *m_projectManager;
@@ -237,7 +234,7 @@ class TupMainWindow : public TabbedMainWindow
     private:
           TupDocumentView *animationTab;
           TupAnimationspace *playerTab;
-          TupHelpBrowser *helpTab;
+          // TupHelpBrowser *helpTab;
           TupTwitterWidget *newsTab;
           TupStatusBar *m_statusBar;
           TActionManager *m_actionManager;
@@ -260,6 +257,8 @@ class TupMainWindow : public TabbedMainWindow
 
     // Components
     private:
+          QToolBar *mainToolBar;
+          QToolBar *alternativeToolBar;
           TupExposureSheet *m_exposureSheet;
           TupScenesWidget *m_scenes;
           TupTimeLine *m_timeLine;
@@ -267,7 +266,7 @@ class TupMainWindow : public TabbedMainWindow
 #if defined(QT_GUI_LIB) && defined(K_DEBUG) && defined(Q_OS_UNIX)
           TupDebugWidget *m_debug;
 #endif
-          TupHelpWidget *m_helper;
+          // TupHelpWidget *m_helper;
           TupLibraryWidget *m_libraryWidget;
           TupColorPalette *m_colorPalette;
           TupPenWidget *m_penWidget;
@@ -280,6 +279,7 @@ class TupMainWindow : public TabbedMainWindow
           ToolView *timeView;
           ToolView *debugView;
           ToolView *exportView;
+
           TupCameraWidget *cameraWidget;
           bool isSaveDialogOpen; 
           bool internetOn;

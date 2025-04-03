@@ -58,7 +58,7 @@ class TUPI_EXPORT TupHelpBrowser : public QWidget
     Q_OBJECT
 
     public:
-        TupHelpBrowser(QWidget *parent);
+        TupHelpBrowser(const QString &path, QWidget *parent = 0);
         ~TupHelpBrowser();
 
     public slots:
@@ -67,10 +67,14 @@ class TUPI_EXPORT TupHelpBrowser : public QWidget
     protected:
         void keyPressEvent(QKeyEvent *event);
 
+    signals:
+        void closeDialog();
+
     private:
         void reload();
-        QSplitter *m_separator;
-        QTextBrowser *m_pageArea;
+
+        struct Private;
+        Private *const k;
 };
 
 #endif

@@ -37,30 +37,41 @@
 #define TUPCANVASVIEW_H
 
 #include "tglobal.h"
-#include "tuppaintareabase.h"
+#include "tupgraphicsscene.h"
+// #include "tuppaintareabase.h"
 
 #include <QGraphicsView>
 #include <QPainter>
 #include <QRectF>
 #include <QMouseEvent>
+#include <QKeyEvent>
+#include <cmath>
 
 class TUPI_EXPORT TupCanvasView : public QGraphicsView
 {
     Q_OBJECT
 
     public:
-        TupCanvasView(QWidget *parent=0, const QSize &screenSize = QSize(0, 0), 
+        TupCanvasView(QWidget *parent=0, TupGraphicsScene *scene=0, const QSize &screenSize = QSize(0, 0), 
                       const QSize &projectSize = QSize(0, 0), const QColor &bg = QColor(Qt::white));
         ~TupCanvasView();
 
     protected:
         virtual void drawBackground(QPainter *painter, const QRectF &rect);
         virtual void mousePressEvent(QMouseEvent *event);
+        virtual void mouseMoveEvent(QMouseEvent *event);
+        virtual void keyPressEvent(QKeyEvent *event);
+        virtual void keyReleaseEvent(QKeyEvent *event);
 
     signals:
         void rightClick();
+        void zoomIn();
+        void zoomOut();
+        void frameBackward();
+        void frameForward();
 
     private:
+        void updateCenter(const QPoint point);
         struct Private;
         Private *const k;
 };

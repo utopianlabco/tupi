@@ -69,11 +69,19 @@ int TupProjectResponse::part() const
 int TupProjectResponse::action() const
 {
     if (k->mode == Undo) {
-
         switch (k->action) {
                 case TupProjectRequest::Add:
                      {
                         return TupProjectRequest::Remove;
+                     }
+                break;
+                case TupProjectRequest::Remove:
+                     {
+                        return TupProjectRequest::Add;
+                     }
+                break;
+                case TupProjectRequest::Exchange:
+                     {
                      }
                 break;
                 case TupProjectRequest::InsertSymbolIntoFrame:
@@ -122,11 +130,6 @@ int TupProjectResponse::action() const
                      {
                      }
                 break;
-                case TupProjectRequest::Remove:
-                     {
-                        return TupProjectRequest::Add;
-                     }
-                break;
                 case TupProjectRequest::Group:
                      {
                         return TupProjectRequest::Ungroup;
@@ -140,7 +143,7 @@ int TupProjectResponse::action() const
                      {
                         #ifdef K_DEBUG
                             QString msg = "TupProjectResponse::action() : Fatal Error: Unhandled action -> " + QString::number(k->action);
-                            #ifdef Q_OS_WIN32
+                            #ifdef Q_OS_WIN
                                 qDebug() << msg;
                             #else
                                 tError() << msg;
@@ -314,7 +317,7 @@ void TupItemResponse::setItemType(TupLibraryObject::Type type)
     m_itemType = type;
 }
 
-QPointF TupItemResponse::position()
+QPointF TupItemResponse::position() const
 {
     return QPointF(m_x, m_y);
 }
@@ -437,7 +440,7 @@ TupProjectResponse *TupProjectResponseFactory::create(int part, int action)
              {
                  #ifdef K_DEBUG
                      QString msg = "TupProjectResponseFactory::create() - Error: Unknown/Unhandled element: " + QString::number(part);
-                     #ifdef Q_OS_WIN32
+                     #ifdef Q_OS_WIN
                          qDebug() << msg;
                      #else
                          tFatal() << msg;

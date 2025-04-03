@@ -50,10 +50,10 @@ class TUPI_PLUGIN TLibavMovieGenerator : public TMovieGenerator
         TLibavMovieGenerator(TMovieGeneratorInterface::Format format, const QSize &size, int fps = 24, double duration = 0);
         ~TLibavMovieGenerator();
         virtual bool movieHeaderOk();
-        virtual const char* getErrorMsg();
+        virtual QString getErrorMsg() const;
 
     protected:
-        void __saveMovie(const QString &fileName);
+        void createMovieFile(const QString &fileName);
         virtual void handle(const QImage &image);
         virtual bool begin();
         virtual void end();
@@ -61,6 +61,7 @@ class TUPI_PLUGIN TLibavMovieGenerator : public TMovieGenerator
     private:
         struct Private;
         Private *const k;
+        QString errorDetail;
 };
 
 #endif
