@@ -1,0 +1,38 @@
+Description: Adjust ruby code to work with Ruby 3.2.
+ Ruby 3.2 removed the File.exists? method.
+Author: Petter Reinholdtsen <pere@debian.org>
+Bug-Debian: https://bugs.debian.org/1094073
+Forwarded: no
+Last-Update: 2025-04-03
+---
+--- tupi-0.2+git08.orig/configure.rb
++++ tupi-0.2+git08/configure.rb
+@@ -180,7 +180,7 @@ _EOH_
+     config.addDefine('REVISION=\\\\\"git08\\\\\"')
+     config.addDefine('CONFIG_VERSION=\\\\\"2\\\\\"')
+ 
+-    if File.exists?('/etc/canaima_version')
++    if File.exist?('/etc/canaima_version')
+        config.addDefine("CANAIMA")
+     end
+ 
+@@ -197,7 +197,7 @@ _EOH_
+     for item in array
+         name = item.split("\/")
+         file = item + "\/" + name[1]
+-        if FileTest.exists?(file)
++        if FileTest.exist?(file)
+            File.delete(file)
+         end
+     end
+--- tupi-0.2+git08.orig/qonf/test.rb
++++ tupi-0.2+git08/qonf/test.rb
+@@ -74,7 +74,7 @@ class Test
+         
+         cwd = Dir.getwd
+ 
+-        if File.exists?(dir)
++        if File.exist?(dir)
+             if File.stat(dir).directory?
+                 Dir.chdir(dir)
+ 
