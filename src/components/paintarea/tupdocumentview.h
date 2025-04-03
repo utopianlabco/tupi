@@ -44,6 +44,8 @@
 #include "tuptoolinterface.h"
 #include "tupconfigurationarea.h"
 #include "tupstoryboard.h"
+#include "tcolorcell.h"
+#include "tupbrushmanager.h"
 
 #include <QMainWindow>
 #include <QLayout>
@@ -93,14 +95,16 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         QSize sizeHint() const;
 
         void setAntialiasing(bool useIt);
-        void setOpenGL(bool useIt);
+        // void setOpenGL(bool useIt);
 
-        QPainter::RenderHints renderHints() const;
+        // QPainter::RenderHints renderHints() const;
         void setZoomFactor(qreal factor);
 
         TupBrushManager *brushManager() const;
-        TupPaintAreaCommand *createCommand(const TupPaintAreaEvent *event);
-        void updatePaintArea();
+        QPen contourPen() const;
+        QBrush fillBrush() const;
+
+        TupPaintAreaCommand *createPaintCommand(const TupPaintAreaEvent *event);
         TupProject::Mode spaceContext();
         TupProject *project();
         int currentFramesTotal();
@@ -112,6 +116,7 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void resizeProjectDimension(const QSize dimension);
         void updatePerspective();
         QColor projectBGColor() const;
+        void updateWorkspace();
 
     private slots:
         void setNextOnionSkin(int n);
@@ -121,12 +126,12 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void applyZoomOut();
         void updateRotationVars(int angle);
         void changeRulerOrigin(const QPointF &zero);
-        void saveTimer();
+        // void saveTimer();
         void showFullScreen();
         void closeFullScreen();
         void loadPlugin(int menu, int index);
-        void updateStatusBgColor(const QColor color);
-        void updatePenThickness(int size);
+        // void updateStatusBgColor(const QColor color);
+        // void updatePenThickness(int size);
         void updateOnionOpacity(double opacity);
         void setBackgroundDirection(int direction);
         void updateBackgroundShiftProperty(int shift);
@@ -140,7 +145,6 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         // Plugins
         void loadPlugins();
         void setSpaceContext();
-        void updateBgColor(const QColor color);
         void enableOnionFeature();
         void setDefaultOnionFactor();
         void setOnionFactor(double value);
@@ -154,10 +158,13 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void showPos(const QPointF &point);	
         void setCursor(const QCursor &cursor);
         void selectToolFromMenu(QAction *action);
-        void callAutoSave();
+        // void callAutoSave();
         void sendStoryboard(TupStoryboard *storyboard, int sceneIndex);
         void updateStaticOpacity(double opacity);
         void updateDynamicOpacity(double opacity);
+
+        void updatePen(const QPen &pen);
+        void updateBrush(const QBrush &brush);
 
     public slots:
         void undo();
@@ -170,17 +177,19 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void updateNodesScale(qreal factor);
         void importPapagayoLipSync();
         void resetWorkSpaceTransformations();
+        void updateBgColor(const QColor color);
+        void updatePaintArea();
 
     signals:
         void requestTriggered(const TupProjectRequest *event);
         void localRequestTriggered(const TupProjectRequest *event);
         void autoSave();
         void modeHasChanged(TupProject::Mode mode);
-        void expandColorPanel();
         void requestExportImageToServer(int frameIndex, int sceneIndex, const QString &title, const QString &topics, const QString &description);
         void openColorDialog(const QColor &);
-        void updateColorFromFullScreen(const QColor &color);
-        void updatePenFromFullScreen(const QPen &pen);
+        // void updateColorFromFullScreen(const QColor &color);
+        void colorChangedFromFullScreen(const QColor &color);
+        // void updatePenFromFullScreen(const QPen &pen);
         void updateStoryboard(TupStoryboard *storyboard, int sceneIndex);
         void postStoryboard(int sceneIndex);
         // void projectHasChanged();
@@ -189,6 +198,10 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void projectSizeHasChanged(const QSize dimension);
         void updateFPS(int fps);
         void newPerspective(int index);
+        void contourColorChanged(const QColor &color);
+        void fillColorChanged(const QColor &color);
+        void bgColorChanged(const QColor &color);
+        void penWidthChanged(int width);
 
     private:
         void setupDrawActions();
@@ -197,6 +210,8 @@ class TUPI_EXPORT TupDocumentView : public QMainWindow
         void createLateralToolBar();
         void updateRotationAngleFromRulers(int angle);
         double backgroundOpacity(TupFrame::FrameType type);
+        void updateOnionColorSchemeStatus(bool status);
+
         struct Private;
         Private *const k;
 

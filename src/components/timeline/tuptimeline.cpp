@@ -70,6 +70,7 @@ TupTimeLine::TupTimeLine(TupProject *project, QWidget *parent) : TupModuleWidget
                         TupProjectActionBar::RemoveLayer |
                         TupProjectActionBar::Separator |
                         TupProjectActionBar::InsertFrame |
+                        TupProjectActionBar::ExtendFrame |
                         TupProjectActionBar::RemoveFrame |
                         TupProjectActionBar::MoveFrameBackward |
                         TupProjectActionBar::MoveFrameForward |
@@ -108,7 +109,7 @@ TupTimeLineTable *TupTimeLine::framesTable(int sceneIndex)
     return 0;
 }
 
-void TupTimeLine::insertScene(int sceneIndex, const QString &name)
+void TupTimeLine::addScene(int sceneIndex, const QString &name)
 {
     if (sceneIndex < 0 || sceneIndex > k->scenesContainer->count())
         return;
@@ -117,11 +118,14 @@ void TupTimeLine::insertScene(int sceneIndex, const QString &name)
     framesTable->setItemSize(10, 20);
 
     connect(framesTable, SIGNAL(frameSelected(int, int)), this, SLOT(selectFrame(int, int)));
+    connect(framesTable, SIGNAL(frameRemoved()), SLOT(removeFrameCopy()));
+    connect(framesTable, SIGNAL(frameCopied(int, int)), SLOT(copyFrameForward(int, int)));
     connect(framesTable, SIGNAL(visibilityChanged(int, bool)), this, SLOT(requestLayerVisibilityAction(int, bool)));
     connect(framesTable, SIGNAL(layerNameChanged(int, const QString &)), this, SLOT(requestLayerRenameAction(int, const QString &))); 
     connect(framesTable, SIGNAL(layerMoved(int, int)), this, SLOT(requestLayerMove(int, int)));
+    connect(framesTable, SIGNAL(newPerspective(int)), this, SIGNAL(newPerspective(int)));
 
-    k->scenesContainer->insertScene(sceneIndex, framesTable, name);
+    k->scenesContainer->addScene(sceneIndex, framesTable, name);
 }
 
 void TupTimeLine::removeScene(int sceneIndex)
@@ -132,16 +136,13 @@ void TupTimeLine::removeScene(int sceneIndex)
 
 void TupTimeLine::closeAllScenes()
 {
-    k->scenesContainer->blockSignals(true);
-    while (k->scenesContainer->currentWidget())
-           delete k->scenesContainer->currentWidget();
-    k->scenesContainer->blockSignals(false);
+    blockSignals(true);
+    k->scenesContainer->removeAllScenes();
+    blockSignals(false);
 }
 
 void TupTimeLine::sceneResponse(TupSceneResponse *response)
 {
-    // Q_UNUSED(response);
-
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
             qDebug() << "[TupTimeLine::sceneResponse()]";
@@ -154,7 +155,7 @@ void TupTimeLine::sceneResponse(TupSceneResponse *response)
             case TupProjectRequest::Add:
             {
                  if (response->mode() == TupProjectResponse::Do) {
-                     insertScene(response->sceneIndex(), response->arg().toString());
+                     addScene(response->sceneIndex(), response->arg().toString());
                      return;
                  } 
 
@@ -282,8 +283,7 @@ void TupTimeLine::layerResponse(TupLayerResponse *response)
 
 void TupTimeLine::frameResponse(TupFrameResponse *response)
 {
-    // Q_UNUSED(response);
-
+    /*
     #ifdef K_DEBUG
         #ifdef Q_OS_WIN
             qDebug() << "[TupTimeLine::frameResponse()]";
@@ -291,6 +291,7 @@ void TupTimeLine::frameResponse(TupFrameResponse *response)
             T_FUNCINFO;
         #endif
     #endif
+    */
 
     TupTimeLineTable *framesTable = this->framesTable(response->sceneIndex());
     if (framesTable) {
@@ -356,7 +357,6 @@ void TupTimeLine::libraryResponse(TupLibraryResponse *response)
                      if (framesTable) {
                          framesTable->insertSoundLayer(response->layerIndex() + 1, response->arg().toString());
                          framesTable->insertFrame(response->layerIndex() + 1);
-                         // framesTable->insertFrame(response->layerIndex() + 1, "");
                      }
                 }
                 break;
@@ -370,7 +370,6 @@ void TupTimeLine::libraryResponse(TupLibraryResponse *response)
 void TupTimeLine::requestCommand(int action)
 {
     int sceneIndex = k->scenesContainer->currentIndex();
-
     if (sceneIndex < 0) {
         #ifdef K_DEBUG
             QString msg = "TupTimeLine::requestCommand() - Fatal Error: Scene index is invalid -> " + QString::number(sceneIndex);
@@ -385,7 +384,6 @@ void TupTimeLine::requestCommand(int action)
     }
 
     int layerIndex = framesTable(sceneIndex)->currentLayer();
-
     if (layerIndex < 0) {
         #ifdef K_DEBUG
             QString msg = "TupTimeLine::requestCommand() - Fatal Error: Layer index is invalid -> " + QString::number(layerIndex);
@@ -400,7 +398,6 @@ void TupTimeLine::requestCommand(int action)
     }
 
     int frameIndex = framesTable(sceneIndex)->lastFrameByLayer(layerIndex);
-
     if (frameIndex < 0) {
         #ifdef K_DEBUG
             QString msg = "TupTimeLine::requestCommand() - Fatal Error: Frame index is invalid -> " + QString::number(frameIndex);
@@ -472,27 +469,23 @@ bool TupTimeLine::requestFrameAction(int action, int frameIndex, int layerIndex,
     Q_UNUSED(frameIndex);
 
     TupProjectRequest request;
+    int currentFrame = framesTable(sceneIndex)->currentColumn();
 
     switch (action) {
             case TupProjectActionBar::InsertFrame:
             {
                  int lastFrame = framesTable(sceneIndex)->lastFrameByLayer(layerIndex);
-                 int currentFrame = framesTable(sceneIndex)->currentColumn();
-
                  if (currentFrame == lastFrame) {
                      request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, lastFrame + 1,
                                                   TupProjectRequest::Add, tr("Frame"));
-                                                  // TupProjectRequest::Add, tr("Frame %1").arg(lastFrame + 2));
                      emit requestTriggered(&request);
                  } else {
                      request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, currentFrame + 1,
                                                   TupProjectRequest::Add, tr("Frame"));
-                                                  // TupProjectRequest::Add, tr("Frame %1").arg(currentFrame + 2));
                      emit requestTriggered(&request);
                      int target = currentFrame + 2;
                      for (int index=target; index <= lastFrame+1; index++) {
                           target++;
-                          // request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, index, TupProjectRequest::Rename, tr("Frame %1").arg(target));
                           request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, index, TupProjectRequest::Rename, tr("Frame"));
                           emit requestTriggered(&request);
                      }
@@ -502,11 +495,15 @@ bool TupTimeLine::requestFrameAction(int action, int frameIndex, int layerIndex,
                  return true;
             }
             break;
+            case TupProjectActionBar::ExtendFrame:
+            {
+                 copyFrameForward(layerIndex, currentFrame);
+                 return true;
+            }
+            break;
             case TupProjectActionBar::RemoveFrame:
             {
                  int lastFrame = framesTable(sceneIndex)->lastFrameByLayer(layerIndex);
-                 int currentFrame = framesTable(sceneIndex)->currentColumn(); 
-
                  if (currentFrame > lastFrame)
                      return false;
 
@@ -536,8 +533,6 @@ bool TupTimeLine::requestFrameAction(int action, int frameIndex, int layerIndex,
             break;
             case TupProjectActionBar::MoveFrameBackward:
             {
-                 int currentFrame = framesTable(sceneIndex)->currentColumn();
-
                  TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, currentFrame, TupProjectRequest::Exchange, currentFrame - 1);
                  emit requestTriggered(&request);
 
@@ -546,11 +541,9 @@ bool TupTimeLine::requestFrameAction(int action, int frameIndex, int layerIndex,
             break;
             case TupProjectActionBar::MoveFrameForward:
             {
-                 int currentFrame = framesTable(sceneIndex)->currentColumn();
                  int lastFrame = framesTable(sceneIndex)->lastFrameByLayer(layerIndex);
 
                  if (currentFrame == lastFrame) {
-                     // TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, lastFrame + 1, TupProjectRequest::Add, tr("Frame %1").arg(lastFrame + 2));
                      TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, lastFrame + 1, TupProjectRequest::Add, tr("Frame"));
                      emit requestTriggered(&request);
                  }
@@ -563,7 +556,6 @@ bool TupTimeLine::requestFrameAction(int action, int frameIndex, int layerIndex,
             break;
             case TupProjectActionBar::LockFrame:
             {
-                 int currentFrame = framesTable(sceneIndex)->currentColumn();
                  bool locked = framesTable(sceneIndex)->frameIsLocked(layerIndex, currentFrame);
 
                  TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, currentFrame, TupProjectRequest::Lock, !locked);
@@ -592,13 +584,11 @@ bool TupTimeLine::requestLayerAction(int action, int layerIndex, int sceneIndex,
                  emit requestTriggered(&request);
 
                  if (layerIndex == 0) {
-                     // request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, 0, TupProjectRequest::Add, tr("Frame %1").arg(1));
                      request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, 0, TupProjectRequest::Add, tr("Frame"));
                      emit requestTriggered(&request);
                  } else {
                      int total = framesTable(sceneIndex)->lastFrameByLayer(layerIndex - 1);
                      for (int j=0; j <= total; j++) {
-                          // request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, j, TupProjectRequest::Add, tr("Frame %1").arg(j + 1));
                           request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, j, TupProjectRequest::Add, tr("Frame"));
                           emit requestTriggered(&request);
                      }
@@ -675,7 +665,7 @@ bool TupTimeLine::requestSceneAction(int action, int sceneIndex, const QVariant 
     return false;
 }
 
-void TupTimeLine::requestLayerVisibilityAction(int layer, bool isVisible)
+void TupTimeLine::requestLayerVisibilityAction(int layerIndex, bool isVisible)
 {
     /*
     #ifdef K_DEBUG
@@ -689,11 +679,11 @@ void TupTimeLine::requestLayerVisibilityAction(int layer, bool isVisible)
 
     int sceneIndex = k->scenesContainer->currentIndex();
 
-    TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layer, TupProjectRequest::View, isVisible);
+    TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layerIndex, TupProjectRequest::View, isVisible);
     emit requestTriggered(&request);
 }
 
-void TupTimeLine::requestLayerRenameAction(int layer, const QString &name)
+void TupTimeLine::requestLayerRenameAction(int layerIndex, const QString &name)
 {
     /*
     #ifdef K_DEBUG
@@ -708,7 +698,7 @@ void TupTimeLine::requestLayerRenameAction(int layer, const QString &name)
 
     int sceneIndex = k->scenesContainer->currentIndex();
     
-    TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layer, TupProjectRequest::Rename, name);
+    TupProjectRequest request = TupRequestBuilder::createLayerRequest(sceneIndex, layerIndex, TupProjectRequest::Rename, name);
     emit requestTriggered(&request);
 }
 
@@ -753,6 +743,43 @@ void TupTimeLine::selectFrame(int layerIndex, int frameIndex)
     }
 }
 
+void TupTimeLine::removeFrameCopy()
+{
+    k->actionBar->emitActionSelected(TupProjectActionBar::RemoveFrame);
+}
+
+void TupTimeLine::copyFrameForward(int layerIndex, int frameIndex)
+{
+    int sceneIndex = k->scenesContainer->currentIndex();
+
+    QString frameName = tr("Frame");
+    TupScene *scene = k->project->sceneAt(sceneIndex);
+    if (scene) {
+        TupLayer *layer = scene->layerAt(layerIndex);
+        if (layer) {
+            TupFrame *frame = layer->frameAt(frameIndex);
+            if (frame)
+                frameName = frame->frameName();
+        }
+    }
+
+    TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex, TupProjectRequest::Copy);
+    emit localRequestTriggered(&request);
+
+    int target = frameIndex + 1;
+    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Add, "");
+    emit requestTriggered(&request);
+
+    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Paste);
+    emit localRequestTriggered(&request);
+
+    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Rename, frameName);
+    emit requestTriggered(&request);
+
+    request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, target, TupProjectRequest::Select);
+    emit localRequestTriggered(&request);
+}
+
 void TupTimeLine::requestSceneSelection(int sceneIndex)
 {
     if (k->scenesContainer->count() > 1) {
@@ -761,16 +788,33 @@ void TupTimeLine::requestSceneSelection(int sceneIndex)
     }
 }
 
-void TupTimeLine::emitRequestChangeFrame(int sceneIndex, int layerIndex, int frameIndex)
+void TupTimeLine::requestLayerMove(int oldLayerIndex, int newLayerIndex)
 {
-    TupProjectRequest request = TupRequestBuilder::createFrameRequest(sceneIndex, layerIndex, frameIndex,
-                                TupProjectRequest::Select, "1");
+    TupProjectRequest request = TupRequestBuilder::createLayerRequest(k->scenesContainer->currentIndex(), oldLayerIndex,
+                                                   TupProjectRequest::Move, newLayerIndex);
     emit requestTriggered(&request);
 }
 
-void TupTimeLine::requestLayerMove(int oldIndex, int newIndex)
+void TupTimeLine::initLayerVisibility()
 {
-    TupProjectRequest request = TupRequestBuilder::createLayerRequest(k->scenesContainer->currentIndex(), oldIndex,
-                                                   TupProjectRequest::Move, newIndex);
-    emit requestTriggered(&request);
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "TupTimeLine::initLayerVisibility()";
+        #else
+            T_FUNCINFO << "TupTimeLine::initLayerVisibility()";
+        #endif
+    #endif
+
+    int scenes = k->project->scenesCount();
+    for (int sceneIndex=0; sceneIndex < scenes; sceneIndex++) {
+         TupScene *scene = k->project->sceneAt(sceneIndex);
+         if (scene) {
+             int layers = scene->layersCount();
+             for (int layerIndex=0; layerIndex < layers; layerIndex++) {
+                  TupLayer *layer = scene->layerAt(layerIndex);
+                  k->scenesContainer->getTable(sceneIndex)->setLayerVisibility(layerIndex, layer->isVisible());
+             }
+         }
+    }
 }
+

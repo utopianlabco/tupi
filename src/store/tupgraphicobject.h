@@ -57,7 +57,7 @@ class TUPI_EXPORT TupGraphicObject : public QObject, public TupAbstractSerializa
         
         TupGraphicObject(QGraphicsItem *item, TupFrame *parent);
         ~TupGraphicObject();
-        
+
         void setItem(QGraphicsItem *item);
         QGraphicsItem *item() const;
         
@@ -81,6 +81,24 @@ class TUPI_EXPORT TupGraphicObject : public QObject, public TupAbstractSerializa
 
         void setItemZValue(int value);
         int itemZValue();
+
+        bool transformationIsNotEdited();
+        void saveInitTransformation();
+        void storeItemTransformation(const QString &properties);
+        void undoTransformation();
+        void redoTransformation();
+
+        bool brushIsNotEdited();
+        void saveInitBrush();
+        void setBrush(const QString &xml);
+        void redoBrushAction();
+        void undoBrushAction();
+
+        bool penIsNotEdited();
+        void saveInitPen();
+        void setPen(const QString &xml);
+        void redoPenAction();
+        void undoPenAction();
 
     public:
         virtual void fromXml(const QString &xml);

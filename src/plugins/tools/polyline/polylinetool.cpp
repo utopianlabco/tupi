@@ -62,10 +62,10 @@ struct PolyLineTool::Private
     
     QGraphicsLineItem *line1;
     QGraphicsLineItem *line2;
-    InfoPanel *configurator;
+    Settings *configurator;
     QCursor cursor;
-
     qreal realFactor;
+    bool cutterOn;
 };
 
 PolyLineTool::PolyLineTool(): k(new Private)
@@ -73,6 +73,7 @@ PolyLineTool::PolyLineTool(): k(new Private)
     k->configurator = 0;
     k->nodeGroup = 0;
     k->item = 0;
+    k->cutterOn = false;
 
     k->cursor = QCursor(kAppProp->themeDir() + "cursors/polyline.png", 4, 4);
     
@@ -120,18 +121,8 @@ void PolyLineTool::init(TupGraphicsScene *scene)
         return;
     }
 
-    initEnv(false);
-
-    /*
-    foreach (QGraphicsView *view,  scene->views()) {
-             view->setDragMode(QGraphicsView::NoDrag);
-        
-             foreach (QGraphicsItem *item, scene->items()) {
-                      item->setFlag(QGraphicsItem::ItemIsSelectable, false);
-                      item->setFlag(QGraphicsItem::ItemIsMovable, false);
-             }
-    }
-    */
+    k->cutterOn = false;
+    initEnv();
 }
 
 QStringList PolyLineTool::keys() const
@@ -148,6 +139,9 @@ void PolyLineTool::press(const TupInputDeviceInformation *input, TupBrushManager
             T_FUNCINFO;
         #endif
     #endif
+
+    if (k->cutterOn)
+        return;
 
     scene->clearSelection();
 
@@ -180,8 +174,10 @@ void PolyLineTool::move(const TupInputDeviceInformation *input, TupBrushManager 
     Q_UNUSED(brushManager);
     Q_UNUSED(scene);
 
-    k->mirror = k->center - (input->pos() - k->center);
+    if (k->cutterOn)
+        return;
 
+    k->mirror = k->center - (input->pos() - k->center);
     if (k->begin) {
         k->right = input->pos();
     } else {
@@ -194,10 +190,13 @@ void PolyLineTool::move(const TupInputDeviceInformation *input, TupBrushManager 
              }
         }
     }
-    
-    k->item->setPath(k->path);
-    k->line1->setLine(QLineF(k->mirror, k->center));
-    k->line2->setLine(QLineF(k->right, k->center));
+
+    if (k->item)    
+        k->item->setPath(k->path);
+    if (k->line1)
+        k->line1->setLine(QLineF(k->mirror, k->center));
+    if (k->line2)
+        k->line2->setLine(QLineF(k->right, k->center));
 }
 
 void PolyLineTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
@@ -213,7 +212,10 @@ void PolyLineTool::release(const TupInputDeviceInformation *input, TupBrushManag
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
 
-    if (k->begin) {
+    if (k->cutterOn)
+        return;
+
+    if (k->begin && k->item) {
         QDomDocument doc;
         doc.appendChild(k->item->toXml(doc));
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
@@ -225,15 +227,17 @@ void PolyLineTool::release(const TupInputDeviceInformation *input, TupBrushManag
  
         k->begin = false;
     } else {
-        if (!k->nodeGroup) {
-            k->nodeGroup = new TNodeGroup(k->item, k->scene, TNodeGroup::Polyline, k->item->zValue() + 1);
-            connect(k->nodeGroup, SIGNAL(nodeReleased()), this, SLOT(nodeChanged()));
-        } else {
-            k->nodeGroup->createNodes(k->item);
-        }
+        if (k->item) {
+            if (!k->nodeGroup) {
+                k->nodeGroup = new TNodeGroup(k->item, k->scene, TNodeGroup::Polyline, k->item->zValue() + 1);
+                connect(k->nodeGroup, SIGNAL(nodeReleased()), this, SLOT(nodeChanged()));
+            } else {
+                k->nodeGroup->createNodes(k->item);
+            }
 
-        k->nodeGroup->show();
-        k->nodeGroup->resizeNodes(k->realFactor);
+            k->nodeGroup->show();
+            k->nodeGroup->resizeNodes(k->realFactor);
+        }
     }
 }
 
@@ -410,6 +414,7 @@ void PolyLineTool::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_F11 || event->key() == Qt::Key_Escape) {
         emit closeHugeCanvas();
     } else if (event->key() == Qt::Key_X) {
+               k->cutterOn = true;
                initEnv();
     } else {
         QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
@@ -418,16 +423,18 @@ void PolyLineTool::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void PolyLineTool::initEnv(bool postInit)
+void PolyLineTool::keyReleaseEvent(QKeyEvent *event)
 {
-    if (postInit) {
-    if (k->nodeGroup) { 
-        k->nodeGroup->clear();
-        k->nodeGroup = 0;
-    } } else {
-      if (k->nodeGroup)
-          k->nodeGroup = 0;
-   }
+    if (event->key() == Qt::Key_X)
+        k->cutterOn = false;
+}
+
+void PolyLineTool::initEnv()
+{
+    if (!k->item)
+        return;
+
+    clearSelection();
 
     k->begin = true;
     k->path = QPainterPath();
@@ -514,25 +521,25 @@ void PolyLineTool::nodeChanged()
                 }
             }
 
-            if (position >= 0 && qgraphicsitem_cast<QGraphicsPathItem *>(k->nodeGroup->parentItem())) {
-                    QDomDocument doc;
-                    doc.appendChild(qgraphicsitem_cast<TupPathItem *>(k->nodeGroup->parentItem())->toXml(doc));
-                
+            if (position >= 0) {
+                TupPathItem *pathItem = qgraphicsitem_cast<TupPathItem *>(k->nodeGroup->parentItem());
+                if (pathItem) {
+                    QString path = pathItem->pathToString();
                     TupProjectRequest event = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(), k->scene->currentFrameIndex(), 
-                                                                                 position, QPointF(), k->scene->spaceContext(), TupLibraryObject::Item, TupProjectRequest::EditNodes, 
-                                                                                 doc.toString());
+                                              position, QPointF(), k->scene->spaceContext(), TupLibraryObject::Item, TupProjectRequest::EditNodes, path);
                     emit requested(&event);
                     // k->nodeGroup->restoreItem();
-             } else {
-               #ifdef K_DEBUG
-                   QString msg = "PolyLineTool::nodeChanged() - Fatal Error: Invalid object index || No nodeGroup parent item";
-                   #ifdef Q_OS_WIN
-                       qDebug() << msg;
-                   #else
-                       tError() << msg;
-                   #endif
-               #endif
-               return;
+                }
+            } else {
+                #ifdef K_DEBUG
+                    QString msg = "PolyLineTool::nodeChanged() - Fatal Error: Invalid object index || No nodeGroup parent item -> " + QString::number(position);
+                    #ifdef Q_OS_WIN
+                        qDebug() << msg;
+                    #else
+                        tError() << msg;
+                    #endif
+                #endif
+                return;
              }
         } else {
           #ifdef K_DEBUG
@@ -566,19 +573,19 @@ int PolyLineTool::toolType() const
 QWidget *PolyLineTool::configurator() 
 {
     if (! k->configurator)
-        k->configurator = new InfoPanel;
+        k->configurator = new Settings;
 
     return k->configurator;
 }
 
 void PolyLineTool::aboutToChangeScene(TupGraphicsScene *)
 {
-    // initEnv(false);
+
 }
 
 void PolyLineTool::aboutToChangeTool()
 {
-    // initEnv(false);
+
 }
 
 void PolyLineTool::saveConfig()
@@ -601,3 +608,12 @@ void PolyLineTool::updateZoomFactor(qreal scaleFactor)
 {
     k->realFactor = scaleFactor;
 }
+
+void PolyLineTool::clearSelection()
+{
+    if (k->nodeGroup) {
+        k->nodeGroup->clear();
+        k->nodeGroup = 0;
+    }
+}
+

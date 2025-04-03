@@ -35,7 +35,6 @@
 
 #include "tupapplication.h"
 #include "tupmainwindow.h"
-#include "tuptwitter.h"
 #include "tapplicationproperties.h"
 #include "tcollapsiblewidget.h"
 
@@ -75,6 +74,7 @@
 
 int main(int argc, char ** argv)
 {
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     TupApplication application(argc, argv);
 
 #ifdef Q_OS_UNIX
@@ -91,15 +91,9 @@ int main(int argc, char ** argv)
     kAppProp->setRevision(REVISION);
 
     // Time to define global variables for Tupi
-    TCONFIG->beginGroup("General");
     QDir appDirPath(QApplication::applicationDirPath());
-    if (! TCONFIG->isOk()) {
-        #if defined(K_DEBUG)
-            TCONFIG->setValue("Debug", "true");
-        #else
-            TCONFIG->setValue("Debug", "false");
-        #endif
-
+    TCONFIG->beginGroup("General");
+    if (TCONFIG->firstTime()) {
         #if defined(Q_OS_MAC)
             TCONFIG->setValue("Home", appDirPath.absolutePath());
         #else
@@ -161,27 +155,34 @@ int main(int argc, char ** argv)
         kAppProp->setDataDir(xmlDir + "en/");
     else
         kAppProp->setDataDir(xmlDir + locale + "/");
-        
-    kAppProp->setThemeDir(kAppProp->shareDir() + "themes/default/");
+
+    QString themeName = TCONFIG->value("Theme").toString();
+    if (themeName.length() == 0) {
+        themeName = "Light";
+        TCONFIG->setValue("Theme", themeName);
+    }
+
+    if (themeName.compare("Light") == 0)
+        kAppProp->setThemeDir(kAppProp->shareDir() + "themes/default/");
+    else
+        kAppProp->setThemeDir(kAppProp->shareDir() + "themes/dark/");
 
     // Setting the repository directory (where the projects are saved)
     application.createCache(TCONFIG->value("Cache").toString());
-
-    // Downloading maefloresta Twitter status
-    TupTwitter *twitter = new TupTwitter();
-    twitter->start();
 
     QStyle *style = QStyleFactory::create("fusion");
     QApplication::setStyle(style);
 
     // SQA: Add support for at least two languages for the next release 
-    if ((locale.compare("en") != 0) && ((locale.compare("es") == 0) || (locale.compare("pt") == 0))) {
-    // if (locale.compare("es") == 0) {
+    QList<QString> langSupport;
+    langSupport << "es" << "fr" << "pt";
+    if (locale.compare("en") != 0 && langSupport.contains(locale)) {
         #ifdef Q_OS_WIN
             QString langFile = kAppProp->shareDir() + "translations/tupi_" + locale + ".qm";
         #else
             QString langFile = kAppProp->shareDir() + "data/translations/tupi_" + locale + ".qm";
         #endif
+
         if (QFile::exists(langFile)) {
             // Loading localization files...
             QTranslator *translator = new QTranslator;
@@ -199,7 +200,7 @@ int main(int argc, char ** argv)
         }
     }
 
-    TupMainWindow mainWindow(argc);
+    TupMainWindow mainWindow;
     mainWindow.showMaximized();
 
     // Looking for plugins for Tupi
@@ -219,11 +220,21 @@ int main(int argc, char ** argv)
         CHANDLER->setImagePath(THEME_DIR + "icons/");
     #endif
 
-    // If there is a second argument, it means to open a project from the command line
-    if (argc == 2) {
-        QString project = QString(argv[1]);
-        if (project.endsWith(".tup") || project.endsWith(".TUP"))
-            mainWindow.openProject(project);
+    if (argc == 1) {
+        bool openLast = TCONFIG->value("OpenLastProject").toBool();
+        if (openLast) {
+            QString files = TCONFIG->value("Recents").toString();
+            QStringList recents = files.split(';');
+            if (!files.isEmpty())
+                mainWindow.openProject(recents.first());
+        }
+    } else {
+        // If there is a second argument, it means to open a project from the command line
+        if (argc == 2) {
+            QString project = QString(argv[1]);
+            if (project.endsWith(".tup") || project.endsWith(".TUP"))
+                mainWindow.openProject(project);
+        }
     }
 
     // It's time to play with Tupi!

@@ -406,9 +406,9 @@ void TupLibraryWidget::insertObjectInWorkspace()
     } 
 
     QString key = k->libraryTree->currentItem()->text(1) + "." + extension.toLower();
-
+    int objectType = k->libraryTree->itemType();
     TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::InsertSymbolIntoFrame, key,
-                                TupLibraryObject::Type(k->libraryTree->currentItem()->data(1, 3216).toInt()), k->project->spaceContext(), 
+                                TupLibraryObject::Type(objectType), k->project->spaceContext(), 
                                 0, QString(), k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame);
 
     emit requestTriggered(&request);
@@ -419,10 +419,10 @@ void TupLibraryWidget::removeCurrentItem()
     if (!k->libraryTree->currentItem()) 
         return;
 
-    TCONFIG->beginGroup("Library");
-    bool noAsk = qvariant_cast<bool>(TCONFIG->value("RemoveObjectWithoutAsk", false));
+    TCONFIG->beginGroup("General");
+    bool ask = TCONFIG->value("ConfirmRemoveObject", true).toBool();
 
-    if (!noAsk) {
+    if (ask) {
         TOptionalDialog dialog(tr("Do you want to remove this object from Library?"), tr("Confirmation"), this);
         dialog.setModal(true);
         QDesktopWidget desktop;
@@ -432,8 +432,8 @@ void TupLibraryWidget::removeCurrentItem()
         if (dialog.exec() == QDialog::Rejected)
             return;
 
-        TCONFIG->beginGroup("Library");
-        TCONFIG->setValue("RemoveObjectWithoutAsk", dialog.shownAgain());
+        TCONFIG->beginGroup("General");
+        TCONFIG->setValue("ConfirmRemoveObject", dialog.shownAgain());
         TCONFIG->sync();
     }
 
@@ -578,6 +578,14 @@ void TupLibraryWidget::cloneObject(QTreeWidgetItem* item)
 
 void TupLibraryWidget::exportObject(QTreeWidgetItem *item)
 {
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN
+            qDebug() << "[TupLibraryWidget::exportObject()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+
     QString id = item->text(3);
     TupLibraryObject *object = k->library->getObject(id);
     if (object) {
@@ -599,23 +607,25 @@ void TupLibraryWidget::exportObject(QTreeWidgetItem *item)
                 if (fileExtension.compare("SVG") == 0)
                     filter += "(*.svg)";
             } else if (object->type() == TupLibraryObject::Sound) {
-                      filter = tr("Sounds") + " ";
-                      if (fileExtension.compare("OGG") == 0)
-                          filter += "(*.ogg)";
-                      if (fileExtension.compare("MP3") == 0)
-                          filter += "(*.mp3)";
-                      if (fileExtension.compare("WAV") == 0)
-                          filter += "(*.wav)";
+                       filter = tr("Sounds") + " ";
+                       if (fileExtension.compare("OGG") == 0)
+                           filter += "(*.ogg)";
+                       if (fileExtension.compare("MP3") == 0)
+                           filter += "(*.mp3)";
+                       if (fileExtension.compare("WAV") == 0)
+                           filter += "(*.wav)";
             }
 
-            QString target = QFileDialog::getSaveFileName(this, tr("Export object..."), QDir::homePath(), filter);
+            TCONFIG->beginGroup("General");
+            QString defaultPath = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
+            QString target = QFileDialog::getSaveFileName(this, tr("Export object..."), defaultPath, filter);
             if (target.isEmpty())
                 return;
 
             if (QFile::exists(target)) {
                 if (!QFile::remove(target)) {
                     #ifdef K_DEBUG
-                        QString msg = "TupLibraryWidget::exportObject() - Fatal Error: destination path already exists! [ " + id + " ]";
+                        QString msg = "TupLibraryWidget::exportObject() - Fatal Error: Destination path already exists! [ " + id + " ]";
                         #ifdef Q_OS_WIN
                             qDebug() << msg;
                         #else
@@ -637,6 +647,7 @@ void TupLibraryWidget::exportObject(QTreeWidgetItem *item)
                 #endif
                 return;
             } else {
+                setDefaultPath(target);
                 TOsd::self()->display(tr("Info"), tr("Item exported successfully!"), TOsd::Info);
             }
         } else {
@@ -690,8 +701,8 @@ void TupLibraryWidget::createRasterObject()
         height *= 10;
 
     size = QSize(width, height);
-
     TupNewItemDialog dialog(name, TupNewItemDialog::Raster, size);
+
     if (dialog.exec() == QDialog::Accepted) {
         QString name = dialog.itemName();
         QSize size = dialog.itemSize();
@@ -938,10 +949,21 @@ void TupLibraryWidget::createVectorObject()
 
 void TupLibraryWidget::importBitmapGroup()
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Import images..."), QDir::homePath(),
-                                                      tr("Images") + " (*.png *.xpm *.jpg *.jpeg *.gif)");
-    for (int i = 0; i < files.size(); ++i)
-         importBitmap(files.at(i));
+    TCONFIG->beginGroup("General");
+    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
+
+    QFileDialog dialog(this, tr("Import images..."), path);
+    dialog.setNameFilter(tr("Images") + " (*.png *.xpm *.jpg *.jpeg *.gif)");
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QStringList files = dialog.selectedFiles();
+        int size = files.size();
+        for (int i = 0; i < size; ++i)
+             importBitmap(files.at(i));
+
+        setDefaultPath(files.at(0));
+    }
 }
 
 void TupLibraryWidget::importBitmap(const QString &image)
@@ -949,14 +971,13 @@ void TupLibraryWidget::importBitmap(const QString &image)
     if (image.isEmpty())
         return;
 
-    QFile f(image);
-    QFileInfo fileInfo(f);
-
+    QFile file(image);
+    QFileInfo fileInfo(file);
     QString key = fileInfo.fileName().toLower();
 
-    if (f.open(QIODevice::ReadOnly)) {
-        QByteArray data = f.readAll();
-        f.close();
+    if (file.open(QIODevice::ReadOnly)) {
+        QByteArray data = file.readAll();
+        file.close();
 
         QPixmap *pixmap = new QPixmap(image);
         int picWidth = pixmap->width();
@@ -994,7 +1015,6 @@ void TupLibraryWidget::importBitmap(const QString &image)
             if (answer == QMessageBox::Yes) {
                 pixmap = new QPixmap();
                 QString extension = fileInfo.suffix().toUpper();
-                // QByteArray ba = extension.toAscii();
                 QByteArray ba = extension.toLatin1();
                 const char* ext = ba.data();
                 if (pixmap->loadFromData(data, ext)) {
@@ -1020,8 +1040,8 @@ void TupLibraryWidget::importBitmap(const QString &image)
         }
 
         TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, key,
-                                                                          TupLibraryObject::Image, k->project->spaceContext(), data, QString(), 
-                                                                          k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame);
+                                                                            TupLibraryObject::Image, k->project->spaceContext(), data, QString(), 
+                                                                            k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame);
         emit requestTriggered(&request);
 
         data.clear();
@@ -1032,10 +1052,21 @@ void TupLibraryWidget::importBitmap(const QString &image)
 
 void TupLibraryWidget::importSvgGroup()
 {
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Import SVG files..."), QDir::homePath(),
-                                                      tr("Vector") + " (*.svg)");
-    for (int i = 0; i < files.size(); ++i)
-         importSvg(files.at(i));
+    TCONFIG->beginGroup("General");
+    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
+
+    QFileDialog dialog(this, tr("Import SVG files..."), path);
+    dialog.setNameFilter(tr("Vector") + " (*.svg)");
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QStringList files = dialog.selectedFiles();
+        int size = files.size();
+        for (int i = 0; i < size; ++i)
+             importSvg(files.at(i));
+
+        setDefaultPath(files.at(0));
+    }
 }
 
 void TupLibraryWidget::importSvg(const QString &svgPath)
@@ -1094,7 +1125,6 @@ void TupLibraryWidget::verifyFramesAvailability(int filesTotal)
     int initFrame = k->currentFrame.frame;
     int scope = initFrame + filesTotal;
     if (scope > framesTotal) {
-        // int limit = scope - framesTotal;
         for (int i=framesTotal; i<scope; i++) {
              TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer,
                                                                                i, TupProjectRequest::Add, tr("Frame %1").arg(i+1));
@@ -1108,278 +1138,297 @@ void TupLibraryWidget::verifyFramesAvailability(int filesTotal)
 
 void TupLibraryWidget::importBitmapSequence()
 {
-    QString dir = getenv("HOME");
-    QString path = QFileDialog::getExistingDirectory(this, tr("Choose the images directory..."), dir,
-                                                     QFileDialog::ShowDirsOnly
-                                                     | QFileDialog::DontResolveSymlinks);
-    if (path.isEmpty())
-        return;
+    TCONFIG->beginGroup("General");
+    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
 
-    QDir source(path); 
-    QFileInfoList photograms = source.entryInfoList(QDir::Files, QDir::Name);
-    int filesTotal = photograms.size();
+    QFileDialog dialog(this, tr("Choose the images directory..."), path);
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+    dialog.setOption(QFileDialog::DontResolveSymlinks);
 
-    // Ensuring to get only graphic files here. Check extensions! (PNG, JPG, GIF, XPM) 
-    int imagesCounter = 0; 
-    for (int i = 0; i < filesTotal; ++i) {
-         if (photograms.at(i).isFile()) {
-             QString extension = photograms.at(i).suffix().toUpper();
-             if (extension.compare("JPEG")==0 || extension.compare("JPG")==0 || extension.compare("PNG")==0 || extension.compare("GIF")==0 || 
-                 extension.compare("XPM")==0)
-                 imagesCounter++;
-         }
-    }
+    if (dialog.exec() == QDialog::Accepted) {
+        QStringList files = dialog.selectedFiles();
+        path = files.at(0);
 
-    if (imagesCounter > 0) {
-        QString text = tr("Image files found: %1.").arg(imagesCounter);
-        bool resize = false;
+        QDir source(path); 
+        QFileInfoList photograms = source.entryInfoList(QDir::Files, QDir::Name);
+        int filesTotal = photograms.size();
 
-        QPixmap *pixmap = new QPixmap(photograms.at(0).absoluteFilePath());
-        int picWidth = pixmap->width();
-        int picHeight = pixmap->height(); 
-        int projectWidth = k->project->dimension().width();
-        int projectHeight = k->project->dimension().height();
-
-        if (picWidth > projectWidth || picHeight > projectHeight) {
-            text = text + "\n" + tr("Files are too big, so they will be resized.") + "\n"
-                   + tr("Note: This task can take a while.");
-            resize = true;
+        // Ensuring to get only graphic files here. Check extensions! (PNG, JPG, GIF, XPM) 
+        int imagesCounter = 0; 
+        for (int i = 0; i < filesTotal; ++i) {
+             if (photograms.at(i).isFile()) {
+                 QString extension = photograms.at(i).suffix().toUpper();
+                 if (extension.compare("JPEG")==0 || extension.compare("JPG")==0 || extension.compare("PNG")==0 || extension.compare("GIF")==0 || 
+                     extension.compare("XPM")==0)
+                     imagesCounter++;
+             }
         }
 
-        QDesktopWidget desktop;
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Information"));  
-        msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText(text);
-        msgBox.setInformativeText(tr("Do you want to continue?"));
-        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.show();
-        msgBox.move((int) (desktop.screenGeometry().width() - msgBox.width())/2, 
-                    (int) (desktop.screenGeometry().height() - msgBox.height())/2);
+        if (imagesCounter > 0) {
+            QString text = tr("Image files found: %1.").arg(imagesCounter);
+            bool resize = false;
 
-        int answer = msgBox.exec();
+            QPixmap *pixmap = new QPixmap(photograms.at(0).absoluteFilePath());
+            int picWidth = pixmap->width();
+            int picHeight = pixmap->height(); 
+            int projectWidth = k->project->dimension().width();
+            int projectHeight = k->project->dimension().height();
 
-        if (answer == QMessageBox::Ok) {
-            verifyFramesAvailability(filesTotal);
+            if (picWidth > projectWidth || picHeight > projectHeight) {
+                text = text + "\n" + tr("Files are too big, so they will be resized.") + "\n"
+                       + tr("Note: This task can take a while.");
+                resize = true;
+            }
 
-            QString directory = source.dirName();
-            k->libraryTree->createFolder(directory);
+            QDesktopWidget desktop;
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(tr("Information"));  
+            msgBox.setIcon(QMessageBox::Question);
+            msgBox.setText(text);
+            msgBox.setInformativeText(tr("Do you want to continue?"));
+            msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.show();
+            msgBox.move((int) (desktop.screenGeometry().width() - msgBox.width())/2, 
+                        (int) (desktop.screenGeometry().height() - msgBox.height())/2);
 
-            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            int answer = msgBox.exec();
 
-            QFont font = this->font();
-            font.setPointSize(8);
+            if (answer == QMessageBox::Ok) {
+                verifyFramesAvailability(filesTotal);
 
-            QProgressDialog progressDialog(this, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint 
-                                                 | Qt::Dialog);
-            progressDialog.setFont(font);
-            progressDialog.setLabelText(tr("Loading images..."));
-            progressDialog.setCancelButton(0);
-            progressDialog.setRange(1, filesTotal);
-            progressDialog.show();
-            int index = 1;
+                QString directory = source.dirName();
+                k->libraryTree->createFolder(directory);
 
-            progressDialog.move((int) (desktop.screenGeometry().width() - progressDialog.width())/2 , 
-                                (int) (desktop.screenGeometry().height() - progressDialog.height())/2);
+                QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-            TupLibraryFolder *folder = new TupLibraryFolder(directory, k->project);
-            k->library->addFolder(folder);
+                QFont font = this->font();
+                font.setPointSize(8);
 
-            int initFrame = k->currentFrame.frame;
-            for (int i = 0; i < filesTotal; ++i) {
-                 if (photograms.at(i).isFile()) {
-                     QString extension = photograms.at(i).suffix().toUpper();
-                     if (extension.compare("JPEG")==0 || extension.compare("JPG")==0 || extension.compare("PNG")==0 || extension.compare("GIF")==0 ||
-                         extension.compare("XPM")==0) {
-                         QString path = photograms.at(i).absoluteFilePath(); 
-                         QString symName = photograms.at(i).fileName().toLower();
-                         QFile f(path);
-                         QFileInfo fileInfo(f);
+                QProgressDialog progressDialog(this, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint 
+                                                     | Qt::Dialog);
+                progressDialog.setFont(font);
+                progressDialog.setLabelText(tr("Loading images..."));
+                progressDialog.setCancelButton(0);
+                progressDialog.setRange(1, filesTotal);
+                progressDialog.show();
+                int index = 1;
 
-                         if (f.open(QIODevice::ReadOnly)) {
-                             QByteArray data = f.readAll();
-                             f.close();
+                progressDialog.move((int) (desktop.screenGeometry().width() - progressDialog.width())/2 , 
+                                    (int) (desktop.screenGeometry().height() - progressDialog.height())/2);
 
-                             if (resize) {
-                                 pixmap = new QPixmap();
-                                 QString extension = fileInfo.suffix().toUpper();
-                                 // QByteArray ba = extension.toAscii();
-                                 QByteArray ba = extension.toLatin1();
-                                 const char* ext = ba.data();
-                                 if (pixmap->loadFromData(data, ext)) {
-                                     int width = projectWidth;
-                                     QPixmap newpix(pixmap->scaledToWidth(width, Qt::SmoothTransformation));
-                                     QBuffer buffer(&data);
-                                     buffer.open(QIODevice::WriteOnly);
-                                     newpix.save(&buffer, ext);
+                TupLibraryFolder *folder = new TupLibraryFolder(directory, k->project);
+                k->library->addFolder(folder);
+
+                int initFrame = k->currentFrame.frame;
+                for (int i = 0; i < filesTotal; ++i) {
+                     if (photograms.at(i).isFile()) {
+                         QString extension = photograms.at(i).suffix().toUpper();
+                         if (extension.compare("JPEG")==0 || extension.compare("JPG")==0 || extension.compare("PNG")==0 || extension.compare("GIF")==0 ||
+                             extension.compare("XPM")==0) {
+                             QString path = photograms.at(i).absoluteFilePath(); 
+                             QString symName = photograms.at(i).fileName().toLower();
+                             QFile f(path);
+                             QFileInfo fileInfo(f);
+
+                             if (f.open(QIODevice::ReadOnly)) {
+                                 QByteArray data = f.readAll();
+                                 f.close();
+
+                                 if (resize) {
+                                     pixmap = new QPixmap();
+                                     QString extension = fileInfo.suffix().toUpper();
+                                     QByteArray ba = extension.toLatin1();
+                                     const char* ext = ba.data();
+                                     if (pixmap->loadFromData(data, ext)) {
+                                         int width = projectWidth;
+                                         QPixmap newpix(pixmap->scaledToWidth(width, Qt::SmoothTransformation));
+                                         QBuffer buffer(&data);
+                                         buffer.open(QIODevice::WriteOnly);
+                                         newpix.save(&buffer, ext);
+                                     }
                                  }
-                             }
                            
-                             TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, symName,
-                                                         TupLibraryObject::Image, k->project->spaceContext(), data, directory);
-                             emit requestTriggered(&request);
-                             if (i < filesTotal-1) {
-                                 request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame + 1,
-                                                                                 TupProjectRequest::Select);
+                                 TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, symName,
+                                                             TupLibraryObject::Image, k->project->spaceContext(), data, directory);
                                  emit requestTriggered(&request);
-                             }
+                                 if (i < filesTotal-1) {
+                                     request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame + 1,
+                                                                                     TupProjectRequest::Select);
+                                     emit requestTriggered(&request);
+                                 }
 
-                             progressDialog.setLabelText(tr("Loading image #%1").arg(index));
-                             progressDialog.setValue(index);
-                             index++;
-                         } else {
-                             QMessageBox::critical(this, tr("ERROR!"), tr("ERROR: Can't open file %1. Please, check file permissions and try again.").arg(symName), QMessageBox::Ok);
-                             QApplication::restoreOverrideCursor();
-                             return;
+                                 progressDialog.setLabelText(tr("Loading image #%1").arg(index));
+                                 progressDialog.setValue(index);
+                                 index++;
+                             } else {
+                                 QMessageBox::critical(this, tr("ERROR!"), tr("ERROR: Can't open file %1. Please, check file permissions and try again.").arg(symName), QMessageBox::Ok);
+                                 QApplication::restoreOverrideCursor();
+                                 return;
+                             }
                          }
                      }
-                 }
-            }
-            TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, initFrame,
-                                                                              TupProjectRequest::Select);
-            emit requestTriggered(&request);
+                }
+                saveDefaultPath(path);
+                TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, initFrame,
+                                                                                  TupProjectRequest::Select);
+                emit requestTriggered(&request);
 
-            QApplication::restoreOverrideCursor();
+                QApplication::restoreOverrideCursor();
+            }
+        } else {
+            TOsd::self()->display(tr("Error"), tr("No image files were found.<br/>Please, try another directory"), TOsd::Error);
         }
-    } else {
-        TOsd::self()->display(tr("Error"), tr("No image files were found.<br/>Please, try another directory"), TOsd::Error);
     }
 }
 
 void TupLibraryWidget::importSvgSequence() 
 {
-    QDesktopWidget desktop;
-    QString dir = getenv("HOME");
-    QString path = QFileDialog::getExistingDirectory(this, tr("Choose the SVG files directory..."), dir,
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-    if (path.isEmpty())
-        return;
+    TCONFIG->beginGroup("General");
+    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
 
-    QDir source(path); 
-    QFileInfoList photograms = source.entryInfoList(QDir::Files, QDir::Name);
-    int filesTotal = photograms.size();
+    QFileDialog dialog(this, tr("Choose the SVG files directory..."), path);
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+    dialog.setOption(QFileDialog::DontResolveSymlinks);
 
-    // Ensuring to get only SVG files here. Check extension! (SVG)
-    int svgCounter = 0;
-    for (int i = 0; i < filesTotal; ++i) {
-         if (photograms.at(i).isFile()) {
-             QString extension = photograms.at(i).suffix().toUpper();
-             if (extension.compare("SVG")==0)
-                 svgCounter++;
-         }
-    }
+    if (dialog.exec() == QDialog::Accepted) {
+        QStringList files = dialog.selectedFiles();
+        path = files.at(0);
 
-    if (svgCounter > 0) {
-        QString testFile = photograms.at(0).absoluteFilePath();
-        QFile file(testFile);
-        file.close();
+        QDir source(path); 
+        QFileInfoList photograms = source.entryInfoList(QDir::Files, QDir::Name);
+        int filesTotal = photograms.size();
 
-        QString text = tr("%1 SVG files will be loaded.").arg(svgCounter);
+        // Ensuring to get only SVG files here. Check extension! (SVG)
+        int svgCounter = 0;
+        for (int i = 0; i < filesTotal; ++i) {
+             if (photograms.at(i).isFile()) {
+                 QString extension = photograms.at(i).suffix().toUpper();
+                 if (extension.compare("SVG")==0)
+                     svgCounter++;
+             }
+        }
 
-        QMessageBox msgBox;
-        msgBox.setWindowTitle(tr("Information"));  
-        msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText(text);
-        msgBox.setInformativeText(tr("Do you want to continue?"));
-        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.show();
-        msgBox.move((int) (desktop.screenGeometry().width() - msgBox.width())/2, 
-                    (int) (desktop.screenGeometry().height() - msgBox.height())/2);
+        if (svgCounter > 0) {
+            QString testFile = photograms.at(0).absoluteFilePath();
+            QFile file(testFile);
+            file.close();
 
-        int answer = msgBox.exec();
+            QString text = tr("%1 SVG files will be loaded.").arg(svgCounter);
 
-        if (answer == QMessageBox::Ok) {
-            verifyFramesAvailability(filesTotal);
-            QString directory = source.dirName();
-            k->libraryTree->createFolder(directory);
+            QDesktopWidget desktop;
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(tr("Information"));  
+            msgBox.setIcon(QMessageBox::Question);
+            msgBox.setText(text);
+            msgBox.setInformativeText(tr("Do you want to continue?"));
+            msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.show();
+            msgBox.move((int) (desktop.screenGeometry().width() - msgBox.width())/2, 
+                        (int) (desktop.screenGeometry().height() - msgBox.height())/2);
 
-            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            int answer = msgBox.exec();
 
-            QFont font = this->font();
-            font.setPointSize(8);
+            if (answer == QMessageBox::Ok) {
+                verifyFramesAvailability(filesTotal);
+                QString directory = source.dirName();
+                k->libraryTree->createFolder(directory);
 
-            QProgressDialog progressDialog(this, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Dialog);
-            progressDialog.setFont(font);
-            progressDialog.setLabelText(tr("Loading SVG files..."));
-            progressDialog.setCancelButton(0);
-            progressDialog.setRange(1, filesTotal);
-            progressDialog.show();
-            int index = 1;
+                QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-            progressDialog.move((int) (desktop.screenGeometry().width() - progressDialog.width())/2 , 
-                                (int) (desktop.screenGeometry().height() - progressDialog.height())/2);
+                QFont font = this->font();
+                font.setPointSize(8);
 
-            TupLibraryFolder *folder = new TupLibraryFolder(directory, k->project);
-            k->library->addFolder(folder);
+                QProgressDialog progressDialog(this, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Dialog);
+                progressDialog.setFont(font);
+                progressDialog.setLabelText(tr("Loading SVG files..."));
+                progressDialog.setCancelButton(0);
+                progressDialog.setRange(1, filesTotal);
+                progressDialog.show();
+                int index = 1;
 
-            int initFrame = k->currentFrame.frame;
-            for (int i = 0; i < filesTotal; ++i) {
-                 if (photograms.at(i).isFile()) {
-                     QString extension = photograms.at(i).suffix().toUpper();
-                     if (extension.compare("SVG")==0) {
-                         QString path = photograms.at(i).absoluteFilePath(); 
-                         QString symName = photograms.at(i).fileName().toLower();
-                         QFile f(path);
+                progressDialog.move((int) (desktop.screenGeometry().width() - progressDialog.width())/2 , 
+                                    (int) (desktop.screenGeometry().height() - progressDialog.height())/2);
 
-                         if (f.open(QIODevice::ReadOnly)) {
-                             QByteArray data = f.readAll();
-                             f.close();
+                TupLibraryFolder *folder = new TupLibraryFolder(directory, k->project);
+                k->library->addFolder(folder);
 
-                             TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, symName,
-                                                                            TupLibraryObject::Svg, k->project->spaceContext(), data, directory);
-                             emit requestTriggered(&request);
-                             if (i < filesTotal-1) {
-                                 request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame + 1,
-                                                                                 TupProjectRequest::Select);
+                int initFrame = k->currentFrame.frame;
+                for (int i = 0; i < filesTotal; ++i) {
+                     if (photograms.at(i).isFile()) {
+                         QString extension = photograms.at(i).suffix().toUpper();
+                         if (extension.compare("SVG")==0) {
+                             QString path = photograms.at(i).absoluteFilePath(); 
+                             QString symName = photograms.at(i).fileName().toLower();
+                             QFile f(path);
+
+                             if (f.open(QIODevice::ReadOnly)) {
+                                 QByteArray data = f.readAll();
+                                 f.close();
+
+                                 TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, symName,
+                                                                                TupLibraryObject::Svg, k->project->spaceContext(), data, directory);
                                  emit requestTriggered(&request);
+                                 if (i < filesTotal-1) {
+                                     request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, k->currentFrame.frame + 1,
+                                                                                     TupProjectRequest::Select);
+                                     emit requestTriggered(&request);
+                                 }
+
+                                 progressDialog.setLabelText(tr("Loading SVG file #%1").arg(index));
+                                 progressDialog.setValue(index);
+                                 index++;
+                             } else {
+                                 QMessageBox::critical(this, tr("ERROR!"), tr("ERROR: Can't open file %1. Please, check file permissions and try again.").arg(symName), QMessageBox::Ok);
+                                 QApplication::restoreOverrideCursor();
+                                 return;
                              }
-
-                             progressDialog.setLabelText(tr("Loading SVG file #%1").arg(index));
-                             progressDialog.setValue(index);
-                             index++;
-
-                         } else {
-                             QMessageBox::critical(this, tr("ERROR!"), tr("ERROR: Can't open file %1. Please, check file permissions and try again.").arg(symName), QMessageBox::Ok);
-                             QApplication::restoreOverrideCursor();
-                             return;
                          }
                      }
-                 }
+                }
+                saveDefaultPath(path);
+                TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, initFrame,
+                                                                                  TupProjectRequest::Select);
+                emit requestTriggered(&request);
+                QApplication::restoreOverrideCursor();
             }
-            TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentFrame.scene, k->currentFrame.layer, initFrame,
-                                                                              TupProjectRequest::Select);
-            emit requestTriggered(&request);
-            QApplication::restoreOverrideCursor();
+        } else {
+            TOsd::self()->display(tr("Error"), tr("No SVG files were found.<br/>Please, try another directory"), TOsd::Error);
         }
-    } else {
-        TOsd::self()->display(tr("Error"), tr("No SVG files were found.<br/>Please, try another directory"), TOsd::Error);
     }
 }
 
 void TupLibraryWidget::importSound()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Import audio file..."), QDir::homePath(),
-                                                 tr("Sound file") + " (*.ogg *.wav *.mp3)");
+    TCONFIG->beginGroup("General");
+    QString path = TCONFIG->value("DefaultPath", QDir::homePath()).toString();
 
-    if (path.isEmpty()) 
-        return;
+    QFileDialog dialog(this, tr("Import audio file..."), path);
+    dialog.setNameFilter(tr("Sound file") + " (*.ogg *.wav *.mp3)");
+    dialog.setFileMode(QFileDialog::ExistingFile);
 
-    QFile file(path);
-    QFileInfo fileInfo(file);
-    QString key = fileInfo.fileName().toLower();
+    if (dialog.exec() == QDialog::Accepted) {
+        QStringList files = dialog.selectedFiles();
+        path = files.at(0);
 
-    if (file.open(QIODevice::ReadOnly)) {
-        QByteArray data = file.readAll();
-        file.close();
+        QFile file(path);
+        QFileInfo fileInfo(file);
+        QString key = fileInfo.fileName().toLower();
 
-        TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, key,
-                                                     TupLibraryObject::Sound, k->project->spaceContext(), data);
-        emit requestTriggered(&request);
-    } else {
-        TOsd::self()->display(tr("Error"), tr("Error while opening file: %1").arg(path), TOsd::Error);
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray data = file.readAll();
+            file.close();
+
+            TupProjectRequest request = TupRequestBuilder::createLibraryRequest(TupProjectRequest::Add, key,
+                                                           TupLibraryObject::Sound, k->project->spaceContext(), data);
+            emit requestTriggered(&request);
+            setDefaultPath(path);
+        } else {
+            TOsd::self()->display(tr("Error"), tr("Error while opening file: %1").arg(path), TOsd::Error);
+        }
     }
 }
 
@@ -1444,8 +1493,6 @@ void TupLibraryWidget::libraryResponse(TupLibraryResponse *response)
                                  item->setIcon(0, QIcon(THEME_DIR + "icons/bitmap.png"));
                                  k->libraryTree->setCurrentItem(item);
                                  previewItem(item);
-                                 // if (!k->isNetworked && k->project->spaceContext() != TupProject::NONE && !k->library->loadingProject())
-                               
                                  if (!k->isNetworked && !folderName.endsWith(".pgo") && !k->library->loadingProject())
                                      insertObjectInWorkspace();
                                }
@@ -1455,7 +1502,6 @@ void TupLibraryWidget::libraryResponse(TupLibraryResponse *response)
                                  item->setIcon(0, QIcon(THEME_DIR + "icons/svg.png"));
                                  k->libraryTree->setCurrentItem(item);
                                  previewItem(item);
-                                 // if (!k->isNetworked && k->project->spaceContext() != TupProject::NONE && !k->library->loadingProject())
                                  if (!k->isNetworked && !k->library->loadingProject())
                                      insertObjectInWorkspace();
                                }
@@ -1961,4 +2007,18 @@ QString TupLibraryWidget::verifyNameAvailability(QString &name, QString &extensi
     }
 
     return name;
+}
+
+void TupLibraryWidget::setDefaultPath(const QString &path)
+{
+    int last = path.lastIndexOf("/");
+    QString dir = path.left(last);
+    saveDefaultPath(dir);
+}
+
+void TupLibraryWidget::saveDefaultPath(const QString &dir)
+{
+    TCONFIG->beginGroup("General");
+    TCONFIG->setValue("DefaultPath", dir);
+    TCONFIG->sync();
 }

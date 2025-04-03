@@ -102,6 +102,9 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     QBoxLayout *presetsLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     QLabel *presetsLabel = new QLabel(tr("Presets") + " ");
 
+    TCONFIG->beginGroup("PaintArea");
+    int presetIndex = TCONFIG->value("DefaultFormat", 3).toInt();
+
     k->presets = new QComboBox();
     k->presets->addItem(tr("Free format"));
     k->presets->addItem(tr("520x380 - 24"));
@@ -110,6 +113,7 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     k->presets->addItem(tr("576 (PAL DV/DVD) - 25"));
     k->presets->addItem(tr("720 (HD) - 24"));
     k->presets->addItem(tr("1080 (Full HD) - 24"));
+
     connect(k->presets, SIGNAL(currentIndexChanged(int)), this, SLOT(setPresets(int)));
 
     presetsLayout->addWidget(presetsLabel);
@@ -121,12 +125,14 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     QBoxLayout *subLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     renderAndFps->setLayout(subLayout);
 
-    k->color = QColor("#fff");
+    TCONFIG->beginGroup("PaintArea");
+    QString colorName = TCONFIG->value("BackgroundDefaultColor", "#ffffff").toString();
+
+    k->color = QColor(colorName);
     k->colorButton = new QPushButton();
     k->colorButton->setText(tr("Background"));
     k->colorButton->setToolTip(tr("Click here to change background color"));
-    k->colorButton->setPalette(QPalette(k->color));
-    k->colorButton->setAutoFillBackground(true);
+    k->colorButton->setStyleSheet("QPushButton { background-color: " + k->color.name() + "; color: black; }");
 
     connect(k->colorButton, SIGNAL(clicked()), this, SLOT(setBgColor()));
 	
@@ -140,20 +146,18 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     fpsLayout->addWidget(k->fps);
     subLayout->addWidget(k->colorButton);
     subLayout->addLayout(fpsLayout);
-    // subLayout->addSpacing(30);
 
     k->size = new TXYSpinBox(tr("Dimension"), infoContainer);
     k->size->setMinimum(50);
     k->size->setMaximum(15000);
-    // k->size->setX(520);
-    // k->size->setY(380);
+    k->size->setX(520);
+    k->size->setY(380);
 
     connect(k->size, SIGNAL(valuesHaveChanged()), this, SLOT(updateFormatCombo()));
 
     QWidget *panel = new QWidget;
     QVBoxLayout *sizeLayout = new QVBoxLayout(panel);
     sizeLayout->addWidget(k->size);
-    // sizeLayout->addWidget(test);
 
     layout->addWidget(panel, 4, 0);
     layout->addWidget(renderAndFps, 4, 1);
@@ -176,7 +180,8 @@ TupNewProject::TupNewProject(QWidget *parent) : TabDialog(parent), k(new Private
     // addTab(netContainer, tr("Network"));
     enableNetOptions(false);
 
-    k->presets->setCurrentIndex(3);
+    if (presetIndex >= 0)
+        k->presets->setCurrentIndex(presetIndex);
 }
 
 TupNewProject::~TupNewProject()
@@ -299,6 +304,11 @@ void TupNewProject::ok()
         }
     }
 
+    TCONFIG->beginGroup("PaintArea");
+    TCONFIG->setValue("BackgroundDefaultColor", k->color.name());
+    TCONFIG->setValue("DefaultFormat", k->presets->currentIndex());
+    TCONFIG->sync();
+
     TabDialog::ok();
 }
 
@@ -316,19 +326,19 @@ void TupNewProject::focusProjectLabel()
 
 void TupNewProject::setBgColor()
 {
-     k->color = QColorDialog::getColor(Qt::white, this);
+     k->color = QColorDialog::getColor(k->color, this);
 
      if (k->color.isValid()) {
          k->colorButton->setText(k->color.name());
-         k->colorButton->setPalette(QPalette(k->color));
-         k->colorButton->setAutoFillBackground(true);
+         QString text = "white";
+         if (k->color.red() > 50 && k->color.green() > 50 && k->color.blue() > 50)
+             text = "black"; 
+         k->colorButton->setStyleSheet("QPushButton { background-color: " + k->color.name() + "; color: " + text + "; }");
      } else {
          k->color = QColor("#fff");
          k->colorButton->setText(tr("White"));
+         k->colorButton->setStyleSheet("QPushButton { background-color: #fff }; color: black;");
      }
-
-     k->colorButton->setPalette(QPalette(k->color));
-     k->colorButton->setAutoFillBackground(true);
 }
 
 void TupNewProject::setPresets(int index)

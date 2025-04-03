@@ -37,7 +37,8 @@
 #define TUPBRUSHSTATUS_H
 
 #include "tglobal.h"
-#include "tupcolorwidget.h"
+#include "tcolorcell.h"
+// #include "tupcolorwidget.h"
 #include "tseparator.h"
 
 #include <QPixmap>
@@ -55,23 +56,15 @@ class TUPI_EXPORT TupBrushStatus : public QWidget
     Q_OBJECT
 
     public:
-        TupBrushStatus(const QString &label, const QPixmap &pix, bool bg);
+        TupBrushStatus(const QString &label, TColorCell::FillType context, const QPixmap &pix);
         ~TupBrushStatus();
 
-        void setForeground(const QPen &pen);
-        void setColor(const QColor &color);
+        void setColor(const QPen &pen);
+        void setColor(const QBrush &brush);
         void setTooltip(const QString &tip);
 
-    signals:
-        void colorRequested();
-        void colorUpdated(const QColor);
-
-    private slots:
-        void updateColour(); 
-
     private:
-        TupColorWidget *brush;
-        bool background;
+        TColorCell *brushCell;
 };
 
 #endif

@@ -105,12 +105,14 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void goToFrame(int frameIndex, int layerIndex, int sceneIndex);
         void goToScene(int sceneIndex);
         void copyCurrentFrame();
-        void pasteDataOnCurrentFrame();
-        void quickCopy();
+        void pasteCurrentFrame();
+        void copyFrameForward();
+        void removeCurrentFrame();
         int currentSceneIndex();
         int currentLayerIndex();
         int currentFrameIndex();
         void resetWorkSpaceCenter(const QSize projectSize);
+        void updateLoadingFlag(bool flag);
 
     public slots:
         void setNextFramesOnionSkinCount(int n);
@@ -124,7 +126,6 @@ class TUPI_EXPORT TupPaintArea : public TupPaintAreaBase, public TupAbstractProj
         void frameChanged(int);
         void closePolyLine();
         void closeLine();
-        void updateStatusBgColor(const QColor color);
         void zoomIn();
         void zoomOut();
         void newPerspective(int index);

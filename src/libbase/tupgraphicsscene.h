@@ -40,6 +40,7 @@
 #include "tupsvgitem.h"
 #include "tupproject.h"
 #include "tupprojectresponse.h"
+#include "tupinputdeviceinformation.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
@@ -89,8 +90,8 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         
         void setNextOnionSkinCount(int n);
         void setPreviousOnionSkinCount(int n);
-        
-        void setLayerVisible(int layerIndex, bool visible);
+
+        void updateLayerVisibility(int layerIndex, bool visible);
         
         TupScene *scene() const;
         
@@ -125,8 +126,10 @@ class TUPI_EXPORT TupGraphicsScene : public QGraphicsScene
         int framesCount();
 
         void setLibrary(TupLibrary *library);
-
         void resetCurrentTool(); 
+        TupInputDeviceInformation * inputDeviceInformation();
+
+        void updateLoadingFlag(bool flag);
 
     // private slots:
     //  void updateObjectInformation(const QString &value);

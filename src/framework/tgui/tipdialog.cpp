@@ -52,7 +52,7 @@ TipDialog::TipDialog(QStringList &labels, TipDatabase *database, QWidget *parent
 void TipDialog::setupGUI()
 {
     setWindowTitle(tags.at(0));
-    setWindowIcon(QPixmap(THEME_DIR + "icons/today_tip.png"));
+    setWindowIcon(QPixmap(THEME_DIR + "icons/bubble.png"));
 
     int h;
     int s;
@@ -106,8 +106,8 @@ void TipDialog::setupGUI()
     
     setAttribute(Qt::WA_DeleteOnClose, true);
     
-    TCONFIG->beginGroup("TipOfDay");
-    m_showOnStart->setChecked(qvariant_cast<bool>(TCONFIG->value("ShowOnStart", true)));
+    TCONFIG->beginGroup("General");
+    m_showOnStart->setChecked(qvariant_cast<bool>(TCONFIG->value("ShowTipOfDay", true)));
     
     showNextTip();
 }
@@ -132,7 +132,7 @@ void TipDialog::showNextTip()
 
 void TipDialog::setShowOnStart()
 {
-    TCONFIG->beginGroup("TipOfDay");
-    TCONFIG->setValue("ShowOnStart", m_showOnStart->isChecked());
+    TCONFIG->beginGroup("General");
+    TCONFIG->setValue("ShowTipOfDay", m_showOnStart->isChecked());
 }
 

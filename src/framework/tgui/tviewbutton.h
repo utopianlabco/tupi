@@ -75,6 +75,8 @@ class T_GUI_EXPORT TViewButton : public QToolButton
         ToolView *toolView() const;
         void setup();
 
+        void setFlag(bool value);
+
     public slots:
         void setSensible(bool s);
         void setBlending(bool e);
@@ -98,21 +100,17 @@ class T_GUI_EXPORT TViewButton : public QToolButton
         void animate();
         void toggleSensibility();
 
-    signals:
-        void helpIsOpen();
+    // signals:
+    //     void helpIsOpen();
 
     private:
         Qt::ToolBarArea m_area;
-
         class Animator;
         Animator *m_animator;
-
+        QPalette m_palette;
+        ToolView *m_toolView;
         bool m_isSensible;
         bool m_blending;
-
-        QPalette m_palette;
-
-        ToolView *m_toolView;
 };
 
 #endif

@@ -39,7 +39,7 @@
 #include "tglobal.h"
 #include "tuptoolplugin.h"
 #include "tuppathitem.h"
-#include "infopanel.h"
+#include "settings.h"
 #include "tcontrolnode.h"
 #include "tnodegroup.h"
 
@@ -73,6 +73,7 @@ class TUPI_PLUGIN PolyLineTool : public TupToolPlugin
         virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         
         virtual void keyPressEvent(QKeyEvent *event);
+        virtual void keyReleaseEvent(QKeyEvent *event);
 
         virtual QWidget *configurator();
         void aboutToChangeScene(TupGraphicsScene *scene);
@@ -82,6 +83,7 @@ class TUPI_PLUGIN PolyLineTool : public TupToolPlugin
 
         void resizeNodes(qreal scaleFactor);
         void updateZoomFactor(qreal scaleFactor);
+        void clearSelection();
 
     protected:
         virtual void itemResponse(const TupItemResponse *response);
@@ -92,7 +94,8 @@ class TUPI_PLUGIN PolyLineTool : public TupToolPlugin
 
     private slots:
         void nodeChanged();
-        void initEnv(bool postInit = true);
+        // void initEnv(bool postInit = true);
+        void initEnv();
         
     private:
         void setupActions();

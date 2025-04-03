@@ -36,6 +36,7 @@
 #include "settings.h"
 #include "timagebutton.h"
 #include "tconfig.h"
+#include "tseparator.h"
 
 Settings::Settings(QWidget *parent) : QWidget(parent)
 {
@@ -48,43 +49,41 @@ Settings::Settings(QWidget *parent) : QWidget(parent)
     #endif
 
     QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-
     QBoxLayout *layout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    QLabel *toolTitle = new QLabel;
+    toolTitle->setAlignment(Qt::AlignHCenter);
+    QPixmap pic(THEME_DIR + "icons/pencil.png"); 
+    toolTitle->setPixmap(pic.scaledToWidth(16, Qt::SmoothTransformation));
+    toolTitle->setToolTip(tr("Pencil Properties"));
+    layout->addWidget(toolTitle);
+    layout->addWidget(new TSeparator(Qt::Horizontal));
+
     QLabel *label = new QLabel(tr("Smoothness"));
     label->setAlignment(Qt::AlignHCenter); 
     layout->addWidget(label);
-    m_exactness = new QDoubleSpinBox();
+    m_smoothness = new QDoubleSpinBox();
 
-    m_exactness->setDecimals(2);
-    m_exactness->setSingleStep(0.1);
-    m_exactness->setMaximum(100);
-    layout->addWidget(m_exactness);
+    m_smoothness->setDecimals(2);
+    m_smoothness->setSingleStep(0.1);
+    m_smoothness->setMinimum(0);
+    m_smoothness->setMaximum(20);
+    layout->addWidget(m_smoothness);
 
     mainLayout->addLayout(layout);
 
     mainLayout->addStretch(2);
 
-    TCONFIG->beginGroup("BrushTool");
-    double smoothness = TCONFIG->value("Smoothness", -1).toDouble();
-
-    if (smoothness > 0) 
-        m_exactness->setValue(smoothness);
-    else
-        m_exactness->setValue(4.0);
+    TCONFIG->beginGroup("PencilTool");
+    double smoothness = TCONFIG->value("Smoothness", 4.0).toDouble();
+    m_smoothness->setValue(smoothness);
 }
 
 Settings::~Settings()
 {
-    #ifdef K_DEBUG
-        #ifdef Q_OS_WIN
-            qDebug() << "[~Settings()]";
-        #else
-            TEND;
-        #endif
-    #endif
 }
 
-double Settings::exactness() const
+double Settings::smoothness() const
 {
-    return m_exactness->value();
+    return m_smoothness->value();
 }

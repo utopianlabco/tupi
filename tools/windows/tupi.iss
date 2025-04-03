@@ -1,8 +1,8 @@
 [Setup]
 AppName=Tupi
-AppVersion=0.2-6
+AppVersion=0.2-7
 DefaultDirName={pf}\Tupi
-DefaultGroupName=Tupi Open 2D Magic
+DefaultGroupName=Tupi 2D Magic
 OutputDir=c:\devel\installer
 ChangesEnvironment=yes
 ChangesAssociations=yes
@@ -25,9 +25,15 @@ Name: "{app}\data\palettes"
 Name: "{app}\data\storyboard"
 Name: "{app}\data\themes"
 Name: "{app}\data\themes\default"
+Name: "{app}\data\themes\defaul\config"
 Name: "{app}\data\themes\default\cursors"
 Name: "{app}\data\themes\default\icons"
 Name: "{app}\data\themes\default\images"
+Name: "{app}\data\themes\dark"
+Name: "{app}\data\themes\dark\config"
+Name: "{app}\data\themes\dark\cursors"
+Name: "{app}\data\themes\dark\icons"
+Name: "{app}\data\themes\dark\images"
 Name: "{app}\data\translations"
 Name: "{app}\data\xml"
 Name: "{app}\data\xml\ca"
@@ -57,9 +63,14 @@ Source: "data\help\images\*"; DestDir: "{app}\data\help\images"
 Source: "data\help\ru\*"; DestDir: "{app}\data\help\ru"
 Source: "data\palettes\*"; DestDir: "{app}\data\palettes"
 Source: "data\storyboard\*"; DestDir: "{app}\data\storyboard"
+Source: "data\themes\default\config\*"; DestDir: "{app}\data\themes\default\config"
 Source: "data\themes\default\cursors\*"; DestDir: "{app}\data\themes\default\cursors"
 Source: "data\themes\default\icons\*"; DestDir: "{app}\data\themes\default\icons"
 Source: "data\themes\default\images\*"; DestDir: "{app}\data\themes\default\images"
+Source: "data\themes\dark\config\*"; DestDir: "{app}\data\themes\dark\config"
+Source: "data\themes\dark\cursors\*"; DestDir: "{app}\data\themes\dark\cursors"
+Source: "data\themes\dark\icons\*"; DestDir: "{app}\data\themes\dark\icons"
+Source: "data\themes\dark\images\*"; DestDir: "{app}\data\themes\dark\images"
 Source: "data\translations\*"; DestDir: "{app}\data\translations"
 Source: "data\xml\ca\*"; DestDir: "{app}\data\xml\ca"
 Source: "data\xml\cs\*"; DestDir: "{app}\data\xml\cs"
@@ -81,10 +92,10 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\lib;{app}\lib\qt5;{app}\lib\libav"
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "TUPI_SHARE"; ValueData: "{app}\data"
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "TUPI_PLUGIN"; ValueData: "{app}\plugins"
-Root: HKCR; Subkey: ".tup"; ValueType: string; ValueName: ""; ValueData: "TupiOpen2DMagic"; Flags: uninsdeletevalue 
-Root: HKCR; Subkey: "TupiOpen2DMagic"; ValueType: string; ValueName: ""; ValueData: "Tupi Open 2D Magic"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "TupiOpen2DMagic\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\tupi.ico,0" 
-Root: HKCR; Subkey: "TupiOpen2DMagic\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\tupi.exe"" ""%1""" 
+Root: HKCR; Subkey: ".tup"; ValueType: string; ValueName: ""; ValueData: "Tupi2DMagic"; Flags: uninsdeletevalue 
+Root: HKCR; Subkey: "Tupi2DMagic"; ValueType: string; ValueName: ""; ValueData: "Tupi 2D Magic"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Tupi2DMagic\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\bin\tupi.ico,0" 
+Root: HKCR; Subkey: "Tupi2DMagic\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\tupi.exe"" ""%1""" 
 
 [Icons]
 Name: "{group}\Tupi"; Filename: "{app}\bin\tupi.exe"; IconFilename: "{app}\bin\tupi.ico"

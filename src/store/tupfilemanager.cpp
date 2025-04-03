@@ -277,17 +277,15 @@ bool TupFileManager::load(const QString &fileName, TupProject *project)
             foreach (QString scenePath, scenes) {
                      scenePath = projectDir.path() + "/" + scenePath;
                      QFile file(scenePath);
-
+					 
                      if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                          QString xml = QString::fromLocal8Bit(file.readAll());
                          QDomDocument document;
                          if (! document.setContent(xml))
                              return false;
                          QDomElement root = document.documentElement();
-
                          TupScene *scene = project->createScene(root.attribute("name"), index, true);
                          scene->fromXml(xml);
-
                          index += 1;
                          file.close();
                      } else {

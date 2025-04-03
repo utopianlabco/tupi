@@ -35,16 +35,14 @@
 
 #include "tupbrushstatus.h"
 
-TupBrushStatus::TupBrushStatus(const QString &label, const QPixmap &pix, bool bg)
+TupBrushStatus::TupBrushStatus(const QString &label, TColorCell::FillType context, const QPixmap &pix)
 {
-    background = bg;
-
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(2);
     layout->setSpacing(2);
 
-    brush = new TupColorWidget;
-    connect(brush, SIGNAL(clicked()), this, SLOT(updateColour()));
+    brushCell = new TColorCell(context, QBrush(Qt::black), QSize(20, 20));
+    brushCell->setEnabled(false);
 
     QLabel *icon = new QLabel("");
     icon->setToolTip(label);
@@ -52,40 +50,24 @@ TupBrushStatus::TupBrushStatus(const QString &label, const QPixmap &pix, bool bg
 
     layout->addWidget(icon);
     layout->addSpacing(3);
-    layout->addWidget(brush);
+    layout->addWidget(brushCell);
 }
 
 TupBrushStatus::~TupBrushStatus()
 {
 }
 
-void TupBrushStatus::setForeground(const QPen &pen)
+void TupBrushStatus::setColor(const QPen &pen)
 {
-    brush->setBrush(pen.brush());
+    brushCell->setBrush(pen.brush());
 }
 
-void TupBrushStatus::setColor(const QColor &color)
+void TupBrushStatus::setColor(const QBrush &brush)
 {
-    QBrush square(color);
-    brush->setBrush(square);
-}
-
-void TupBrushStatus::updateColour()
-{
-    if (background) {
-        QColor color = QColorDialog::getColor(brush->color(), this);
-        if (color.isValid()) {
-            setColor(color);
-            emit colorUpdated(color);
-        }
-
-    } else {
-        emit colorRequested();
-    }
+    brushCell->setBrush(brush);
 }
 
 void TupBrushStatus::setTooltip(const QString &tip)
 {
-    brush->setToolTip(tip);
+    brushCell->setToolTip(tip);
 }
-

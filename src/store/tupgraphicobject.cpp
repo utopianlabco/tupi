@@ -34,10 +34,10 @@
  ***************************************************************************/
 
 #include "tupgraphicobject.h"
-// #include "tupframe.h"
 #include "tuplayer.h"
 #include "tupscene.h"
 #include "tupitemtweener.h"
+#include "tupserializer.h"
 
 struct TupGraphicObject::Private
 {
@@ -47,6 +47,15 @@ struct TupGraphicObject::Private
     TupItemTweener *tween;
     TupFrame *frame;
     QPointF lastTweenPos;
+
+    QStringList transformDoList;
+    QStringList transformUndoList;
+
+    QStringList brushDoList;
+    QStringList brushUndoList;
+
+    QStringList penDoList;
+    QStringList penUndoList;
 };
 
 TupGraphicObject::TupGraphicObject(QGraphicsItem *item, TupFrame *parent) : QObject(parent), k(new Private)
@@ -81,16 +90,7 @@ TupGraphicObject::~TupGraphicObject()
     #endif	
     */
 
-    /*
-    if (k->item)
-        delete k->item;
-
-    if (k->tween && k->frame->scene())
-        k->frame->scene()->removeTweenObject(this);
-    }
-
     delete k;
-    */
 }
 
 void TupGraphicObject::fromXml(const QString &xml)
@@ -230,4 +230,169 @@ void TupGraphicObject::setItemZValue(int value)
 int TupGraphicObject::itemZValue()
 {
     return k->item->zValue();
+}
+
+bool TupGraphicObject::transformationIsNotEdited()
+{
+    return k->transformDoList.isEmpty() && k->transformUndoList.isEmpty();
+}
+
+void TupGraphicObject::saveInitTransformation()
+{
+    QDomDocument doc;
+    doc.appendChild(TupSerializer::properties(k->item, doc));
+    k->transformDoList << doc.toString();
+}
+
+void TupGraphicObject::storeItemTransformation(const QString &properties)
+{
+    k->transformDoList << properties;
+}
+
+void TupGraphicObject::undoTransformation()
+{
+    if (k->transformDoList.count() > 1) {
+        k->transformUndoList << k->transformDoList.takeLast();
+        if (!k->transformDoList.isEmpty()) {
+            QString properties = k->transformDoList.last();
+            QDomDocument doc;
+            doc.setContent(properties);
+            TupSerializer::loadProperties(k->item, doc.documentElement());
+        }
+    }
+}
+
+void TupGraphicObject::redoTransformation()
+{
+    if (!k->transformUndoList.isEmpty()) {
+        QString properties = k->transformUndoList.takeLast();
+        k->transformDoList << properties;
+        QDomDocument doc;
+        doc.setContent(properties);
+        TupSerializer::loadProperties(k->item, doc.documentElement());
+    }
+}
+
+bool TupGraphicObject::brushIsNotEdited()
+{
+    return k->brushDoList.isEmpty() && k->brushUndoList.isEmpty();
+}
+
+void TupGraphicObject::saveInitBrush()
+{
+    if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+        QBrush brush = shape->brush();
+        QDomDocument doc; 
+        doc.appendChild(TupSerializer::brush(&brush, doc));
+        k->brushDoList << doc.toString();
+    }
+}
+
+void TupGraphicObject::setBrush(const QString &xml)
+{
+    if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+        k->brushDoList << xml;
+        QBrush brush;
+        QDomDocument doc;
+        doc.setContent(xml);
+
+        TupSerializer::loadBrush(brush, doc.documentElement());
+        shape->setBrush(brush);
+    }
+}
+
+void TupGraphicObject::redoBrushAction()
+{
+    if (!k->brushUndoList.isEmpty()) {
+        if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+            QString xml = k->brushUndoList.takeLast();
+            k->brushDoList << xml;
+            QBrush brush;
+            QDomDocument doc;
+            doc.setContent(xml);
+
+            TupSerializer::loadBrush(brush, doc.documentElement());
+            shape->setBrush(brush);
+        }
+    }
+}
+
+void TupGraphicObject::undoBrushAction()
+{
+    if (k->brushDoList.count() > 1) {
+        if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+            k->brushUndoList << k->brushDoList.takeLast();
+            if (!k->brushDoList.isEmpty()) {
+                QString xml = k->brushDoList.last();
+                QBrush brush;
+                QDomDocument doc;
+                doc.setContent(xml);
+
+                TupSerializer::loadBrush(brush, doc.documentElement());
+                shape->setBrush(brush);
+            }
+        }
+    }
+}
+
+bool TupGraphicObject::penIsNotEdited()
+{
+    return k->penDoList.isEmpty() && k->penUndoList.isEmpty();
+}
+
+void TupGraphicObject::saveInitPen()
+{
+    if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+        QPen pen = shape->pen();
+        QDomDocument doc;
+        doc.appendChild(TupSerializer::pen(&pen, doc));
+        k->penDoList << doc.toString();
+    }
+}
+
+void TupGraphicObject::setPen(const QString &xml)
+{
+    if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+        QPen pen;
+        QDomDocument doc;
+        doc.setContent(xml);
+
+        TupSerializer::loadPen(pen, doc.documentElement());
+        shape->setPen(pen);
+        k->penDoList << xml;
+    }
+}
+
+void TupGraphicObject::redoPenAction()
+{
+    if (!k->penUndoList.isEmpty()) {
+        if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+            QString xml = k->penUndoList.takeLast();
+            k->penDoList << xml;
+            QPen pen;
+            QDomDocument doc;
+            doc.setContent(xml);
+
+            TupSerializer::loadPen(pen, doc.documentElement());
+            shape->setPen(pen);
+        }
+    }
+}
+
+void TupGraphicObject::undoPenAction()
+{
+    if (k->penDoList.count() > 1) {
+        if (QAbstractGraphicsShapeItem *shape = qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->item)) {
+            k->penUndoList << k->penDoList.takeLast();
+            if (!k->penDoList.isEmpty()) {
+                QString xml = k->penDoList.last();
+                QPen pen;
+                QDomDocument doc;
+                doc.setContent(xml);
+
+                TupSerializer::loadPen(pen, doc.documentElement());
+                shape->setPen(pen);
+            }
+        }
+    }
 }

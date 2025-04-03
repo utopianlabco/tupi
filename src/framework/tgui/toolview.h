@@ -77,6 +77,9 @@ class T_GUI_EXPORT ToolView : public QDockWidget
         bool isChecked();
         void setShortcut(QKeySequence shortcut);
 
+    // signals:
+    //     void dockExpanded(bool expanded);
+
     public slots:
         void saveSize(bool checked);
 
@@ -84,17 +87,7 @@ class T_GUI_EXPORT ToolView : public QDockWidget
         void setup(const QString &label);
 
     protected:
-        virtual void showEvent(QShowEvent *e);
-
-/*		
-#if QT_VERSION < 0x040200
-    protected:
-        virtual bool event(QEvent *e);
-
-    private:
-        Qt::DockWidgetArea m_area;
-#endif
-*/
+        virtual void showEvent(QShowEvent *event);
 
     private:
         TViewButton *m_button;
