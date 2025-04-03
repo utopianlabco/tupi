@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -50,17 +50,23 @@ class InfoPanel : public QWidget
 
     public:
         enum Flip { Vertical = 1, Horizontal, Crossed };
+        enum Order { ToBack = 0, ToFront, ToBackOneLevel, ToFrontOneLevel };
 
         InfoPanel(QWidget *parent = 0);
         ~InfoPanel();
 
      signals:
         void callFlip(InfoPanel::Flip flip);
+        void callOrderAction(InfoPanel::Order action);
 
      private slots:
         void vFlip();
         void hFlip();
         void cFlip();
+        void sendToBack();
+        void sendToBackOneLevel();
+        void sendToFront();
+        void sendToFrontOneLevel();
 };
 
 #endif

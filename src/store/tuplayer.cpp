@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -232,8 +232,8 @@ TupFrame *TupLayer::frame(int position) const
 {
     if (position < 0 || position >= k->frames.count()) {
         #ifdef K_DEBUG
-               T_FUNCINFO << " FATAL ERROR: index out of bound (TupLayer) : " << position;
-               T_FUNCINFO << " FATAL ERROR: index limit : " << k->frames.count()-1;
+               tError() << "TupLayer::frame() - FATAL ERROR: frame index out of bound : " << position;
+               tError() << "TupLayer::frame() - FATAL ERROR: index limit : " << k->frames.count()-1;
         #endif
         return 0;
     }

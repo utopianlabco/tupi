@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -120,6 +120,21 @@ void TupExposureSheet::createMenu()
     insertMenu->addAction(insertTen);
     connect(insertTen, SIGNAL(triggered()), this, SLOT(insertTenFrames()));
 
+    QAction *insertTwenty = new QAction(QIcon(THEME_DIR + "icons/add_frame.png"), tr("20 frames"), this);
+    insertTwenty->setIconVisibleInMenu(true);
+    insertMenu->addAction(insertTwenty);
+    connect(insertTwenty, SIGNAL(triggered()), this, SLOT(insertTwentyFrames()));
+
+    QAction *insertFifty = new QAction(QIcon(THEME_DIR + "icons/add_frame.png"), tr("50 frames"), this);
+    insertFifty->setIconVisibleInMenu(true);
+    insertMenu->addAction(insertFifty);
+    connect(insertFifty, SIGNAL(triggered()), this, SLOT(insertFiftyFrames()));
+
+    QAction *insertHundred = new QAction(QIcon(THEME_DIR + "icons/add_frame.png"), tr("100 frames"), this);
+    insertHundred->setIconVisibleInMenu(true);
+    insertMenu->addAction(insertHundred);
+    connect(insertHundred, SIGNAL(triggered()), this, SLOT(insertHundredFrames()));
+
     k->menu->addMenu(insertMenu);
 
     QAction *removeOne = new QAction(QIcon(THEME_DIR + "icons/remove_frame.png"), tr("Remove frame"), this);
@@ -152,10 +167,18 @@ void TupExposureSheet::createMenu()
     expandMenu->addAction(tr("5 frames"), this, SLOT(expandCurrentFrameFive()));
     expandMenu->addAction(tr("10 frames"), this, SLOT(expandCurrentFrameTen()));
     expandMenu->setDisabled(true);
-    
     k->menu->addMenu(expandMenu);
-    connect(k->menu, SIGNAL(triggered(QAction *)), this, SLOT(actionTriggered(QAction*)));
     //connect(expandMenu, SIGNAL(triggered(QAction *)), this, SLOT(actionTriggered(QAction*)));
+
+    QMenu *timeLineMenu = new QMenu(tr("Copy TL forward"));
+    timeLineMenu->addAction(QIcon(THEME_DIR + "icons/copy.png"), tr("1 time"), this, SLOT(copyTimeLineOnce()));
+    timeLineMenu->addAction(QIcon(THEME_DIR + "icons/copy.png"), tr("2 times"), this, SLOT(copyTimeLineTwoTimes()));
+    timeLineMenu->addAction(QIcon(THEME_DIR + "icons/copy.png"), tr("3 times"), this, SLOT(copyTimeLineThreeTimes()));
+    timeLineMenu->addAction(QIcon(THEME_DIR + "icons/copy.png"), tr("4 times"), this, SLOT(copyTimeLineFourTimes()));
+    timeLineMenu->addAction(QIcon(THEME_DIR + "icons/copy.png"), tr("5 times"), this, SLOT(copyTimeLineFiveTimes()));
+    k->menu->addMenu(timeLineMenu);
+
+    connect(k->menu, SIGNAL(triggered(QAction *)), this, SLOT(actionTriggered(QAction*)));
 }
 
 void TupExposureSheet::addScene(int index, const QString &name)
@@ -706,7 +729,7 @@ void TupExposureSheet::frameResponse(TupFrameResponse *e)
                 break;
                 case TupProjectRequest::Lock:
                  {
-                     table->setLockFrame(e->layerIndex(), e->frameIndex(),  e->arg().toBool());
+                     table->setLockFrame(e->layerIndex(), e->frameIndex(), e->arg().toBool());
                  }
                 break;
                 case TupProjectRequest::Rename:
@@ -717,16 +740,17 @@ void TupExposureSheet::frameResponse(TupFrameResponse *e)
                 case TupProjectRequest::Select:
                  {
                      table->blockSignals(true);
-                     // setScene(e->sceneIndex());
                      table->selectFrame(e->layerIndex(), e->frameIndex());
                      table->blockSignals(false);
                  }
                 break;
                 case TupProjectRequest::Expand:
                  {
+                     /*
                      tFatal() << "TupExposureSheet::frameResponse - Expand! -> Just Tracing!";
                      tFatal() << "TupExposureSheet::frameResponse - Starting point: -> " << e->frameIndex();
                      tFatal() << "TupExposureSheet::frameResponse - Range: -> " << e->arg().toInt();
+                     */
                      for(int i = 0; i < e->arg().toInt(); i++)
                          table->insertFrame(e->layerIndex(), e->frameIndex()+i+1, 
                                             table->frameName(e->layerIndex(), e->frameIndex()), 
@@ -826,6 +850,21 @@ void TupExposureSheet::insertTenFrames()
     insertFrames(10);
 }
 
+void TupExposureSheet::insertTwentyFrames()
+{
+    insertFrames(20);
+}
+
+void TupExposureSheet::insertFiftyFrames()
+{
+    insertFrames(50);
+}
+
+void TupExposureSheet::insertHundredFrames()
+{
+    insertFrames(100);
+}
+
 void TupExposureSheet::insertFrames(int n)
 {
     #ifdef K_DEBUG
@@ -892,5 +931,62 @@ void TupExposureSheet::updateFramesState(TupProject *project)
               }
          }
     }
+}
+
+
+void TupExposureSheet::copyTimeLineOnce()
+{
+    copyTimeLine(1);
+}
+
+void TupExposureSheet::copyTimeLineTwoTimes()
+{
+    copyTimeLine(2);
+}
+
+void TupExposureSheet::copyTimeLineThreeTimes()
+{
+    copyTimeLine(3);
+}
+
+void TupExposureSheet::copyTimeLineFourTimes()
+{
+    copyTimeLine(4);
+}
+
+void TupExposureSheet::copyTimeLineFiveTimes()
+{
+    copyTimeLine(5);
+}
+
+void TupExposureSheet::copyTimeLine(int times) 
+{
+    int currentScene = k->scenesContainer->currentIndex();
+    int currentLayer = k->currentTable->currentLayer();
+    int currentFrame = k->currentTable->currentFrame();
+    int framesTotal = k->currentTable->usedFrames(k->currentTable->currentLayer());
+
+    for (int i=0; i < times; i++) {
+         for (int j=0; j < framesTotal; j++) {
+              TupProjectRequest request = TupRequestBuilder::createFrameRequest(currentScene,
+                                                                                currentLayer,
+                                                                                j,
+                                                                                TupProjectRequest::Copy);
+              emit localRequestTriggered(&request);
+              int frameIndex = k->currentTable->usedFrames(currentLayer);
+              insertFrame(currentLayer, frameIndex);
+
+              request = TupRequestBuilder::createFrameRequest(currentScene,
+                                                              currentLayer, frameIndex,
+                                                              TupProjectRequest::Paste);
+              emit localRequestTriggered(&request);
+         }
+    }
+
+    TupProjectRequest request = TupRequestBuilder::createFrameRequest(currentScene,                                   
+                                                                      currentLayer,                                 
+                                                                      currentFrame,      
+                                                                      TupProjectRequest::Select, "1");
+    emit requestTriggered(&request);
 }
 

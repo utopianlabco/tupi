@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -185,14 +185,12 @@ void PencilTool::release(const TupInputDeviceInformation *input, TupBrushManager
     k->item->setBrush(brushManager->brush());
     k->item->setPath(k->path);
 
-    // Add TupProjectRequest
-
     QDomDocument doc;
     doc.appendChild(k->item->toXml(doc));
 
     TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(), 
-                                                                   scene->currentFrame()->graphics().count(), QPointF(), scene->spaceMode(),
-                                                                   TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                                     0, QPoint(), scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                     doc.toString());
 
     emit requested(&request);
 }
@@ -201,9 +199,7 @@ void PencilTool::smoothPath(QPainterPath &path, double smoothness, int from, int
 {
     QPolygonF pol;
     QList<QPolygonF> polygons = path.toSubpathPolygons();
-
     QList<QPolygonF>::iterator it = polygons.begin();
-
     QPolygonF::iterator pointIt;
 
     while (it != polygons.end()) {

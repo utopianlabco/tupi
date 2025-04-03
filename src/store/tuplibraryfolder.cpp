@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -48,14 +48,15 @@ struct TupLibraryFolder::Private
     QString id;
     Folders folders;
     LibraryObjects objects;
-    
     TupProject *project;
+    bool loadingProject;
 };
 
 TupLibraryFolder::TupLibraryFolder(const QString &id, TupProject *project, QObject *parent) : QObject(parent), k(new Private)
 {
     k->id = id;
     k->project = project;
+    k->loadingProject = false;
 }
 
 TupLibraryFolder::~TupLibraryFolder()
@@ -64,7 +65,7 @@ TupLibraryFolder::~TupLibraryFolder()
 }
 
 TupLibraryObject *TupLibraryFolder::createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data, 
-                                               const QString &folder, bool loaded)
+                                                 const QString &folder, bool loaded)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -74,14 +75,14 @@ TupLibraryObject *TupLibraryFolder::createSymbol(TupLibraryObject::Type type, co
         #ifdef K_DEBUG
                tError() << "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is empty!";
         #endif
-        return false;
+        return 0;
     }
 
     if (data.isNull()) {
         #ifdef K_DEBUG
                tError() << "TupLibraryFolder::createSymbol() - [ Fatal Error ] - Data is null!";
         #endif
-        return false;
+        return 0;
     }
 
     TupLibraryObject *object = new TupLibraryObject(this);
@@ -134,6 +135,24 @@ bool TupLibraryFolder::addObject(const QString &folderName, TupLibraryObject *ob
                  }
              }
     }
+
+    return false;
+}
+
+bool TupLibraryFolder::reloadObject(const QString &id)
+{
+    foreach (QString oid, k->objects.keys()) {
+             if (oid.compare(id) == 0) {
+                 QString path = k->objects[id]->dataPath();
+                 if (QFile::exists(path)) {  
+                     return k->objects[id]->loadData(path);
+                 }
+             }
+    }
+
+    #ifdef K_DEBUG
+           tError() << "TupLibraryFolder::reloadObject() - [ Fatal Error ] - Object " << id << " wasn't found";
+    #endif
 
     return false;
 }
@@ -346,6 +365,8 @@ LibraryObjects TupLibraryFolder::objects() const
 
 void TupLibraryFolder::fromXml(const QString &xml)
 {
+    k->loadingProject = true;
+
     QDomDocument document;
 
     if (! document.setContent(xml))
@@ -368,8 +389,8 @@ void TupLibraryFolder::fromXml(const QString &xml)
                        TupLibraryFolder *folder = new TupLibraryFolder(e.attribute("id"), k->project, this);
                        addFolder(folder);
 
-                       TupProjectLoader::createSymbol(TupLibraryObject::Folder,
-                                                     e.attribute("id"), QString(), "FOLDER",  k->project);
+                       TupProjectLoader::createSymbol(TupLibraryObject::Folder, e.attribute("id"), QString(), 
+                                                      "FOLDER",  k->project);
 
                        // Loading the objects inside this folder
                        loadObjects(e.attribute("id"), folderDocument.toString(0));
@@ -379,6 +400,8 @@ void TupLibraryFolder::fromXml(const QString &xml)
 
            domNode = domNode.nextSibling();
     }
+
+    k->loadingProject = false;
 }
 
 void TupLibraryFolder::loadObjects(const QString &folder, const QString &xml)
@@ -418,6 +441,8 @@ void TupLibraryFolder::loadItem(const QString &folder, QDomNode xml)
                  object->loadDataFromPath(k->project->dataDir());
             }
             break;
+            default:
+            break;
     }
 
     if (folder.compare("library") == 0)
@@ -434,7 +459,7 @@ void TupLibraryFolder::loadItem(const QString &folder, QDomNode xml)
     }
 
     TupProjectLoader::createSymbol(TupLibraryObject::Type(object->type()),
-                                  object->symbolName(), folder, data.toLocal8Bit(), k->project);
+                                   object->symbolName(), folder, data.toLocal8Bit(), k->project);
 }
 
 QDomElement TupLibraryFolder::toXml(QDomDocument &doc) const
@@ -480,4 +505,9 @@ void TupLibraryFolder::updatePaths(const QString &newPath)
 
     foreach (TupLibraryFolder *folder, k->folders)
              folder->updatePaths(newPath);    
+}
+
+bool TupLibraryFolder::loadingProject()
+{
+    return k->loadingProject;
 }

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -186,9 +186,19 @@ void Configurator::setStartFrame(int currentIndex)
     k->settingsPanel->setStartFrame(currentIndex);
 }
 
-QString Configurator::tweenToXml(int currentFrame)
+int Configurator::startFrame()
 {
-    return k->settingsPanel->tweenToXml(currentFrame);
+    return k->settingsPanel->startFrame();
+}
+
+int Configurator::startComboSize()
+{
+    return k->settingsPanel->startComboSize();
+}
+
+QString Configurator::tweenToXml(int currentScene, int currentLayer, int currentFrame)
+{
+    return k->settingsPanel->tweenToXml(currentScene, currentLayer, currentFrame);
 }
 
 int Configurator::totalSteps()

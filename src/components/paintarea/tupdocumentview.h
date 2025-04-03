@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,8 +33,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPVIEWDOCUMENT_H
-#define TUPVIEWDOCUMENT_H
+#ifndef TUPDOCUMENTVIEW_H
+#define TUPDOCUMENTVIEW_H
 
 #include "tupdocumentruler.h"
 #include "tactionmanager.h"
@@ -58,13 +58,13 @@ class TupProjectResponse;
  * @author Jorge Cuadrado
 */
 
-class TupViewDocument : public QMainWindow
+class TupDocumentView : public QMainWindow
 {
     Q_OBJECT
 
     public:
-        TupViewDocument(TupProject *project, QWidget *parent = 0, bool isNetworked = true, const QStringList &users = QStringList());
-        ~TupViewDocument();
+        TupDocumentView(TupProject *project, QWidget *parent = 0, bool isNetworked = true, const QStringList &users = QStringList());
+        ~TupDocumentView();
         void closeArea();
         QSize sizeHint() const;
 
@@ -103,12 +103,14 @@ class TupViewDocument : public QMainWindow
         void updateStatusBgColor(const QColor color);
         void updatePenThickness(int size);
         void updateOnionOpacity(double opacity);
+        void setBackgroundDirection(int direction);
+        void updateBackgroundShiftProperty(int shift);
+        void renderDynamicBackground();
+        void fullScreenRightClick();
 
     private:
         struct Private;
         Private *const k;
-
-    private:
         void setupDrawActions();
         void createToolBar();
         void createMenu();
@@ -129,10 +131,10 @@ class TupViewDocument : public QMainWindow
         void selectScene(int scene);
 
     private slots:
-        void showPos(const QPointF &p);	
-        void setCursor(const QCursor &c);
-        void updateZoomFactor( double f);
-        void selectToolFromMenu(QAction *act);
+        void showPos(const QPointF &point);	
+        void setCursor(const QCursor &cursor);
+        void updateZoomFactor(double factor);
+        void selectToolFromMenu(QAction *action);
         void callAutoSave();
         void sendStoryboard(TupStoryboard *storyboard, int sceneIndex);
 
@@ -149,7 +151,7 @@ class TupViewDocument : public QMainWindow
         void requestTriggered(const TupProjectRequest *event);
         void localRequestTriggered(const TupProjectRequest *event);
         void autoSave();
-        void modeHasChanged(int mode);
+        void modeHasChanged(TupProject::Mode mode);
         void expandColorPanel();
         void requestExportImageToServer(int frameIndex, int sceneIndex, const QString &title, const QString &topics, const QString &description);
         void openColorDialog(const QColor &);
@@ -157,6 +159,8 @@ class TupViewDocument : public QMainWindow
         void updatePenFromFullScreen(const QPen &pen);
         void updateStoryboard(TupStoryboard *storyboard, int sceneIndex);
         void postStoryboard(int sceneIndex);
+        void projectHasChanged();
+        void closePolyLine();
 
     // protected:
     // void closeEvent(QCloseEvent *e);

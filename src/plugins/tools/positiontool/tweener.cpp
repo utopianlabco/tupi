@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -65,6 +65,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsView>
 #include <QDomDocument>
+#include <QDir>
 
 struct Tweener::Private
 {
@@ -76,18 +77,21 @@ struct Tweener::Private
     QList<QGraphicsItem *> objects;
 
     TupItemTweener *currentTween;
-    TNodeGroup *group;
+    TNodeGroup *nodesGroup;
 
-    bool pathAdded;
-    int startPoint;
+    bool isPathInScene;
+    int initFrame;
+    int initLayer;
+    int initScene;
 
     TupToolPlugin::Mode mode;
-    // Settings::EditMode editMode;
     TupToolPlugin::EditMode editMode;
 
     QPointF itemObjectReference;
     QPointF pathOffset;
     QPointF firstNode;
+
+    int baseZValue;
 };
 
 Tweener::Tweener() : TupToolPlugin(), k(new Private)
@@ -96,9 +100,12 @@ Tweener::Tweener() : TupToolPlugin(), k(new Private)
 
     k->configurator = 0;
     k->path = 0;
-    k->group = 0;
-    k->startPoint = 0;
+    k->nodesGroup = 0;
     k->currentTween = 0;
+
+    k->initFrame = 0;
+    k->initLayer = 0;
+    k->initScene = 0;
 }
 
 Tweener::~Tweener()
@@ -106,22 +113,23 @@ Tweener::~Tweener()
     delete k;
 }
 
-/* This method initializes the plugin */
+/* This method initialize the context of the plugin */
 
 void Tweener::init(TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+       T_FUNCINFO;
     #endif
 
     delete k->path;
     k->path = 0;
-    delete k->group;
-    k->group = 0;
+    delete k->nodesGroup;
+    k->nodesGroup = 0;
     k->scene = scene;
     k->objects.clear();
+    k->baseZValue = 20000 + (scene->scene()->layersTotal() * 10000);
 
-    k->pathAdded = false;
+    k->isPathInScene = false;
     k->pathOffset = QPointF(0, 0); 
     k->firstNode = QPointF(0, 0);
     k->itemObjectReference = QPointF(0, 0);
@@ -141,10 +149,10 @@ void Tweener::init(TupGraphicsScene *scene)
     k->configurator->initStartCombo(total, k->scene->currentFrameIndex());
 }
 
-void Tweener::updateStartPoint(int index)
+void Tweener::updateStartFrame(int index)
 {
-    if (k->startPoint != index && index >= 0) 
-        k->startPoint = index;
+    if (k->initFrame != index && index >= 0) 
+        k->initFrame = index;
 }
 
 /* This method returns the plugin name */
@@ -161,13 +169,13 @@ QStringList Tweener::keys() const
 void Tweener::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+       T_FUNCINFO;
     #endif
 
     Q_UNUSED(brushManager);
     Q_UNUSED(scene);
 
-    if (k->editMode == TupToolPlugin::Path && k->scene->currentFrameIndex() == k->startPoint) {
+    if (k->editMode == TupToolPlugin::Path && k->scene->currentFrameIndex() == k->initFrame) {
         if (k->path) {
             QPointF point = k->path->mapFromParent(input->pos());
             QPainterPath path = k->path->path();
@@ -193,21 +201,19 @@ void Tweener::move(const TupInputDeviceInformation *input, TupBrushManager *brus
 void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+       T_FUNCINFO;
     #endif
 
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
 
-    if (scene->currentFrameIndex() == k->startPoint) {
-
+    if (scene->currentFrameIndex() == k->initFrame) {
         if (k->editMode == TupToolPlugin::Path) {
-
-            if (k->group) {
-                k->group->createNodes(k->path);
-                k->group->expandAllNodes();
+            if (k->nodesGroup) {
+                k->nodesGroup->createNodes(k->path);
+                k->nodesGroup->expandAllNodes();
                 k->configurator->updateSteps(k->path);
-                QPainterPath::Element e  = k->path->path().elementAt(0);
+                QPainterPath::Element e = k->path->path().elementAt(0);
                 QPointF begin = QPointF(e.x, e.y);
 
                 if (begin != k->firstNode) {
@@ -218,9 +224,8 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
                     int distanceY = newPos.y() - oldPos.y();
 
                     if (k->objects.size() > 0) {
-                        foreach (QGraphicsItem *item, k->objects) {
+                        foreach (QGraphicsItem *item, k->objects)
                                  item->moveBy(distanceX, distanceY);
-                        }
                         QGraphicsItem *item = k->objects.at(0);
                         QRectF rect = item->sceneBoundingRect();
                         k->itemObjectReference = rect.center();
@@ -229,11 +234,8 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
                     k->firstNode = newPos;
                 }
             }
-
         } else {
-
             if (scene->selectedItems().size() > 0) {
-
                 k->objects = scene->selectedItems();
                 k->configurator->notifySelection(true);
 
@@ -245,11 +247,10 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
 
                 if (!k->path) {
                     k->path = new QGraphicsPathItem;
-                    k->path->setZValue(maxZValue());
+                    k->path->setZValue(k->baseZValue);
 
-                    QColor color = Qt::lightGray;
-                    color.setAlpha(200);
-                    QPen pen(QBrush(color), 1, Qt::DotLine);
+                    QColor color(55, 155, 55, 200);
+                    QPen pen(QBrush(color), 2, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
                     k->path->setPen(pen);
 
                     QPainterPath path;
@@ -257,7 +258,7 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
                     k->firstNode = newPos;
                     k->path->setPath(path);
                     scene->addItem(k->path);
-                    k->pathAdded = true;
+                    k->isPathInScene = true;
 
                     k->pathOffset = QPointF(0, 0);
                 } else {
@@ -294,17 +295,14 @@ QWidget *Tweener::configurator()
         k->mode = TupToolPlugin::View;
 
         k->configurator = new Configurator;
-
-        connect(k->configurator, SIGNAL(startingPointChanged(int)), this, SLOT(updateStartPoint(int)));
-        connect(k->configurator, SIGNAL(clickedCreatePath()), this, SLOT(setCreatePath()));
-        connect(k->configurator, SIGNAL(clickedSelect()), this, SLOT(setSelect()));
+        connect(k->configurator, SIGNAL(startingFrameChanged(int)), this, SLOT(updateStartFrame(int)));
+        connect(k->configurator, SIGNAL(clickedCreatePath()), this, SLOT(setTweenPath()));
+        connect(k->configurator, SIGNAL(clickedSelect()), this, SLOT(setSelection()));
         connect(k->configurator, SIGNAL(clickedRemoveTween(const QString &)), this, SLOT(removeTween(const QString &)));
         connect(k->configurator, SIGNAL(clickedResetInterface()), this, SLOT(applyReset()));
         connect(k->configurator, SIGNAL(setMode(TupToolPlugin::Mode)), this, SLOT(updateMode(TupToolPlugin::Mode)));
         connect(k->configurator, SIGNAL(clickedApplyTween()), this, SLOT(applyTween()));
-        // connect(k->configurator, SIGNAL(editModeOn()), this, SLOT(setEditEnv())); 
         connect(k->configurator, SIGNAL(getTweenData(const QString &)), this, SLOT(setCurrentTween(const QString &)));
-
     } else {
         k->mode = k->configurator->mode();
     }
@@ -313,72 +311,70 @@ QWidget *Tweener::configurator()
 }
 
 /* This method is called when there's a change on/of scene */
-void Tweener::aboutToChangeScene(TupGraphicsScene *)
+void Tweener::aboutToChangeScene(TupGraphicsScene *scene)
 {
+    Q_UNUSED(scene);
 }
 
 /* This method is called when this plugin is off */
 
 void Tweener::aboutToChangeTool()
 {
+    resetGUI();
+}
+
+void Tweener::resetGUI()
+{
     if (k->editMode == TupToolPlugin::Selection) {
         clearSelection();
         disableSelection();
-
         return;
     }
 
     if (k->editMode == TupToolPlugin::Path) {
         if (k->path) {
             k->scene->removeItem(k->path);
-            k->pathAdded = false;
-            delete k->group;
-            k->group = 0;
+            k->isPathInScene = false;
+            if (k->nodesGroup) {
+                k->nodesGroup->clear();
+                k->nodesGroup = 0;
+            }
         }
         return;
     }
-}
-
-/* SQA: What is it? */
-
-bool Tweener::isComplete() const
-{
-    return true;
 }
 
 /* This method defines the actions contained in this plugin */
 
 void Tweener::setupActions()
 {
-    TAction *translater = new TAction(QPixmap(kAppProp->themeDir() + "icons/position_tween.png"), 
-                                      tr("Position Tween"), this);
-    translater->setCursor(QCursor(kAppProp->themeDir() + "cursors/tweener.png"));
-    translater->setShortcut(QKeySequence(tr("Shift+W")));
+    TAction *action = new TAction(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "position_tween.png"), tr("Position Tween"), this);
+    action->setCursor(QCursor(kAppProp->themeDir() + "cursors" + QDir::separator() + "tweener.png"));
+    action->setShortcut(QKeySequence(tr("Shift+W")));
 
-    k->actions.insert(tr("Position Tween"), translater);
+    k->actions.insert(tr("Position Tween"), action);
 }
 
 /* This method initializes the "Create path" mode */
 
-void Tweener::setCreatePath()
+void Tweener::setTweenPath()
 {
     if (k->path) {
-
         k->pathOffset = QPointF(0, 0);
 
-        if (!k->pathAdded) {
+        if (!k->isPathInScene) {
             k->scene->addItem(k->path);
-            k->pathAdded = true;
+            k->isPathInScene = true;
         } 
 
-        if (k->group) {
-            k->group->createNodes(k->path);
+        if (k->nodesGroup) {
+            k->nodesGroup->createNodes(k->path);
         } else {
-            k->group = new TNodeGroup(k->path, k->scene, TNodeGroup::PositionTween);
-            connect(k->group, SIGNAL(nodeReleased()), SLOT(updatePath()));
-            k->group->createNodes(k->path);
+            k->nodesGroup = new TNodeGroup(k->path, k->scene, TNodeGroup::PositionTween, k->baseZValue);
+            connect(k->nodesGroup, SIGNAL(nodeReleased()), SLOT(updatePath()));
+            k->nodesGroup->createNodes(k->path);
         }
-        k->group->expandAllNodes();
+        k->nodesGroup->expandAllNodes();
     }
 
     k->editMode = TupToolPlugin::Path;
@@ -387,32 +383,37 @@ void Tweener::setCreatePath()
 
 /* This method initializes the "Select object" mode */
 
-void Tweener::setSelect()
+void Tweener::setSelection()
 {
     if (k->mode == TupToolPlugin::Edit) {
-        if (k->startPoint != k->scene->currentFrameIndex()) {
-            TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
-                                                                            k->scene->currentLayerIndex(),
-                                                                            k->startPoint, TupProjectRequest::Select, "1");
+        if (k->initFrame != k->scene->currentFrameIndex()) {
+            TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->currentTween->initScene(),
+                                                                              k->currentTween->initLayer(),
+                                                                              k->currentTween->initFrame(), 
+                                                                              TupProjectRequest::Select, "1");
             emit requested(&request);
         }
     }
 
     if (k->path) {
         k->scene->removeItem(k->path);
-        k->pathAdded = false;
-        delete k->group;
-        k->group = 0;
+        k->isPathInScene = false;
+        if (k->nodesGroup) {
+            k->nodesGroup->clear();
+            k->nodesGroup = 0;
+        }
     }
 
     k->editMode = TupToolPlugin::Selection;
 
+    int bottomBoundary = 20000 + (k->scene->currentLayerIndex()*10000);
+    int topBoundary = bottomBoundary + 10000; 
+
     foreach (QGraphicsView * view, k->scene->views()) {
              view->setDragMode(QGraphicsView::RubberBandDrag);
              foreach (QGraphicsItem *item, view->scene()->items()) {
-                      if ((item->zValue() >= 10000) && (item->toolTip().length()==0)) {
-                          item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
-                      }
+                      if ((item->zValue() >= bottomBoundary) && (item->zValue() < topBoundary) && (item->toolTip().length()==0)) 
+                           item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
              }
     }
 
@@ -423,7 +424,6 @@ void Tweener::setSelect()
                  item->setSelected(true);
         }
     }
-
 }
 
 /* This method transforms the path created into a QString representation */
@@ -438,43 +438,43 @@ QString Tweener::pathToCoords()
     for (int i=0; i < k->path->path().elementCount(); i++) {
          QPainterPath::Element e = k->path->path().elementAt(i);
          switch (e.type) {
-            case QPainterPath::MoveToElement:
-            {
-                if (t != 'M') {
-                    t = 'M';
-                    strPath += "M " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                } else {
-                    strPath += QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                }
-            }
-            break;
-            case QPainterPath::LineToElement:
-            {
-                if (t != 'L') {
-                    t = 'L';
-                    strPath += " L " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                } else {
-                    strPath += QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                }
-            }
-            break;
-            case QPainterPath::CurveToElement:
-            {
-                if (t != 'C') {
-                    t = 'C';
-                    strPath += " C " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                } else {
-                    strPath += "  " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
-                }
-            }
-            break;
-            case QPainterPath::CurveToDataElement:
-            {
-                if (t == 'C')
-                    strPath +=  " " + QString::number(e.x + offsetX) + "  " + QString::number(e.y + offsetY) + " ";
-            }
-            break;
-        }
+             case QPainterPath::MoveToElement:
+             {
+                 if (t != 'M') {
+                     t = 'M';
+                     strPath += "M " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                 } else {
+                     strPath += QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                 }
+             }
+             break;
+             case QPainterPath::LineToElement:
+             {
+                  if (t != 'L') {
+                      t = 'L';
+                      strPath += " L " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                  } else {
+                      strPath += QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                  }
+             }
+             break;
+             case QPainterPath::CurveToElement:
+             {
+                  if (t != 'C') {
+                      t = 'C';
+                      strPath += " C " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                  } else {
+                      strPath += "  " + QString::number(e.x + offsetX) + " " + QString::number(e.y + offsetY) + " ";
+                  }
+             }
+             break;
+             case QPainterPath::CurveToDataElement:
+             {
+                  if (t == 'C')
+                      strPath +=  " " + QString::number(e.x + offsetX) + "  " + QString::number(e.y + offsetY) + " ";
+             }
+             break;
+         }
     }
 
     return strPath.trimmed();
@@ -490,19 +490,22 @@ void Tweener::applyReset()
     clearSelection();
     disableSelection();
 
-    if (k->group) {
-        k->group->clear();
-        k->group = 0;
+    if (k->nodesGroup) {
+        k->nodesGroup->clear();
+        k->nodesGroup = 0;
     }
 
     if (k->path) {
-        if (k->startPoint == k->scene->currentFrameIndex())
+        if (k->initFrame == k->scene->currentFrameIndex())
             k->scene->removeItem(k->path);
-        k->pathAdded = false;
+        k->isPathInScene = false;
         k->path = 0;
     }
 
-    k->startPoint = k->scene->currentFrameIndex();
+    k->initFrame = k->scene->currentFrameIndex();
+    k->initLayer = k->scene->currentLayerIndex();
+    k->initScene = k->scene->currentSceneIndex();
+
     k->configurator->cleanData();
 }
 
@@ -511,7 +514,7 @@ void Tweener::applyReset()
 void Tweener::applyTween()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+       T_FUNCINFO;
     #endif
 
     QString name = k->configurator->currentTweenName();
@@ -522,9 +525,11 @@ void Tweener::applyTween()
     }
 
     if (!k->scene->scene()->tweenExists(name, TupItemTweener::Position)) {
+        k->initFrame = k->scene->currentFrameIndex();
+        k->initLayer = k->scene->currentLayerIndex();
+        k->initScene = k->scene->currentSceneIndex();
 
         foreach (QGraphicsItem *item, k->objects) {   
-
                  TupLibraryObject::Type type = TupLibraryObject::Item;
                  int objectIndex = k->scene->currentFrame()->indexOf(item); 
                  QRectF rect = item->sceneBoundingRect();
@@ -542,50 +547,33 @@ void Tweener::applyTween()
                  QString route = pathToCoords();
 
                  TupProjectRequest request = TupRequestBuilder::createItemRequest(
-                                            k->scene->currentSceneIndex(),
-                                            k->scene->currentLayerIndex(),
-                                            k->startPoint,
-                                            objectIndex,
-                                            QPointF(), k->scene->spaceMode(), type,
-                                            TupProjectRequest::SetTween, 
-                                            k->configurator->tweenToXml(k->startPoint, point, route));
+                                             k->initScene, k->initLayer, k->initFrame,
+                                             objectIndex,
+                                             QPointF(), k->scene->spaceMode(), type,
+                                             TupProjectRequest::SetTween, 
+                                             k->configurator->tweenToXml(k->initScene, k->initLayer, k->initFrame, point, route));
                  emit requested(&request);
         }
-
-        int framesNumber = framesTotal();
-        int total = k->startPoint + k->configurator->totalSteps() - 1;
-
-        if (total > framesNumber) {
-            for (int i = framesNumber; i <= total; i++) {
-                 TupProjectRequest requestFrame = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
-                                                                                      k->scene->currentLayerIndex(),
-                                                                                      i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
-                 emit requested(&requestFrame);
-            }
-        }
-
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(), 
-                                                                        k->scene->currentLayerIndex(),
-                                                                        k->startPoint, TupProjectRequest::Select, "1");
-        emit requested(&request);
-
     } else {
-
         removeTweenFromProject(name);
         QList<QGraphicsItem *> newList;
 
+        k->initFrame = k->configurator->startFrame();
+        k->initLayer = k->currentTween->initLayer();
+        k->initScene = k->currentTween->initScene();
+
         foreach (QGraphicsItem *item, k->objects) {
-
                  TupLibraryObject::Type type = TupLibraryObject::Item;
-                 TupScene *scene = k->scene->scene();
-                 TupLayer *layer = scene->layer(k->scene->currentLayerIndex());
-                 TupFrame *frame = layer->frame(k->currentTween->startFrame());
+                 TupProject *project = k->scene->scene()->project();
+                 TupScene *scene = project->scene(k->initScene);
+                 TupLayer *layer = scene->layer(k->initLayer);
+                 TupFrame *frame = layer->frame(k->currentTween->initFrame());
                  int objectIndex = frame->indexOf(item);
-
                  QRectF rect = item->sceneBoundingRect();
                  QPointF point = rect.topLeft();
+                 TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item); 
 
-                 if (TupSvgItem *svg = qgraphicsitem_cast<TupSvgItem *>(item)) {
+                 if (svg) {
                      type = TupLibraryObject::Svg;
                      objectIndex = frame->indexOf(svg);
                  } else {
@@ -594,61 +582,45 @@ void Tweener::applyTween()
                          point = item->pos();
                  }
 
-                 if (k->startPoint != k->currentTween->startFrame()) {
+                 if (k->initFrame != k->currentTween->initFrame()) {
                      QDomDocument dom;
-                     dom.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(dom));
-
-                     TupProjectRequest request = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), 
-                                                                                    k->scene->currentLayerIndex(), 
-                                                                                    k->startPoint, -1, 
-                                                                                    QPointF(), k->scene->spaceMode(), type, 
-                                                                                    TupProjectRequest::Add, dom.toString());
-                     emit requested(&request);
-
-                     request = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), 
-                                                                   k->scene->currentLayerIndex(),
-                                                                   k->currentTween->startFrame(),
-                                                                   objectIndex, QPointF(), 
-                                                                   k->scene->spaceMode(), type,
-                                                                   TupProjectRequest::Remove);
-                     emit requested(&request);
-
-                     frame = layer->frame(k->startPoint);
-                     if (type == TupLibraryObject::Item)
-                         objectIndex = frame->graphicItemsCount() - 1;
+                     if (type == TupLibraryObject::Svg)
+                         dom.appendChild(svg->toXml(dom));
                      else
-                         objectIndex = frame->svgItemsCount() - 1;
+                         dom.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(dom));
 
-                     newList.append(frame->graphic(objectIndex)->item());
+                     TupProjectRequest request = TupRequestBuilder::createItemRequest(k->initScene, k->initLayer, 
+                                                 k->initFrame, 0, QPointF(), 
+                                                 k->scene->spaceMode(), type, 
+                                                 TupProjectRequest::Add, dom.toString());
+                     emit requested(&request);
+
+                     request = TupRequestBuilder::createItemRequest(k->currentTween->initScene(), 
+                               k->currentTween->initLayer(),
+                               k->currentTween->initFrame(),
+                               objectIndex, QPointF(), 
+                               k->scene->spaceMode(), type,
+                               TupProjectRequest::Remove);
+                     emit requested(&request);
+
+                     frame = layer->frame(k->initFrame);
+                     if (type == TupLibraryObject::Item) {
+                         objectIndex = frame->graphicItemsCount() - 1;
+                         newList.append(frame->graphic(objectIndex)->item());
+                     } else {
+                         objectIndex = frame->svgItemsCount() - 1;
+                         newList.append(frame->svg(objectIndex));
+                     }
                  }
 
                  QString route = pathToCoords();
 
                  TupProjectRequest request = TupRequestBuilder::createItemRequest(
-                                            k->scene->currentSceneIndex(),
-                                            k->scene->currentLayerIndex(),
-                                            k->startPoint,
-                                            objectIndex,
-                                            QPointF(), k->scene->spaceMode(), type,
-                                            TupProjectRequest::SetTween,
-                                            k->configurator->tweenToXml(k->startPoint, point, route));
-                 emit requested(&request);
-
-                 int total = k->startPoint + k->configurator->totalSteps();
-
-                 int framesNumber = framesTotal();
-
-                 if (framesNumber < total) {
-                     for (int i = framesNumber; i < total; i++) {
-                          TupProjectRequest requestFrame = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
-                                                          k->scene->currentLayerIndex(),
-                                                          i, TupProjectRequest::Add, tr("Frame %1").arg(i + 1));
-                          emit requested(&requestFrame);
-                     }
-                 }
-
-                 request = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(),
-                                                                k->startPoint, TupProjectRequest::Select, "1");
+                                             k->initScene, k->initLayer, k->initFrame,
+                                             objectIndex,
+                                             QPointF(), k->scene->spaceMode(), type,
+                                             TupProjectRequest::SetTween,
+                                             k->configurator->tweenToXml(k->initScene, k->initLayer, k->initFrame, point, route));
                  emit requested(&request);
         }
 
@@ -656,8 +628,26 @@ void Tweener::applyTween()
             k->objects = newList;
     }
 
-    setCurrentTween(name);
+    int framesNumber = framesTotal();
+    int total = k->initFrame + k->configurator->totalSteps() - 1;
+    int layersTotal = k->scene->scene()->layersTotal();
+    TupProjectRequest request;
 
+    if (total > framesNumber) {
+        for (int i = framesNumber; i <= total; i++) {
+             for (int j = 0; j < layersTotal; j++) {
+                  request = TupRequestBuilder::createFrameRequest(k->initScene, j, i, TupProjectRequest::Add,
+                                                                  tr("Frame %1").arg(i + 1));
+                  emit requested(&request);
+             }
+        }
+    }
+
+    request = TupRequestBuilder::createFrameRequest(k->initScene, k->initLayer, k->initFrame,
+                                                    TupProjectRequest::Select, "1");
+    emit requested(&request);
+
+    setCurrentTween(name);
     TOsd::self()->display(tr("Info"), tr("Tween %1 applied!").arg(name), TOsd::Info);
 }
 
@@ -691,56 +681,48 @@ void Tweener::updateScene(TupGraphicsScene *scene)
     k->mode = k->configurator->mode();
 
     if (k->mode == TupToolPlugin::Edit) {
+        int total = k->initFrame + k->configurator->totalSteps();
 
-       int total = k->startPoint + k->configurator->totalSteps();
+        if (k->editMode == TupToolPlugin::Path) {
+            if (scene->currentFrameIndex() >= k->initFrame && scene->currentFrameIndex() < total) {
+                if (k->path && k->nodesGroup) {
+                    k->scene->addItem(k->path);            
+                    k->nodesGroup->createNodes(k->path);
+                    k->nodesGroup->expandAllNodes();
+                }
+            }
+        } 
 
-       if (k->editMode == TupToolPlugin::Path) {
-           if (scene->currentFrameIndex() >= k->startPoint && scene->currentFrameIndex() < total) {
-               if (k->path && k->group) {
-                   k->scene->addItem(k->path);            
-                   k->group->createNodes(k->path);
-                   k->group->expandAllNodes();
-               }
-           }
-       } 
+        int framesNumber = framesTotal();
 
-       int framesNumber = framesTotal();
-
-       if (k->configurator->startComboSize() < framesNumber)
-           k->configurator->initStartCombo(framesNumber, k->startPoint);
+        if (k->configurator->startComboSize() < framesNumber)
+            k->configurator->initStartCombo(framesNumber, k->initFrame);
 
     } else if (k->mode == TupToolPlugin::Add) {
-
                int total = framesTotal();
-
                if (k->configurator->startComboSize() < total) {
-                   k->configurator->initStartCombo(total, k->startPoint);
+                   k->configurator->initStartCombo(total, k->initFrame);
                } else {
-                   if (scene->currentFrameIndex() != k->startPoint)
+                   if (scene->currentFrameIndex() != k->initFrame)
                        k->configurator->setStartFrame(scene->currentFrameIndex());
                }
 
-               if (k->editMode == TupToolPlugin::Path) {
-
-                       k->path = 0;
-                       k->configurator->cleanData();
-                       k->configurator->activateMode(TupToolPlugin::Selection);
-                       clearSelection();
-                       setSelect();
-
-               } else if (k->editMode == TupToolPlugin::Selection) {
-                       
-                       k->path = 0;
-                       if (scene->currentFrameIndex() != k->startPoint)
-                           clearSelection();
-                       k->startPoint = scene->currentFrameIndex();
-                       setSelect();
-               } 
-
+           if (k->editMode == TupToolPlugin::Path) {
+               k->path = 0;
+               k->configurator->cleanData();
+               k->configurator->activateMode(TupToolPlugin::Selection);
+               clearSelection();
+               setSelection();
+           } else if (k->editMode == TupToolPlugin::Selection) {
+                      k->path = 0;
+                      if (scene->currentFrameIndex() != k->initFrame)
+                          clearSelection();
+                      k->initFrame = scene->currentFrameIndex();
+                      setSelection();
+           } 
     } else {
-             if (scene->currentFrameIndex() != k->startPoint) {
-                 k->configurator->setStartFrame(scene->currentFrameIndex());
-             }
+        if (scene->currentFrameIndex() != k->initFrame) 
+            k->configurator->setStartFrame(scene->currentFrameIndex());
     }
 }
 
@@ -750,20 +732,6 @@ void Tweener::updateMode(TupToolPlugin::Mode mode)
 
     if (k->mode == TupToolPlugin::Edit)
         setEditEnv();
-}
-
-int Tweener::maxZValue()
-{
-    int max = -1;
-    foreach (QGraphicsView *view, k->scene->views()) {
-             foreach (QGraphicsItem *item, view->scene()->items()) {
-                      if (item->zValue() > max)
-                          max = item->zValue();
-
-             }
-    }
-
-    return max + 1;
 }
 
 void Tweener::removeTweenFromProject(const QString &name)
@@ -790,18 +758,18 @@ void Tweener::setCurrentTween(const QString &name)
 {
     TupScene *scene = k->scene->scene();
     k->currentTween = scene->tween(name, TupItemTweener::Position);
-    if (k->currentTween) {
+    if (k->currentTween)
         k->configurator->setCurrentTween(k->currentTween);
-    } 
 }
 
 void Tweener::setEditEnv()
 {
-    k->startPoint = k->currentTween->startFrame();
-    if (k->startPoint != k->scene->currentFrameIndex()) {
-        TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
-                                                                       k->scene->currentLayerIndex(),
-                                                                       k->startPoint, TupProjectRequest::Select, "1");
+    k->initFrame = k->currentTween->initFrame();
+    k->initLayer = k->currentTween->initLayer();
+    k->initScene = k->currentTween->initScene();
+
+    if (k->initFrame != k->scene->currentFrameIndex() || k->initLayer != k->scene->currentLayerIndex() || k->initScene != k->scene->currentSceneIndex()) {
+        TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->initScene, k->initLayer, k->initFrame, TupProjectRequest::Select, "1");
         emit requested(&request);
     }
 
@@ -814,9 +782,9 @@ void Tweener::setEditEnv()
     k->itemObjectReference = rect.center();
 
     k->path = k->currentTween->graphicsPath();
-    k->path->setZValue(maxZValue());
+    k->path->setZValue(k->baseZValue);
 
-    QPainterPath::Element e  = k->path->path().elementAt(0);
+    QPainterPath::Element e = k->path->path().elementAt(0);
     k->firstNode = QPointF(e.x, e.y);
 
     QPointF oldPos = QPointF(e.x, e.y);
@@ -827,12 +795,11 @@ void Tweener::setEditEnv()
     k->path->moveBy(distanceX, distanceY);
     k->pathOffset = QPointF(distanceX, distanceY);
 
-    QColor color = Qt::lightGray;
-    color.setAlpha(200);
-    QPen pen(QBrush(color), 1, Qt::DotLine);
+    QColor color(55, 155, 55, 200);
+    QPen pen(QBrush(color), 2, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
     k->path->setPen(pen);
 
-    setCreatePath();
+    setTweenPath();
 }
 
 int Tweener::framesTotal()
@@ -880,7 +847,6 @@ void Tweener::sceneResponse(const TupSceneResponse *event)
 
     if ((event->action() == TupProjectRequest::Remove || event->action() == TupProjectRequest::Reset)
         && (k->scene->currentSceneIndex() == event->sceneIndex())) {
-        tError() << "Tracing 1";
         init(k->scene);
     }
 
@@ -906,6 +872,13 @@ void Tweener::frameResponse(const TupFrameResponse *event)
 
     if (event->action() == TupProjectRequest::Remove && k->scene->currentLayerIndex() == event->layerIndex())
         init(k->scene);
+
+    if (event->action() == TupProjectRequest::Select) {
+        if (k->initLayer != event->layerIndex() || k->initScene != event->sceneIndex()) {
+            resetGUI();
+            init(k->scene);
+        }
+    }
 }
 
 TupToolPlugin::Mode Tweener::currentMode()

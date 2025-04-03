@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -72,9 +72,10 @@ class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
 
         enum Mode 
         {
-            NONE = 0,
-            FRAMES_EDITION,
-            BACKGROUND_EDITION 
+            FRAMES_EDITION = 0,
+            STATIC_BACKGROUND_EDITION,
+            DYNAMIC_BACKGROUND_EDITION,
+            NONE
         };
 
         TupProject(QObject *parent = 0);
@@ -119,6 +120,7 @@ class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
         bool removeSymbolFromFrame(const QString &name, TupLibraryObject::Type type);
 
         bool updateSymbolId(TupLibraryObject::Type type, const QString &oldId, const QString &newId);
+        void reloadLibraryItem(TupLibraryObject::Type type, const QString &id, TupLibraryObject *object);
 
         void clear();
         void loadLibrary(const QString &filename);

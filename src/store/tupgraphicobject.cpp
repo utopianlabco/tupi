@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -53,12 +53,13 @@ struct TupGraphicObject::Private
     QPointF lastTweenPos;
 };
 
-TupGraphicObject::TupGraphicObject(QGraphicsItem *item, TupFrame *parent)
-	: QObject(parent), k(new Private)
+TupGraphicObject::TupGraphicObject(QGraphicsItem *item, TupFrame *parent) : QObject(parent), k(new Private)
 {
+    /*
     #ifdef K_DEBUG
            TINIT;
     #endif
+    */
 
     k->item = item;
     k->tween = 0;
@@ -70,9 +71,11 @@ TupGraphicObject::TupGraphicObject(QGraphicsItem *item, TupFrame *parent)
 
 TupGraphicObject::~TupGraphicObject()
 {
+    /*
     #ifdef K_DEBUG
            TEND;
     #endif
+    */
 
     if (k->item)
         delete k->item;
@@ -108,6 +111,10 @@ void TupGraphicObject::setItem(QGraphicsItem *item)
     if (item) {
         k->item = item;
         initItemData();
+    } else {
+        #ifdef K_DEBUG
+               tError() << "TupGraphicObject::setItem() - Fatal Error: QGraphicsItem is null!";
+        #endif
     } 
 }
 
@@ -189,4 +196,14 @@ void TupGraphicObject::setLastTweenPos(QPointF point)
 QPointF TupGraphicObject::lastTweenPos()
 {   
     return k->lastTweenPos;
+}
+
+void TupGraphicObject::setItemZValue(int value)
+{
+    k->item->setZValue(value);
+}
+
+int TupGraphicObject::itemZValue()
+{
+    return k->item->zValue();
 }

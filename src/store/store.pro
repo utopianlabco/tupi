@@ -55,13 +55,14 @@ HEADERS += tuplayer.h \
            tuprequestparser.h \
            tupprojectresponse.h \
            tupabstractprojectresponsehandler.h \
-           tupifilemanager.h \
+           tupfilemanager.h \
            tupprojectloader.h \
            tupgraphiclibraryitem.h \
            tupitemtweener.h \
            tuptweenerstep.h \
            tupsoundlayer.h \
            tupsvgitem.h \
+           tupbackgroundscene.h \
            tupbackground.h \
            tupstoryboard.h
 
@@ -101,13 +102,14 @@ SOURCES += tuplayer.cpp \
            tupprojectresponse.cpp \
            tupabstractprojectresponsehandler.cpp \
            tupitemfactory.cpp \
-           tupifilemanager.cpp \
+           tupfilemanager.cpp \
            tupprojectloader.cpp \
            tupgraphiclibraryitem.cpp \
            tupitemtweener.cpp \
            tuptweenerstep.cpp \
            tupsoundlayer.cpp \
            tupsvgitem.cpp \
+           tupbackgroundscene.cpp \
            tupbackground.cpp \
            tupstoryboard.cpp
 

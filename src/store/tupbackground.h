@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -40,6 +40,9 @@
 #include "tupglobal_store.h"
 #include "tupscene.h"
 
+#include <QImage>
+#include <QPixmap>
+
 /**
  * @author Gustav Gonzalez
 */
@@ -49,16 +52,35 @@ class STORE_EXPORT TupBackground : public QObject, public TupAbstractSerializabl
     Q_OBJECT
 
     public:
-        TupBackground(TupScene *parent);
+        enum Direction { Left2Right = 0, Right2Left = 1, Top2Bottom, Bottom2Top };
+        TupBackground(TupScene *parent, const QSize dimension, const QColor bgColor);
         ~TupBackground();
 
-    public:
-        TupFrame* frame();
+        void setBgColor(const QColor color);
+        TupFrame* staticFrame();
+        TupFrame* dynamicFrame(); 
+        void renderDynamicView();
+        QPixmap dynamicView(int frameIndex);
+        void setDyanmicDirection(int direction);
+        void setDyanmicShift(int shift);
+        Direction dyanmicDirection();
+        int dyanmicShift();
+        void setDynamicRaster(QImage bg);
+        QImage dynamicRaster();
+        bool dynamicBgIsEmpty();
+        bool staticBgIsEmpty();
+        bool rasterRenderIsPending();
+
         virtual void fromXml(const QString &xml);
         virtual QDomElement toXml(QDomDocument &doc) const;
 
     private:
-        TupFrame *landscape;
+        QSize dimension;
+        QColor bgColor;
+        TupFrame *staticBg;
+        TupFrame *dynamicBg;
+        QImage raster;
+        bool noRender;
 };
 
 #endif

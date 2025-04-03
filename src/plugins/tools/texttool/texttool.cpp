@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -129,9 +129,8 @@ void TextTool::release(const TupInputDeviceInformation *input, TupBrushManager *
     doc.appendChild(m_item->toXml(doc));
 
     TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), 
-                             scene->currentFrameIndex(), scene->currentFrame()->graphics().count(), QPointF(),
-                             scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, doc.toString()); // Adds to end
-
+                                                                   scene->currentFrameIndex(), 0, QPointF(), scene->spaceMode(), 
+                                                                   TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
     emit requested(&event);
 }
 

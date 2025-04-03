@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -38,23 +38,23 @@
 #include <QDomDocument>
 #include <QDomElement>
 
-#include "tupinetfilemanager.h"
+#include "tupnetfilemanager.h"
 #include "tupproject.h"
 #include "tupnetprojectmanagerparams.h"
 
-TupiNetFileManager::TupiNetFileManager() : TupiFileManager()
+TupNetFileManager::TupNetFileManager() : TupFileManager()
 {
 }
 
-TupiNetFileManager::TupiNetFileManager(const QString &server, int port) : TupiFileManager(), m_server(server), m_port(port)
+TupNetFileManager::TupNetFileManager(const QString &server, int port) : TupFileManager(), m_server(server), m_port(port)
 {
 }
 
-TupiNetFileManager::~TupiNetFileManager()
+TupNetFileManager::~TupNetFileManager()
 {
 }
 
-bool TupiNetFileManager::save(const QString &_filename, const TupProject *project)
+bool TupNetFileManager::save(const QString &_filename, const TupProject *project)
 {
     QString filename = _filename;
     
@@ -101,12 +101,12 @@ bool TupiNetFileManager::save(const QString &_filename, const TupProject *projec
     return true;
 }
 
-bool TupiNetFileManager::load(const QString &, TupProject *)
+bool TupNetFileManager::load(const QString &, TupProject *)
 {
     return false;
 }
 
-TupNetProjectManagerParams *TupiNetFileManager::params(const QString &filename)
+TupNetProjectManagerParams *TupNetFileManager::params(const QString &filename)
 {
     TupNetProjectManagerParams *params = new TupNetProjectManagerParams;
     

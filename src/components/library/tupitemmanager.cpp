@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,7 +33,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupgctable.h"
+#include "tupitemmanager.h"
 #include "tglobal.h"
 #include "tdebug.h"
 #include "tapplication.h"
@@ -47,8 +47,9 @@
  * @author David Cuadrado
 */
 
-TupGCTable::TupGCTable(QWidget *parent) : TreeListWidget(parent), m_currentFolder(0)
+TupItemManager::TupItemManager(QWidget *parent) : TreeListWidget(parent), m_currentFolder(0)
 {
+    currentSelection = "";
     setHeaderLabels(QStringList() << "" << "");
 
     header()->setResizeMode(QHeaderView::ResizeToContents);
@@ -63,11 +64,11 @@ TupGCTable::TupGCTable(QWidget *parent) : TreeListWidget(parent), m_currentFolde
     foldersTotal = 1;
 }
 
-TupGCTable::~TupGCTable()
+TupItemManager::~TupItemManager()
 {
 }
 
-void TupGCTable::createFolder(const QString &name)
+void TupItemManager::createFolder(const QString &name)
 {
     if (name.isNull())
         folderName = tr("New folder %1").arg(foldersTotal);
@@ -94,7 +95,7 @@ void TupGCTable::createFolder(const QString &name)
     } 
 }
 
-QTreeWidgetItem *TupGCTable::getFolder(const QString &folderName)
+QTreeWidgetItem *TupItemManager::getFolder(const QString &folderName)
 {
     QList<QTreeWidgetItem *> nodes = findItems(folderName, Qt::MatchExactly, 1);
     for (int i = 0; i < nodes.size(); ++i) {
@@ -106,23 +107,23 @@ QTreeWidgetItem *TupGCTable::getFolder(const QString &folderName)
     return 0;
 }
 
-QString TupGCTable::oldFolder()
+QString TupItemManager::oldFolder()
 {
     return folderName;
 }
 
-QTreeWidgetItem *TupGCTable::currentFolder()
+QTreeWidgetItem *TupItemManager::currentFolder()
 {
     return m_currentFolder;
 }
 
-void TupGCTable::setCurrentFolder(QTreeWidgetItem *cf)
+void TupItemManager::setCurrentFolder(QTreeWidgetItem *cf)
 {
     if (cf)
         m_currentFolder = cf;
 }
 
-void TupGCTable::removeCurrentFolder()
+void TupItemManager::removeCurrentFolder()
 {
     if (m_currentFolder) {
         int index = indexOfTopLevelItem(m_currentFolder) - 1;
@@ -134,20 +135,75 @@ void TupGCTable::removeCurrentFolder()
     }
 }
 
-void TupGCTable::callRename() 
+void TupItemManager::renameItem() 
 {
     QTreeWidgetItem *item = currentItem();
     if (item)
         emit itemRenamed(item);
 }
 
-void TupGCTable::mouseDoubleClickEvent(QMouseEvent *event)
+void TupItemManager::cloneItem()
 {
-    if (event->buttons() == Qt::LeftButton)
-        callRename();
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit itemCloned(item);
 }
 
-bool TupGCTable::isFolder(QTreeWidgetItem *item) 
+void TupItemManager::exportItem()
+{
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit itemExported(item);
+}
+
+void TupItemManager::callInkscapeToEdit()
+{
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit inkscapeEditCall(item);
+}
+
+void TupItemManager::callGimpToEdit()
+{
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit gimpEditCall(item);
+}
+
+void TupItemManager::callKritaToEdit()
+{
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit kritaEditCall(item);
+}
+
+void TupItemManager::callMyPaintToEdit()
+{
+    QTreeWidgetItem *item = currentItem();
+    if (item)
+        emit myPaintEditCall(item);
+}
+
+void TupItemManager::createNewRaster()
+{
+     emit newRasterCall();
+}
+
+void TupItemManager::createNewSVG()
+{
+     emit newVectorCall();
+}
+
+void TupItemManager::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->buttons() == Qt::LeftButton) {
+        QTreeWidgetItem *item = currentItem();
+        if (item)
+            emit itemRequired();
+    }
+}
+
+bool TupItemManager::isFolder(QTreeWidgetItem *item) 
 {
     if (item->text(2).length() == 0)
         return true;
@@ -155,12 +211,12 @@ bool TupGCTable::isFolder(QTreeWidgetItem *item)
     return false;
 }
 
-int  TupGCTable::indexOf(QTreeWidgetItem *item)
+int  TupItemManager::indexOf(QTreeWidgetItem *item)
 {
     return indexOfTopLevelItem(item) + 1;
 }
 
-void TupGCTable::mousePressEvent(QMouseEvent *event)
+void TupItemManager::mousePressEvent(QMouseEvent *event)
 {
     parentNode = "";
 
@@ -172,31 +228,83 @@ void TupGCTable::mousePressEvent(QMouseEvent *event)
 
         if (event->buttons() == Qt::RightButton) {
 
-            QAction *rename = new QAction(tr("Rename"), this);
-            connect(rename, SIGNAL(triggered()), this, SLOT(callRename()));
-
-            QAction *remove = new QAction(tr("Delete"), this);
-            // remove->setShortcut(QKeySequence(Qt::Key_Delete));
-            connect(remove, SIGNAL(triggered()), this, SIGNAL(itemRemoved()));
-
-            QAction *edit;
+            QMenu *menu = new QMenu(tr("Options"));
 
             if (item->text(2).compare("SVG")==0) {
-                edit = new QAction(tr("Edit with Inkscape"), this);
-                connect(edit, SIGNAL(triggered()), this, SLOT(callInkscape()));
+                QAction *edit = new QAction(tr("Edit with Inkscape"), this);
+                connect(edit, SIGNAL(triggered()), this, SLOT(callInkscapeToEdit()));
+#ifdef Q_OS_UNIX
+                if (!QFile::exists("/usr/bin/inkscape"))
+                    edit->setDisabled(true);
+#else
+                edit->setDisabled(true);
+#endif
+                menu->addAction(edit);
             } else if (item->text(2).compare("OBJ")!=0) {
-                edit = new QAction(tr("Edit with Gimp"), this);
-                connect(edit, SIGNAL(triggered()), this, SLOT(callGimp()));
+                QAction *gimpEdit = new QAction(tr("Edit with Gimp"), this);
+                connect(gimpEdit, SIGNAL(triggered()), this, SLOT(callGimpToEdit()));
+#ifdef Q_OS_UNIX
+                if (!QFile::exists("/usr/bin/gimp"))
+                    gimpEdit->setDisabled(true);
+#else
+                gimpEdit->setDisabled(true);
+#endif
+                menu->addAction(gimpEdit);
+
+                QAction *kritaEdit = new QAction(tr("Edit with Krita"), this);
+                connect(kritaEdit, SIGNAL(triggered()), this, SLOT(callKritaToEdit()));
+#ifdef Q_OS_UNIX
+                if (!QFile::exists("/usr/bin/krita"))
+                    kritaEdit->setDisabled(true);
+#else
+                kritaEdit->setDisabled(true);
+#endif
+                menu->addAction(kritaEdit);
+
+                QAction *myPaintEdit = new QAction(tr("Edit with MyPaint"), this);
+                connect(myPaintEdit, SIGNAL(triggered()), this, SLOT(callMyPaintToEdit()));
+#ifdef Q_OS_UNIX
+                if (!QFile::exists("/usr/bin/mypaint"))
+                    myPaintEdit->setDisabled(true);
+#else
+                myPaintEdit->setDisabled(true);
+#endif
+                menu->addAction(myPaintEdit);
             }
 
-            QMenu *menu = new QMenu(tr("Options"));
+            QAction *clone = new QAction(tr("Clone"), this);
+            connect(clone, SIGNAL(triggered()), this, SLOT(cloneItem()));
+
+            QAction *exportObject = new QAction(tr("Export"), this);
+            connect(exportObject, SIGNAL(triggered()), this, SLOT(exportItem()));
+
+            QAction *rename = new QAction(tr("Rename"), this);
+            connect(rename, SIGNAL(triggered()), this, SLOT(renameItem()));
+
+            QAction *remove = new QAction(tr("Delete"), this);
+            connect(remove, SIGNAL(triggered()), this, SIGNAL(itemRemoved()));
+
+            menu->addAction(clone);
+            menu->addAction(exportObject);
             menu->addAction(rename);
             menu->addAction(remove);
-            if (item->text(2).compare("OBJ")!=0) {
-                edit->setDisabled(true);
-                menu->addAction(edit);
-            }
+            menu->addSeparator();
 
+#ifdef Q_OS_UNIX
+            if (QFile::exists("/usr/bin/gimp") || QFile::exists("/usr/bin/krita") || QFile::exists("/usr/bin/mypaint")) {
+                QAction *raster = new QAction(tr("Create new raster item"), this);
+                connect(raster, SIGNAL(triggered()), this, SLOT(createNewRaster()));
+                menu->addAction(raster);
+            }
+#endif
+
+#ifdef Q_OS_UNIX
+            if (QFile::exists("/usr/bin/inkscape")) {
+                QAction *svg = new QAction(tr("Create new svg item"), this);
+                connect(svg, SIGNAL(triggered()), this, SLOT(createNewSVG()));
+                menu->addAction(svg);
+            }
+#endif
             menu->exec(event->globalPos());
 
         } else if (event->buttons() == Qt::LeftButton) {
@@ -231,10 +339,29 @@ void TupGCTable::mousePressEvent(QMouseEvent *event)
             if (drag->start(Qt::MoveAction) == Qt::MoveAction)
                 delete takeTopLevelItem(indexOfTopLevelItem(item));
         }
+    } else {
+            QMenu *menu = new QMenu(tr("Options"));
+
+#ifdef Q_OS_UNIX
+            if (QFile::exists("/usr/bin/gimp") || QFile::exists("/usr/bin/krita") || QFile::exists("/usr/bin/mypaint")) {
+                QAction *raster = new QAction(tr("Create new raster item"), this);
+                connect(raster, SIGNAL(triggered()), this, SLOT(createNewRaster()));
+                menu->addAction(raster);
+            }
+#endif
+
+#ifdef Q_OS_UNIX
+            if (QFile::exists("/usr/bin/inkscape")) {
+                QAction *svg = new QAction(tr("Create new svg item"), this);
+                connect(svg, SIGNAL(triggered()), this, SLOT(createNewSVG()));
+                menu->addAction(svg);
+            }
+#endif
+            menu->exec(event->globalPos());
     }
 }
 
-void TupGCTable::dropEvent(QDropEvent *event)
+void TupItemManager::dropEvent(QDropEvent *event)
 {
      bool eventAccept = false;
 
@@ -361,7 +488,7 @@ void TupGCTable::dropEvent(QDropEvent *event)
      }
 }
 
-void TupGCTable::dragEnterEvent(QDragEnterEvent *event)
+void TupItemManager::dragEnterEvent(QDragEnterEvent *event)
 {
      if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
          if (event->source() == this) {
@@ -375,7 +502,7 @@ void TupGCTable::dragEnterEvent(QDragEnterEvent *event)
      }
 }
 
-void TupGCTable::dragMoveEvent(QDragMoveEvent *event)
+void TupItemManager::dragMoveEvent(QDragMoveEvent *event)
 {
      if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
          if (event->source() == this) {
@@ -389,7 +516,7 @@ void TupGCTable::dragMoveEvent(QDragMoveEvent *event)
      }
 }
 
-void TupGCTable::keyPressEvent(QKeyEvent * event)
+void TupItemManager::keyPressEvent(QKeyEvent * event)
 {
     if (event->key() == Qt::Key_Up) {
         QTreeWidgetItem *current = currentItem();
@@ -431,17 +558,7 @@ void TupGCTable::keyPressEvent(QKeyEvent * event)
     }
 }
 
-void TupGCTable::callInkscape()
-{
-    // execute /usr/bin/inkscape
-}
-
-void TupGCTable::callGimp()
-{
-    // execute /usr/bin/gimp   
-}
-
-void TupGCTable::cleanUI()
+void TupItemManager::cleanUI()
 {
     clear();
     foldersTotal = 1;

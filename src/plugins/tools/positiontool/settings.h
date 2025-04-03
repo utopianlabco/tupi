@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -51,9 +51,6 @@ class Settings : public QWidget
     Q_OBJECT
 
     public:
-        // enum Mode { Add = 1, Edit, View };
-        // enum EditMode { Selection = 0, Path, None };
-
         Settings(QWidget *parent = 0);
         ~Settings();
 
@@ -64,7 +61,7 @@ class Settings : public QWidget
         int startFrame();
 
         void updateSteps(const QGraphicsPathItem *path);
-        QString tweenToXml(int currentFrame, QPointF point, QString &path);
+        QString tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point, QString &path);
         int totalSteps();
         // void activatePathMode();
         // void activateSelectionMode();
@@ -84,7 +81,7 @@ class Settings : public QWidget
         void clickedSelect();
         void clickedResetTween();
         void clickedApplyTween();
-        void startingPointChanged(int);
+        void startingFrameChanged(int);
         
     private:
         void setInnerForm();

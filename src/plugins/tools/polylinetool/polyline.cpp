@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -52,6 +52,7 @@
 #include <QGraphicsLineItem>
 #include <QPainterPath>
 #include <QMatrix>
+#include <QDir>
 
 struct PolyLine::Private
 {
@@ -68,7 +69,8 @@ struct PolyLine::Private
     TupPathItem *item;
     TupGraphicsScene *scene;
     
-    QGraphicsLineItem *line1, *line2;
+    QGraphicsLineItem *line1;
+    QGraphicsLineItem *line2;
     InfoPanel *configurator;
     QCursor cursor;
 };
@@ -76,11 +78,10 @@ struct PolyLine::Private
 PolyLine::PolyLine(): k(new Private)
 {
     k->configurator = 0;
-    k->begin = false;
     k->nodegroup = 0;
     k->item = 0;
 
-    k->cursor = QCursor(kAppProp->themeDir() + "cursors/polyline.png");
+    k->cursor = QCursor(kAppProp->themeDir() + "cursors" + QDir::separator() + "polyline.png");
     
     k->line1 = new QGraphicsLineItem(0, 0, 0, 0);
     k->line1->setPen(QPen(QColor(55, 177, 50)));
@@ -94,16 +95,28 @@ PolyLine::~PolyLine()
 {
 }
 
+void PolyLine::setupActions()
+{
+    TAction *polyline = new TAction(QIcon(kAppProp->themeDir() + QDir::separator() + "icons" + QDir::separator() + "polyline.png"), tr("PolyLine"), this);
+    polyline->setShortcut(QKeySequence(tr("S")));
+    polyline->setCursor(k->cursor);
+
+    k->actions.insert(tr("PolyLine"), polyline);
+}
+
+QMap<QString, TAction *> PolyLine::actions() const
+{
+    return k->actions;
+}
+
 void PolyLine::init(TupGraphicsScene *scene)
 {
     k->scene = scene;
-
-    endItem();
+    initEnv();
 
     foreach (QGraphicsView *view,  scene->views()) {
              view->setDragMode(QGraphicsView::NoDrag);
         
-             Q_CHECK_PTR(view->scene());
              foreach (QGraphicsItem *item, scene->items()) {
                       item->setFlag(QGraphicsItem::ItemIsSelectable, false);
                       item->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -119,35 +132,25 @@ QStringList PolyLine::keys() const
 void PolyLine::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-       T_FUNCINFO;
+           T_FUNCINFO;
     #endif
-
-    if (input->button() == Qt::RightButton) {
-        endItem();
-        return;
-    }
 
     scene->clearSelection();
 
-    // scene->addItem(k->line1);
-    // scene->addItem(k->line2);
-    
-    if (!k->item) {
+    if (k->begin) {
         k->path = QPainterPath();
         k->path.moveTo(input->pos());
+
         k->item = new TupPathItem();
         k->item->setPath(k->path);
-        
         scene->includeObject(k->item);
-
-        k->begin = true;
     } else {
         if (!scene->items().contains(k->item))
             scene->includeObject(k->item);
         
-        k->begin = false;
         k->path = k->item->path();
 
+       // SQA: What are the k->right/k->mirror initial values?
         k->path.cubicTo(k->right, k->mirror, input->pos());
     }
     
@@ -165,30 +168,23 @@ void PolyLine::move(const TupInputDeviceInformation *input, TupBrushManager *bru
 {
     Q_UNUSED(brushManager);
     Q_UNUSED(scene);
-    
-    foreach (QGraphicsView *view,  scene->views())
-             view->setDragMode(QGraphicsView::NoDrag);
-    
+
     k->mirror = k->center - (input->pos() - k->center);
 
     if (k->begin) {
         k->right = input->pos();
     } else {
-        for (int i = k->path.elementCount()-1; i >= 0; i--) {
+        for (int i=k->path.elementCount()-1; i>=0; i--) {
              if (k->path.elementAt(i).type == QPainterPath::CurveToElement) {
                  k->right = input->pos();
                  if (k->path.elementAt(i+1).type == QPainterPath::CurveToDataElement)
                      k->path.setElementPositionAt(i+1, k->mirror.x(), k->mirror.y());
                  break;
-            }
+             }
         }
     }
     
-    Q_CHECK_PTR(k->item);
-
-    if (k->item)
-        k->item->setPath(k->path);
-    
+    k->item->setPath(k->path);
     k->line1->setLine(QLineF(k->mirror, k->center));
     k->line2->setLine(QLineF(k->right, k->center));
 }
@@ -196,56 +192,37 @@ void PolyLine::move(const TupInputDeviceInformation *input, TupBrushManager *bru
 void PolyLine::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
-       T_FUNCINFO;
+           T_FUNCINFO;
     #endif
 
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
-    
-    // k->scene = scene;
-    
+
     if (!k->nodegroup) {
-        k->nodegroup = new TNodeGroup(k->item, scene, TNodeGroup::Polyline);
+        k->nodegroup = new TNodeGroup(k->item, scene, TNodeGroup::Polyline, k->item->zValue()+1);
         connect(k->nodegroup, SIGNAL(nodeReleased()), this, SLOT(nodeChanged()));
     } else {
         k->nodegroup->createNodes(k->item);
     }
     
-    QDomDocument doc;
     if (k->begin) {
+        QDomDocument doc;
         doc.appendChild(k->item->toXml(doc));
-
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
-                                                                       scene->currentLayerIndex(), 
-                                                                       scene->currentFrameIndex(), 
-                                                                       scene->currentFrame()->graphicItemsCount(), 
-                                                                       QPointF(), scene->spaceMode(), TupLibraryObject::Item, 
-                                                                       TupProjectRequest::Add, doc.toString());
+                                                       scene->currentLayerIndex(), 
+                                                       scene->currentFrameIndex(), 
+                                                       0, QPointF(), scene->spaceMode(), TupLibraryObject::Item, 
+                                                       TupProjectRequest::Add, doc.toString());
         emit requested(&request);
-    } else if (!k->nodegroup->isSelected()) {
-               int position = scene->currentFrame()->indexOf(k->item);
-        
-               if (position != -1 && qgraphicsitem_cast<QGraphicsPathItem *>(k->nodegroup->parentItem())) {
-                   doc.appendChild(qgraphicsitem_cast<TupPathItem *>(k->nodegroup->parentItem())->toXml(doc));
-            
-                   TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), 
-                                                                                scene->currentFrameIndex(), position, 
-                                                                                QPointF(), scene->spaceMode(), TupLibraryObject::Item, 
-                                                                                TupProjectRequest::EditNodes, doc.toString());
-                   k->nodegroup->restoreItem();
-                   emit requested(&event);
-               } else {
-                   tDebug("selection") << "position is " << position; 
-               }
 
-               k->nodegroup->clearChangesNodes();
-    }
+        k->begin = false;
+    } 
 }
 
 void PolyLine::itemResponse(const TupItemResponse *response)
 {
     #ifdef K_DEBUG
-       T_FUNCINFO;
+           T_FUNCINFO;
     #endif
 
     TupProject *project = k->scene->scene()->project();
@@ -255,34 +232,68 @@ void PolyLine::itemResponse(const TupItemResponse *response)
     TupFrame *frame = 0;
 
     if (project) {
-
         scene = project->scene(response->sceneIndex());
         if (scene) {
             if (project->spaceContext() == TupProject::FRAMES_EDITION) {
                 layer = scene->layer(response->layerIndex());
                 if (layer) {
                     frame = layer->frame(response->frameIndex());
-                    if (frame)
+                    if (frame) {
                         item = frame->item(response->itemIndex());
+                    } else {
+                        #ifdef K_DEBUG
+                               tError() << "PolyLine::itemResponse() - Fatal Error: Frame variable is NULL!";
+                        #endif
+                    }
+                } else {
+                    #ifdef K_DEBUG
+                           tError() << "PolyLine::itemResponse() - Fatal Error: Layer variable is NULL!";
+                    #endif
                 }
             } else {
                 TupBackground *bg = scene->background();
                 if (bg) {
-                    TupFrame *frame = bg->frame();
-                    if (frame)
-                        item = frame->item(response->itemIndex());
+                    if (project->spaceContext() == TupProject::STATIC_BACKGROUND_EDITION) {
+                        TupFrame *frame = bg->staticFrame();
+                        if (frame) {
+                            item = frame->item(response->itemIndex());
+                        } else {
+                            #ifdef K_DEBUG
+                                   tError() << "PolyLine::itemResponse() - Fatal Error: Static bg frame variable is NULL!";
+                            #endif
+                        }
+                    } else if (project->spaceContext() == TupProject::DYNAMIC_BACKGROUND_EDITION) {
+                               TupFrame *frame = bg->dynamicFrame();
+                               if (frame) {
+                                   item = frame->item(response->itemIndex());
+                               } else {
+                                   #ifdef K_DEBUG
+                                          tError() << "PolyLine::itemResponse() - Fatal Error: Dynamic bg frame variable is NULL!";
+                                   #endif
+                               }
+                    } else {
+                        #ifdef K_DEBUG
+                               tError() << "PolyLine::itemResponse() - Fatal Error: Invalid spaceMode!";
+                        #endif
+                    }
+                } else {
+                    #ifdef K_DEBUG
+                           tError() << "PolyLine::itemResponse() - Fatal Error: Scene bg variable is NULL!";
+                    #endif
                 }
             }
+        } else {
+            #ifdef K_DEBUG
+                   tError() << "PolyLine::itemResponse() - Fatal Error: Scene variable is NULL!";
+            #endif
         }
-
     } else {
         #ifdef K_DEBUG
-               tFatal() << "PolyLine::itemResponse() - Project not exist";
+               tError() << "PolyLine::itemResponse() - Fatal Error: Project variable is NULL!";
         #endif
     }
         
     switch (response->action()) {
-
         case TupProjectRequest::Add:
         {
             if (TupPathItem *path = qgraphicsitem_cast<TupPathItem *>(item)) {
@@ -294,9 +305,10 @@ void PolyLine::itemResponse(const TupItemResponse *response)
             }
         }
         break;
-
         case TupProjectRequest::Remove:
         {
+            // SQA: This code is really being used
+            /*
             if (item == k->item) {
                 k->path = QPainterPath();
                 delete k->item;
@@ -304,15 +316,12 @@ void PolyLine::itemResponse(const TupItemResponse *response)
                 delete k->nodegroup;
                 k->nodegroup = 0;
             }
+            */
         }
         break;
-
         case TupProjectRequest::EditNodes:
         {
             if (k->nodegroup && item) {
-                foreach (QGraphicsView * view, k->scene->views())
-                         view->setUpdatesEnabled(true);
-                
                 if (qgraphicsitem_cast<QGraphicsPathItem *>(k->nodegroup->parentItem()) != item) {
                     delete k->item;
                     k->item = qgraphicsitem_cast<TupPathItem *>(item);
@@ -325,7 +334,6 @@ void PolyLine::itemResponse(const TupItemResponse *response)
             }
         }
         break;
-        
         default: 
         break;
     }
@@ -338,41 +346,34 @@ void PolyLine::keyPressEvent(QKeyEvent *event)
     #endif
 
     if (event->key() == Qt::Key_F11 || event->key() == Qt::Key_Escape) {
-        tFatal() << "PolyLine::keyPressEvent(QKeyEvent *event) - Tracing Esc!";
         emit closeHugeCanvas();
     } else if (event->key() == Qt::Key_X) {
-               tFatal() << "PolyLine::keyPressEvent(QKeyEvent *event) - Tracing X key!";
-               endItem();
-               // event->accept();
-    // } else if (event->modifiers() != Qt::ShiftModifier && event->modifiers() != Qt::ControlModifier) {
+               initEnv();
     } else {
         QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
         if (flags.first != -1 && flags.second != -1)
             emit callForPlugin(flags.first, flags.second);
     }
-    /* SQA: This code must be removed
-    else {
-        tFatal() << "PolyLine::keyPressEvent(QKeyEvent *event) - Tracing any other key!";
-        event->ignore();
-        return;
-    }
-    */
 }
 
-void PolyLine::endItem()
+void PolyLine::initEnv()
 {
-    if (k->item) {
-        if (k->line1 && k->line2) {
-            if (k->scene->items().contains(k->line1))
-                k->scene->removeItem(k->line1);
-            if (k->scene->items().contains(k->line2))
-                k->scene->removeItem(k->line2);
-        }
+    k->begin = true;
+    k->path = QPainterPath();
+    k->item = 0;
 
-        k->path = QPainterPath();
-        k->item = 0;
-        delete k->nodegroup;
+    if (k->nodegroup) { 
+        k->nodegroup->clear();
         k->nodegroup = 0;
+    }
+
+    if (k->line1) {
+        if (k->scene->items().contains(k->line1))
+            k->scene->removeItem(k->line1);
+    }
+    if (k->line2) {
+        if (k->scene->items().contains(k->line2))
+            k->scene->removeItem(k->line2);
     }
 }
 
@@ -383,7 +384,6 @@ void PolyLine::nodeChanged()
     #endif
 
     if (k->nodegroup) {
-        // SHOW_VAR(!d->nodegroup->changedNodes().isEmpty());
         if (!k->nodegroup->changedNodes().isEmpty()) {
             int position = -1;
             TupProject *project = k->scene->scene()->project();
@@ -391,51 +391,66 @@ void PolyLine::nodeChanged()
                 position = k->scene->currentFrame()->indexOf(k->nodegroup->parentItem());
             } else {
                 TupBackground *bg = k->scene->scene()->background();
-                TupFrame *frame = bg->frame();
-                position = frame->indexOf(k->nodegroup->parentItem());
+                if (bg) {
+                    if (project->spaceContext() == TupProject::STATIC_BACKGROUND_EDITION) {
+                        TupFrame *frame = bg->staticFrame();
+                        if (frame) {
+                            position = frame->indexOf(k->nodegroup->parentItem());
+                        } else {
+                            #ifdef K_DEBUG
+                                   tError() << "PolyLine::nodeChanged() - Fatal Error: Static bg frame is NULL!";
+                            #endif
+                            return;
+                        }
+                    } else if (project->spaceContext() == TupProject::DYNAMIC_BACKGROUND_EDITION) {
+                               TupFrame *frame = bg->dynamicFrame();
+                               if (frame) {
+                                   position = frame->indexOf(k->nodegroup->parentItem());
+                               } else {
+                                   #ifdef K_DEBUG
+                                          tError() << "PolyLine::nodeChanged() - Fatal Error: Dynamic bg frame is NULL!";
+                                   #endif
+                                   return;
+                               }
+                    } else {
+                        #ifdef K_DEBUG
+                               tError() << "PolyLine::nodeChanged() - Fatal Error: Invalid spaceMode!";
+                        #endif
+                    }
+                } else {
+                    #ifdef K_DEBUG
+                           tError() << "PolyLine::nodeChanged() - Fatal Error: Scene background variable is NULL!";
+                    #endif
+                }
             }
 
-            if (position != -1 && qgraphicsitem_cast<QGraphicsPathItem *>(k->nodegroup->parentItem())) {
+            if (position >= 0 && qgraphicsitem_cast<QGraphicsPathItem *>(k->nodegroup->parentItem())) {
                     QDomDocument doc;
                     doc.appendChild(qgraphicsitem_cast<TupPathItem *>(k->nodegroup->parentItem())->toXml(doc));
                 
                     TupProjectRequest event = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(), k->scene->currentFrameIndex(), 
                                                                                  position, QPointF(), k->scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::EditNodes, 
                                                                                  doc.toString());
-                    foreach (QGraphicsView * view, k->scene->views())
-                             view->setUpdatesEnabled(false);
-
-                    k->nodegroup->restoreItem();
                     emit requested(&event);
+                    // k->nodegroup->restoreItem();
              } else {
                #ifdef K_DEBUG
-                      tFatal() << "PolyLine::nodeChanged() -> ERROR: position == -1 && No nodegroup parent item";
+                      tError() << "PolyLine::nodeChanged() - Fatal Error: Invalid object index || No nodegroup parent item";
                #endif
+               return;
              }
         } else {
           #ifdef K_DEBUG
-                 tFatal() << "PolyLine::nodeChanged() -> ERROR: There are no changedNodes!";
+                 tError() << "PolyLine::nodeChanged() - Fatal Error: Array of changed nodes is empty!";
           #endif
+          return;
         }
     } else {
-      #ifdef K_DEBUG
-             tFatal() << "PolyLine::nodeChanged() -> ERROR: There's no nodegroup!";
-      #endif
+        #ifdef K_DEBUG
+               tError() << "PolyLine::nodeChanged() - Fatal Error: Array of nodes is empty!";
+        #endif
+        return;
     }
-}
-
-void PolyLine::setupActions()
-{
-    TAction *pencil = new TAction(QIcon(kAppProp->themeDir() + "/"  + "icons/polyline.png"), tr("PolyLine"), this);
-    pencil->setShortcut(QKeySequence(tr("S")));
-    pencil->setCursor(k->cursor);
-    
-    k->actions.insert(tr("PolyLine"), pencil);
-}
-
-QMap<QString, TAction *> PolyLine::actions() const
-{
-    return k->actions;
 }
 
 int PolyLine::toolType() const
@@ -453,28 +468,12 @@ QWidget *PolyLine::configurator()
 
 void PolyLine::aboutToChangeScene(TupGraphicsScene *)
 {
-    endItem();
-
-    // SQA: Check if this code does something
-    /*
-    k->path = QPainterPath();
-    k->item = 0;
-    delete k->nodegroup;
-    k->nodegroup = 0;
-    
-    if (k->nodegroup) {
-        k->nodegroup->show();
-        if (k->nodegroup->parentItem()) {
-            k->nodegroup->parentItem()->setSelected(true);
-            k->nodegroup->syncNodesFromParent();
-        }
-    }
-    */
+    initEnv();
 }
 
 void PolyLine::aboutToChangeTool()
 {
-    endItem();
+    initEnv();
 }
 
 void PolyLine::saveConfig()
@@ -484,13 +483,6 @@ void PolyLine::saveConfig()
 QCursor PolyLine::cursor() const
 {
     return k->cursor;
-}
-
-void PolyLine::doubleClick(const TupInputDeviceInformation *input, TupGraphicsScene *scene)
-{
-    Q_UNUSED(input);
-    Q_UNUSED(scene);
-    endItem();
 }
 
 Q_EXPORT_PLUGIN2(tup_polyline, PolyLine);

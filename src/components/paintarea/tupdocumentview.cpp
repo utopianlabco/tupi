@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -33,7 +33,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "tupviewdocument.h"
+#include "tupdocumentview.h"
 #include "tupapplication.h"
 
 // Tupi Framework 
@@ -88,7 +88,7 @@
  * @author David Cuadrado
 */
 
-struct TupViewDocument::Private
+struct TupDocumentView::Private
 {
     QActionGroup *gridGroup; 
     QActionGroup *editGroup; 
@@ -107,17 +107,17 @@ struct TupViewDocument::Private
     QMenu *viewMenu;
     QMenu *orderMenu;
 
-    // QAction *aUndo;
-    // QAction *aRedo;
-    // QAction *aClose;
-
     QToolBar *barGrid;
     QToolBar *toolbar;
+    QToolBar *propertiesBar;
 
     QDoubleSpinBox *zoomFactorSpin;
     QDoubleSpinBox *onionFactorSpin;
     QSpinBox *prevOnionSkinSpin;
     QSpinBox *nextOnionSkinSpin;
+
+    QComboBox *dirCombo;
+    QSpinBox *shiftSpin;
 
     bool onionEnabled;
     int prevOnionValue;
@@ -141,6 +141,7 @@ struct TupViewDocument::Private
     TupToolPlugin *currentTool;
     TupPaintAreaStatus *status;
     QComboBox *spaceMode;
+    bool dynamicFlag;
 
     TupProject *project;
     QTimer *timer;
@@ -148,7 +149,7 @@ struct TupViewDocument::Private
     TupExportInterface *imagePlugin;
 };
 
-TupViewDocument::TupViewDocument(TupProject *project, QWidget *parent, bool isNetworked, const QStringList &users) : QMainWindow(parent), k(new Private)
+TupDocumentView::TupDocumentView(TupProject *project, QWidget *parent, bool isNetworked, const QStringList &users) : QMainWindow(parent), k(new Private)
 {
     #ifdef K_DEBUG
            TINIT;
@@ -163,6 +164,7 @@ TupViewDocument::TupViewDocument(TupProject *project, QWidget *parent, bool isNe
     k->viewAngle = 0;
     k->isNetworked = isNetworked;
     k->onLineUsers = users;
+    k->dynamicFlag = false;
 
     k->actionManager = new TActionManager(this);
 
@@ -223,9 +225,9 @@ TupViewDocument::TupViewDocument(TupProject *project, QWidget *parent, bool isNe
     //k->configurationArea = new TupConfigurationArea(this);
     //addDockWidget(Qt::RightDockWidgetArea, k->configurationArea);
     //k->configurationArea->close();
-    
+   
+    createTools(); 
     createToolBar();
-    createTools();
     
     k->status = new TupPaintAreaStatus(this);
     setStatusBar(k->status);
@@ -248,7 +250,7 @@ TupViewDocument::TupViewDocument(TupProject *project, QWidget *parent, bool isNe
     //     saveTimer();
 }
 
-TupViewDocument::~TupViewDocument()
+TupDocumentView::~TupDocumentView()
 {
     #ifdef K_DEBUG
            TEND;
@@ -260,40 +262,37 @@ TupViewDocument::~TupViewDocument()
     if (k->currentTool)
         k->currentTool->saveConfig();
 
-    // k->timer->stop();
-    // delete k->timer;
-
     delete k->configurationArea;
     delete k;
 }
 
-void TupViewDocument::setAntialiasing(bool useIt)
+void TupDocumentView::setAntialiasing(bool useIt)
 {
     k->paintArea->setAntialiasing(useIt);
 }
 
-void TupViewDocument::setOpenGL(bool useIt)
+void TupDocumentView::setOpenGL(bool useIt)
 {
     k->paintArea->setUseOpenGL(useIt);
 }
 
-void TupViewDocument::setDrawGrid(bool draw)
+void TupDocumentView::setDrawGrid(bool draw)
 {
     k->paintArea->setDrawGrid(draw);
 }
 
-QPainter::RenderHints TupViewDocument::renderHints() const
+QPainter::RenderHints TupDocumentView::renderHints() const
 {
     return k->paintArea->renderHints();
 }
 
-void TupViewDocument::setRotationAngle(int angle)
+void TupDocumentView::setRotationAngle(int angle)
 {
     k->viewAngle = angle;
     k->paintArea->setRotationAngle(angle);
 }
 
-void TupViewDocument::setZoom(qreal factor)
+void TupDocumentView::setZoom(qreal factor)
 {
     k->paintArea->setZoom(factor);
     k->verticalRuler->setRulerZoom(factor);
@@ -305,18 +304,18 @@ void TupViewDocument::setZoom(qreal factor)
     }
 }
 
-void TupViewDocument::setZoomView(const QString &percent)
+void TupDocumentView::setZoomView(const QString &percent)
 {
     k->status->setZoomFactor(percent);
 }
 
-void TupViewDocument::showPos(const QPointF &p)
+void TupDocumentView::showPos(const QPointF &point)
 {
-    QString message =  "X: " +  QString::number(p.x()) + " Y: " + QString::number(p.y());
+    QString message =  "X: " +  QString::number(point.x()) + " Y: " + QString::number(point.y());
     emit sendToStatus(message);
 }
 
-void TupViewDocument::setupDrawActions()
+void TupDocumentView::setupDrawActions()
 {
     TAction *showGrid = new TAction(QPixmap(THEME_DIR + "icons/subgrid.png"), 
                                     tr("Show grid"), QKeySequence(tr("#")),
@@ -395,10 +394,9 @@ void TupViewDocument::setupDrawActions()
                                      "Storyboard Settings", QKeySequence(tr("Ctrl+Shift+S")),
                                      this, SLOT(storyboardSettings()), k->actionManager, "storyboard");
     storyboard->setStatusTip("Storyboard settings");
-    // storyboard->setDisabled(true);
 }
 
-void TupViewDocument::createTools()
+void TupDocumentView::createTools()
 {
     k->toolbar = new QToolBar(tr("Draw tools"), this);
     k->toolbar->setIconSize(QSize(16, 16));
@@ -442,18 +440,26 @@ void TupViewDocument::createTools()
     k->toolbar->addAction(k->motionMenu->menuAction());
 }
 
-void TupViewDocument::loadPlugins()
+void TupDocumentView::loadPlugins()
 {
+    bool imagePluginLoaded = false; 
     foreach (QObject *plugin, TupPluginManager::instance()->formats()) {
              if (plugin) {
                  TupExportInterface *exporter = qobject_cast<TupExportInterface *>(plugin);
                  if (exporter) {
-                     if (exporter->key().compare(tr("Image Arrays")) == 0) {
+                     if (exporter->key().compare(tr("Image Array")) == 0) {
                          k->imagePlugin = exporter;
+                         imagePluginLoaded = true;
                          break;
                      }
                  }
              }
+    }
+
+    if (!imagePluginLoaded) {
+        #ifdef K_DEBUG
+               tError() << "TupDocumentView::loadPlugins() - Fatal Error: Couldn't found the \"Image Array\" plugin!";
+        #endif
     }
 
     QVector<TAction*> brushTools(8);
@@ -475,7 +481,7 @@ void TupViewDocument::loadPlugins()
 
              for (it = keys.begin(); it != keys.end(); ++it) {
                   #ifdef K_DEBUG
-                         tDebug("plugins") << "TupViewDocument::loadPlugins() - Tool Loaded: " << *it;
+                         tWarning() << "TupDocumentView::loadPlugins() - Tool Loaded: " << *it;
                   #endif
 
                   TAction *action = tool->actions()[*it];
@@ -515,7 +521,8 @@ void TupViewDocument::loadPlugins()
                                    if (toolName.compare(tr("PolyLine")) == 0) {
                                        brushTools[3] = action;
                                        TupToolPlugin *tool = qobject_cast<TupToolPlugin *>(action->parent());
-                                       connect(k->paintArea, SIGNAL(closePolyLine()), tool, SLOT(endItem()));
+                                       connect(k->paintArea, SIGNAL(closePolyLine()), tool, SLOT(initEnv()));
+                                       connect(this, SIGNAL(closePolyLine()), tool, SLOT(initEnv()));
                                    }
 
                                    if (toolName.compare(tr("Line")) == 0)
@@ -630,7 +637,7 @@ void TupViewDocument::loadPlugins()
     pencil->trigger();
 }
 
-void TupViewDocument::loadPlugin(int menu, int index)
+void TupDocumentView::loadPlugin(int menu, int index)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -639,7 +646,6 @@ void TupViewDocument::loadPlugin(int menu, int index)
     TAction *action = 0;
 
     switch (menu) {
-
             case TupToolPlugin::Arrows:
                  {
                      if (index == TupToolPlugin::FrameBack) {
@@ -652,7 +658,6 @@ void TupViewDocument::loadPlugin(int menu, int index)
                      return;
                  }
             break;
-
             case TupToolPlugin::ColorMenu:
                  {
                      if (index == TupToolPlugin::ColorTool) {
@@ -664,7 +669,6 @@ void TupViewDocument::loadPlugin(int menu, int index)
                      }
                  }
             break;
-
             case TupToolPlugin::BrushesMenu:
                  {
                      QList<QAction*> brushActions = k->brushesMenu->actions();
@@ -672,13 +676,12 @@ void TupViewDocument::loadPlugin(int menu, int index)
                          action = (TAction *) brushActions[index];
                      } else {
                          #ifdef K_DEBUG
-                                tError() << "TupViewDocument::loadPlugin() - Error: Invalid Brush Index / No plugin loaded";
+                                tError() << "TupDocumentView::loadPlugin() - Error: Invalid Brush Index / No plugin loaded";
                          #endif
                          return;
                      }
                  }
             break;
-
             case TupToolPlugin::SelectionMenu:
                  {
                      if (index == TupToolPlugin::Delete) {
@@ -689,14 +692,13 @@ void TupViewDocument::loadPlugin(int menu, int index)
                              action = (TAction *) selectionActions[index];
                          } else {
                              #ifdef K_DEBUG
-                                    tError() << "TupViewDocument::loadPlugin() - Error: Invalid Selection Index / No plugin loaded";
+                                    tError() << "TupDocumentView::loadPlugin() - Error: Invalid Selection Index / No plugin loaded";
                              #endif
                              return;
                          }
                      }
                  }
             break;
-
             case TupToolPlugin::FillMenu:
                  {
                      QList<QAction*> fillActions = k->fillMenu->actions();
@@ -704,13 +706,12 @@ void TupViewDocument::loadPlugin(int menu, int index)
                          action = (TAction *) fillActions[index];
                      } else {
                          #ifdef K_DEBUG
-                                tError() << "TupViewDocument::loadPlugin() - Error: Invalid Fill Index / No plugin loaded";
+                                tError() << "TupDocumentView::loadPlugin() - Error: Invalid Fill Index / No plugin loaded";
                          #endif
                          return;
                      }
                  }
             break;
-
             case TupToolPlugin::ZoomMenu:
                  {
                      QList<QAction*> viewActions = k->viewToolMenu->actions();
@@ -718,17 +719,16 @@ void TupViewDocument::loadPlugin(int menu, int index)
                          action = (TAction *) viewActions[index];
                      } else {
                          #ifdef K_DEBUG
-                                tError() << "TupViewDocument::loadPlugin() - Error: Invalid Zoom Index (" << index << ") / No plugin loaded";
+                                tError() << "TupDocumentView::loadPlugin() - Error: Invalid Zoom Index (" << index << ") / No plugin loaded";
                          #endif
                          return;
                      }
                  }
             break;
-
             default:
                  {
                      #ifdef K_DEBUG
-                            tError() << "TupViewDocument::loadPlugin() - Error: Invalid Menu Index / No plugin loaded";
+                            tError() << "TupDocumentView::loadPlugin() - Error: Invalid Menu Index / No plugin loaded";
                      #endif
                      return;
                  }
@@ -753,13 +753,13 @@ void TupViewDocument::loadPlugin(int menu, int index)
         }
     } else {
         #ifdef K_DEBUG
-               tError() << "TupViewDocument::loadPlugin() - Error: Action pointer is NULL!";
+               tError() << "TupDocumentView::loadPlugin() - Error: Action pointer is NULL!";
         #endif
         return;
     }
 }
 
-void TupViewDocument::selectTool()
+void TupDocumentView::selectTool()
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -768,7 +768,6 @@ void TupViewDocument::selectTool()
     TAction *action = qobject_cast<TAction *>(sender());
 
     if (action) {
-
         QString toolName = tr("%1").arg(action->text());
 
         if (k->currentTool) {
@@ -792,7 +791,6 @@ void TupViewDocument::selectTool()
         int minWidth = 0;
 
         switch (tool->toolType()) {
-
                 case TupToolInterface::Brush: 
                      k->fullScreenAction->setDisabled(false);
                      if (toolName.compare(tr("Pencil"))==0) {
@@ -810,7 +808,6 @@ void TupViewDocument::selectTool()
                      if (!action->icon().isNull())
                          k->brushesMenu->menuAction()->setIcon(action->icon());
                      break;
-
                 case TupToolInterface::Tweener:
                      k->fullScreenAction->setDisabled(true);
                      minWidth = 220;
@@ -819,7 +816,6 @@ void TupViewDocument::selectTool()
                      if (!action->icon().isNull())
                          k->motionMenu->menuAction()->setIcon(action->icon());
                      break;
-
                 case TupToolInterface::Fill:
                      k->fullScreenAction->setDisabled(false);
                      k->fillMenu->setDefaultAction(action);
@@ -827,7 +823,6 @@ void TupViewDocument::selectTool()
                      if (!action->icon().isNull())
                          k->fillMenu->menuAction()->setIcon(action->icon());
                      break;
-
                 case TupToolInterface::Selection:
                      k->fullScreenAction->setDisabled(false);
                      k->selectionMenu->setDefaultAction(action);
@@ -839,9 +834,7 @@ void TupViewDocument::selectTool()
                          connect(k->paintArea, SIGNAL(itemAddedOnSelection(TupGraphicsScene *)), 
                                  tool, SLOT(updateItems(TupGraphicsScene *)));
                      } 
-
                      break;
-
                 case TupToolInterface::View:
                      k->fullScreenAction->setDisabled(false);
                      k->viewToolMenu->setDefaultAction(action);
@@ -854,7 +847,6 @@ void TupViewDocument::selectTool()
                      if (toolName.compare(tr("Hand"))==0) {
                          tool->setProjectSize(k->project->dimension());
                      }
-                     
                      break;
         }
 
@@ -875,9 +867,6 @@ void TupViewDocument::selectTool()
         k->paintArea->setTool(tool);
         k->paintArea->viewport()->setCursor(action->cursor());
 
-        if ((tool->toolType() == TupToolInterface::Tweener) && (k->spaceMode->currentIndex() != 0))
-            k->spaceMode->setCurrentIndex(0);
-
         if (toolName.compare(tr("Object Selection"))==0) {
             qreal globalFactor = k->status->currentZoomFactor();
             qreal factor = globalFactor*0.01;
@@ -886,12 +875,12 @@ void TupViewDocument::selectTool()
 
     } else {
         #ifdef K_DEBUG
-               tError() << "TupViewDocument::selectTool() - Error: Action from sender() is NULL";
+               tError() << "TupDocumentView::selectTool() - Fatal Error: Action from sender() is NULL";
         #endif
     }
 }
 
-void TupViewDocument::selectToolFromMenu(QAction *action)
+void TupDocumentView::selectToolFromMenu(QAction *action)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -912,29 +901,30 @@ void TupViewDocument::selectToolFromMenu(QAction *action)
                 tool->trigger();
             } else {
                 #ifdef K_DEBUG
-                       tError() << "TupViewDocument::selectToolFromMenu() - Default action is NULL";
+                       tError() << "TupDocumentView::selectToolFromMenu() - Default action is NULL";
                 #endif
             }
         }
     } else {
         #ifdef K_DEBUG
-               tFatal() << "TupViewDocument::selectToolFromMenu() - Error: Action with NO parent! Aborting...";
+               tFatal() << "TupDocumentView::selectToolFromMenu() - Error: Action with NO parent! Aborting...";
         #endif
     } 
 }
 
-bool TupViewDocument::handleProjectResponse(TupProjectResponse *event)
+bool TupDocumentView::handleProjectResponse(TupProjectResponse *event)
 {
     return k->paintArea->handleResponse(event);
 }
 
-void TupViewDocument::applyFilter()
+void TupDocumentView::applyFilter()
 {
     QAction *action = qobject_cast<QAction *>(sender());
 
     if (action) {
+        // SQA: Check this code to understand how filters work 
         /*
-        SQA issue: Code to check
+        SQA issue: Pending to check this code  
         AFilterInterface *aFilter = qobject_cast<AFilterInterface *>(action->parent());
         QString filter = action->text();
         
@@ -947,39 +937,44 @@ void TupViewDocument::applyFilter()
     }
 }
 
-void TupViewDocument::updateZoomFactor(double f)
+void TupDocumentView::updateZoomFactor(double factor)
 {
     k->zoomFactorSpin->blockSignals(true);
-    k->zoomFactorSpin->setValue(f*100);
+    k->zoomFactorSpin->setValue(factor*100);
     k->zoomFactorSpin->blockSignals(false);
 }
 
-void TupViewDocument::createToolBar()
+void TupDocumentView::createToolBar()
 {
     k->barGrid = new QToolBar(tr("Paint area actions"), this);
     k->barGrid->setIconSize(QSize(16, 16));
 
+    k->propertiesBar = new QToolBar(tr("Dynamic Background Properties"), this);
+
     addToolBar(k->barGrid);
+
+    k->spaceMode = new QComboBox();
+    k->spaceMode->addItem(QIcon(THEME_DIR + "icons/frames_mode.png"), tr("Frames Mode"));
+    k->spaceMode->addItem(QIcon(THEME_DIR + "icons/static_background_mode.png"), tr("Static BG Mode"));
+    k->spaceMode->addItem(QIcon(THEME_DIR + "icons/dynamic_background_mode.png"), tr("Dynamic BG Mode"));
+
+    connect(k->spaceMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setSpaceContext()));
+    setSpaceContext();
+    k->barGrid->addWidget(k->spaceMode);
 
     k->barGrid->addAction(kApp->findGlobalAction("undo"));
     k->barGrid->addAction(kApp->findGlobalAction("redo"));
-
-    k->barGrid->addSeparator();
 
     k->barGrid->addAction(k->actionManager->find("copy"));
     k->barGrid->addAction(k->actionManager->find("paste"));
     k->barGrid->addAction(k->actionManager->find("cut"));
     k->barGrid->addAction(k->actionManager->find("delete"));
-    k->barGrid->addSeparator();
 
     k->barGrid->addAction(k->actionManager->find("show_grid"));
     k->barGrid->addAction(k->actionManager->find("full_screen"));
-    k->barGrid->addSeparator();
 
     k->barGrid->addAction(k->actionManager->find("group"));
     k->barGrid->addAction(k->actionManager->find("ungroup"));
-
-    k->barGrid->addSeparator();
 
     TCONFIG->beginGroup("OnionParameters");
     int preview = TCONFIG->value("PreviousFrames", -1).toInt();
@@ -1018,16 +1013,6 @@ void TupViewDocument::createToolBar()
     connect(k->onionFactorSpin, SIGNAL(valueChanged(double)), this, SLOT(setOnionFactor(double)));
 
     k->barGrid->addWidget(k->onionFactorSpin);
-    k->barGrid->addSeparator();
-
-    k->spaceMode = new QComboBox();
-    k->spaceMode->addItem(QIcon(THEME_DIR + "icons/frames_mode.png"), tr("Frames Mode"));
-    k->spaceMode->addItem(QIcon(THEME_DIR + "icons/background_mode.png"), tr("Background Mode"));
-
-    connect(k->spaceMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setSpaceContext()));
-    setSpaceContext();
-    k->barGrid->addWidget(k->spaceMode);
-    k->barGrid->addSeparator();
 
     k->barGrid->addAction(k->actionManager->find("export_image"));
 
@@ -1037,11 +1022,45 @@ void TupViewDocument::createToolBar()
     if (k->isNetworked && server.compare("tupitu.be") == 0)
         k->barGrid->addAction(k->actionManager->find("post_image"));
 
-    k->barGrid->addSeparator();
     k->barGrid->addAction(k->actionManager->find("storyboard"));
+
+    addToolBarBreak();
+
+    QLabel *dirLabel = new QLabel(tr("Direction") + ": ");
+
+    k->dirCombo = new QComboBox;
+    k->dirCombo->addItem(tr("Left to Right"));
+    k->dirCombo->addItem(tr("Right to Left"));
+    k->dirCombo->addItem(tr("Top to Bottom"));
+    k->dirCombo->addItem(tr("Bottom to Top"));
+    connect(k->dirCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setBackgroundDirection(int)));
+
+    QLabel *shiftLabel = new QLabel(tr("Shift Length") + ": ");
+
+    k->shiftSpin = new QSpinBox(this);
+    k->shiftSpin->setSingleStep(1);
+    k->shiftSpin->setRange(1, 1000);
+    connect(k->shiftSpin, SIGNAL(valueChanged(int)), this, SLOT(updateBackgroundShiftProperty(int)));
+
+    QWidget *empty1 = new QWidget();
+    empty1->setFixedWidth(5);
+    QWidget *empty2 = new QWidget();
+    empty2->setFixedWidth(5);
+
+    k->propertiesBar->addWidget(dirLabel);
+    k->propertiesBar->addWidget(k->dirCombo);
+    k->propertiesBar->addWidget(empty1);
+    k->propertiesBar->addSeparator();
+    k->propertiesBar->addWidget(empty2);
+    k->propertiesBar->addWidget(shiftLabel);
+    k->propertiesBar->addWidget(k->shiftSpin);
+
+    k->propertiesBar->setVisible(false);
+
+    addToolBar(k->propertiesBar);
 }
 
-void TupViewDocument::closeArea()
+void TupDocumentView::closeArea()
 {
     if (k->configurationArea->isVisible())
         k->configurationArea->close();
@@ -1050,24 +1069,25 @@ void TupViewDocument::closeArea()
     close();
 }
 
-void TupViewDocument::undo()
+void TupDocumentView::undo()
 {
     puts("Adding undo support");
 }
 
-void TupViewDocument::redo()
+void TupDocumentView::redo()
 {
     puts("Adding redo support");
 }
 
-void TupViewDocument::setCursor(const QCursor &)
+void TupDocumentView::setCursor(const QCursor &cursor)
 {
+    Q_UNUSED(cursor);
  /*
     k->paintArea->setCursor(c);
  */
 }
 
-void TupViewDocument::setPreviousOnionSkin(int level)
+void TupDocumentView::setPreviousOnionSkin(int level)
 {
     TCONFIG->beginGroup("OnionParameters");
     TCONFIG->setValue("PreviousFrames", level);
@@ -1075,7 +1095,7 @@ void TupViewDocument::setPreviousOnionSkin(int level)
     k->paintArea->setPreviousFramesOnionSkinCount(level);
 }
 
-void TupViewDocument::setNextOnionSkin(int level)
+void TupDocumentView::setNextOnionSkin(int level)
 {
     TCONFIG->beginGroup("OnionParameters");
     TCONFIG->setValue("NextFrames", level);
@@ -1083,12 +1103,12 @@ void TupViewDocument::setNextOnionSkin(int level)
     k->paintArea->setNextFramesOnionSkinCount(level);
 }
 
-void TupViewDocument::toggleShowGrid()
+void TupDocumentView::toggleShowGrid()
 {
     k->paintArea->setDrawGrid(!k->paintArea->drawGrid());
 }
 
-void TupViewDocument::updateScaleVars(double factor)
+void TupDocumentView::updateScaleVars(double factor)
 {
     k->status->updateZoomFactor(factor);
     k->verticalRuler->setRulerZoom(factor);
@@ -1100,47 +1120,47 @@ void TupViewDocument::updateScaleVars(double factor)
     }
 }
 
-void TupViewDocument::changeRulerOrigin(const QPointF &zero)
+void TupDocumentView::changeRulerOrigin(const QPointF &zero)
 {
     k->verticalRuler->setOrigin(zero.y());
     k->horizontalRuler->setOrigin(zero.x());
 }
 
-QSize TupViewDocument::sizeHint() const
+QSize TupDocumentView::sizeHint() const
 {
     QSize size(parentWidget()->size());
 
     return size.expandedTo(QApplication::globalStrut());
 }
 
-QSize TupViewDocument::workSpaceSize() const
+QSize TupDocumentView::workSpaceSize() const
 {
     return k->paintArea->size();
 }
 
-TupBrushManager *TupViewDocument::brushManager() const
+TupBrushManager *TupDocumentView::brushManager() const
 {
     return k->paintArea->brushManager();
 }
 
-TupPaintAreaCommand *TupViewDocument::createCommand(const TupPaintAreaEvent *event)
+TupPaintAreaCommand *TupDocumentView::createCommand(const TupPaintAreaEvent *event)
 {
     TupPaintAreaCommand *command = new TupPaintAreaCommand(k->paintArea, event);
 
     return command;
 }
 
-void TupViewDocument::updatePaintArea()
+void TupDocumentView::updatePaintArea()
 {
     k->paintArea->updatePaintArea(); 
 }
 
-void TupViewDocument::callAutoSave()
+void TupDocumentView::callAutoSave()
 {
     emit autoSave();
 }
 
-void TupViewDocument::saveTimer()
+void TupDocumentView::saveTimer()
 {
     TCONFIG->beginGroup("General");
     k->autoSaveTime = TCONFIG->value("AutoSave", 10).toInt();
@@ -1157,44 +1177,70 @@ void TupViewDocument::saveTimer()
     }
 }
 
-void TupViewDocument::setSpaceContext()
+void TupDocumentView::setSpaceContext()
 {
-    int index = k->spaceMode->currentIndex();
+    TupProject::Mode mode = TupProject::Mode(k->spaceMode->currentIndex());
 
-    if (index == 0)
+    if (mode == TupProject::FRAMES_EDITION) {
+        if (k->dynamicFlag) {
+            k->dynamicFlag = false;
+            renderDynamicBackground();
+        }
         k->project->updateSpaceContext(TupProject::FRAMES_EDITION);
-    else
-        k->project->updateSpaceContext(TupProject::BACKGROUND_EDITION);
+        k->propertiesBar->setVisible(false);
+        k->motionMenu->setEnabled(true);
+    } else if (mode == TupProject::STATIC_BACKGROUND_EDITION) {
+               if (k->dynamicFlag) {
+                   k->dynamicFlag = false;
+                   renderDynamicBackground();
+               }
+               k->project->updateSpaceContext(TupProject::STATIC_BACKGROUND_EDITION);
+               k->propertiesBar->setVisible(false);
+               k->motionMenu->setEnabled(false);
+    } else if (mode == TupProject::DYNAMIC_BACKGROUND_EDITION) {
+               k->dynamicFlag = true;
+               k->project->updateSpaceContext(TupProject::DYNAMIC_BACKGROUND_EDITION);
+
+               int sceneIndex = k->paintArea->currentSceneIndex();
+               TupScene *scene = k->project->scene(sceneIndex);
+               if (scene) {
+                   TupBackground *bg = scene->background();
+                   if (bg) {
+                       int direction = bg->dyanmicDirection();
+                       k->dirCombo->setCurrentIndex(direction);
+                       int shift = bg->dyanmicShift();
+                       k->shiftSpin->setValue(shift);
+                   }
+               }
+               k->propertiesBar->setVisible(true);
+               k->motionMenu->setEnabled(false);
+    }
 
     k->paintArea->updateSpaceContext();
-
     k->paintArea->updatePaintArea();
 
    if (k->currentTool) {
        k->currentTool->init(k->paintArea->graphicsScene()); 
-       if ((k->currentTool->toolType() == TupToolInterface::Tweener) && (index != 0)) {
+       if ((k->currentTool->toolType() == TupToolInterface::Tweener) && (mode != TupProject::FRAMES_EDITION)) {
            QAction *pencil = k->brushesMenu->actions().at(0);
            pencil->trigger();
        }
    }
 
-   emit modeHasChanged(index + 1);
+   emit modeHasChanged(mode);
 }
 
-TupProject::Mode TupViewDocument::spaceContext()
+TupProject::Mode TupDocumentView::spaceContext()
 {
-   if (k->spaceMode->currentIndex() == 0)
-       return TupProject::FRAMES_EDITION;
-   else 
-       return TupProject::BACKGROUND_EDITION;
+   return TupProject::Mode(k->spaceMode->currentIndex());
 }
 
-TupProject *TupViewDocument::project()
+TupProject *TupDocumentView::project()
 {
    return k->project;
 }
 
-int TupViewDocument::currentFramesTotal()
+int TupDocumentView::currentFramesTotal()
 {
    int sceneIndex = k->paintArea->graphicsScene()->currentSceneIndex();
    int layerIndex = k->paintArea->graphicsScene()->currentLayerIndex();
@@ -1210,12 +1256,15 @@ int TupViewDocument::currentFramesTotal()
     return -1;
 }
 
-int TupViewDocument::currentSceneIndex()
+int TupDocumentView::currentSceneIndex()
 {
-    return k->paintArea->graphicsScene()->currentSceneIndex();
+    if (k->paintArea)
+        return k->paintArea->graphicsScene()->currentSceneIndex();
+   
+    return -1; 
 }
 
-void TupViewDocument::updateBgColor(const QColor color)
+void TupDocumentView::updateBgColor(const QColor color)
 {
    if (!k->isNetworked) {
        k->project->setBgColor(color);
@@ -1226,7 +1275,7 @@ void TupViewDocument::updateBgColor(const QColor color)
    }
 }
 
-void TupViewDocument::enableOnionFeature()
+void TupDocumentView::enableOnionFeature()
 {
     if (!k->onionEnabled) {
 
@@ -1255,13 +1304,13 @@ void TupViewDocument::enableOnionFeature()
     k->paintArea->updatePaintArea();
 }
 
-void TupViewDocument::setDefaultOnionFactor()
+void TupDocumentView::setDefaultOnionFactor()
 {
     k->onionFactorSpin->setValue(0.5);
     setOnionFactor(0.5);
 }
 
-void TupViewDocument::setOnionFactor(double opacity)
+void TupDocumentView::setOnionFactor(double opacity)
 {
     TCONFIG->beginGroup("OnionParameters");
     TCONFIG->setValue("OnionFactor", opacity);
@@ -1269,7 +1318,7 @@ void TupViewDocument::setOnionFactor(double opacity)
     k->paintArea->setOnionFactor(opacity);
 }
 
-void TupViewDocument::showFullScreen()
+void TupDocumentView::showFullScreen()
 {
     if (k->fullScreenOn || k->currentTool->toolType() == TupToolInterface::Tweener)
         return;
@@ -1302,25 +1351,26 @@ void TupViewDocument::showFullScreen()
     connect(k->fullScreen, SIGNAL(callAction(int, int)), this, SLOT(loadPlugin(int, int)));
     connect(k->fullScreen, SIGNAL(requestTriggered(const TupProjectRequest *)), this, SIGNAL(requestTriggered(const TupProjectRequest *)));
     connect(k->fullScreen, SIGNAL(localRequestTriggered(const TupProjectRequest *)), this, SIGNAL(localRequestTriggered(const TupProjectRequest *)));
+    connect(k->fullScreen, SIGNAL(rightClick()), this, SLOT(fullScreenRightClick()));
 
     connect(k->fullScreen, SIGNAL(goToFrame(int, int, int)), this, SLOT(selectFrame(int, int, int)));
     connect(k->fullScreen, SIGNAL(goToScene(int)), this, SLOT(selectScene(int)));
 }
 
-void TupViewDocument::updatePenThickness(int size) 
+void TupDocumentView::updatePenThickness(int size) 
 {
     QPen pen = brushManager()->pen();
     pen.setWidth(size);
     emit updatePenFromFullScreen(pen);
 }
 
-void TupViewDocument::updateOnionOpacity(double opacity)
+void TupDocumentView::updateOnionOpacity(double opacity)
 {
     k->paintArea->setOnionFactor(opacity);
     k->onionFactorSpin->setValue(opacity);
 }
 
-void TupViewDocument::closeFullScreen()
+void TupDocumentView::closeFullScreen()
 {
     if (k->fullScreenOn) {
         disconnect(this, SIGNAL(openColorDialog(const QColor &)), k->fullScreen, SLOT(colorDialog(const QColor &)));
@@ -1341,17 +1391,17 @@ void TupViewDocument::closeFullScreen()
     }
 }
 
-void TupViewDocument::selectFrame(int frame, int layer, int scene)
+void TupDocumentView::selectFrame(int frame, int layer, int scene)
 {
     k->paintArea->goToFrame(frame, layer, scene);
 }
 
-void TupViewDocument::selectScene(int scene)
+void TupDocumentView::selectScene(int scene)
 {
     k->paintArea->goToScene(scene);
 }
 
-void TupViewDocument::exportImage()
+void TupDocumentView::exportImage()
 {
     int sceneIndex = k->paintArea->graphicsScene()->currentSceneIndex();
     int frameIndex = k->paintArea->graphicsScene()->currentFrameIndex();
@@ -1368,7 +1418,7 @@ void TupViewDocument::exportImage()
     }
 }
 
-void TupViewDocument::postImage()
+void TupDocumentView::postImage()
 {
     int sceneIndex = k->paintArea->graphicsScene()->currentSceneIndex();
     int frameIndex = k->paintArea->graphicsScene()->currentFrameIndex();
@@ -1388,12 +1438,12 @@ void TupViewDocument::postImage()
     }
 }
 
-void TupViewDocument::updateStatusBgColor(const QColor color)
+void TupDocumentView::updateStatusBgColor(const QColor color)
 {
     k->status->setBgColor(color);
 }
 
-void TupViewDocument::storyboardSettings()
+void TupDocumentView::storyboardSettings()
 {
     QDesktopWidget desktop;
     int sceneIndex = k->paintArea->graphicsScene()->currentSceneIndex();
@@ -1414,11 +1464,11 @@ void TupViewDocument::storyboardSettings()
                         (int) (desktop.screenGeometry().height() - storySettings->height())/2);
 }
 
-void TupViewDocument::sendStoryboard(TupStoryboard *storyboard, int sceneIndex)
+void TupDocumentView::sendStoryboard(TupStoryboard *storyboard, int sceneIndex)
 {
     if (k->isNetworked) {
         #ifdef K_DEBUG
-               tWarning() << "TupViewDocument::sendStoryboard() - Sending storyboard...";
+               tWarning() << "TupDocumentView::sendStoryboard() - Sending storyboard...";
         #endif
         emit updateStoryboard(storyboard, sceneIndex);
     } else {
@@ -1426,7 +1476,7 @@ void TupViewDocument::sendStoryboard(TupStoryboard *storyboard, int sceneIndex)
     }
 }
 
-void TupViewDocument::updateUsersOnLine(const QString &login, int state)
+void TupDocumentView::updateUsersOnLine(const QString &login, int state)
 {
     if (state == 1) {
         k->onLineUsers << login; 
@@ -1437,4 +1487,49 @@ void TupViewDocument::updateUsersOnLine(const QString &login, int state)
 
     if (k->fullScreenOn)
         k->fullScreen->updateOnLineUsers(k->onLineUsers);
+}
+
+void TupDocumentView::setBackgroundDirection(int direction)
+{
+   int sceneIndex = k->paintArea->currentSceneIndex();
+   TupScene *scene = k->project->scene(sceneIndex);
+   if (scene) {
+       TupBackground *bg = scene->background();
+       if (bg) {
+           bg->setDyanmicDirection(direction);
+           emit projectHasChanged();
+       }
+   }
+}
+
+void TupDocumentView::updateBackgroundShiftProperty(int shift)
+{
+   int sceneIndex = k->paintArea->currentSceneIndex();
+   TupScene *scene = k->project->scene(sceneIndex);
+   if (scene) {
+       TupBackground *bg = scene->background();
+       if (bg) {
+           bg->setDyanmicShift(shift);
+           emit projectHasChanged();
+       }
+   }
+}
+
+void TupDocumentView::renderDynamicBackground()
+{
+   int sceneIndex = k->paintArea->currentSceneIndex();
+   TupScene *scene = k->project->scene(sceneIndex); 
+
+   if (scene) {
+       TupBackground *bg = scene->background();
+       if (bg) {
+           bg->renderDynamicView();
+       }
+   }
+}
+
+void TupDocumentView::fullScreenRightClick()
+{
+   if (k->currentTool->name().compare(tr("PolyLine")) == 0)
+       emit closePolyLine();
 }

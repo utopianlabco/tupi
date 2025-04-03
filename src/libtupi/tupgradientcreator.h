@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -217,7 +217,7 @@ class TUPI_EXPORT SpinControl: public QGroupBox
                     m_radius->show();
                     m_angle->hide();
                     m_title->show();
-                    m_title->setText(tr("radius"));
+                    m_title->setText(tr("Radius"));
                     break;
                 }
                 case  QGradient::ConicalGradient:
@@ -226,7 +226,7 @@ class TUPI_EXPORT SpinControl: public QGroupBox
                     m_radius->hide();
                     m_angle->show();
                     m_title->show();
-                    m_title->setText(tr("angle"));
+                    m_title->setText(tr("Angle"));
                     break;
                 }
                 default: break;

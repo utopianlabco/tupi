@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -79,7 +79,7 @@ struct TupCanvas::Private
     bool propertiesMenuIsOpen;
     bool exposureDialogIsOpen;
     UserHand hand;
-    TupInfoWidget *display;
+    // TupInfoWidget *display;
     bool isNetworked;
     QStringList onLineUsers;
     TupExposureDialog *exposureDialog;
@@ -93,14 +93,14 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
            TINIT;
     #endif
 
-    setWindowTitle(tr("Tupi: 2D Magic"));
+    setWindowTitle(tr("Tupi: Open 2D Magic"));
     setWindowIcon(QIcon(QPixmap(THEME_DIR + "icons/animation_mode.png")));
 
     k->hand = Right;
     // k->hand = Left;
  
     k->scene = scene;
-    connect(k->scene, SIGNAL(showInfoWidget()), this, SLOT(showInfoWidget()));
+    // connect(k->scene, SIGNAL(showInfoWidget()), this, SLOT(showInfoWidget()));
   
     k->isNetworked = isNetworked;
     k->onLineUsers = onLineUsers;
@@ -115,6 +115,7 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     k->exposureDialogIsOpen = false;
 
     graphicsView = new TupCanvasView(this, screenSize, k->size, project->bgColor());
+    connect(graphicsView, SIGNAL(rightClick()), this, SIGNAL(rightClick()));
 
     graphicsView->setScene(scene);
     graphicsView->centerOn(centerPoint);
@@ -130,7 +131,7 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     connect(images, SIGNAL(clicked()), this, SLOT(wakeUpLibrary()));
 
     TImageButton *selectionTools = new TImageButton(QPixmap(THEME_DIR + "icons/selection_big.png"), 60, this, true);
-    selectionTools->setToolTip(tr("SelectionTools"));
+    selectionTools->setToolTip(tr("Selection Tools"));
     connect(selectionTools, SIGNAL(clicked()), this, SLOT(selectionTools()));
 
     TImageButton *undo = new TImageButton(QPixmap(THEME_DIR + "icons/undo_big.png"), 60, this, true);
@@ -187,11 +188,11 @@ TupCanvas::TupCanvas(QWidget *parent, Qt::WindowFlags flags, TupGraphicsScene *s
     infoLayout->setContentsMargins(0, 0, 0, 0);
     infoLayout->setSpacing(5);
 
-    k->display = new TupInfoWidget(this);
-    connect(k->display, SIGNAL(closePanel()), this, SLOT(hideInfoWidget()));
-
-    infoLayout->addWidget(k->display);
-    k->display->hide();
+    // SQA: Experimental code
+    // k->display = new TupInfoWidget(this);
+    // connect(k->display, SIGNAL(closePanel()), this, SLOT(hideInfoWidget()));
+    // infoLayout->addWidget(k->display);
+    // k->display->hide();
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -446,7 +447,7 @@ void TupCanvas::wakeUpLibrary()
     updateMenuStates();
 
     QString graphicPath = QFileDialog::getOpenFileName (this, tr("Import a SVG file..."), QDir::homePath(),
-                                                    tr("Vectorial") + " (*.svg *.png *.jpg *.jpeg *.gif)");
+                                                    tr("Vector") + " (*.svg *.png *.jpg *.jpeg *.gif)");
     if (graphicPath.isEmpty())
         return;
 
@@ -608,12 +609,12 @@ void TupCanvas::updateMenuStates()
 
 void TupCanvas::showInfoWidget()
 {
-    k->display->show();
+    // k->display->show();
 }
 
 void TupCanvas::hideInfoWidget()
 {
-    k->display->hide();
+    // k->display->hide();
 }
 
 void TupCanvas::updateOnLineUsers(const QStringList &onLineUsers)

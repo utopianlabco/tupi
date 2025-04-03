@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -58,8 +58,6 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
     Q_OBJECT
 
     public:
-        enum MoveItemType { MoveBack, MoveFront, MoveBackwards, MoveForwards };
-
         TupPaintArea(TupProject *project, QWidget * parent = 0);
         ~TupPaintArea();
 
@@ -77,6 +75,8 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
         void copyCurrentFrame();
         void pasteDataOnCurrentFrame();
         void quickCopy();
+        int currentSceneIndex();
+        int currentLayerIndex();
 
     public slots:
         void setNextFramesOnionSkinCount(int n);
@@ -97,10 +97,16 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
         void ungroupItems();
         void copyItems();
         void pasteItems();
+        void pasteNextFive();
+        void pasteNextTen();
+        void pasteNextTwenty();
+        void pasteNextFifty();
+        void pasteNextHundred();
+
         void cutItems();
 
         void addSelectedItemsToLibrary();
-        void requestMoveSelectedItems(QAction *action);
+        void requestItemMovement(QAction *action);
         void goToFrame(int index);
 
     protected:
@@ -117,6 +123,7 @@ class TupPaintArea : public TupPaintAreaBase, public TupAbstractProjectResponseH
         bool canPaint() const;
 
     private:
+        void multipasteObject(int pasteTotal);
         struct Private;
         Private *const k;
 };

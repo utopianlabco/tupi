@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -62,7 +62,9 @@ bool ThemeManager::applyTheme(const QString &file)
     if (reader.parse(&xmlsource)) {
         ok = true;
     } else {
-        tError() <<  QObject::tr("I can't analize the theme file: %1").arg(file) << endl;
+        #ifdef K_DEBUG
+               tError() << "ThemeManager::applyTheme() - Fatal Error: Can't process the theme file: " << file;
+        #endif
         ok = false;
     }
     
@@ -83,7 +85,9 @@ bool ThemeManager::applyTheme(const ThemeDocument &kd)
     if (reader.parse(&xmlsource)) {
         ok = true;
     } else {
-        tDebug() << QObject::tr("I can't analize the theme document") << endl;
+        #ifdef K_DEBUG
+               tError() << "ThemeManager::applyTheme() - Fatal Error: Can't process theme document";
+        #endif
         ok = false;
     }
     
@@ -180,15 +184,21 @@ bool ThemeManager::characters(const QString &)
 
 bool ThemeManager::error(const QXmlParseException & exception)
 {
-    tError() << "Error analizing theme: " << exception.message() << endl;
+    #ifdef K_DEBUG
+           tError() << "ThemeManager::error() - Fatal Error: Can't process theme!";
+           tError() << "ThemeManager::error() - Message: " << exception.message();
+    #endif
 
     return false;
 }
 
 bool ThemeManager::fatalError(const QXmlParseException & exception)
 {
-    tError() << "FATAL Error analizing theme: " << endl;
-    tError() << "Line: " << exception.lineNumber() << " Column: " << exception.columnNumber() << " " << exception.message() << endl;
+    #ifdef K_DEBUG
+           tError() << "ThemeManager::error() - Fatal Error: Can't load theme...";
+           tError() << "ThemeManager::error() - Line: " << exception.lineNumber() << " Column: " << exception.columnNumber();
+           tError() << "ThemeManager::error() - Message: " << exception.message();
+    #endif
 
     return false;
 }

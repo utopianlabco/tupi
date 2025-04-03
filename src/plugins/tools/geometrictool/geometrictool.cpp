@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,8 +34,6 @@
  ***************************************************************************/
 
 #include "geometrictool.h"
-#include "tglobal.h"
-#include "tdebug.h"
 #include "tuprectitem.h"
 #include "tupellipseitem.h"
 #include "tuplineitem.h"
@@ -48,6 +46,9 @@
 #include "tuprequestbuilder.h"
 #include "tupprojectrequest.h"
 #include "tupbrushmanager.h"
+
+#include "tglobal.h"
+#include "tdebug.h"
 
 #include <cmath>
 #include <QKeySequence>
@@ -104,7 +105,6 @@ void GeometricTool::init(TupGraphicsScene *scene)
 
     foreach (QGraphicsView * view, scene->views()) {
              view->setDragMode(QGraphicsView::NoDrag);
-             Q_CHECK_PTR(view->scene());
              if (QGraphicsScene *scene = qobject_cast<QGraphicsScene *>(view->scene())) {
                  foreach (QGraphicsItem *item, scene->items()) {
                           item->setFlag(QGraphicsItem::ItemIsSelectable, false);
@@ -148,7 +148,6 @@ void GeometricTool::press(const TupInputDeviceInformation *input, TupBrushManage
     Q_UNUSED(brushManager);
 
     if (input->buttons() == Qt::LeftButton) {
-        
         if (name() == tr("Rectangle")) {
             k->added = false;
             k->rect = new TupRectItem(QRectF(input->pos(), QSize(0,0)));
@@ -156,16 +155,13 @@ void GeometricTool::press(const TupInputDeviceInformation *input, TupBrushManage
             k->rect->setBrush(brushManager->brush());
 
             k->currentPoint = input->pos();
-
         } else if (name() == tr("Ellipse")) {
-
                    k->added = false;
                    k->ellipse = new TupEllipseItem(QRectF(input->pos(), QSize(0,0)));
                    k->ellipse->setPen(brushManager->pen());
                    k->ellipse->setBrush(brushManager->brush());
 
                    k->currentPoint = input->pos();
-
         } else if (name() == tr("Line")) {
                    k->currentPoint = input->pos();
 
@@ -207,7 +203,6 @@ void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager
     Q_UNUSED(scene);
     
     if (name() == tr("Rectangle") || name() == tr("Ellipse")) {
-
         if (!k->added) {
             if (name() == tr("Rectangle"))
                 scene->includeObject(k->rect);
@@ -222,14 +217,12 @@ void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager
         int yInit = k->currentPoint.y();
 
         QRectF rect;
-
         if (name() == tr("Rectangle"))
             rect = k->rect->rect();
         else
             rect = k->ellipse->rect();
 
         if (k->proportion) {
-
             int width = abs(xMouse - xInit);
             int height = abs(yMouse - yInit);
 
@@ -274,7 +267,6 @@ void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager
             }
             
         } else {
-
             if (xMouse >= xInit) {
                 if (yMouse >= yInit)
                     rect.setBottomRight(input->pos());
@@ -305,28 +297,22 @@ void GeometricTool::release(const TupInputDeviceInformation *input, TupBrushMana
     Q_UNUSED(brushManager);
 
     QDomDocument doc;
-    QPointF position;
+    QPointF point;
 
     if (name() == tr("Rectangle")) {
         doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->rect)->toXml(doc));
-        position = k->rect->pos();
+        point = k->rect->pos();
     } else if (name() == tr("Ellipse")) {
                doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->ellipse)->toXml(doc));
                QRectF rect = k->ellipse->rect();
-               position = rect.topLeft();
+               point = rect.topLeft();
     } else if (name() == tr("Line")) {
                return;
-
-               // doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->line)->toXml(doc));
-               // position = k->line->pos();
-               doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->path)->toXml(doc));
-               position = k->path->boundingRect().topLeft(); 
     }
-    
+
     TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), 
-                             scene->currentFrameIndex(), scene->currentFrame()->graphics().count(), position,
-                             scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, doc.toString()); // Adds to end
-    
+                              scene->currentFrameIndex(), 0, point, scene->spaceMode(), TupLibraryObject::Item, 
+                              TupProjectRequest::Add, doc.toString());
     emit requested(&event);
 }
 
@@ -355,10 +341,6 @@ QWidget *GeometricTool::configurator()
 
 void GeometricTool::aboutToChangeScene(TupGraphicsScene *scene)
 {
-    #ifdef K_DEBUG
-           T_FUNCINFO;
-    #endif
-
     Q_UNUSED(scene);
 
     endItem();
@@ -366,10 +348,6 @@ void GeometricTool::aboutToChangeScene(TupGraphicsScene *scene)
 
 void GeometricTool::aboutToChangeTool() 
 {
-    #ifdef K_DEBUG
-           T_FUNCINFO;
-    #endif
-
     endItem();
 }
 
@@ -418,17 +396,14 @@ void GeometricTool::endItem()
 
     if (k->path) {
         QDomDocument doc;
-        QPointF position;
-
         doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->path)->toXml(doc));
-        position = QPointF(0, 0);
+        QPointF point = QPointF(0, 0);
 
         TupProjectRequest event = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(),
-                                 k->scene->currentFrameIndex(), k->scene->currentFrame()->graphics().count(), position,
-                                 k->scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                  k->scene->currentFrameIndex(), 0, point, k->scene->spaceMode(), TupLibraryObject::Item, 
+                                  TupProjectRequest::Add, doc.toString());
 
         emit requested(&event);
-
         k->path = 0;
     }
 }

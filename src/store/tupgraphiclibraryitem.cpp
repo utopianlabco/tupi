@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tupgraphiclibraryitem.h"
-#include "tuplibraryobject.h"
 #include "tupserializer.h"
 
 #include <QGraphicsTextItem>
@@ -46,6 +45,7 @@ struct TupGraphicLibraryItem::Private
     QString symbolName;
     QString svgContent;
     QList<QGraphicsItem *> items;
+    TupLibraryObject::Type itemType;
 };
 
 TupGraphicLibraryItem::TupGraphicLibraryItem() : TupProxyItem(), k(new Private)
@@ -55,12 +55,18 @@ TupGraphicLibraryItem::TupGraphicLibraryItem() : TupProxyItem(), k(new Private)
 TupGraphicLibraryItem::TupGraphicLibraryItem(TupLibraryObject *object) : TupProxyItem(), k(new Private)
 {
     setObject(object);
+    k->itemType = object->type();
 }
 
 TupGraphicLibraryItem::~TupGraphicLibraryItem()
 {
     qDeleteAll(k->items);
     delete k;
+}
+
+TupLibraryObject::Type TupGraphicLibraryItem::type()
+{
+    return k->itemType;
 }
 
 QDomElement TupGraphicLibraryItem::toXml(QDomDocument &doc) const

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -39,7 +39,7 @@
 #include "tupmodulewidgetbase.h"
 #include "tupproject.h"
 #include "tupexportpluginobject.h"
-#include "texportwizard.h"
+#include "tupexportwizard.h"
 
 #include <QListWidget>
 #include <QHash>
@@ -55,12 +55,12 @@ class VideoProperties;
  * @author David Cuadrado
 */
 
-class TupExportWidget : public TExportWizard
+class TupExportWidget : public TupExportWizard
 {
     Q_OBJECT
 
     public:
-        // enum Format { Video = 0, Storyboard };
+        enum OutputFormat { Animation = 0, ImagesArray, AnimatedImage };
         TupExportWidget(const TupProject *project, QWidget *parent = 0, bool isLocal = true);
         ~TupExportWidget();
         QString videoTitle() const;
@@ -79,8 +79,9 @@ class TupExportWidget : public TExportWizard
     private:
         SelectPlugin *m_pluginSelectionPage;
         SelectScenes *m_scenesSelectionPage;
-        ExportTo *m_exportToPage;
-        ExportTo *m_exportImages;
+        ExportTo *m_exportAnimation;
+        ExportTo *m_exportImagesArray;
+        ExportTo *m_exportAnimatedImage;
         VideoProperties *videoProperties;
         const TupProject *m_project;
         QHash<QString, TupExportInterface *> m_plugins;

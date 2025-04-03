@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -54,7 +54,7 @@ struct Configurator::Private
 
     TupItemTweener *currentTween;
 
-    int framesTotal;
+    int framesTotal; 
     int currentFrame;
 
     TupToolPlugin::Mode mode;
@@ -107,7 +107,7 @@ void Configurator::setPropertiesPanel()
 {
     k->settingsPanel = new Settings(this);
 
-    connect(k->settingsPanel, SIGNAL(startingPointChanged(int)), this, SIGNAL(startingPointChanged(int)));
+    connect(k->settingsPanel, SIGNAL(initFrameChanged(int)), this, SIGNAL(initFrameChanged(int)));
     connect(k->settingsPanel, SIGNAL(clickedSelect()), this, SIGNAL(clickedSelect()));
     connect(k->settingsPanel, SIGNAL(clickedDefineProperties()), this, SIGNAL(clickedDefineProperties()));
     connect(k->settingsPanel, SIGNAL(clickedApplyTween()), this, SLOT(applyItem()));
@@ -186,14 +186,19 @@ void Configurator::setStartFrame(int currentIndex)
     k->settingsPanel->setStartFrame(currentIndex);
 }
 
+int Configurator::startFrame()
+{
+    return k->settingsPanel->startFrame();
+}
+
 int Configurator::startComboSize()
 {
     return k->settingsPanel->startComboSize();
 }
 
-QString Configurator::tweenToXml(int currentFrame, QPointF point)
+QString Configurator::tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point)
 {
-    return k->settingsPanel->tweenToXml(currentFrame, point);
+    return k->settingsPanel->tweenToXml(currentScene, currentLayer, currentFrame, point);
 }
 
 int Configurator::totalSteps()
@@ -201,20 +206,21 @@ int Configurator::totalSteps()
     return k->settingsPanel->totalSteps();
 }
 
-void Configurator::activatePropertiesMode(TupToolPlugin::EditMode mode)
+void Configurator::activateMode(TupToolPlugin::EditMode mode)
 {
-    k->settingsPanel->activatePropertiesMode(mode);
+    k->settingsPanel->activateMode(mode);
 }
 
 void Configurator::addTween(const QString &name)
 {
-    activeTweenManagerPanel(false);
-
     k->mode = TupToolPlugin::Add;
-    k->state = Configurator::Properties;
 
     k->settingsPanel->setParameters(name, k->framesTotal, k->currentFrame);
+    
+    activeTweenManagerPanel(false);
     activePropertiesPanel(true);
+
+    k->state = Properties;
 
     emit setMode(k->mode);
 }
@@ -224,7 +230,7 @@ void Configurator::editTween()
     activeTweenManagerPanel(false);
 
     k->mode = TupToolPlugin::Edit;
-    k->state = Configurator::Properties;
+    k->state = Properties;
 
     k->settingsPanel->notifySelection(true);
     k->settingsPanel->setParameters(k->currentTween);
@@ -295,8 +301,8 @@ TupToolPlugin::Mode Configurator::mode()
 
 void Configurator::applyItem()
 {
-     k->mode = TupToolPlugin::Edit;
-     emit clickedApplyTween();
+    k->mode = TupToolPlugin::Edit;
+    emit clickedApplyTween();
 }
 
 void Configurator::resetUI()

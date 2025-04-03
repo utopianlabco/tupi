@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -49,6 +49,7 @@
 #include <QBoxLayout>
 #include <QHeaderView>
 #include <QGraphicsPathItem>
+#include <QDir>
 
 struct Settings::Private
 {
@@ -91,10 +92,10 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -135,7 +136,7 @@ void Settings::setInnerForm()
     //k->comboInit->setMaximumWidth(50);
     //k->comboInit->setEditable(false);
 
-    connect(k->comboInit, SIGNAL(currentIndexChanged(int)), this, SIGNAL(startingPointChanged(int)));
+    connect(k->comboInit, SIGNAL(currentIndexChanged(int)), this, SIGNAL(startingFrameChanged(int)));
 
     QHBoxLayout *startLayout = new QHBoxLayout;
     startLayout->setAlignment(Qt::AlignHCenter);
@@ -189,7 +190,7 @@ void Settings::setParameters(const QString &name, int framesTotal, int startFram
 
     k->comboInit->setEnabled(false);
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
     initStartCombo(framesTotal, startFrame);
@@ -207,7 +208,7 @@ void Settings::setParameters(TupItemTweener *currentTween)
     k->input->setText(currentTween->name());
     k->comboInit->setEnabled(true);
 
-    initStartCombo(currentTween->frames(), currentTween->startFrame());
+    initStartCombo(currentTween->frames(), currentTween->initFrame());
 
     k->stepViewer->setPath(currentTween->graphicsPath());
     k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->stepViewer->totalSteps()));
@@ -265,14 +266,16 @@ void Settings::emitOptionChanged(int option)
     }
 }
 
-QString Settings::tweenToXml(int currentFrame, QPointF point, QString &path)
+QString Settings::tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point, QString &path)
 {
     QDomDocument doc;
 
     QDomElement root = doc.createElement("tweening");
     root.setAttribute("name", currentTweenName());
     root.setAttribute("type", TupItemTweener::Position);
-    root.setAttribute("init", currentFrame);
+    root.setAttribute("initFrame", currentFrame);
+    root.setAttribute("initLayer", currentLayer);
+    root.setAttribute("initScene", currentScene);
     root.setAttribute("frames", k->stepViewer->totalSteps());
     root.setAttribute("origin", QString::number(point.x()) + "," + QString::number(point.y()));
     root.setAttribute("coords", path);
@@ -343,7 +346,7 @@ void Settings::setEditMode()
 {
     k->mode = TupToolPlugin::Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "icons" + QDir::separator() + "close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 

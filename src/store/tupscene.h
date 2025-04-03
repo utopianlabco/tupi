@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -75,7 +75,7 @@ class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
         /**
           * Default Constructor
           */
-        TupScene(TupProject *parent);
+        TupScene(TupProject *parent, const QSize dimension, const QColor bgColor);
 
         /**
           * Destructor
@@ -86,6 +86,11 @@ class STORE_EXPORT TupScene : public QObject, public TupAbstractSerializable
           * Sets scene name
           */
         void setSceneName(const QString &name);
+
+        /**
+          * Sets background color 
+          */
+        void setBgColor(const QColor bgColor);
 
         /**
           * Locks the scene

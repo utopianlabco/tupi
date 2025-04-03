@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -65,8 +65,8 @@ class STORE_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializ
         TupLibraryObject(QObject *parent = 0);
         ~TupLibraryObject();
         
-        void setType(int type);
-        int type() const;
+        void setType(TupLibraryObject::Type type);
+        TupLibraryObject::Type type() const;
         
         void setData(const QVariant &data);
         QVariant data() const;
@@ -76,9 +76,13 @@ class STORE_EXPORT TupLibraryObject : public QObject, public TupAbstractSerializ
         
         void setSymbolName(const QString &name);
         QString symbolName() const;
+
+        QString smallId() const;
+        QString extension() const;
         
         bool loadRawData(const QByteArray &data);
         bool loadDataFromPath(const QString &dataDir);
+        bool loadData(const QString &path);
         
         void saveData(const QString &dataDir);
         

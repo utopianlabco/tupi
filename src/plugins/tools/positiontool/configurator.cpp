@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -127,7 +127,7 @@ void Configurator::setPropertiesPanel()
 {
     k->settingsPanel = new Settings(this);
 
-    connect(k->settingsPanel, SIGNAL(startingPointChanged(int)), this, SIGNAL(startingPointChanged(int)));
+    connect(k->settingsPanel, SIGNAL(startingFrameChanged(int)), this, SIGNAL(startingFrameChanged(int)));
 
     connect(k->settingsPanel, SIGNAL(clickedSelect()), this, SIGNAL(clickedSelect()));
     connect(k->settingsPanel, SIGNAL(clickedCreatePath()), this, SIGNAL(clickedCreatePath()));
@@ -220,9 +220,9 @@ void Configurator::updateSteps(const QGraphicsPathItem *path)
     k->settingsPanel->updateSteps(path);
 }
 
-QString Configurator::tweenToXml(int currentFrame, QPointF point, QString &path)
+QString Configurator::tweenToXml(int currentScene, int currentLayer, int currentFrame, QPointF point, QString &path)
 {
-    return k->settingsPanel->tweenToXml(currentFrame, point, path);
+    return k->settingsPanel->tweenToXml(currentScene, currentLayer, currentFrame, point, path);
 }
 
 int Configurator::totalSteps()
@@ -265,7 +265,6 @@ void Configurator::editTween()
     k->settingsPanel->setParameters(k->currentTween);
     activePropertiesPanel(true);
 
-    // emit editModeOn();
     emit setMode(k->mode);
 }
 

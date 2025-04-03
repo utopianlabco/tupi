@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -37,7 +37,6 @@
 #define SETTINGS_H
 
 #include "tuptoolplugin.h"
-
 #include <QWidget>
 
 class TupItemTweener;
@@ -51,9 +50,6 @@ class Settings : public QWidget
     Q_OBJECT
 
     public:
-        // enum Mode { Add = 1, Edit, View };
-        // enum EditMode { Selection = 0, Properties, None };
-
         Settings(QWidget *parent = 0);
         ~Settings();
 
@@ -61,21 +57,23 @@ class Settings : public QWidget
         void setParameters(TupItemTweener *currentTween);
         void initStartCombo(int totalFrames, int currentIndex);
         void setStartFrame(int currentIndex);
+        int startFrame();
 
         int totalSteps();
 
         QString currentTweenName() const;
-        void activatePropertiesMode(TupToolPlugin::EditMode mode);
+        void activateMode(TupToolPlugin::EditMode mode);
         void notifySelection(bool flag);
-        QString tweenToXml(int currentFrame);
+        int startComboSize();
+        QString tweenToXml(int currentScene, int currentLayer, int currentFrame);
 
     private slots:
         void applyTween();
         void emitOptionChanged(int option);
-        void checkBottomLimit(int index);
         void checkTopLimit(int index);
         void updateLoopCheckbox(int state);
         void updateReverseCheckbox(int state);
+        void updateLastFrame();
         
     signals:
         void clickedSelect();

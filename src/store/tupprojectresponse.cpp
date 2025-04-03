@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -139,7 +139,9 @@ int TupProjectResponse::action() const
                 break;
                 default:
                      {
-                        tFatal() << "TupProjectResponse::action() : Unhandled action -> " << k->action;
+                        #ifdef K_DEBUG
+                               tError() << "TupProjectResponse::action() : Fatal Error: Unhandled action -> " << k->action;
+                        #endif
                      }
                 break;
         }
@@ -388,7 +390,6 @@ bool TupLibraryResponse::frameIsEmpty()
 
 void TupLibraryResponse::setFrameState(bool state)
 {
-    tFatal() << "TupLibraryResponse::setFrameState() - Setting state: " << state;
     empty = state;
 }
 
@@ -430,7 +431,7 @@ TupProjectResponse *TupProjectResponseFactory::create(int part, int action)
             break;
             default:
              {
-                qFatal("Unknown PART"); // TODO: REMOVE ME
+                tFatal() << "TupProjectResponseFactory::create() - Unknown/Unhandled element: " << part;
              }
             break;
     }

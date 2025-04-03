@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -51,14 +51,12 @@ struct TupSvgItem::Private
     QPointF lastTweenPos;
 };
 
-TupSvgItem::TupSvgItem(QGraphicsItem * parent)
-    : QGraphicsSvgItem(parent), k(new Private)
+TupSvgItem::TupSvgItem(QGraphicsItem * parent) : QGraphicsSvgItem(parent), k(new Private)
 {
     setAcceptHoverEvents(true);
 }
 
-TupSvgItem::TupSvgItem(QString &file, TupFrame *frame)
-    : QGraphicsSvgItem(file), k(new Private)
+TupSvgItem::TupSvgItem(QString &file, TupFrame *frame) : QGraphicsSvgItem(file), k(new Private)
 {
     setAcceptHoverEvents(true);
     k->path = file;

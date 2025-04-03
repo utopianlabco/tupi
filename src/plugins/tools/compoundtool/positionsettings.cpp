@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -152,7 +152,7 @@ PositionSettings::~PositionSettings()
 
 // Adding new Tween
 
-void PositionSettings::setParameters(int framesTotal, int startFrame)
+void PositionSettings::setParameters(int framesTotal, int initFrame)
 {
     k->mode = TweenerPanel::Add;
 
@@ -163,7 +163,7 @@ void PositionSettings::setParameters(int framesTotal, int startFrame)
     k->closeButton->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"));
     k->closeButton->setToolTip(tr("Cancel Tween"));
 
-    initStartCombo(framesTotal, startFrame);
+    initStartCombo(framesTotal, initFrame);
 }
 
 // Editing new Tween
@@ -174,7 +174,7 @@ void PositionSettings::setParameters(TupItemTweener *currentTween)
 
     k->comboInit->setEnabled(true);
 
-    initStartCombo(currentTween->frames(), currentTween->startFrame());
+    initStartCombo(currentTween->frames(), currentTween->initFrame());
 
     k->stepViewer->setPath(currentTween->graphicsPath());
     k->totalLabel->setText(tr("Frames Total") + ": " + QString::number(k->stepViewer->totalSteps()));
@@ -194,7 +194,7 @@ void PositionSettings::setStartFrame(int currentIndex)
     k->comboInit->setCurrentIndex(currentIndex);
 }
 
-int PositionSettings::startFrame()
+int PositionSettings::initFrame()
 {
     return k->comboInit->currentIndex();
 }

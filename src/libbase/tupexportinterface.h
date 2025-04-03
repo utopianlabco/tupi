@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -64,7 +64,8 @@ class TUPI_EXPORT TupExportInterface
                PNG  = 1 << 8,
                JPEG = 1 << 9,
                XPM  = 1 << 10,
-               SMIL = 1 << 11
+               SMIL = 1 << 11,
+               APNG = 1 << 12
              };
 
         Q_DECLARE_FLAGS(Formats, Format);

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -52,6 +52,7 @@
 
 #include <QUndoStack>
 #include <QDir>
+#include <QFileInfo>
 
 // This class handles the current animation project 
 
@@ -180,7 +181,11 @@ void TupProjectManager::setupNewProject()
     }
 
     if (!k->isNetworked) {
-        k->project->setDataDir(CACHE_DIR + k->params->projectName());
+       
+        QString projectPath = CACHE_DIR + k->params->projectName(); 
+        cleanProjectPath(projectPath);
+
+        k->project->setDataDir(projectPath);
 
         TupProjectRequest request = TupRequestBuilder::createSceneRequest(0, TupProjectRequest::Add, tr("Scene %1").arg(1));
         handleProjectRequest(&request);
@@ -214,9 +219,6 @@ bool TupProjectManager::saveProject(const QString &fileName)
 {
     bool result = k->handler->saveProject(fileName, k->project);
     k->isModified = !result;
-
-    // if (k->isModified)
-    //     emit modified(false);
 
     return result;
 }
@@ -317,8 +319,6 @@ void TupProjectManager::handleLocalRequest(const TupProjectRequest *request)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
-           tWarning() << "Local Package: ";
-           tWarning() << request->xml();
     #endif
 
     TupRequestParser parser;
@@ -377,7 +377,7 @@ void TupProjectManager::createCommand(const TupProjectRequest *request, bool add
 
         if (addToStack)
             k->undoStack->push(command);
-        else 
+        else  
             command->redo();
     } else {
         #ifdef K_DEBUG
@@ -406,11 +406,11 @@ void TupProjectManager::emitResponse(TupProjectResponse *response)
         k->isModified = true;
         if (TupSceneResponse *sceneResponse = static_cast<TupSceneResponse *>(response)) {
             if (response->action() == TupProjectRequest::Remove)
-                emit modified(true);
+                emit projectHasChanged(true);
             else
-                emit modified(false);
+                emit projectHasChanged(false);
         } else {
-            emit modified(false);
+            emit projectHasChanged(false);
         }
     }
 
@@ -428,4 +428,29 @@ void TupProjectManager::emitResponse(TupProjectResponse *response)
 void TupProjectManager::setOpen(bool isOpen)
 {
     k->project->setOpen(isOpen);
+}
+
+bool TupProjectManager::cleanProjectPath(QString &projectPath)
+{
+    bool result = true;
+    QDir dir(projectPath);
+
+    if (dir.exists(projectPath)) {
+        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+            if (info.isDir()) {
+                QString path = info.absoluteFilePath();
+                result = cleanProjectPath(path);
+            }
+            else {
+                result = QFile::remove(info.absoluteFilePath());
+            }
+
+            if (!result) {
+                return result;
+            }
+        }
+        result = dir.rmdir(projectPath);
+    }
+
+    return result;
 }

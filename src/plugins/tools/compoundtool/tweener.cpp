@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -89,6 +89,8 @@ struct Tweener::Private
     QPointF itemObjectReference;
     QPointF pathOffset;
     QPointF firstNode;
+
+    int baseZValue;
 };
 
 Tweener::Tweener() : TupToolPlugin(), k(new Private)
@@ -115,6 +117,7 @@ void Tweener::init(TupGraphicsScene *scene)
     k->pathAdded = false;
     delete k->group;
     k->group = 0;
+    k->baseZValue = 20000 + (scene->scene()->layersTotal() * 10000);
 
     k->scene = scene;
     k->objects.clear();
@@ -390,7 +393,7 @@ void Tweener::setCreatePath()
         if (k->group) {
             k->group->createNodes(k->path);
         } else {
-            k->group = new TNodeGroup(k->path, k->scene, TNodeGroup::CompoundTween);
+            k->group = new TNodeGroup(k->path, k->scene, TNodeGroup::CompoundTween, k->baseZValue);
             connect(k->group, SIGNAL(nodeReleased()), SLOT(updatePath()));
             k->group->createNodes(k->path);
         }
@@ -419,7 +422,7 @@ void Tweener::setSelect()
     foreach (QGraphicsView * view, k->scene->views()) {
              view->setDragMode(QGraphicsView::RubberBandDrag);
              foreach (QGraphicsItem *item, view->scene()->items()) {
-                      if ((item->zValue() >= 10000) && (item->toolTip().length()==0)) {
+                      if ((item->zValue() >= 20000) && (item->toolTip().length()==0)) {
                           item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable);
                       }
              }
@@ -542,7 +545,7 @@ void Tweener::applyTween()
                  TupLibraryObject::Type type = TupLibraryObject::Item;
                  TupScene *scene = k->scene->scene();
                  TupLayer *layer = scene->layer(k->scene->currentLayerIndex());
-                 TupFrame *frame = layer->frame(k->currentTween->startFrame());
+                 TupFrame *frame = layer->frame(k->currentTween->initFrame());
                  int objectIndex = frame->indexOf(item);
 
                  QRectF rect = item->sceneBoundingRect();
@@ -557,7 +560,7 @@ void Tweener::applyTween()
                          point = item->pos();
                  }
 
-                 if (k->startPoint != k->currentTween->startFrame()) {
+                 if (k->startPoint != k->currentTween->initFrame()) {
                      QDomDocument dom;
                      dom.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(dom));
 
@@ -575,7 +578,7 @@ void Tweener::applyTween()
 
                      request = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), 
                                                                    k->scene->currentLayerIndex(),
-                                                                   k->currentTween->startFrame(),
+                                                                   k->currentTween->initFrame(),
                                                                    objectIndex, QPointF(), 
                                                                    k->scene->spaceMode(), type,
                                                                    TupProjectRequest::Remove);
@@ -780,7 +783,7 @@ void Tweener::setEditEnv()
 {
     tFatal() << "void Tweener::setEditEnv() - Just tracing!!!";
 
-    k->startPoint = k->currentTween->startFrame();
+    k->startPoint = k->currentTween->initFrame();
     if (k->startPoint != k->scene->currentFrameIndex()) {
         TupProjectRequest request = TupRequestBuilder::createFrameRequest(k->scene->currentSceneIndex(),
                                                                        k->scene->currentLayerIndex(),

@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -50,7 +50,6 @@
 struct TControlNode::Private
 {
     int index;
-    int level;
     QGraphicsItem *graphicParent;
     TControlNode *centralNode;
     TControlNode *leftNode;
@@ -72,20 +71,21 @@ TControlNode::TControlNode(int index, TNodeGroup *nodeGroup, const QPointF & pos
     k->unchanged = true;
     k->nodeGroup = nodeGroup;
     k->scene = scene;
-    k->level = level;
     
     QGraphicsItem::setCursor(QCursor(Qt::PointingHandCursor));
     setFlag(ItemIsSelectable, true);
     setFlag(ItemIsMovable, true);
     setFlag(ItemSendsGeometryChanges, true);
-    
     setPos(pos);
 
-    if (k->level > 0)
-        setZValue(k->level + 1);
+    /*
+    if (level > 0)
+        setZValue(level + 1);
     else
         setZValue(graphicParent->zValue() + 1);
+    */
 
+    setZValue(level);
     setGraphicParent(graphicParent);
 }
 
@@ -95,60 +95,31 @@ TControlNode::~TControlNode()
 
 void TControlNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
+    Q_UNUSED(option);
     Q_UNUSED(w);
     
-    // FIXME: Check Antialiasing management for this painter
+    // SQA: Check Antialiasing management for this painter
     // bool antialiasing = painter->renderHints() & QPainter::Antialiasing;
     // painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 
     QColor c;
 
-    /*
-    if (option->state & QStyle::State_Sunken || option->state & QStyle::State_Selected) {
-
-        // painter->save();
-        // painter->setPen(QPen(Qt::gray));
-        // painter->restore();
-        
-        if (qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->graphicParent)) {
-            c = QColor("gray");
-            c.setAlpha(100);
-        } else {
-            c = QColor("green");
-            c.setAlpha(200);
-        }
-
-    } else {
-
-        if (qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(k->graphicParent)) {
-           c = QColor("white");
-        } else {
-           c = QColor("navy");
-        }
-        c.setAlpha(150);
-    }
-    */
-
     if (k->centralNode) {
         c = QColor("white");
-        // c.setAlpha();
     } else {
         c = QColor(55, 155, 55);
-        // c.setAlpha(200);
     }
 
     painter->setBrush(c);
     paintLinesToChildNodes(painter);
-
     painter->drawRoundRect(boundingRect());
 }
 
-void TControlNode::paintLinesToChildNodes(QPainter * painter)
+void TControlNode::paintLinesToChildNodes(QPainter *painter)
 {
     QMatrix inverted = sceneMatrix().inverted();
     painter->save();
     
-    // painter->setPen(QPen(QColor(0x8080FF)));
     painter->setPen(QPen(QColor(Qt::gray)));
     painter->setRenderHint(QPainter::Antialiasing, true);
 
@@ -167,7 +138,7 @@ void TControlNode::paintLinesToChildNodes(QPainter * painter)
 
 QRectF TControlNode::boundingRect() const
 {
-    QSizeF size(8 , 8);
+    QSizeF size(8, 8);
     QRectF rect(QPointF(-size.width()/2, -size.height()/2), size);
 
     if (k->rightNode) {
@@ -186,10 +157,8 @@ QRectF TControlNode::boundingRect() const
 QVariant TControlNode::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemPositionChange) {
-
         if (!k->unchanged) {
             if (qgraphicsitem_cast<QGraphicsPathItem*>(k->graphicParent)) {
-
                 QPointF diff = value.toPointF() - pos();
                 if (k->leftNode)
                     k->leftNode->moveBy(diff.x(), diff.y());
@@ -206,7 +175,6 @@ QVariant TControlNode::itemChange(GraphicsItemChange change, const QVariant &val
            k->unchanged = false;
         }
     } else if (change == QGraphicsItem::ItemSelectedChange) {
-
                if (value.toBool()) {
                    k->graphicParent->setSelected(true);
                    showChildNodes(true);
@@ -283,9 +251,8 @@ void TControlNode::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     foreach (QGraphicsItem *item, scene()->selectedItems()) {
              if (qgraphicsitem_cast<TControlNode*>(item)) {
                  if (!k->centralNode) { 
-                     if (item != this) {
+                     if (item != this)
                          item->moveBy(event->pos().x(), event->pos().y());
-                     } 
                  }
              } 
     }
@@ -373,8 +340,3 @@ void TControlNode::hasChanged(bool unchanged)
 {
     k->unchanged = unchanged;
 }
-
-void TControlNode::clear()
-{
-}
-

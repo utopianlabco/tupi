@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -66,7 +66,6 @@ class Tweener : public TupToolPlugin
 
         int toolType() const;
         void aboutToChangeScene(TupGraphicsScene *scene);
-        bool isComplete() const;
 
         virtual void sceneResponse(const TupSceneResponse *event);
         virtual void layerResponse(const TupLayerResponse *event);
@@ -79,10 +78,10 @@ class Tweener : public TupToolPlugin
         int framesTotal();
         void setupActions();
         QString pathToCoords();
-        int maxZValue();
         void clearSelection();
         void disableSelection();
         void removeTweenFromProject(const QString &name);
+        void resetGUI();
 
     private:
         struct Private;
@@ -92,11 +91,11 @@ class Tweener : public TupToolPlugin
         void applyReset();
         void applyTween();
         void removeTween(const QString &name);
-        void setCreatePath();
-        void setSelect();
+        void setTweenPath();
+        void setSelection();
         void setEditEnv();
         void updateMode(TupToolPlugin::Mode mode);
-        void updateStartPoint(int index);
+        void updateStartFrame(int index);
         void setCurrentTween(const QString &name);
 
     public slots:

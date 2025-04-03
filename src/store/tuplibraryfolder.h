@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -52,9 +52,6 @@ class TupLibraryObject;
 typedef QMap<QString, TupLibraryFolder *> Folders;
 typedef QMap<QString, TupLibraryObject *> LibraryObjects;
 
-//typedef QHash<QString, TupLibraryObject *> LibraryObjects;
-//typedef QMap<QString, TupLibraryFolder *> Folders;
-
 /**
  * @author David Cuadrado
 **/
@@ -74,6 +71,8 @@ class STORE_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializ
         
         bool addObject(TupLibraryObject *object); 
         bool addObject(const QString &folderName, TupLibraryObject *object);
+
+        bool reloadObject(const QString &id);
 
         bool addFolder(TupLibraryFolder *folder);
 
@@ -102,6 +101,8 @@ class STORE_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializ
         bool folderExists(const QString &id) const;
 
         void updatePaths(const QString &newPath);
+
+        bool loadingProject();
         
     public:
         virtual void fromXml(const QString &xml);

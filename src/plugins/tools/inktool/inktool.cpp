@@ -21,7 +21,7 @@
  *   License:                                                              *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -164,7 +164,8 @@ void InkTool::press(const TupInputDeviceInformation *input, TupBrushManager *bru
     k->previewPoint = input->pos();
 
     k->item = new TupPathItem();
-    QPen pen(Qt::lightGray, 0.5, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
+    QColor color(55, 155, 55, 200);
+    QPen pen(QBrush(color), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     k->item->setPen(pen);
 
     scene->includeObject(k->item);
@@ -532,8 +533,8 @@ void InkTool::release(const TupInputDeviceInformation *input, TupBrushManager *b
         QDomDocument doc;
         doc.appendChild(line->toXml(doc));
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                       scene->currentFrame()->graphics().count(), QPointF(), scene->spaceMode(),
-                                                       TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                                         0, QPointF(), scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                         doc.toString());
         emit requested(&request);
 
     } else {
@@ -546,8 +547,8 @@ void InkTool::release(const TupInputDeviceInformation *input, TupBrushManager *b
         QDomDocument doc;
         doc.appendChild(blackEllipse->toXml(doc));
         TupProjectRequest request = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), scene->currentFrameIndex(),
-                                                       scene->currentFrame()->graphics().count(), currentPoint, scene->spaceMode(),
-                                                       TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
+                                                                         0, currentPoint, scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
+                                                                         doc.toString());
         emit requested(&request);
     }
 }
