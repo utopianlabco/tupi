@@ -1,4 +1,3 @@
-TARGET = quazip
 DEPENDPATH += .
 
 macx {

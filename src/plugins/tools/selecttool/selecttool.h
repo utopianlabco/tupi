@@ -40,7 +40,7 @@
 #include "tuppathitem.h"
 #include "tupproject.h"
 #include "tupgraphicsscene.h"
-#include "infopanel.h"
+#include "settings.h"
 #include "tupprojectresponse.h"
 
 #include <QObject>
@@ -91,18 +91,20 @@ class SelectTool : public TupToolPlugin
     private slots:
         void syncNodes();
         void updateItems(TupGraphicsScene *scene);
-        void applyFlip(InfoPanel::Flip flip);
-        void applyOrderAction(InfoPanel::Order order);
+        void applyFlip(Settings::Flip flip);
+        void applyOrderAction(Settings::Order order);
+        void updateItemPosition(int x, int y);
 
     private:
         void setupActions();
         void verifyActiveSelection();
         void updateRealZoomFactor();
         void reset(TupGraphicsScene *scene);
+        void updateItemPosition();
 
         struct Private;
         Private *const k;
-        InfoPanel *panel;
+        Settings *panel;
 
 };
 

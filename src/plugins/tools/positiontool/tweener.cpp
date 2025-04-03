@@ -121,10 +121,17 @@ void Tweener::init(TupGraphicsScene *scene)
        T_FUNCINFO;
     #endif
 
-    delete k->path;
-    k->path = 0;
-    delete k->nodesGroup;
-    k->nodesGroup = 0;
+    if (k->nodesGroup) {
+        k->nodesGroup->clear();
+        delete k->nodesGroup;
+        k->nodesGroup = 0;
+    }
+
+    if (k->path) {
+        delete k->path;
+        k->path = 0;
+    }
+
     k->scene = scene;
     k->objects.clear();
     k->baseZValue = 20000 + (scene->scene()->layersTotal() * 10000);
@@ -151,8 +158,8 @@ void Tweener::init(TupGraphicsScene *scene)
 
 void Tweener::updateStartFrame(int index)
 {
-    if (k->initFrame != index && index >= 0) 
-        k->initFrame = index;
+    if (k->initFrame != index && index >= 0)
+        k->initFrame = index - 1;
 }
 
 /* This method returns the plugin name */
@@ -175,7 +182,7 @@ void Tweener::press(const TupInputDeviceInformation *input, TupBrushManager *bru
     Q_UNUSED(brushManager);
     Q_UNUSED(scene);
 
-    if (k->editMode == TupToolPlugin::Path && k->scene->currentFrameIndex() == k->initFrame) {
+    if (k->editMode == TupToolPlugin::Properties && k->scene->currentFrameIndex() == k->initFrame) {
         if (k->path) {
             QPointF point = k->path->mapFromParent(input->pos());
             QPainterPath path = k->path->path();
@@ -208,7 +215,7 @@ void Tweener::release(const TupInputDeviceInformation *input, TupBrushManager *b
     Q_UNUSED(brushManager);
 
     if (scene->currentFrameIndex() == k->initFrame) {
-        if (k->editMode == TupToolPlugin::Path) {
+        if (k->editMode == TupToolPlugin::Properties) {
             if (k->nodesGroup) {
                 k->nodesGroup->createNodes(k->path);
                 k->nodesGroup->expandAllNodes();
@@ -331,7 +338,7 @@ void Tweener::resetGUI()
         return;
     }
 
-    if (k->editMode == TupToolPlugin::Path) {
+    if (k->editMode == TupToolPlugin::Properties) {
         if (k->path) {
             k->scene->removeItem(k->path);
             k->isPathInScene = false;
@@ -377,7 +384,7 @@ void Tweener::setTweenPath()
         k->nodesGroup->expandAllNodes();
     }
 
-    k->editMode = TupToolPlugin::Path;
+    k->editMode = TupToolPlugin::Properties;
     disableSelection();
 }
 
@@ -683,7 +690,7 @@ void Tweener::updateScene(TupGraphicsScene *scene)
     if (k->mode == TupToolPlugin::Edit) {
         int total = k->initFrame + k->configurator->totalSteps();
 
-        if (k->editMode == TupToolPlugin::Path) {
+        if (k->editMode == TupToolPlugin::Properties) {
             if (scene->currentFrameIndex() >= k->initFrame && scene->currentFrameIndex() < total) {
                 if (k->path && k->nodesGroup) {
                     k->scene->addItem(k->path);            
@@ -707,7 +714,7 @@ void Tweener::updateScene(TupGraphicsScene *scene)
                        k->configurator->setStartFrame(scene->currentFrameIndex());
                }
 
-           if (k->editMode == TupToolPlugin::Path) {
+           if (k->editMode == TupToolPlugin::Properties) {
                k->path = 0;
                k->configurator->cleanData();
                k->configurator->activateMode(TupToolPlugin::Selection);

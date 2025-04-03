@@ -65,6 +65,11 @@ _EOH_
         exit 0
     end
 
+    debug = 1
+    if conf.hasArgument?("without-debug")
+       debug = 0
+    end
+
     if conf.hasArgument?("with-ffmpeg") and conf.hasArgument?("without-ffmpeg")  
        Info.error << " ERROR: Options --with-ffmpeg and --without-ffmpeg are mutually exclusive\n"
        exit 0
@@ -88,7 +93,7 @@ _EOH_
 
     if conf.hasArgument?("with-qtdir")
        qtdir = conf.argumentValue("with-qtdir")
-       conf.verifyQtVersion("4.7.0", qtdir)
+       conf.verifyQtVersion("4.7.0", debug, qtdir)
        if distro == "lucid"
           config.addDefine("K_LUCID")
        end
@@ -98,7 +103,7 @@ _EOH_
           Info.error << " Try the option --help for more info\n"
           exit 0
        else
-          conf.verifyQtVersion("4.7.0", "")
+          conf.verifyQtVersion("4.7.0", debug, "")
        end
     end
 
@@ -138,17 +143,16 @@ _EOH_
              end
           end
        else # Other distros
-          if majorVersion[2] >= "54" and minorVersion[2] >= "35"
-             FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.new.cpp", destination)
+          if FileTest.exists?("/usr/bin/pacman") # Arch / Manjaro
+             FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.arch.cpp", destination)
           else
-             FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.old.cpp", destination)
+             if majorVersion[2] >= "54" and minorVersion[2] >= "35"
+                FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.new.cpp", destination)
+             else
+                FileUtils.cp("src/plugins/export/ffmpegplugin/tffmpegmoviegenerator.old.cpp", destination)
+             end
           end
        end
-    end
-
-    debug = 1
-    if conf.hasArgument?("without-debug")
-       debug = 0
     end
 
     if conf.hasArgument?("without-ffmpeg")
@@ -176,8 +180,8 @@ _EOH_
     # config.addLib("-ltupifwsound")
     
     config.addDefine('VERSION=\\\\\"0.2\\\\\"')
-    config.addDefine('CODE_NAME=\\\\\"Aram\\\\\"')
-    config.addDefine('REVISION=\\\\\"git03\\\\\"')
+    config.addDefine('CODE_NAME=\\\\\"Argentum\\\\\"')
+    config.addDefine('REVISION=\\\\\"git04\\\\\"')
 
     if conf.hasArgument?("install-headers")
        config.addDefine("ADD_HEADERS");

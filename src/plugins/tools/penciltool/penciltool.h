@@ -37,7 +37,7 @@
 #define PENCILTOOL_H
 
 #include "tuptoolplugin.h"
-#include "exactnessconfigurator.h"
+#include "settings.h"
 #include "tuppathitem.h"
 #include "tupprojectresponse.h"
 
