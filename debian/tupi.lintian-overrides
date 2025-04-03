@@ -1,3 +1,2 @@
 ## false-positives:
 hardening-no-fortify-functions [usr/lib/tupi/libtupifwcore.so.1.0.0]
-
