@@ -4,7 +4,7 @@
 # Target is a library:  
 
 INSTALLS += target 
-target.path = /plugins/ 
+target.path = /plugins/
 
 HEADERS += geometrictool.h \
            infopanel.h 

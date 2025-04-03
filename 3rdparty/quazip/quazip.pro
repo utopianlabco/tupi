@@ -3,6 +3,21 @@
 # Subdir relative project main directory: ./3rdparty/quazip
 # Target is a library:  
 
+INSTALLS += headers target
+target.path = /lib/
+
+headers.target = .
+headers.commands = cp *.h $(INSTALL_ROOT)/include/quazip
+headers.path = /include/quazip
+
+macx {
+    CONFIG += plugin warn_on
+}
+
+macx {
+    CONFIG += plugin warn_on
+}
+
 HEADERS += crypt.h \
            ioapi.h \
            quazip.h \
@@ -19,14 +34,20 @@ SOURCES += ioapi.c \
            unzip.c \
            zip.c 
 
-CONFIG += release warn_on qt staticlib
+*:!macx{
+    CONFIG += dll warn_on
+}
 TEMPLATE = lib
 QT -= gui
-LIBS += -lz
+
+unix {
+  LIBS += -lz
+}
+
 INCLUDEPATH += .
 
 MOC_DIR = .moc
 UI_DIR = .ui
 OBJECTS_DIR = .obj
 
-include(../../tupiglobal.pri)
+DEFINES += K_DEBUG

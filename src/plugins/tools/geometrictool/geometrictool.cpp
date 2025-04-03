@@ -36,17 +36,18 @@
 #include "geometrictool.h"
 #include "tglobal.h"
 #include "tdebug.h"
-#include "ktrectitem.h"
-#include "ktellipseitem.h"
-#include "ktlineitem.h"
-#include "ktpathitem.h"
-#include "ktlibraryobject.h"
-#include "ktinputdeviceinformation.h"
-#include "ktgraphicsscene.h"
-#include "ktscene.h"
-#include "ktrequestbuilder.h"
-#include "ktprojectrequest.h"
-#include "ktbrushmanager.h"
+#include "tuprectitem.h"
+#include "tupellipseitem.h"
+#include "tuplineitem.h"
+#include "tuppathitem.h"
+#include "tuplibraryobject.h"
+#include "tupinputdeviceinformation.h"
+#include "tupgraphicsscene.h"
+#include "tupscene.h"
+#include "tupframe.h"
+#include "tuprequestbuilder.h"
+#include "tupprojectrequest.h"
+#include "tupbrushmanager.h"
 
 #include <cmath>
 #include <QKeySequence>
@@ -57,11 +58,11 @@
 
 struct GeometricTool::Private
 {
-    KTRectItem *rect;
-    KTEllipseItem *ellipse;
-    KTLineItem *line;
-    KTPathItem *path;
-    KTGraphicsScene *scene;
+    TupRectItem *rect;
+    TupEllipseItem *ellipse;
+    TupLineItem *line;
+    TupPathItem *path;
+    TupGraphicsScene *scene;
     InfoPanel *configurator;
     bool added;
     QPointF currentPoint;
@@ -90,7 +91,7 @@ QStringList GeometricTool::keys() const
     return QStringList() << tr("Rectangle") << tr("Ellipse") << tr("Line");
 }
 
-void GeometricTool::init(KTGraphicsScene *scene)
+void GeometricTool::init(TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -115,29 +116,29 @@ void GeometricTool::init(KTGraphicsScene *scene)
 
 void GeometricTool::setupActions()
 {
-    TAction *action1 = new TAction(QIcon(THEME_DIR + "icons/square.png"), tr("Rectangle"), this);
+    TAction *action1 = new TAction(QIcon(kAppProp->themeDir() + "icons/square.png"), tr("Rectangle"), this);
     action1->setShortcut(QKeySequence(tr("R")));
-    k->squareCursor = QCursor(THEME_DIR + "cursors/square.png", 0, 0);
+    k->squareCursor = QCursor(kAppProp->themeDir() + "cursors/square.png", 0, 0);
     action1->setCursor(k->squareCursor);
     
     k->actions.insert(tr("Rectangle"), action1);
     
-    TAction *action2 = new TAction(QIcon(THEME_DIR + "icons/ellipse.png"), tr("Ellipse"), this);
+    TAction *action2 = new TAction(QIcon(kAppProp->themeDir() + "icons/ellipse.png"), tr("Ellipse"), this);
     action2->setShortcut(QKeySequence(tr("C")));
-    k->circleCursor = QCursor(THEME_DIR + "cursors/circle.png");
+    k->circleCursor = QCursor(kAppProp->themeDir() + "cursors/circle.png");
     action2->setCursor(k->circleCursor);
     
     k->actions.insert(tr("Ellipse"), action2);
     
-    TAction *action3 = new TAction(QIcon(THEME_DIR + "icons/line.png"), tr("Line"), this);
+    TAction *action3 = new TAction(QIcon(kAppProp->themeDir() + "icons/line.png"), tr("Line"), this);
     action3->setShortcut(QKeySequence(tr("L")));
-    k->lineCursor = QCursor(THEME_DIR + "cursors/line.png", 0, 0);
+    k->lineCursor = QCursor(kAppProp->themeDir() + "cursors/line.png", 0, 0);
     action3->setCursor(k->lineCursor);
 
     k->actions.insert(tr("Line"), action3);
 }
 
-void GeometricTool::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void GeometricTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -150,7 +151,7 @@ void GeometricTool::press(const KTInputDeviceInformation *input, KTBrushManager 
         
         if (name() == tr("Rectangle")) {
             k->added = false;
-            k->rect = new KTRectItem(QRectF(input->pos(), QSize(0,0)));
+            k->rect = new TupRectItem(QRectF(input->pos(), QSize(0,0)));
             k->rect->setPen(brushManager->pen());
             k->rect->setBrush(brushManager->brush());
 
@@ -159,7 +160,7 @@ void GeometricTool::press(const KTInputDeviceInformation *input, KTBrushManager 
         } else if (name() == tr("Ellipse")) {
 
                    k->added = false;
-                   k->ellipse = new KTEllipseItem(QRectF(input->pos(), QSize(0,0)));
+                   k->ellipse = new TupEllipseItem(QRectF(input->pos(), QSize(0,0)));
                    k->ellipse->setPen(brushManager->pen());
                    k->ellipse->setBrush(brushManager->brush());
 
@@ -169,12 +170,11 @@ void GeometricTool::press(const KTInputDeviceInformation *input, KTBrushManager 
                    k->currentPoint = input->pos();
 
                    if (k->path) {
-                       // QPointF point = k->path->mapFromParent(k->currentPoint);
                        QPainterPath path = k->path->path();
                        path.cubicTo(k->lastPoint, k->lastPoint, k->lastPoint);
                        k->path->setPath(path);
                    } else {
-                       k->path = new KTPathItem;
+                       k->path = new TupPathItem;
                        k->path->setPen(brushManager->pen());
                        k->path->setBrush(brushManager->brush());
 
@@ -183,16 +183,21 @@ void GeometricTool::press(const KTInputDeviceInformation *input, KTBrushManager 
                        k->path->setPath(path);
                        scene->includeObject(k->path);
 
-                       k->line = new KTLineItem();
+                       k->line = new TupLineItem();
                        k->line->setPen(brushManager->pen());
                        k->line->setLine(QLineF(input->pos().x(), input->pos().y(), input->pos().x(), input->pos().y()));
+
+                       TupFrame *frame = scene->currentFrame();
+                       int zLevel = frame->getTopZLevel();
+                       k->line->setZValue(zLevel);
+
                        scene->addItem(k->line);
                    }
         }
     } 
 }
 
-void GeometricTool::move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void GeometricTool::move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -290,7 +295,7 @@ void GeometricTool::move(const KTInputDeviceInformation *input, KTBrushManager *
     } 
 }
 
-void GeometricTool::release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void GeometricTool::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -303,24 +308,24 @@ void GeometricTool::release(const KTInputDeviceInformation *input, KTBrushManage
     QPointF position;
 
     if (name() == tr("Rectangle")) {
-        doc.appendChild(dynamic_cast<KTAbstractSerializable *>(k->rect)->toXml(doc));
+        doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->rect)->toXml(doc));
         position = k->rect->pos();
     } else if (name() == tr("Ellipse")) {
-               doc.appendChild(dynamic_cast<KTAbstractSerializable *>(k->ellipse)->toXml(doc));
+               doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->ellipse)->toXml(doc));
                QRectF rect = k->ellipse->rect();
                position = rect.topLeft();
     } else if (name() == tr("Line")) {
                return;
 
-               // doc.appendChild(dynamic_cast<KTAbstractSerializable *>(k->line)->toXml(doc));
+               // doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->line)->toXml(doc));
                // position = k->line->pos();
-               doc.appendChild(dynamic_cast<KTAbstractSerializable *>(k->path)->toXml(doc));
+               doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->path)->toXml(doc));
                position = k->path->boundingRect().topLeft(); 
     }
     
-    KTProjectRequest event = KTRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), 
+    TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), scene->currentLayerIndex(), 
                              scene->currentFrameIndex(), scene->currentFrame()->graphics().count(), position,
-                             scene->spaceMode(), KTLibraryObject::Item, KTProjectRequest::Add, doc.toString()); // Adds to end
+                             scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, doc.toString()); // Adds to end
     
     emit requested(&event);
 }
@@ -348,7 +353,7 @@ QWidget *GeometricTool::configurator()
     return k->configurator;
 }
 
-void GeometricTool::aboutToChangeScene(KTGraphicsScene *scene)
+void GeometricTool::aboutToChangeScene(TupGraphicsScene *scene)
 {
     #ifdef K_DEBUG
            T_FUNCINFO;
@@ -374,10 +379,13 @@ void GeometricTool::saveConfig()
 
 void GeometricTool::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Shift) {
-        k->proportion = true;
+    if (event->key() == Qt::Key_F11 || event->key() == Qt::Key_Escape) {
+        emit closeHugeCanvas();
+        return;
+    } else if (event->key() == Qt::Key_Shift) {
+               k->proportion = true;
     } else {
-        QPair<int, int> flags = KTToolPlugin::setKeyAction(event->key(), event->modifiers());
+        QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
         if (flags.first != -1 && flags.second != -1)
             emit callForPlugin(flags.first, flags.second);
     }
@@ -387,9 +395,6 @@ void GeometricTool::keyReleaseEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Shift)
         k->proportion = false;
-
-    if (event->key() == Qt::Key_F11 || event->key() == Qt::Key_Escape)
-        emit closeHugeCanvas();
 }
 
 QCursor GeometricTool::cursor() const
@@ -402,7 +407,7 @@ QCursor GeometricTool::cursor() const
                return k->lineCursor;
     }
 
-    return 0;
+    return QCursor(Qt::ArrowCursor);
 }
 
 void GeometricTool::endItem()
@@ -415,12 +420,12 @@ void GeometricTool::endItem()
         QDomDocument doc;
         QPointF position;
 
-        doc.appendChild(dynamic_cast<KTAbstractSerializable *>(k->path)->toXml(doc));
+        doc.appendChild(dynamic_cast<TupAbstractSerializable *>(k->path)->toXml(doc));
         position = QPointF(0, 0);
 
-        KTProjectRequest event = KTRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(),
+        TupProjectRequest event = TupRequestBuilder::createItemRequest(k->scene->currentSceneIndex(), k->scene->currentLayerIndex(),
                                  k->scene->currentFrameIndex(), k->scene->currentFrame()->graphics().count(), position,
-                                 k->scene->spaceMode(), KTLibraryObject::Item, KTProjectRequest::Add, doc.toString());
+                                 k->scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, doc.toString());
 
         emit requested(&event);
 
@@ -454,7 +459,7 @@ void GeometricTool::updatePos(QPointF pos)
     }
 }
 
-void GeometricTool::doubleClick(const KTInputDeviceInformation *input, KTGraphicsScene *scene)
+void GeometricTool::doubleClick(const TupInputDeviceInformation *input, TupGraphicsScene *scene)
 {
     Q_UNUSED(input);
     Q_UNUSED(scene);
@@ -462,26 +467,26 @@ void GeometricTool::doubleClick(const KTInputDeviceInformation *input, KTGraphic
     endItem();
 }
 
-void GeometricTool::sceneResponse(const KTSceneResponse *event)
+void GeometricTool::sceneResponse(const TupSceneResponse *event)
 {
     Q_UNUSED(event);
     if (name() == tr("Line")) 
         init(k->scene);
 }
 
-void GeometricTool::layerResponse(const KTLayerResponse *event)
+void GeometricTool::layerResponse(const TupLayerResponse *event)
 {
     Q_UNUSED(event);
     if (name() == tr("Line")) 
         init(k->scene);
 }
 
-void GeometricTool::frameResponse(const KTFrameResponse *event)
+void GeometricTool::frameResponse(const TupFrameResponse *event)
 {
     Q_UNUSED(event);
     if (name() == tr("Line")) 
         init(k->scene);
 }
 
-Q_EXPORT_PLUGIN2(kt_geometric, GeometricTool)
+Q_EXPORT_PLUGIN2(tup_geometric, GeometricTool)
 

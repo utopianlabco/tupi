@@ -3,14 +3,24 @@
 # Subdir relative project main directory: ./src/components/scenes
 # Target is a library:  
 
-HEADERS += ktsceneslist.h \
-           ktscenesdelegate.h \
-           ktsceneswidget.h 
-SOURCES += ktsceneslist.cpp \
-           ktscenesdelegate.cpp \
-           ktsceneswidget.cpp 
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tupsceneslist.h \
+           tupscenesdelegate.h \
+           tupsceneswidget.h 
+
+SOURCES += tupsceneslist.cpp \
+           tupscenesdelegate.cpp \
+           tupsceneswidget.cpp 
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = scenes
 

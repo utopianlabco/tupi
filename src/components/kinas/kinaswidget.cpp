@@ -36,7 +36,7 @@
 #include "kinaswidget.h"
 #include "tdebug.h"
 
-KinasWidget::KinasWidget(QWidget *parent) : KTModuleWidgetBase(parent)
+KinasWidget::KinasWidget(QWidget *parent) : TupModuleWidgetBase(parent)
 {
     TINIT;
 
@@ -46,7 +46,7 @@ KinasWidget::KinasWidget(QWidget *parent) : KTModuleWidgetBase(parent)
     m_splitter = new QSplitter(this);
     addChild(m_splitter);
 
-    m_functionViewer = new KTSFunctionView(m_splitter);
+    m_functionViewer = new TupSFunctionView(m_splitter);
     m_splitter->addWidget(m_functionViewer);
 
     m_editors = new QTabWidget(this);
@@ -54,7 +54,7 @@ KinasWidget::KinasWidget(QWidget *parent) : KTModuleWidgetBase(parent)
 
     m_splitter->setSizes(QList<int>()<<160 << 400);
 
-    addEditor("Example.kts");
+    addEditor("Example.tups");
 }
 
 
@@ -65,6 +65,6 @@ KinasWidget::~KinasWidget()
 
 void KinasWidget::addEditor(const QString &title)
 {
-    KTSEditor *m_editor = new KTSEditor;
+    TupSEditor *m_editor = new TupSEditor;
     m_editors->addTab(m_editor, title);
 }

@@ -36,8 +36,8 @@
 #include "tweenerpanel.h"
 #include "positionsettings.h"
 #include "tdebug.h"
-#include "kradiobuttongroup.h"
-#include "kimagebutton.h"
+#include "tradiobuttongroup.h"
+#include "timagebutton.h"
 #include "tseparator.h"
 #include "tweenertable.h"
 #include "tosd.h"
@@ -61,7 +61,7 @@ struct TweenerPanel::Private
     EditMode editMode;
 
     QLineEdit *input;
-    KRadioButtonGroup *options;
+    TRadioButtonGroup *options;
 
     TweenerTable *tweenerTable;
     int currentTweenIndex;
@@ -74,8 +74,8 @@ struct TweenerPanel::Private
 
     bool selectionDone;
 
-    KImageButton *applyButton;
-    KImageButton *closeButton;
+    TImageButton *applyButton;
+    TImageButton *closeButton;
 };
 
 TweenerPanel::TweenerPanel(QWidget *parent) : QWidget(parent), k(new Private)
@@ -124,7 +124,7 @@ void TweenerPanel::setOptionsPanel()
     innerLayout->setMargin(0);
     innerLayout->setSpacing(0);
 
-    k->options = new KRadioButtonGroup(tr("Options"), Qt::Vertical);
+    k->options = new TRadioButtonGroup(tr("Options"), Qt::Vertical);
     k->options->addItem(tr("Select object"), 0);
     k->options->addItem(tr("Set Tweeners"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
@@ -184,11 +184,11 @@ void TweenerPanel::setButtonsPanel()
     QBoxLayout *innerLayout = new QBoxLayout(QBoxLayout::TopToBottom, k->buttonsPanel);
     innerLayout->setAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
-    k->applyButton = new KImageButton(QPixmap(THEME_DIR + "icons/save.png"), 22);
+    k->applyButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/save.png"), 22);
     k->applyButton->setDisabled(true);
     connect(k->applyButton, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->closeButton = new KImageButton(QPixmap(THEME_DIR + "icons/close.png"), 22);
+    k->closeButton = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"), 22);
     connect(k->closeButton, SIGNAL(clicked()), this, SLOT(closePanel()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -281,13 +281,13 @@ void TweenerPanel::setParameters(const QString &name, int framesTotal, int start
     activateMode(TweenerPanel::Selection);
 
     k->applyButton->setToolTip(tr("Save Tween"));
-    k->closeButton->setIcon(QPixmap(THEME_DIR + "icons/close.png"));
+    k->closeButton->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"));
     k->closeButton->setToolTip(tr("Cancel Tween"));
 }
 
 // Editing Tween
 
-void TweenerPanel::setParameters(KTItemTweener *currentTween)
+void TweenerPanel::setParameters(TupItemTweener *currentTween)
 {
     tFatal() << "TweenerPanel::setParameters() - Loading Tween: " << currentTween->name();
 
@@ -299,7 +299,7 @@ void TweenerPanel::setParameters(KTItemTweener *currentTween)
     activateMode(TweenerPanel::TweenList);
 
     for (int i=0; i < 6; i++) {
-         if (currentTween->contains(KTItemTweener::Type(i))) {
+         if (currentTween->contains(TupItemTweener::Type(i))) {
              tFatal() << "TweenerPanel::setParameters() - Tween contains: " << i;
              k->tweenerTable->checkTween(i, true);
              switch(i) {
@@ -427,7 +427,7 @@ void TweenerPanel::setEditMode()
     k->mode = TweenerPanel::Edit;
 
     k->applyButton->setToolTip(tr("Update Tween"));
-    k->closeButton->setIcon(QPixmap(THEME_DIR + "icons/close_properties.png"));
+    k->closeButton->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close_properties.png"));
     k->closeButton->setToolTip(tr("Close Tween properties"));
 }
 
@@ -468,7 +468,7 @@ QString TweenerPanel::tweenToXml(int currentFrame, QPointF point)
 
    tweening.appendChild(settings);
 
-   foreach (KTTweenerStep *step, k->positionPanel->steps())
+   foreach (TupTweenerStep *step, k->positionPanel->steps())
             tweening.appendChild(step->toXml(doc));
 
    doc.appendChild(tweening);

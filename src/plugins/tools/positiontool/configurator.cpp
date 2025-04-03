@@ -36,12 +36,12 @@
 #include "configurator.h"
 #include "tweenmanager.h"
 #include "buttonspanel.h"
-#include "ktitemtweener.h"
+#include "tupitemtweener.h"
 #include "stepsviewer.h"
-#include "kttweenerstep.h"
+#include "tuptweenerstep.h"
 #include "tosd.h"
-#include "kradiobuttongroup.h"
-#include "kimagebutton.h"
+#include "tradiobuttongroup.h"
+#include "timagebutton.h"
 #include "tdebug.h"
 
 #include <QLabel>
@@ -64,8 +64,8 @@ struct Configurator::Private
 
     bool selectionDone;
 
-    KImageButton *removeButton;
-    KImageButton *editButton;
+    TImageButton *removeButton;
+    TImageButton *editButton;
 
     Settings::Mode mode; 
     GuiState state;
@@ -73,7 +73,7 @@ struct Configurator::Private
     int framesTotal;
     int currentFrame;
 
-    KTItemTweener *currentTween;
+    TupItemTweener *currentTween;
 };
 
 Configurator::Configurator(QWidget *parent) : QFrame(parent), k(new Private)
@@ -114,6 +114,10 @@ Configurator::~Configurator()
 
 void Configurator::loadTweenList(QList<QString> tweenList)
 {
+    #ifdef K_DEBUG
+           T_FUNCINFO;
+    #endif
+
     k->tweenManager->loadTweenList(tweenList);
     if (tweenList.count() > 0)
         activeButtonsPanel(true); 
@@ -267,6 +271,10 @@ void Configurator::editTween()
 
 void Configurator::closeTweenProperties()
 {
+    #ifdef K_DEBUG
+           T_FUNCINFO;
+    #endif
+
     if (k->mode == Settings::Add)
         k->tweenManager->removeItemFromList();
 
@@ -310,6 +318,10 @@ void Configurator::notifySelection(bool flag)
 
 void Configurator::closeSettingsPanel()
 {
+    #ifdef K_DEBUG
+           T_FUNCINFO;
+    #endif
+
     if (k->state == Properties) {
         activeTweenManagerPanel(true);
         activePropertiesPanel(false);
@@ -331,6 +343,10 @@ void Configurator::applyItem()
 
 void Configurator::resetUI()
 {
+    #ifdef K_DEBUG
+           T_FUNCINFO;
+    #endif
+
     k->tweenManager->resetUI();
     closeSettingsPanel();
     k->settingsPanel->notifySelection(false);
@@ -341,7 +357,7 @@ void Configurator::updateTweenData(const QString &name)
     emit getTweenData(name);
 }
 
-void Configurator::setCurrentTween(KTItemTweener *currentTween)
+void Configurator::setCurrentTween(TupItemTweener *currentTween)
 {
     k->currentTween = currentTween;
 }

@@ -10,29 +10,38 @@ headers.target = .
 headers.commands = cp *.h $(INSTALL_ROOT)/include/tupibase
 headers.path = /include/tupibase
 
-HEADERS += ktexportinterface.h \
-           ktexportpluginobject.h \
-           ktfilterinterface.h \
-           ktmodulewidgetbase.h \
-           ktpluginmanager.h \
-           kttoolinterface.h \
-           kttoolplugin.h  \
-           ktpaintareabase.h \
-           ktpaintarearotator.h \
-           ktgraphicsscene.h \
-           ktguideline.h \
-           ktanimationrenderer.h
-SOURCES += ktexportpluginobject.cpp \
-           ktmodulewidgetbase.cpp \
-           ktpluginmanager.cpp \
-           kttoolplugin.cpp  \
-           ktpaintareabase.cpp \
-           ktpaintarearotator.cpp \
-           ktgraphicsscene.cpp \
-           ktguideline.cpp \
-           ktanimationrenderer.cpp
+macx {
+    CONFIG += plugin warn_on
+}
 
-CONFIG += dll warn_on
+HEADERS += tupexportinterface.h \
+           tupexportpluginobject.h \
+           tupfilterinterface.h \
+           tupmodulewidgetbase.h \
+           tuppluginmanager.h \
+           tuptoolinterface.h \
+           tuptoolplugin.h  \
+           tuppaintareabase.h \
+           tuppaintarearotator.h \
+           tupgraphicsscene.h \
+           tupguideline.h \
+           tupanimationrenderer.h \
+           tupwebhunter.h
+
+SOURCES += tupexportpluginobject.cpp \
+           tupmodulewidgetbase.cpp \
+           tuppluginmanager.cpp \
+           tuptoolplugin.cpp  \
+           tuppaintareabase.cpp \
+           tuppaintarearotator.cpp \
+           tupgraphicsscene.cpp \
+           tupguideline.cpp \
+           tupanimationrenderer.cpp \
+           tupwebhunter.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
 TEMPLATE = lib
 TARGET = tupibase
 
@@ -40,9 +49,9 @@ FRAMEWORK_DIR = "../framework"
 include($$FRAMEWORK_DIR/framework.pri)
 QUAZIP_DIR = ../../3rdparty/quazip/
 include($$QUAZIP_DIR/quazip.pri)
-LIBTUPI_DIR = ../../src/libtupi
+LIBTUPI_DIR = ../libtupi
 include($$LIBTUPI_DIR/libtupi.pri)
-STORE_DIR = ../../src/store
+STORE_DIR = ../store
 include($$STORE_DIR/store.pri)
 
 include(../../tupiglobal.pri)

@@ -35,10 +35,10 @@
 
 #include "settings.h"
 #include "tdebug.h"
-#include "kradiobuttongroup.h"
-#include "ktitemtweener.h"
-#include "kttweenerstep.h"
-#include "kimagebutton.h"
+#include "tradiobuttongroup.h"
+#include "tupitemtweener.h"
+#include "tuptweenerstep.h"
+#include "timagebutton.h"
 #include "tseparator.h"
 #include "tosd.h"
 
@@ -57,14 +57,14 @@ struct Settings::Private
     QBoxLayout *layout;
     Mode mode;
     QLineEdit *input;
-    KRadioButtonGroup *options;
+    TRadioButtonGroup *options;
     QComboBox *comboInit;
     QComboBox *comboEnd;
 
     QLabel *totalLabel;
     int totalSteps;
 
-    KTItemTweener::TransformAxes scaleAxes;
+    TupItemTweener::TransformAxes scaleAxes;
     QComboBox *comboAxes;
     QComboBox *comboFactor;
     QComboBox *comboIterations;
@@ -74,13 +74,13 @@ struct Settings::Private
     bool selectionDone;
     bool propertiesDone;
 
-    KImageButton *apply;
-    KImageButton *remove;
+    TImageButton *apply;
+    TImageButton *remove;
 };
 
 Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
 {
-    k->scaleAxes = KTItemTweener::XY;
+    k->scaleAxes = TupItemTweener::XY;
     k->selectionDone = false;
     k->totalSteps = 0;
 
@@ -99,15 +99,15 @@ Settings::Settings(QWidget *parent) : QWidget(parent), k(new Private)
     nameLayout->addWidget(nameLabel);
     nameLayout->addWidget(k->input);
 
-    k->options = new KRadioButtonGroup(tr("Options"), Qt::Vertical);
+    k->options = new TRadioButtonGroup(tr("Options"), Qt::Vertical);
     k->options->addItem(tr("Select object"), 0);
     k->options->addItem(tr("Set Properties"), 1);
     connect(k->options, SIGNAL(clicked(int)), this, SLOT(emitOptionChanged(int)));
 
-    k->apply = new KImageButton(QPixmap(THEME_DIR + "icons/save.png"), 22);
+    k->apply = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/save.png"), 22);
     connect(k->apply, SIGNAL(clicked()), this, SLOT(applyTween()));
 
-    k->remove = new KImageButton(QPixmap(THEME_DIR + "icons/close.png"), 22);
+    k->remove = new TImageButton(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"), 22);
     connect(k->remove, SIGNAL(clicked()), this, SIGNAL(clickedResetTween()));
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
@@ -292,7 +292,7 @@ void Settings::setParameters(const QString &name, int framesTotal, int startFram
 
     activatePropertiesMode(Settings::Selection);
     k->apply->setToolTip(tr("Save Tween"));
-    k->remove->setIcon(QPixmap(THEME_DIR + "icons/close.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close.png"));
     k->remove->setToolTip(tr("Cancel Tween"));
 
     k->comboInit->setCurrentIndex(startFrame);
@@ -302,7 +302,7 @@ void Settings::setParameters(const QString &name, int framesTotal, int startFram
 
 // Editing new Tween
 
-void Settings::setParameters(KTItemTweener *currentTween)
+void Settings::setParameters(TupItemTweener *currentTween)
 {
     setEditMode();
     activatePropertiesMode(Settings::Properties);
@@ -361,7 +361,7 @@ void Settings::setEditMode()
 {
     k->mode = Edit;
     k->apply->setToolTip(tr("Update Tween"));
-    k->remove->setIcon(QPixmap(THEME_DIR + "icons/close_properties.png"));
+    k->remove->setIcon(QPixmap(kAppProp->themeDir() + "/"  + "icons/close_properties.png"));
     k->remove->setToolTip(tr("Close Tween properties"));
 }
 
@@ -424,13 +424,13 @@ QString Settings::tweenToXml(int currentFrame, QPointF point)
 
     QDomElement root = doc.createElement("tweening");
     root.setAttribute("name", currentTweenName());
-    root.setAttribute("type", KTItemTweener::Scale);
+    root.setAttribute("type", TupItemTweener::Scale);
     root.setAttribute("init", currentFrame);
    
     checkFramesRange();
     root.setAttribute("frames", k->totalSteps);
     root.setAttribute("origin", QString::number(point.x()) + "," + QString::number(point.y()));
-    k->scaleAxes = KTItemTweener::TransformAxes(k->comboAxes->currentIndex());
+    k->scaleAxes = TupItemTweener::TransformAxes(k->comboAxes->currentIndex());
     root.setAttribute("scaleAxes", k->scaleAxes);
     double factor = k->comboFactor->currentText().toDouble();
     root.setAttribute("scaleFactor", factor);
@@ -460,10 +460,10 @@ QString Settings::tweenToXml(int currentFrame, QPointF point)
     double scaleX = 1.0;
     double scaleY = 1.0;
 
-    if (k->scaleAxes == KTItemTweener::XY) {
+    if (k->scaleAxes == TupItemTweener::XY) {
         factorX = factor;
         factorY = factor;
-    } else if (k->scaleAxes == KTItemTweener::X) {
+    } else if (k->scaleAxes == TupItemTweener::X) {
                factorX = factor;
     } else {
         factorY = factor;
@@ -503,7 +503,7 @@ QString Settings::tweenToXml(int currentFrame, QPointF point)
              }
          }
 
-         KTTweenerStep *step = new KTTweenerStep(i);
+         TupTweenerStep *step = new TupTweenerStep(i);
          step->setScale(scaleX, scaleY);
          root.appendChild(step->toXml(doc));
     }

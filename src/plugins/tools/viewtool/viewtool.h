@@ -36,20 +36,21 @@
 #ifndef VIEWTOOL_H
 #define VIEWTOOL_H
 
-#include "kttoolplugin.h"
+#include "tuptoolplugin.h"
 #include "zoomconfigurator.h"
 
 #include <QObject>
 #include <QLabel>
 #include <QGraphicsRectItem>
+#include <QSize>
 
-class KTGraphicsScene;
+class TupGraphicsScene;
 
 /**
  * @author Jorge Cuadrado
 */
 
-class ViewTool: public KTToolPlugin
+class ViewTool: public TupToolPlugin
 {
     Q_OBJECT
 
@@ -57,22 +58,25 @@ class ViewTool: public KTToolPlugin
         ViewTool();
         ~ViewTool();
 
-        virtual void init(KTGraphicsScene *scene);
+        virtual void init(TupGraphicsScene *scene);
         virtual QStringList keys() const;
         
-        virtual void press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
+        virtual void press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
 
         virtual QMap<QString, TAction *> actions() const;
         int toolType() const;
         
         virtual QWidget *configurator();
-        void aboutToChangeScene(KTGraphicsScene *scene);
+        virtual void aboutToChangeScene(TupGraphicsScene *scene);
         virtual void aboutToChangeTool();
         virtual void saveConfig();
         virtual void keyPressEvent(QKeyEvent *event);
         virtual QCursor cursor() const;
+
+        virtual void autoZoom();
+        virtual void setProjectSize(const QSize size);
 
     signals:
         void closeHugeCanvas();
@@ -91,7 +95,7 @@ class ViewTool: public KTToolPlugin
         QGraphicsRectItem *m_rect;
         bool added;
         QPointF firstPoint; 
-        KTGraphicsScene *m_scene;
+        TupGraphicsScene *m_scene;
         ZoomConfigurator *m_configurator;
     */
 };

@@ -21,7 +21,6 @@ Use: ./configure [options]
   --includedir=[path]:  Set include path [/usr/local/include]
   --sharedir=[path]:    Set data path [/usr/local/share]
   --with-ffmpeg=[path]: Set ffmpeg installation path [/usr]
-  --with-aspell=[path]: Set apell installation path [/usr]
   --with-debug:         Enable debug
   --with-qtdir=[path]:  Set Qt directory [i.e. /usr/local/qt]
   --debian-build:       Option exclusive for Debian maintainer
@@ -62,16 +61,12 @@ _EOH_
        config.addIncludePath(ffmpegInclude)
     end
 
-    if conf.hasArgument?("with-aspell")
-       aspellLib = conf.argumentValue("with-spell") + "/lib"
-       aspellInclude = conf.argumentValue("with-aspell") + "/include"
-       config.addLib("-L" + aspellLib)
-       config.addIncludePath(aspellInclude)
-    end
-
     debug = 0
     if conf.hasArgument?("with-debug")
-        debug = 1
+       debug = 1
+       if File.readlines("3rdparty/quazip/quazip.pro").grep(/K_DEBUG/).size === 0
+          system("echo \"DEFINES += K_DEBUG\" >> 3rdparty/quazip/quazip.pro")
+       end
     end
 
     conf.createTests
@@ -97,9 +92,9 @@ _EOH_
     # config.addLib("-L#{RQonf::CONFIG["libdir"]}")
     # config.addIncludePath(RQonf::CONFIG["includepath"])
     
-    config.addDefine('VERSION=\\\\\"0.1\\\\\"')
-    config.addDefine('CODE_NAME=\\\\\"Gemo\\\\\"')
-    config.addDefine('REVISION=\\\\\"git12\\\\\"')
+    config.addDefine('VERSION=\\\\\"0.2\\\\\"')
+    config.addDefine('CODE_NAME=\\\\\"Obi\\\\\"')
+    config.addDefine('REVISION=\\\\\"1\\\\\"')
 
     Info.info << "Debug support... "
 
@@ -117,12 +112,7 @@ _EOH_
     unix.addVariable("UI_DIR", ".ui")
     unix.addVariable("OBJECTS_DIR", ".obj")
 
-    if RUBY_PLATFORM.downcase.include?("darwin")
-       config.addLib("-L/sw/lib")
-       config.addIncludePath("/sw/include")
-    end
-
-     # The file tupiglobal.pri contains all the global variables for the compilation process        
+    # The file tupiglobal.pri contains all the global variables for the compilation process        
     config.save("tupiglobal.pri")
     conf.createMakefiles
     

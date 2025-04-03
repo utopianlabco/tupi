@@ -36,20 +36,20 @@
 #include "filltool.h"
 #include "tglobal.h"
 #include "tdebug.h"
-#include "kpathhelper.h"
-#include "ktrectitem.h"
-#include "ktellipseitem.h"
-#include "ktlineitem.h"
-#include "ktpathitem.h"
-#include "ktserializer.h"
-#include "ktitemconverter.h"
-#include "ktrequestbuilder.h"
-#include "ktlibraryobject.h"
-#include "ktscene.h"
-#include "ktinputdeviceinformation.h"
-#include "ktgraphicsscene.h"
-#include "ktprojectrequest.h"
-#include "ktbrushmanager.h"
+#include "tpathhelper.h"
+#include "tuprectitem.h"
+#include "tupellipseitem.h"
+#include "tuplineitem.h"
+#include "tuppathitem.h"
+#include "tupserializer.h"
+#include "tupitemconverter.h"
+#include "tuprequestbuilder.h"
+#include "tuplibraryobject.h"
+#include "tupscene.h"
+#include "tupinputdeviceinformation.h"
+#include "tupgraphicsscene.h"
+#include "tupprojectrequest.h"
+#include "tupbrushmanager.h"
 #include "cliphelper.h"
 
 #include <QKeySequence>
@@ -61,7 +61,7 @@
 struct FillTool::Private
 {
     QMap<QString, TAction *> actions;
-    KTGraphicsScene *scene;
+    TupGraphicsScene *scene;
     QCursor insideCursor;
     QCursor contourCursor;
 };
@@ -75,10 +75,10 @@ FillTool::~FillTool()
 {
 }
 
-void FillTool::init(KTGraphicsScene *scene)
+void FillTool::init(TupGraphicsScene *scene)
 {
     foreach (QGraphicsItem *item, scene->items()) {
-             if (scene->spaceMode() == KTProject::FRAMES_EDITION) {
+             if (scene->spaceMode() == TupProject::FRAMES_EDITION) {
                  if (item->zValue() >= 10000 && item->toolTip().length()==0) {
                      item->setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
                  } else {
@@ -100,33 +100,33 @@ QStringList FillTool::keys() const
 
 void FillTool::setupActions()
 {
-    TAction *action1 = new TAction(QIcon(THEME_DIR + "icons/inside.png"), tr("Internal fill"), this);
+    TAction *action1 = new TAction(QIcon(kAppProp->themeDir() + "icons/inside.png"), tr("Internal fill"), this);
     action1->setShortcut(QKeySequence(tr("I")));
-    k->insideCursor = QCursor(THEME_DIR + "cursors/paint.png");
+    k->insideCursor = QCursor(kAppProp->themeDir() + "cursors/paint.png");
     action1->setCursor(k->insideCursor);
     k->actions.insert(tr("Internal fill"), action1);
     
     /*
-    TAction *action2 = new TAction(QIcon(THEME_DIR + "icons/fillcolor.png"), tr("Shape fill"), this);
+    TAction *action2 = new TAction(QIcon(kAppProp->themeDir() + "icons/fillcolor.png"), tr("Shape fill"), this);
     action2->setShortcut(QKeySequence(tr("Ctrl+F")));
-    action2->setCursor(QCursor(THEME_DIR + "cursors/paint.png"));
+    action2->setCursor(QCursor(kAppProp->themeDir() + "cursors/paint.png"));
     k->actions.insert(tr("Shape fill"), action2);
     */
     
-    TAction *action3 = new TAction(QIcon(THEME_DIR + "icons/contour.png"), tr("Line fill"), this);
+    TAction *action3 = new TAction(QIcon(kAppProp->themeDir() + "icons/contour.png"), tr("Line fill"), this);
     action3->setShortcut(QKeySequence(tr("B")));
-    k->contourCursor = QCursor(THEME_DIR + "cursors/contour_fill.png");
+    k->contourCursor = QCursor(kAppProp->themeDir() + "cursors/contour_fill.png");
     action3->setCursor(k->contourCursor);
     k->actions.insert(tr("Line fill"), action3);
 }
 
-void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void FillTool::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     if (input->buttons() == Qt::LeftButton) {
         QGraphicsItem *clickedItem = scene->itemAt(input->pos());
         
         if (name() == tr("Shape fill")) {
-            KTPathItem *item = KTItemConverter::convertToPath(clickedItem);
+            TupPathItem *item = TupItemConverter::convertToPath(clickedItem);
             
             if (!item) { 
                 #ifdef K_DEBUG
@@ -141,7 +141,7 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
             if (!colls.isEmpty()) {
                 bool doSubs = false;
                 foreach (QGraphicsItem *xit, colls) {
-                         KTPathItem *path = KTItemConverter::convertToPath(xit);
+                         TupPathItem *path = TupItemConverter::convertToPath(xit);
                          if (path) {
                              QPointF localPoint = xit->mapFromScene(input->pos());
                              if (path->shape().contains(localPoint) && 
@@ -157,7 +157,7 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
                     QPainterPath subs;
                     
                     foreach (QGraphicsItem *xit, colls) {
-                             KTPathItem *path = KTItemConverter::convertToPath(xit);
+                             TupPathItem *path = TupItemConverter::convertToPath(xit);
                              if (path) {
                                  QPointF localPoint = xit->mapFromScene(input->pos());
                                  if (!path->shape().contains(localPoint))
@@ -167,7 +167,7 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
                     
                     res = ClipHelper::subtract(res, subs);
                     
-                    QList<QPainterPath> subpaths = KPathHelper::toSubpaths(res);
+                    QList<QPainterPath> subpaths = TPathHelper::toSubpaths(res);
                     
                     if (subpaths.count() > 1) {
                         foreach (QPainterPath subpath, subpaths) {
@@ -180,7 +180,7 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
                 }
             }
             
-            KTPathItem *intersection = new KTPathItem();
+            TupPathItem *intersection = new TupPathItem();
             intersection->setPath(res);
             
             intersection->setZValue(clickedItem->zValue()+1);
@@ -191,10 +191,10 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
             QDomDocument doc;
             doc.appendChild(intersection->toXml(doc));
 
-            KTProjectRequest event = KTRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
+            TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
                             scene->currentLayerIndex(), scene->currentFrameIndex(), 
                             scene->currentFrame()->graphics().count(), QPointF(),
-                            scene->spaceMode(), KTLibraryObject::Item, KTProjectRequest::Add, 
+                            scene->spaceMode(), TupLibraryObject::Item, TupProjectRequest::Add, 
                             doc.toString()); // Adds to end
             emit requested(&event);
 
@@ -204,11 +204,11 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
                             qgraphicsitem_cast<QAbstractGraphicsShapeItem *>(clickedItem)) {
                 int position = -1;
 
-                if (scene->spaceMode() == KTProject::FRAMES_EDITION) {
+                if (scene->spaceMode() == TupProject::FRAMES_EDITION) {
                     position = scene->currentFrame()->indexOf(shape);
                 } else {
-                    KTBackground *bg = scene->scene()->background();
-                    KTFrame *frame = bg->frame();
+                    TupBackground *bg = scene->scene()->background();
+                    TupFrame *frame = bg->frame();
                     position = frame->indexOf(shape);
                 }
                 
@@ -222,13 +222,13 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
                     }
                     
                     QDomDocument doc;
-                    doc.appendChild(KTSerializer::properties(shape, doc));
+                    doc.appendChild(TupSerializer::properties(shape, doc));
                     
-                    KTProjectRequest event = KTRequestBuilder::createItemRequest( 
+                    TupProjectRequest event = TupRequestBuilder::createItemRequest( 
                                 scene->currentSceneIndex(), scene->currentLayerIndex(),
                                 scene->currentFrameIndex(), position, QPointF(), 
-                                scene->spaceMode(), KTLibraryObject::Item, 
-                                KTProjectRequest::Transform, doc.toString());
+                                scene->spaceMode(), TupLibraryObject::Item, 
+                                TupProjectRequest::Transform, doc.toString());
 
                     emit requested(&event);
                 } else {
@@ -241,11 +241,11 @@ void FillTool::press(const KTInputDeviceInformation *input, KTBrushManager *brus
     }
 }
 
-void FillTool::move(const KTInputDeviceInformation *, KTBrushManager *, KTGraphicsScene *)
+void FillTool::move(const TupInputDeviceInformation *, TupBrushManager *, TupGraphicsScene *)
 {
 }
 
-void FillTool::release(const KTInputDeviceInformation *, KTBrushManager *, KTGraphicsScene *)
+void FillTool::release(const TupInputDeviceInformation *, TupBrushManager *, TupGraphicsScene *)
 {
 }
 
@@ -256,7 +256,7 @@ QMap<QString, TAction *> FillTool::actions() const
 
 int FillTool::toolType() const
 {
-    return KTToolInterface::Fill;
+    return TupToolInterface::Fill;
 }
         
 QWidget *FillTool::configurator()
@@ -264,7 +264,7 @@ QWidget *FillTool::configurator()
     return 0;
 }
 
-void FillTool::aboutToChangeScene(KTGraphicsScene *)
+void FillTool::aboutToChangeScene(TupGraphicsScene *)
 {
 }
 
@@ -302,7 +302,7 @@ void FillTool::keyPressEvent(QKeyEvent *event)
         emit closeHugeCanvas();
     // } else if (event->modifiers() != Qt::ShiftModifier && event->modifiers() != Qt::ControlModifier) {
     } else {
-        QPair<int, int> flags = KTToolPlugin::setKeyAction(event->key(), event->modifiers());
+        QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
         if (flags.first != -1 && flags.second != -1)
             emit callForPlugin(flags.first, flags.second);
     }
@@ -316,7 +316,7 @@ QCursor FillTool::cursor() const
                return k->contourCursor;
     }
 
-    return 0;
+    return QCursor(Qt::ArrowCursor);
 }
 
-Q_EXPORT_PLUGIN2(kt_fill, FillTool)
+Q_EXPORT_PLUGIN2(tup_fill, FillTool)

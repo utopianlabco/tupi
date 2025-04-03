@@ -3,110 +3,120 @@
 # Subdir relative project main directory: ./src/store
 # Target is a library:  
 
-INSTALLS += headers \
-            target 
-target.path = /lib/ 
-
+INSTALLS += headers 
 headers.target = .
 headers.commands = cp *.h $(INSTALL_ROOT)/include/tupistore
 headers.path = /include/tupistore/
 
-HEADERS += ktlayer.h \
-           ktpalettedocument.h \
-           ktframe.h \
-           ktprojectrequest.h \
-           ktscene.h \
-           ktproject.h \
-           ktprojectmanager.h \
-           ktprojectcommand.h \
-           ktabstractserializable.h \
-           ktframegroup.h \
-           ktpathitem.h \
-           ktrectitem.h \
-           ktpixmapitem.h \
-           kttextitem.h \
-           ktbuttonitem.h \
-           ktitemfactory.h \
-           ktellipseitem.h \
-           ktglobal_store.h \
-           ktpaintareaevent.h \
-           ktserializer.h \
-           ktlineitem.h \
-           ktitemconverter.h \
-           ktitemgroup.h \
-           ktprojectmanagerparams.h \
-           ktabstractprojectmanagerhandler.h \
-           ktcommandexecutor.h \
-           ktgraphicobject.h \
-           ktlibrary.h \
-           ktlibraryobject.h \
-           ktlibraryfolder.h \
-           ktrequestbuilder.h \
-           ktrequestparser.h \
-           ktprojectresponse.h \
-           ktabstractprojectresponsehandler.h \
-           tupifilemanager.h \
-           ktprojectloader.h \
-           ktgraphiclibraryitem.h \
-           ktitemtweener.h \
-           kttweenerstep.h \
-           ktsoundlayer.h \
-           ktsvgitem.h \
-           ktbackground.h
-SOURCES += ktlayer.cpp \
-           ktpalettedocument.cpp \
-           ktframe.cpp \
-           ktprojectrequest.cpp \
-           ktscene.cpp \
-           ktproject.cpp \
-           ktprojectmanager.cpp \
-           ktprojectcommand.cpp \
-           ktframegroup.cpp \
-           ktpathitem.cpp \
-           ktrectitem.cpp \
-           ktpixmapitem.cpp \
-           kttextitem.cpp \
-           ktbuttonitem.cpp \
-           ktellipseitem.cpp \
-           ktpaintareaevent.cpp \
-           ktserializer.cpp \
-           ktlineitem.cpp \
-           ktitemconverter.cpp \
-           ktitemgroup.cpp \
-           ktprojectmanagerparams.cpp \
-           ktabstractprojectmanagerhandler.cpp \
-           ktcommandexecutor.cpp \
-           ktcommandexecutor_frames.cpp \
-           ktcommandexecutor_items.cpp \
-           ktcommandexecutor_layers.cpp \
-           ktgraphicobject.cpp \
-           ktlibrary.cpp \
-           ktlibraryobject.cpp \
-           ktlibraryfolder.cpp \
-           ktcommandexecutor_library.cpp \
-           ktrequestbuilder.cpp \
-           ktrequestparser.cpp \
-           ktprojectresponse.cpp \
-           ktabstractprojectresponsehandler.cpp \
-           ktitemfactory.cpp \
-           tupifilemanager.cpp \
-           ktprojectloader.cpp \
-           ktgraphiclibraryitem.cpp \
-           ktitemtweener.cpp \
-           kttweenerstep.cpp \
-           ktsoundlayer.cpp \
-           ktsvgitem.cpp \
-           ktbackground.cpp
+INSTALLS += target
+target.path = /lib
 
-CONFIG += dll warn_on
+macx {
+    CONFIG += plugin warn_on
+}
+
+HEADERS += tuplayer.h \
+           tuppalettedocument.h \
+           tupframe.h \
+           tupprojectrequest.h \
+           tupscene.h \
+           tupproject.h \
+           tupprojectmanager.h \
+           tupprojectcommand.h \
+           tupabstractserializable.h \
+           tupframegroup.h \
+           tuppathitem.h \
+           tuprectitem.h \
+           tuppixmapitem.h \
+           tuptextitem.h \
+           tupbuttonitem.h \
+           tupitemfactory.h \
+           tupellipseitem.h \
+           tupglobal_store.h \
+           tuppaintareaevent.h \
+           tupserializer.h \
+           tuplineitem.h \
+           tupitemconverter.h \
+           tupitemgroup.h \
+           tupprojectmanagerparams.h \
+           tupabstractprojectmanagerhandler.h \
+           tupcommandexecutor.h \
+           tupgraphicobject.h \
+           tuplibrary.h \
+           tuplibraryobject.h \
+           tuplibraryfolder.h \
+           tuprequestbuilder.h \
+           tuprequestparser.h \
+           tupprojectresponse.h \
+           tupabstractprojectresponsehandler.h \
+           tupifilemanager.h \
+           tupprojectloader.h \
+           tupgraphiclibraryitem.h \
+           tupitemtweener.h \
+           tuptweenerstep.h \
+           tupsoundlayer.h \
+           tupsvgitem.h \
+           tupbackground.h \
+           tupstoryboard.h
+
+SOURCES += tuplayer.cpp \
+           tuppalettedocument.cpp \
+           tupframe.cpp \
+           tupprojectrequest.cpp \
+           tupscene.cpp \
+           tupproject.cpp \
+           tupprojectmanager.cpp \
+           tupprojectcommand.cpp \
+           tupframegroup.cpp \
+           tuppathitem.cpp \
+           tuprectitem.cpp \
+           tuppixmapitem.cpp \
+           tuptextitem.cpp \
+           tupbuttonitem.cpp \
+           tupellipseitem.cpp \
+           tuppaintareaevent.cpp \
+           tupserializer.cpp \
+           tuplineitem.cpp \
+           tupitemconverter.cpp \
+           tupitemgroup.cpp \
+           tupprojectmanagerparams.cpp \
+           tupabstractprojectmanagerhandler.cpp \
+           tupcommandexecutor.cpp \
+           tupcommandexecutor_frames.cpp \
+           tupcommandexecutor_items.cpp \
+           tupcommandexecutor_layers.cpp \
+           tupgraphicobject.cpp \
+           tuplibrary.cpp \
+           tuplibraryobject.cpp \
+           tuplibraryfolder.cpp \
+           tupcommandexecutor_library.cpp \
+           tuprequestbuilder.cpp \
+           tuprequestparser.cpp \
+           tupprojectresponse.cpp \
+           tupabstractprojectresponsehandler.cpp \
+           tupitemfactory.cpp \
+           tupifilemanager.cpp \
+           tupprojectloader.cpp \
+           tupgraphiclibraryitem.cpp \
+           tupitemtweener.cpp \
+           tuptweenerstep.cpp \
+           tupsoundlayer.cpp \
+           tupsvgitem.cpp \
+           tupbackground.cpp \
+           tupstoryboard.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = tupistore
 
-STORE_DIR = ../../src/store
+STORE_DIR = .
 
 FRAMEWORK_DIR = "../framework"
 include($$FRAMEWORK_DIR/framework.pri)
-LIBTUPI_DIR = ../../src/libtupi
+LIBTUPI_DIR = ../libtupi
 include($$LIBTUPI_DIR/libtupi.pri)
 
 include(../../tupiglobal.pri)

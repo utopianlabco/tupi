@@ -3,12 +3,22 @@
 # Subdir relative project main directory: ./src/components/pen
 # Target is a library:  
 
-HEADERS += ktwitter.h \  
-           ktwitterwidget.h
-SOURCES += ktwitter.cpp \
-           ktwitterwidget.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tuptwitter.h \  
+           tuptwitterwidget.h
+
+SOURCES += tuptwitter.cpp \
+           tuptwitterwidget.cpp
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = twitter
 

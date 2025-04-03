@@ -10,22 +10,31 @@ tpal.commands = test -d $(INSTALL_ROOT)/data/palettes/ || mkdir $(INSTALL_ROOT)/
                 cp palettes/*.tpal $(INSTALL_ROOT)/data/palettes/
 tpal.path = /data/palettes/
 
-HEADERS += ktcolorpicker.h \
-           ktcolorpalette.h \
-           ktviewcolorcells.h \
-           ktluminancepicker.h \
-           ktcellscolor.h \
-           ktpaletteparser.h \
-           ktcolorvalue.h
-SOURCES += ktcolorpicker.cpp \
-           ktcolorpalette.cpp \
-           ktviewcolorcells.cpp \
-           ktluminancepicker.cpp \
-           ktcellscolor.cpp \
-           ktpaletteparser.cpp \
-           ktcolorvalue.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tupcolorpicker.h \
+           tupcolorpalette.h \
+           tupviewcolorcells.h \
+           tupluminancepicker.h \
+           tupcellscolor.h \
+           tuppaletteparser.h \
+           tupcolorvalue.h
+SOURCES += tupcolorpicker.cpp \
+           tupcolorpalette.cpp \
+           tupviewcolorcells.cpp \
+           tupluminancepicker.cpp \
+           tupcellscolor.cpp \
+           tuppaletteparser.cpp \
+           tupcolorvalue.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
 TEMPLATE = lib
 TARGET = colorpalette
 

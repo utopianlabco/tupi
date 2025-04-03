@@ -7,12 +7,21 @@ INSTALLS += help
 help.files += help 
 help.path = /data/ 
 
-HEADERS += kthelpwidget.h \
-           kthelpbrowser.h 
-SOURCES += kthelpwidget.cpp \
-           kthelpbrowser.cpp 
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tuphelpwidget.h \
+           tuphelpbrowser.h 
+SOURCES += tuphelpwidget.cpp \
+           tuphelpbrowser.cpp 
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = help
 

@@ -38,19 +38,19 @@
 #include "tdebug.h"
 #include "tglobal.h"
 #include "talgorithm.h"
-#include "knodegroup.h"
+#include "tnodegroup.h"
 
-#include "ktgraphicalgorithm.h"
-#include "ktscene.h"
-#include "ktlayer.h"
-#include "ktserializer.h"
-#include "ktinputdeviceinformation.h"
-#include "ktgraphicsscene.h"
-#include "ktprojectrequest.h"
-#include "ktprojectresponse.h"
-#include "ktrequestbuilder.h"
-#include "ktproxyitem.h"
-#include "ktlibraryobject.h"
+#include "tupgraphicalgorithm.h"
+#include "tupscene.h"
+#include "tuplayer.h"
+#include "tupserializer.h"
+#include "tupinputdeviceinformation.h"
+#include "tupgraphicsscene.h"
+#include "tupprojectrequest.h"
+#include "tupprojectresponse.h"
+#include "tuprequestbuilder.h"
+#include "tupproxyitem.h"
+#include "tuplibraryobject.h"
 
 #include <QGraphicsView>
 #include <QPointF>
@@ -62,8 +62,8 @@
 struct ContourSelection::Private
 {
     QMap<QString, TAction *> actions;
-    QList<KNodeGroup*> nodeGroups; 
-    KTGraphicsScene *scene;
+    QList<TNodeGroup*> nodeGroups; 
+    TupGraphicsScene *scene;
 };
 
 ContourSelection::ContourSelection(): k(new Private)
@@ -76,7 +76,7 @@ ContourSelection::~ContourSelection()
     delete k;
 }
 
-void ContourSelection::init(KTGraphicsScene *scene)
+void ContourSelection::init(TupGraphicsScene *scene)
 {
     k->scene = scene;
 
@@ -86,9 +86,9 @@ void ContourSelection::init(KTGraphicsScene *scene)
     foreach (QGraphicsView * view, scene->views()) {
              view->setDragMode (QGraphicsView::RubberBandDrag);
              foreach (QGraphicsItem *item, view->scene()->items()) {
-                      if (!qgraphicsitem_cast<KControlNode *>(item)) {
-                          if (scene->spaceMode() == KTProject::FRAMES_EDITION) {
-                              if (item->zValue() >= 10000 && qgraphicsitem_cast<KTPathItem *>(item)) {
+                      if (!qgraphicsitem_cast<TControlNode *>(item)) {
+                          if (scene->spaceMode() == TupProject::FRAMES_EDITION) {
+                              if (item->zValue() >= 10000 && qgraphicsitem_cast<TupPathItem *>(item)) {
                                   item->setFlags(QGraphicsItem::ItemIsSelectable);
                               } else {
                                   item->setFlag(QGraphicsItem::ItemIsSelectable, false);
@@ -107,7 +107,7 @@ QStringList ContourSelection::keys() const
     return QStringList() << tr("Line Selection") ;
 }
 
-void ContourSelection::press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ContourSelection::press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     /*
     foreach (QGraphicsView *view, scene->views())
@@ -121,14 +121,14 @@ void ContourSelection::press(const KTInputDeviceInformation *input, KTBrushManag
     // k->scene = scene;
 }
 
-void ContourSelection::move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ContourSelection::move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
     Q_UNUSED(scene);
 }
 
-void ContourSelection::release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene)
+void ContourSelection::release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene)
 {
     Q_UNUSED(input);
     Q_UNUSED(brushManager);
@@ -136,8 +136,8 @@ void ContourSelection::release(const KTInputDeviceInformation *input, KTBrushMan
     if (scene->selectedItems().count() > 0) {
 
         QList<QGraphicsItem *> currentSelection = scene->selectedItems();
-        QList<KNodeGroup *>::iterator it = k->nodeGroups.begin();
-        QList<KNodeGroup *>::iterator itEnd = k->nodeGroups.end();
+        QList<TNodeGroup *>::iterator it = k->nodeGroups.begin();
+        QList<TNodeGroup *>::iterator itEnd = k->nodeGroups.end();
 
         while (it != itEnd) {
                int parentIndex = scene->selectedItems().indexOf((*it)->parentItem());
@@ -150,32 +150,32 @@ void ContourSelection::release(const KTInputDeviceInformation *input, KTBrushMan
 
         foreach (QGraphicsItem *item, currentSelection) {
                  if (item) {
-                     // SQA: Critical! KControlNode cast doesn't work / qgraphicsitem_cast issue / app crash!  
-                     if (!qgraphicsitem_cast<KControlNode *>(item)) {
-                         if (!qgraphicsitem_cast<KTPathItem*>(item)) {
-                             KTProjectRequest event = KTRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
+                     // SQA: Critical! TControlNode cast doesn't work / qgraphicsitem_cast issue / app crash!  
+                     if (!qgraphicsitem_cast<TControlNode *>(item)) {
+                         if (!qgraphicsitem_cast<TupPathItem*>(item)) {
+                             TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
                                                       scene->currentLayerIndex(), scene->currentFrameIndex(), 
                                                       scene->currentFrame()->indexOf(item), QPointF(), scene->spaceMode(),
-                                                      KTLibraryObject::Item, KTProjectRequest::Convert, 2);
+                                                      TupLibraryObject::Item, TupProjectRequest::Convert, 2);
                              emit requested(&event);
                          } else {
-                             k->nodeGroups << new KNodeGroup(item, scene, KNodeGroup::LineSelection);
+                             k->nodeGroups << new TNodeGroup(item, scene, TNodeGroup::LineSelection);
                          }
                      }
             }
         }
 
-        foreach (KNodeGroup *group, k->nodeGroups) {
+        foreach (TNodeGroup *group, k->nodeGroups) {
                  if (!group->changedNodes().isEmpty()) {
                      int position  = scene->currentFrame()->indexOf(group->parentItem());
                      if (position != -1 && qgraphicsitem_cast<QGraphicsPathItem *>(group->parentItem())) {
                          QDomDocument doc;
-                         doc.appendChild(qgraphicsitem_cast<KTPathItem *>(group->parentItem())->toXml(doc));
+                         doc.appendChild(qgraphicsitem_cast<TupPathItem *>(group->parentItem())->toXml(doc));
                     
-                         KTProjectRequest event = KTRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
+                         TupProjectRequest event = TupRequestBuilder::createItemRequest(scene->currentSceneIndex(), 
                                                   scene->currentLayerIndex(), scene->currentFrameIndex(), position, 
-                                                  QPointF(), scene->spaceMode(), KTLibraryObject::Item, 
-                                                  KTProjectRequest::EditNodes, doc.toString());
+                                                  QPointF(), scene->spaceMode(), TupLibraryObject::Item, 
+                                                  TupProjectRequest::EditNodes, doc.toString());
                     
                          foreach (QGraphicsView * view, scene->views())
                                   view->setUpdatesEnabled(false);
@@ -193,7 +193,7 @@ void ContourSelection::release(const KTInputDeviceInformation *input, KTBrushMan
 
     } else {
 
-        foreach (KNodeGroup *group, k->nodeGroups)
+        foreach (TNodeGroup *group, k->nodeGroups)
                  group->clear();
 
         k->nodeGroups.clear();
@@ -201,22 +201,22 @@ void ContourSelection::release(const KTInputDeviceInformation *input, KTBrushMan
     }
 }
 
-void ContourSelection::itemResponse(const KTItemResponse *response)
+void ContourSelection::itemResponse(const TupItemResponse *response)
 {
     #ifdef K_DEBUG
            T_FUNCINFOX("selection");
     #endif
 
-    KTProject *project = k->scene->scene()->project();
+    TupProject *project = k->scene->scene()->project();
     QGraphicsItem *item = 0;
-    KTScene *scene = 0;
-    KTLayer *layer = 0;
-    KTFrame *frame = 0;
+    TupScene *scene = 0;
+    TupLayer *layer = 0;
+    TupFrame *frame = 0;
 
     if (project) {
         scene = project->scene(response->sceneIndex());
         if (scene) {
-            if (project->spaceContext() == KTProject::FRAMES_EDITION) {
+            if (project->spaceContext() == TupProject::FRAMES_EDITION) {
                 layer = scene->layer(response->layerIndex());
                 if (layer) {
                     frame = layer->frame(response->frameIndex());
@@ -224,9 +224,9 @@ void ContourSelection::itemResponse(const KTItemResponse *response)
                         item = frame->item(response->itemIndex());
                 }
             } else {
-                KTBackground *bg = scene->background();
+                TupBackground *bg = scene->background();
                 if (bg) {
-                    KTFrame *frame = bg->frame();
+                    TupFrame *frame = bg->frame();
                     if (frame)
                         item = frame->item(response->itemIndex());
                 }
@@ -240,22 +240,22 @@ void ContourSelection::itemResponse(const KTItemResponse *response)
     
     switch (response->action()) {
         
-            case KTProjectRequest::Convert:
+            case TupProjectRequest::Convert:
             {
                  if (item && scene) {
-                     KNodeGroup *node = new KNodeGroup(item, k->scene, KNodeGroup::LineSelection);
+                     TNodeGroup *node = new TNodeGroup(item, k->scene, TNodeGroup::LineSelection);
                      k->nodeGroups << node;
                  }
             }
             break;
 
-            case KTProjectRequest::EditNodes:
+            case TupProjectRequest::EditNodes:
             {
                  if (item) {
                      foreach (QGraphicsView * view, k->scene->views())
                               view->setUpdatesEnabled(true);
 
-                     foreach (KNodeGroup* group, k->nodeGroups) {
+                     foreach (TNodeGroup* group, k->nodeGroups) {
                               if (qgraphicsitem_cast<QGraphicsPathItem *>(group->parentItem()) == item) {
                                   group->show();
                                   group->syncNodesFromParent();
@@ -271,7 +271,7 @@ void ContourSelection::itemResponse(const KTItemResponse *response)
             }
             break;
 
-            case KTProjectRequest::Remove:
+            case TupProjectRequest::Remove:
             {
                  return;
             }
@@ -279,7 +279,7 @@ void ContourSelection::itemResponse(const KTItemResponse *response)
 
             default:
             {
-                foreach (KNodeGroup* node, k->nodeGroups) {
+                foreach (TNodeGroup* node, k->nodeGroups) {
                          if (node) {
                              node->show();
                              if (node->parentItem()) {
@@ -299,7 +299,7 @@ void ContourSelection::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Delete) {
         bool deleted = false;
     
-        foreach (KNodeGroup *nodegroup, k->nodeGroups)
+        foreach (TNodeGroup *nodegroup, k->nodeGroups)
                  deleted = deleted || (nodegroup->removeSelectedNodes() > 0);
 
         if (deleted)
@@ -310,7 +310,7 @@ void ContourSelection::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_F11 || event->key() == Qt::Key_Escape) {
         emit closeHugeCanvas();
     } else {
-        QPair<int, int> flags = KTToolPlugin::setKeyAction(event->key(), event->modifiers());
+        QPair<int, int> flags = TupToolPlugin::setKeyAction(event->key(), event->modifiers());
         if (flags.first != -1 && flags.second != -1)
             emit callForPlugin(flags.first, flags.second);
     }
@@ -318,7 +318,7 @@ void ContourSelection::keyPressEvent(QKeyEvent *event)
 
 void ContourSelection::setupActions()
 {
-    TAction *select = new TAction(QPixmap(THEME_DIR + "icons/nodes.png"), tr("Line Selection"), this);
+    TAction *select = new TAction(QPixmap(kAppProp->themeDir() + "icons/nodes.png"), tr("Line Selection"), this);
     select->setShortcut(QKeySequence(tr("N")));
 
     k->actions.insert(tr("Line Selection"), select);
@@ -331,7 +331,7 @@ QMap<QString, TAction *> ContourSelection::actions() const
 
 int ContourSelection::toolType() const
 {
-    return KTToolInterface::Selection;
+    return TupToolInterface::Selection;
 }
 
 QWidget *ContourSelection::configurator() 
@@ -339,7 +339,7 @@ QWidget *ContourSelection::configurator()
     return 0;
 }
 
-void ContourSelection::aboutToChangeScene(KTGraphicsScene *scene)
+void ContourSelection::aboutToChangeScene(TupGraphicsScene *scene)
 {
     init(scene);
 }
@@ -367,4 +367,4 @@ QCursor ContourSelection::cursor() const
     return QCursor(Qt::ArrowCursor);
 }
 
-Q_EXPORT_PLUGIN2(kt_editNodes, ContourSelection)
+Q_EXPORT_PLUGIN2(tup_editNodes, ContourSelection)

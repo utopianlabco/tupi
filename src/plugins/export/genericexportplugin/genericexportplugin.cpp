@@ -34,8 +34,8 @@
  ***************************************************************************/
 
 #include "genericexportplugin.h"
-#include "ktlayer.h"
-#include "ktanimationrenderer.h"
+#include "tuplayer.h"
+#include "tupanimationrenderer.h"
 #include "tglobal.h"
 #include "tdebug.h"
 
@@ -55,13 +55,13 @@ QString GenericExportPlugin::key() const
     return "Image Arrays";
 }
 
-KTExportInterface::Formats GenericExportPlugin::availableFormats()
+TupExportInterface::Formats GenericExportPlugin::availableFormats()
 {
-    return KTExportInterface::PNG | KTExportInterface::JPEG | KTExportInterface::XPM;
+    return TupExportInterface::PNG | TupExportInterface::JPEG | TupExportInterface::XPM;
 }
 
-bool GenericExportPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<KTScene *> &scenes, 
-                                         KTExportInterface::Format format, const QSize &size, int fps)
+bool GenericExportPlugin::exportToFormat(const QColor color, const QString &filePath, const QList<TupScene *> &scenes, 
+                                         TupExportInterface::Format format, const QSize &size, int fps)
 {
     Q_UNUSED(fps);
 
@@ -75,19 +75,19 @@ bool GenericExportPlugin::exportToFormat(const QColor color, const QString &file
     const char *extension = "PNG";
 
     switch (format) {
-            case KTExportInterface::JPEG:
+            case TupExportInterface::JPEG:
                  extension = "JPEG";
                  break;
-            case KTExportInterface::XPM:
+            case TupExportInterface::XPM:
                  extension = "XPM";
                  break;
             default:
                  break;
     }
 
-    KTAnimationRenderer renderer(color);
+    TupAnimationRenderer renderer(color);
 
-    foreach (KTScene *scene, scenes) {
+    foreach (TupScene *scene, scenes) {
              renderer.setScene(scene, size);
 
              int photogram = 0;
@@ -98,9 +98,15 @@ bool GenericExportPlugin::exportToFormat(const QColor color, const QString &file
                      painter.setRenderHint(QPainter::Antialiasing, true);
                      renderer.render(&painter);
                     }
+
                     QString index = "";
-                    if (photogram < 10)
+                    if (photogram < 10) {
+                        index = "000";
+                    } else if (photogram < 100) {
+                               index = "00";
+                    } else {
                         index = "0";
+                    }
 
                     index += QString("%1").arg(photogram);
 
@@ -113,7 +119,7 @@ bool GenericExportPlugin::exportToFormat(const QColor color, const QString &file
     return true;
 }
 
-bool GenericExportPlugin::exportFrame(int frameIndex, const QColor color, const QString &filePath, KTScene *scene, const QSize &size)
+bool GenericExportPlugin::exportFrame(int frameIndex, const QColor color, const QString &filePath, TupScene *scene, const QSize &size)
 {
     QString path = filePath;
     const char *extension;
@@ -127,7 +133,7 @@ bool GenericExportPlugin::exportFrame(int frameIndex, const QColor color, const 
         path += ".png";  
     }
 
-    KTAnimationRenderer renderer(color);
+    TupAnimationRenderer renderer(color);
     renderer.setScene(scene, size);
 
     renderer.renderPhotogram(frameIndex);

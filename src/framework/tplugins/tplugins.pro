@@ -3,7 +3,7 @@
 # Subdir relative project main directory: ./src/framework/tplugins
 # Target is a subdirs project 
 
-SUBDIRS += kgstengine 
-CONFIG += release warn_on 
+SUBDIRS += tgstengine 
+CONFIG += warn_on 
 TEMPLATE = subdirs 
 QMAKE_STRIP = echo

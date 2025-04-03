@@ -3,10 +3,21 @@
 # Subdir relative project main directory: ./src/components/pen
 # Target is a library:  
 
-HEADERS += ktpenwidget.h ktpenthicknesswidget.h
-SOURCES += ktpenwidget.cpp ktpenthicknesswidget.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tuppenwidget.h 
+           # tuppenthicknesswidget.h
+SOURCES += tuppenwidget.cpp 
+           # tuppenthicknesswidget.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
 TEMPLATE = lib
 TARGET = pen
 

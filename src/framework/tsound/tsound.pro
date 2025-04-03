@@ -8,11 +8,17 @@ target.path = /lib/
 headers.path = /include/tupisound
 headers.files += *.h
 
-HEADERS += kaudioengineiface.h \
-           kaudioplayer.h
-SOURCES += kaudioplayer.cpp
+macx {
+    CONFIG += plugin warn_on
+}
 
-CONFIG += release warn_on dll
+HEADERS += taudioengineiface.h \
+           taudioplayer.h
+SOURCES += taudioplayer.cpp
+
+*:!macx{
+    CONFIG += warn_on dll
+}
 TEMPLATE = lib 
 TARGET = tupifwsound
 

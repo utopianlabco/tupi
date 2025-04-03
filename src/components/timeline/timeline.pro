@@ -3,20 +3,30 @@
 # Subdir relative project main directory: ./src/components/timeline
 # Target is a library:  
 
-HEADERS += kttimeline.h \
-           ktlayermanager.h \
-           kttlruler.h \
-           ktframestable.h \ 
-           ktlayerindex.h \
-           ktlayercontrols.h
-SOURCES += kttimeline.cpp \
-           ktlayermanager.cpp \
-           kttlruler.cpp \
-           ktframestable.cpp \
-           ktlayerindex.cpp \
-           ktlayercontrols.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tuptimeline.h \
+           tuplayermanager.h \
+           tuptlruler.h \
+           tupframestable.h \ 
+           tuplayerindex.h \
+           tuplayercontrols.h
+
+SOURCES += tuptimeline.cpp \
+           tuplayermanager.cpp \
+           tuptlruler.cpp \
+           tupframestable.cpp \
+           tuplayerindex.cpp \
+           tuplayercontrols.cpp
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib
 TARGET = timeline
 

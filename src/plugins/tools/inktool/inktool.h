@@ -33,12 +33,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef INKTOOL_H
-#define INKTOOL_H
+#ifndef SCHEMETOOL_H
+#define SCHEMETOOL_H
 
-#include "kttoolplugin.h"
+#include "tuptoolplugin.h"
 #include "configurator.h"
-#include "ktpathitem.h"
+#include "tuppathitem.h"
 
 #include <QObject>
 #include <QSpinBox>
@@ -50,7 +50,7 @@ class QKeySequence;
  * @author David Cuadrado
 */
 
-class InkTool : public KTToolPlugin
+class InkTool : public TupToolPlugin
 {
     Q_OBJECT
     
@@ -58,17 +58,18 @@ class InkTool : public KTToolPlugin
         InkTool();
         virtual ~InkTool();
         
-        virtual void init(KTGraphicsScene *scene);
+        virtual void init(TupGraphicsScene *scene);
         virtual QStringList keys() const;
-        virtual void press(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void move(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
-        virtual void release(const KTInputDeviceInformation *input, KTBrushManager *brushManager, KTGraphicsScene *scene);
+        virtual void press(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void move(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
+        virtual void release(const TupInputDeviceInformation *input, TupBrushManager *brushManager, TupGraphicsScene *scene);
         virtual QMap<QString, TAction *>actions() const;
         int toolType() const;
         virtual QWidget *configurator();
         virtual void aboutToChangeTool();
         virtual void saveConfig();
         virtual void keyPressEvent(QKeyEvent *event);
+        virtual QCursor cursor() const;
 
     signals:
         void closeHugeCanvas();
@@ -77,24 +78,40 @@ class InkTool : public KTToolPlugin
     private:
         void setupActions();
         void smoothPath(QPainterPath &path, double smoothness, int from = 0, int to = -1);
-        
+
+    private slots:
+        void updateSpacingVar(int value);
+        void updateSizeToleranceVar(int value);
+
+    private:
+        struct Private;
+        Private *const k;
+
+    /*        
     private:
         QPointF m_firstPoint;
         QPointF m_oldPos;
         QPointF previewPoint;
         QPointF oldPosRight;
         QPointF oldPosLeft;
+        QPointF connector;
         QPainterPath m_path;
         QPainterPath pathRight; 
         QPainterPath pathLeft;
-        Configurator * m_configurator;
+        Configurator *m_configurator;
         QMap<QString, TAction *> m_actions;
-        KTPathItem *m_item;
-        KTPathItem *itemRight;
-        KTPathItem *itemLeft;
+        TupPathItem *m_item;
+        TupPathItem *itemRight;
+        TupPathItem *itemLeft;
         int dotsCounter;
         qreal penWidth;
         qreal oldSlope;
+        int spacing;
+        qreal tolerance;
+        qreal widthVar; 
+        int arrowSize;
+        int firstArrow;
+    */
 };
 
 #endif

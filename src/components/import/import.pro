@@ -3,10 +3,20 @@
 # Subdir relative project main directory: ./src/components/import
 # Target is a library:  
 
-HEADERS += ktpaletteimporter.h
-SOURCES += ktpaletteimporter.cpp
+INSTALLS += target
+target.path = /lib/
 
-CONFIG += static warn_on
+macx {
+    CONFIG += staticlib warn_on
+}
+
+HEADERS += tuppaletteimporter.h
+SOURCES += tuppaletteimporter.cpp
+
+*:!macx{
+    CONFIG += dll warn_on
+}
+
 TEMPLATE = lib 
 TARGET = import
 
