@@ -37,11 +37,15 @@
 #include "tupmainwindow.h"
 #include "tuptwitter.h"
 #include "tapplicationproperties.h"
-#include "tdebug.h"
 #include "tcollapsiblewidget.h"
 
-#ifdef Q_OS_UNIX
+#ifdef K_DEBUG
+#ifdef Q_OS_WIN32
+#include <QDebug>
+#else
+#include "tdebug.h"
 #include "tupcrashhandler.h"
+#endif
 #endif
 
 #ifdef ENABLE_TUPISTYLE
@@ -74,13 +78,12 @@ int main(int argc, char ** argv)
     TupApplication application(argc, argv);
     QString slash = QDir::separator();
 
-#ifdef K_DEBUG
-       TDebug::setOutputChannel();
-#endif
-
 #ifdef Q_OS_UNIX
+#ifdef K_DEBUG
+    TDebug::setOutputChannel();
     // Initializing the crash handler, very useful to catch bugs
     TupCrashHandler::init();
+#endif
 #endif
 
     // Setting the current version for Tupi
@@ -103,9 +106,36 @@ int main(int argc, char ** argv)
         #else
             TCONFIG->setValue("Home", QString::fromLocal8Bit(::getenv("TUPI_HOME")));
         #endif
-        TCONFIG->setValue("Cache", QDir::tempPath());
+        
+        #ifdef Q_OS_WIN32
+            if (QSysInfo::windowsVersion() == QSysInfo::WV_XP) {
+                QDir dir("C:\temp");
+                if (!dir.exists()) {
+                    if (!dir.mkdir("C:\temp")) {
+                        #ifdef K_DEBUG
+                            qDebug() << "main.cpp - Fatal error: WinXP issue!";
+                        #endif
+                        return 0;
+                    }
+                }
+                TCONFIG->setValue("Cache", QDir::tempPath());
+            } else {
+                TCONFIG->setValue("Cache", QDir::tempPath());
+            }
+        #else
+                TCONFIG->setValue("Cache", QDir::tempPath());    
+        #endif
     }
 
+#ifdef K_DEBUG
+    QString debug = "main.cpp - CACHE path: " + TCONFIG->value("Cache").toString();
+    #ifdef Q_OS_WIN32
+        qWarning() << debug;
+    #else
+        tWarning() << debug;
+    #endif
+#endif
+    
 #if defined(Q_OS_MAC)
     kAppProp->setHomeDir(TCONFIG->value("Home").toString());
     kAppProp->setBinDir(appDirPath.absolutePath());
@@ -119,48 +149,73 @@ int main(int argc, char ** argv)
 #endif
 
     QString locale = QString(QLocale::system().name()).left(2);
-
     if (locale.length() < 2)
         locale = "en";
 
-    QDir dir(kAppProp->shareDir() + "data" + slash + locale + slash);
-    if (! dir.exists())
-        kAppProp->setDataDir(kAppProp->shareDir() + "data" + slash + "en" + slash);
+#ifdef Q_OS_WIN32
+    QString xmlDir = kAppProp->shareDir() + "xml" + slash;
+#else
+    QString xmlDir = kAppProp->shareDir() + "data" + slash + "xml" + slash;
+#endif
+    QDir dir(xmlDir + locale + slash);
+    if (!dir.exists())
+        kAppProp->setDataDir(xmlDir + "en" + slash);
     else
-        kAppProp->setDataDir(kAppProp->shareDir() + "data" + slash + locale + slash);
-
+        kAppProp->setDataDir(xmlDir + locale + slash);
+        
     kAppProp->setThemeDir(kAppProp->shareDir() + "themes" + slash + "default" + slash);
 
     // Setting the repository directory (where the projects are saved)
     application.createCache(TCONFIG->value("Cache").toString());
 
-    // SQA: Temporarily disabled until starting the port to Qt5
     // Downloading maefloresta Twitter status
-    // Tupwitter *twitter = new Tupwitter();
-    // twitter->start();
+    TupTwitter *twitter = new TupTwitter();
+    twitter->start();
 
     QStyle *style = QStyleFactory::create("fusion");
     QApplication::setStyle(style);
 
-    // Loading localization files... now you got Tupi in your native language
-
-    QTranslator *translator = new QTranslator;
-    translator->load(kAppProp->shareDir() + "data" + slash + "translations" + slash + "tupi_" + locale + ".qm");
-    application.installTranslator(translator);
+    if ((locale.compare("en") != 0) && ((locale.compare("es") == 0) || (locale.compare("pt") == 0))) {
+        #ifdef Q_OS_WIN32
+            QString langFile = kAppProp->shareDir() + "translations" + slash + "tupi_" + locale + ".qm";
+        #else
+            QString langFile = kAppProp->shareDir() + "data" + slash + "translations" + slash + "tupi_" + locale + ".qm";
+        #endif
+        if (QFile::exists(langFile)) {
+            // Loading localization files...
+            QTranslator *translator = new QTranslator;
+            translator->load(langFile);
+            application.installTranslator(translator);
+        } else {
+            #ifdef K_DEBUG
+                QString msg = "main.cpp - Error: Can't open file -> " + langFile;
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
+            #endif    
+        }
+    }
 
     TupMainWindow mainWindow(argc);
     mainWindow.showMaximized();
 
     // Looking for plugins for Tupi
     #ifdef K_DEBUG
-           tWarning() << "main.cpp - Loading plugins from: " << kAppProp->pluginDir();
+        QString msg = "main.cpp - Loading plugins from: " + kAppProp->pluginDir();
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
     #endif
     QApplication::addLibraryPath(kAppProp->pluginDir());
 
     // Loading visual components required for the Crash Handler
-    #ifdef Q_OS_UNIX
-           CHANDLER->setConfig(DATA_DIR + "crashhandler.xml");
-           CHANDLER->setImagePath(THEME_DIR + "icons/");
+    #if defined(Q_OS_UNIX) && defined(K_DEBUG)
+        CHANDLER->setConfig(DATA_DIR + "crashhandler.xml");
+        CHANDLER->setImagePath(THEME_DIR + "icons/");
     #endif
 
     // If there is a second argument, it means to open a project from the command line

@@ -36,13 +36,14 @@
 #ifndef TUPACKPARSER_H
 #define TUPACKPARSER_H
 
+#include "tglobal.h"
 #include "tupxmlparserbase.h"
 
 /**
  * @author David Cuadrado 
 */
 
-class TupAckParser : public TupXmlParserBase
+class TUPI_EXPORT TupAckParser : public TupXmlParserBase
 {
     public:
         TupAckParser();

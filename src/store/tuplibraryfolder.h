@@ -36,14 +36,18 @@
 #ifndef TUPLIBRARYFOLDER_H
 #define TUPLIBRARYFOLDER_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
 #include "tuplibraryobject.h"
-#include "tupglobal_store.h"
 
 #include <QObject>
 #include <QHash>
 #include <QMap>
 #include <QByteArray>
+#include <QTextStream>
+#include <QFileInfo>
+#include <QFile>
+#include <QDir>
 
 class TupProject;
 class TupLibraryFolder;
@@ -56,7 +60,7 @@ typedef QMap<QString, TupLibraryObject *> LibraryObjects;
  * @author David Cuadrado
 **/
 
-class STORE_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
     
@@ -67,7 +71,7 @@ class STORE_EXPORT TupLibraryFolder : public QObject, public TupAbstractSerializ
         void setId(const QString &id);
         QString id() const;
         
-        TupLibraryObject *createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data, const QString &folder = QString(), bool loaded = false);
+        TupLibraryObject *createSymbol(TupLibraryObject::Type type, const QString &name, const QByteArray &data = QByteArray(), const QString &folder = QString(), bool loaded = false);
         
         bool addObject(TupLibraryObject *object); 
         bool addObject(const QString &folderName, TupLibraryObject *object);

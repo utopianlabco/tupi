@@ -34,16 +34,13 @@
  ***************************************************************************/
 
 #include "twidgetlistview.h"
-#include "tdebug.h"
-
-#include <QHeaderView>
-#include <QResizeEvent>
 
 TWidgetListView::TWidgetListView(QWidget * parent) : QTableWidget(0,1,parent)
 {
     verticalHeader()->hide();
     horizontalHeader()->hide();
-    horizontalHeader()->setResizeMode(QHeaderView::Custom);
+    // horizontalHeader()->setResizeMode(QHeaderView::Custom);
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Custom);
 }
 
 TWidgetListView::~TWidgetListView()

@@ -55,13 +55,13 @@ class Test
         @optional = false
     end
     
-    def run(config, conf, debug, isLucid)
+    def run(config, conf, debug)
 
         parser = Parser.new
         parser.os = DetectOS::OS[DetectOS.whatOS].to_s.downcase
-        
+
         return false if not parser.parse(@rules) or parser.name.empty?
-        
+
         @optional = parser.optional
         
         Info.info << "Checking for " << parser.name << "... "
@@ -84,23 +84,49 @@ class Test
                    extraLib = "-L/usr/lib64 "
                 end
 
-                if File.dirname(@rules).end_with?("ffmpeg")  
-                   if conf.hasArgument?("with-ffmpeg")
-                      ffmpegLib = conf.argumentValue("with-ffmpeg") + "/lib"
-                      extraLib += "-L#{ffmpegLib}"
-                      extraInclude = conf.argumentValue("with-ffmpeg") + "/include"
+                if File.dirname(@rules).end_with?("libav")  
+                   if conf.hasArgument?("with-libav")
+                      libavDir = conf.argumentValue("with-libav")
+                      libavLib = libavDir + "/lib"
+                      extraLib += "-L#{libavLib}"
+                      extraInclude = libavDir + "/include"
                       qmakeLine = "'LIBS += #{extraLib}'";
                       qmakeLine += " 'INCLUDEPATH += #{extraInclude}'";
                    end
                 else
-                   qmakeLine = ""
-                   if extraLib.length > 0 
-                      qmakeLine = "'LIBS += #{extraLib} #{parser.libs.join(" ")}'";
+                   if File.dirname(@rules).end_with?("quazip")
+                      if conf.hasArgument?("with-quazip")
+                         quazipDir = conf.argumentValue("with-quazip")
+                         quazipLib = quazipDir + "/lib"
+                         extraLib += "-L#{quazipLib} -lquazip"
+                         extraInclude = quazipDir + "/include"
+                         qmakeLine = "'LIBS += #{extraLib}'"
+                         qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
+                      else
+                         if parser.os.eql? "14.10" 
+                            extraLib = "-lquazip-qt5"
+                         else
+                            extraLib = "-lquazip"
+                         end
+                         qmakeLine = "'LIBS += #{extraLib}'"
+                      end
+                   else
+                      if File.dirname(@rules).end_with?("theora")
+                         if conf.hasArgument?("with-theora")
+                            theoraDir = conf.argumentValue("with-theora")
+                            theoraLib = theoraDir + "/lib"
+                            extraLib += "-L#{theoraLib}"
+                            extraInclude = theoraDir + "/include"
+                            qmakeLine = "'LIBS += #{extraLib}'"
+                            qmakeLine += " 'INCLUDEPATH += #{extraInclude}'"
+                         end
+                      else
+                         qmakeLine = ""
+                         if extraLib.length > 0 
+                            qmakeLine = "'LIBS += #{extraLib} #{parser.libs.join(" ")}'"
+                         end
+                      end
                    end
-                end
-
-                if isLucid
-                   qmakeLine = "'DEFINES += K_LUCID' " + qmakeLine
                 end
 
                 @qmake.run(qmakeLine, true)
@@ -150,6 +176,12 @@ class Test
         parser.libs.each { |lib|
             config.addLib(lib)
         }
+
+        if parser.os.eql? "14.10"
+           config.addLib("-lquazip-qt5")
+        else
+           config.addLib("-lquazip")
+        end
         
         parser.defines.each { |define|
             config.addDefine(define)

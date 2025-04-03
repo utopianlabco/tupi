@@ -36,10 +36,11 @@
 #ifndef TUPBRUSHMANAGER_H
 #define TUPBRUSHMANAGER_H
 
+#include "tglobal.h"
+
 #include <QObject>
 #include <QPen>
 #include <QBrush>
-#include "tupglobal.h"
 
 /**
  * @author David Cuadrado

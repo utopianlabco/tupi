@@ -36,8 +36,10 @@
 #ifndef TUPPAINTAREAROTATOR_H
 #define TUPPAINTAREAROTATOR_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
+
 #include <QObject>
+#include <QTimer>
 
 class TupPaintAreaBase;
 

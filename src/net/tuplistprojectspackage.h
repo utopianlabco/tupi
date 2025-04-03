@@ -36,13 +36,15 @@
 #ifndef TUPLISTPROJECTSPACKAGE_H
 #define TUPLISTPROJECTSPACKAGE_H
 
+#include "tglobal.h"
+
 #include <QDomDocument>
 
 /**
  * @author David Cuadrado
 */
 
-class TupListProjectsPackage : public QDomDocument
+class TUPI_EXPORT TupListProjectsPackage : public QDomDocument
 {
     public:
         TupListProjectsPackage();

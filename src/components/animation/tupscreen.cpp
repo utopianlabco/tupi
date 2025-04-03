@@ -34,19 +34,6 @@
  ***************************************************************************/
 
 #include "tupscreen.h"
-#include "tupprojectresponse.h"
-#include "tupgraphicobject.h"
-#include "tupgraphicsscene.h"
-#include "tupanimationrenderer.h"
-#include "tupsoundlayer.h"
-#include "tdebug.h"
-
-#include <QGraphicsItem>
-#include <QApplication>
-#include <QMessageBox>
-#include <QProgressDialog>
-#include <QDesktopWidget>
-#include <QTimer>
 
 typedef QList<QImage> photoArray;
 
@@ -54,6 +41,7 @@ struct TupScreen::Private
 {
     QWidget *container;
     QImage renderCamera;
+    QPoint imagePos;
     bool firstShoot;
     bool isScaled;
     const TupProject *project;
@@ -70,24 +58,35 @@ struct TupScreen::Private
     QList<photoArray> animationList;
     QList<bool> renderControl;
     QSize screenDimension;
+
+    TupLibrary *library;
+    QList<QPair<int, QString> > lipSyncRecords;
+    QMediaPlayer *soundPlayer;
+
+    bool isPlaying;
 };
 
-TupScreen::TupScreen(const TupProject *project, const QSize viewSize, bool isScaled, QWidget *parent) : QFrame(parent), k(new Private)
+TupScreen::TupScreen(TupProject *project, const QSize viewSize, bool isScaled, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     k->container = parent;
     k->project = project;
+    k->library = project->library();
     k->isScaled = isScaled;
-
     k->screenDimension = viewSize;
-
     k->cyclicAnimation = false;
     k->fps = 24;
     k->currentSceneIndex = 0;
     k->currentFramePosition = 0;
+    k->soundPlayer = new QMediaPlayer;
+    k->isPlaying = false;
 
     k->timer = new QTimer(this);
     k->playBackTimer = new QTimer(this);
@@ -96,15 +95,19 @@ TupScreen::TupScreen(const TupProject *project, const QSize viewSize, bool isSca
     connect(k->playBackTimer, SIGNAL(timeout()), this, SLOT(back()));
 
     initPhotogramsArray();
-    updateFirstFrame();
 
     updateSceneIndex(0);
+    updateFirstFrame();
 }
 
 TupScreen::~TupScreen()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupScreen()]";
+        #else
+            TEND;
+        #endif
     #endif
 
     k->timer->stop();
@@ -122,7 +125,11 @@ TupScreen::~TupScreen()
 void TupScreen::resetPhotograms(int sceneIndex)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::resetPhotograms()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (sceneIndex > -1) {
@@ -139,7 +146,11 @@ void TupScreen::resetPhotograms(int sceneIndex)
 void TupScreen::initPhotogramsArray()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::initPhotogramsArray()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     k->renderControl.clear();
@@ -154,95 +165,124 @@ void TupScreen::initPhotogramsArray()
 void TupScreen::setFPS(int fps)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::setFPS()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
-   k->fps = fps;
+    k->fps = fps;
 
-   if (k->timer->isActive()) {
-       k->timer->stop();
-       play();
-   }
+    if (k->timer->isActive()) {
+        k->timer->stop();
+        play();
+    }
 
-   if (k->playBackTimer->isActive()) {
-       k->playBackTimer->stop();
-       playBack();
-   }
+    if (k->playBackTimer->isActive()) {
+        k->playBackTimer->stop();
+        playBack();
+    }
 }
 
 void TupScreen::paintEvent(QPaintEvent *)
 {
-   /*
-   #ifdef K_DEBUG
-          T_FUNCINFO;
-   #endif
-   */
+    /*
+    #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::paintEvent()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif
+    */
 
-   if (!k->firstShoot) {
-       if (k->currentFramePosition > -1 && k->currentFramePosition < k->photograms.count())
-           k->renderCamera = k->photograms[k->currentFramePosition];
-   } else {
-       k->firstShoot = false;
-   }
+    if (k->isPlaying)
+        playLipSyncAt(k->currentFramePosition);
 
-   QPainter painter;
-   painter.begin(this);
+    if (!k->firstShoot) {
+        if (k->currentFramePosition > -1 && k->currentFramePosition < k->photograms.count())
+            k->renderCamera = k->photograms[k->currentFramePosition];
+    } else {
+        k->firstShoot = false;
+    }
 
-   int x = (frameSize().width() - k->renderCamera.size().width()) / 2;
-   int y = (frameSize().height() - k->renderCamera.size().height()) / 2;
-   painter.drawImage(QPoint(x, y), k->renderCamera);
+    QPainter painter;
+    painter.begin(this);
 
-   // SQA: Border for the player. Useful for some tests
-   // painter.setPen(QPen(Qt::gray, 0.5, Qt::SolidLine));
-   // painter.drawRect(x, y, k->renderCamera.size().width()-1, k->renderCamera.size().height()-1);
+    painter.drawImage(k->imagePos, k->renderCamera);
+
+    // SQA: Border for the player. Useful for some tests
+    // painter.setPen(QPen(Qt::gray, 0.5, Qt::SolidLine));
+    // painter.drawRect(x, y, k->renderCamera.size().width()-1, k->renderCamera.size().height()-1);
 }
 
 void TupScreen::play()
 {
-   #ifdef K_DEBUG
-          tWarning("camera") << "TupScreen::play() - Playing at " << k->fps << " FPS";
-   #endif
+    #ifdef K_DEBUG
+        QString msg = "TupScreen::play() - Playing at " + QString::number(k->fps) + " FPS";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning("camera") << msg;
+        #endif
+    #endif
 
-   if (k->playBackTimer->isActive()) 
-       stop();
+    k->isPlaying = true;
 
-   k->currentFramePosition = 0;
+    if (k->playBackTimer->isActive()) 
+        stop();
 
-   if (!k->timer->isActive()) {
-       if (!k->renderControl.at(k->currentSceneIndex)) {
-           QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-           render();
-           QApplication::restoreOverrideCursor();
-       }
+    k->currentFramePosition = 0;
 
-       if (k->renderControl.at(k->currentSceneIndex))
-           k->timer->start(1000 / k->fps);
-   }
+    if (!k->timer->isActive()) {
+        if (!k->renderControl.at(k->currentSceneIndex)) {
+            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            render();
+            QApplication::restoreOverrideCursor();
+        }
+
+        if (k->renderControl.at(k->currentSceneIndex))
+            k->timer->start(1000 / k->fps);
+    }
 }
 
 void TupScreen::playBack()
 {
-   #ifdef K_DEBUG
-          tWarning("camera") << "TupScreen::playBack() - Starting procedure...";
-   #endif
+    #ifdef K_DEBUG
+        QString msg = "TupScreen::playBack() - Starting procedure...";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning("camera") << msg;
+        #endif
+    #endif
 
-   if (k->timer->isActive())
-       stop();
+    if (k->timer->isActive())
+        stop();
 
-   k->currentFramePosition = k->photograms.count() - 1;
+    k->currentFramePosition = k->photograms.count() - 1;
 
-   if (!k->playBackTimer->isActive()) {
-       if (!k->renderControl.at(k->currentSceneIndex))
-           render();
-       k->playBackTimer->start(1000 / k->fps);
-   }
+    if (!k->playBackTimer->isActive()) {
+        if (!k->renderControl.at(k->currentSceneIndex))
+            render();
+        k->playBackTimer->start(1000 / k->fps);
+    }
 }
 
 void TupScreen::stop()
 {
     #ifdef K_DEBUG
-           tWarning("camera") << "TupScreen::stop() - Stopping player!";
+        QString msg = "TupScreen::stop() - Stopping player!";
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning("camera") << msg;
+        #endif
     #endif
+
+    k->isPlaying = false;
+    k->soundPlayer->stop();
    
     if (k->timer->isActive())
         k->timer->stop();
@@ -260,26 +300,44 @@ void TupScreen::stop()
 void TupScreen::nextFrame()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::nextFrame()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (!k->renderControl.at(k->currentSceneIndex))
         render();
 
     k->currentFramePosition += 1;
+
+    if (k->currentFramePosition == k->photograms.count())
+        k->currentFramePosition = 0;
+
     repaint();
 }
 
 void TupScreen::previousFrame()
 {
+    /* 
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::previousFrame()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
+    */
 
     if (!k->renderControl.at(k->currentSceneIndex))
         render();
 
     k->currentFramePosition -= 1;
+
+    if (k->currentFramePosition < 0)
+        k->currentFramePosition = k->photograms.count() - 1;
+
     repaint();
 }
 
@@ -287,7 +345,11 @@ void TupScreen::advance()
 {
     /*
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::advance()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
     */
 
@@ -310,7 +372,11 @@ void TupScreen::advance()
 void TupScreen::back()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::back()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->cyclicAnimation && k->currentFramePosition < 0)
@@ -335,7 +401,11 @@ void TupScreen::layerResponse(TupLayerResponse *)
 void TupScreen::sceneResponse(TupSceneResponse *event)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::sceneResponse()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     int index = event->sceneIndex();
@@ -393,39 +463,42 @@ void TupScreen::libraryResponse(TupLibraryResponse *)
 void TupScreen::render()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::render()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
+
+    emit isRendering(0);
 
     TupScene *scene = k->project->scene(k->currentSceneIndex);
 
     if (!scene) {
         #ifdef K_DEBUG
-               tError() << "TupScreen::render() - [ Fatal Error ] - Scene is NULL! -> index: " << k->currentSceneIndex;
+            QString msg = "TupScreen::render() - [ Fatal Error ] - Scene is NULL! -> index: " + QString::number(k->currentSceneIndex);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
         return;
     }
 
     k->sounds.clear();
 
-    foreach (TupSoundLayer *layer, scene->soundLayers().values())
-             k->sounds << layer;
+    int soundLayersTotal = scene->soundLayers().size();
+    for (int i = 0; i < soundLayersTotal; i++) {
+         TupSoundLayer *layer = scene->soundLayers().at(i);
+         k->sounds << layer;
+    }
 
-    TupAnimationRenderer renderer(k->project->bgColor());
+    TupAnimationRenderer renderer(k->project->bgColor(), k->library);
     renderer.setScene(scene, k->project->dimension());
 
     QFont font = this->font();
     font.setPointSize(8);
-
-    QProgressDialog progressDialog(this, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Dialog);
-    progressDialog.setFont(font);
-    progressDialog.setLabelText(tr("Rendering...")); 
-    progressDialog.setCancelButton(0);
-    progressDialog.setRange(1, renderer.totalPhotograms());
-
-    QDesktopWidget desktop;
-    progressDialog.move((int) (desktop.screenGeometry().width() - progressDialog.width())/2, 
-                        (int) (desktop.screenGeometry().height() - progressDialog.height())/2);
-    progressDialog.show();
 
     QList<QImage> photogramList;
     int i = 1;
@@ -444,19 +517,25 @@ void TupScreen::render()
                photogramList << renderized;
            }
 
-           progressDialog.setValue(i);
+           emit isRendering(i); 
            i++;
     }
 
     k->photograms = photogramList;
     k->animationList.replace(k->currentSceneIndex, photogramList);
     k->renderControl.replace(k->currentSceneIndex, true);
+
+    emit isRendering(0); 
 }
 
 QSize TupScreen::sizeHint() const
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::sizeHint()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     return k->renderCamera.size();
@@ -465,7 +544,11 @@ QSize TupScreen::sizeHint() const
 void TupScreen::resizeEvent(QResizeEvent *event)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::resizeEvent()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     QFrame::resizeEvent(event);
@@ -478,7 +561,12 @@ void TupScreen::resizeEvent(QResizeEvent *event)
         update();
     } else {
         #ifdef K_DEBUG
-               tError() << "TupScreen::resizeEvent() - [ Error ] - Current index is invalid -> " << k->currentSceneIndex;
+            QString msg = "TupScreen::resizeEvent() - [ Error ] - Current index is invalid -> " + QString::number(k->currentSceneIndex);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }
@@ -486,7 +574,11 @@ void TupScreen::resizeEvent(QResizeEvent *event)
 void TupScreen::setLoop(bool loop)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::setLoop()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     k->cyclicAnimation = loop;
@@ -495,7 +587,11 @@ void TupScreen::setLoop(bool loop)
 void TupScreen::updateSceneIndex(int index)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::updateSceneIndex()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     k->currentSceneIndex = index;
@@ -504,7 +600,12 @@ void TupScreen::updateSceneIndex(int index)
         k->photograms = k->animationList.at(k->currentSceneIndex);
     } else {
         #ifdef K_DEBUG
-               tError() << "TupScreen::updateSceneIndex() - [ Error ] - Can't set current photogram array -> " << k->currentSceneIndex;
+            QString msg = "TupScreen::updateSceneIndex() - [ Error ] - Can't set current photogram array -> " + QString::number(k->currentSceneIndex);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }
@@ -517,7 +618,11 @@ int TupScreen::currentSceneIndex()
 TupScene *TupScreen::currentScene() const
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::currentScene()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->currentSceneIndex > -1) {
@@ -539,7 +644,11 @@ TupScene *TupScreen::currentScene() const
 void TupScreen::updateAnimationArea()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::updateAnimationArea()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->currentSceneIndex > -1 && k->currentSceneIndex < k->animationList.count()) {
@@ -549,7 +658,12 @@ void TupScreen::updateAnimationArea()
         update();
     } else {
         #ifdef K_DEBUG
-               tError() << "TupScreen::updateAnimationArea() - [ Fatal Error ] - Can't access to scene index: " << k->currentSceneIndex;
+            QString msg = "TupScreen::updateAnimationArea() - [ Fatal Error ] - Can't access to scene index: " + QString::number(k->currentSceneIndex);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }
@@ -561,13 +675,19 @@ void TupScreen::updateAnimationArea()
 void TupScreen::updateFirstFrame()
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::updateFirstFrame()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (k->currentSceneIndex > -1 && k->currentSceneIndex < k->animationList.count()) {
         TupScene *scene = k->project->scene(k->currentSceneIndex);
         if (scene) { 
-            TupAnimationRenderer renderer(k->project->bgColor());
+            setLipSyncSettings();
+
+            TupAnimationRenderer renderer(k->project->bgColor(), k->library);
             renderer.setScene(scene, k->project->dimension());
             renderer.renderPhotogram(0);
 
@@ -584,15 +704,29 @@ void TupScreen::updateFirstFrame()
                 k->renderCamera = firstFrame;
             }
 
+            int x = (frameSize().width() - k->renderCamera.size().width()) / 2;
+            int y = (frameSize().height() - k->renderCamera.size().height()) / 2;
+            k->imagePos = QPoint(x, y);
+
             k->firstShoot = true;
         } else {
             #ifdef K_DEBUG
-                   tError() << "TupScreen::updateFirstFrame() - [ Fatal Error ] - Null scene at index: " << k->currentSceneIndex;
+                QString msg = "TupScreen::updateFirstFrame() - [ Fatal Error ] - Null scene at index: " + QString::number(k->currentSceneIndex);
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
             #endif
         }
     } else {
         #ifdef K_DEBUG
-               tError() << "TupScreen::updateFirstFrame() - [ Fatal Error ] - Can't access to scene index: " << k->currentSceneIndex;
+            QString msg = "TupScreen::updateFirstFrame() - [ Fatal Error ] - Can't access to scene index: " + QString::number(k->currentSceneIndex);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 }
@@ -600,7 +734,11 @@ void TupScreen::updateFirstFrame()
 void TupScreen::addPhotogramsArray(int sceneIndex)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupScreen::addPhotogramsArray()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (sceneIndex > -1) {
@@ -609,3 +747,40 @@ void TupScreen::addPhotogramsArray(int sceneIndex)
         k->animationList.insert(sceneIndex, photograms);
     }
 }
+
+void TupScreen::setLipSyncSettings()
+{
+    TupScene *scene = k->project->scene(k->currentSceneIndex);
+    if (scene) {
+        if (scene->lipSyncTotal() > 0) {
+            k->lipSyncRecords.clear();
+            Mouths mouths = scene->getLipSyncList();
+            foreach(TupLipSync *lipsync, mouths) {
+                    TupLibraryFolder *folder = k->library->getFolder(lipsync->name());
+                    if (folder) {
+                        TupLibraryObject *sound = folder->getObject(lipsync->soundFile());
+                        if (sound) {
+                            QPair<int, QString> soundRecord;
+                            soundRecord.first = lipsync->initFrame();
+                            soundRecord.second = sound->dataPath();
+                            k->lipSyncRecords << soundRecord;
+                        }
+                    }
+            }
+        }
+    }
+}
+
+void TupScreen::playLipSyncAt(int frame)
+{
+    int size = k->lipSyncRecords.count();
+    for(int i=0; i<size; i++) {
+             QPair<int, QString> soundRecord = k->lipSyncRecords.at(i);
+             if (frame == soundRecord.first) {
+                 QString path = soundRecord.second;
+                 k->soundPlayer->setMedia(QUrl::fromLocalFile(soundRecord.second));
+                 k->soundPlayer->play();
+             }
+    }
+}
+

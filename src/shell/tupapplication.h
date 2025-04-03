@@ -38,6 +38,19 @@
 
 #include "tapplication.h"
 
+#ifdef K_DEBUG
+
+#ifdef Q_OS_WIN32
+#include <QDebug>
+#else
+#include "tdebug.h"
+#endif
+
+#endif
+
+#include <QDesktopWidget>
+#include <QRect>
+
 /**
  * Support Class for main.cpp
  * This class contains some of the basic methods required when Tupi is launched
@@ -53,17 +66,6 @@ class TupApplication : public TApplication
         ~TupApplication();
 
     public slots:
-        /**
-         * @if english
-         * Open a settings wizard the first time Tupi is launched
-         * @endif
-         * @if spanish
-         * Lanza un wizard de configuracion la primera vez que se inicia la aplicacion
-         * @endif
-         * @return true/false if the application has the settings file created
-         */
-         virtual bool firstRun();
-
         /**
          * @if english
          * Create a cache directory with the path defined at cacheDir variable

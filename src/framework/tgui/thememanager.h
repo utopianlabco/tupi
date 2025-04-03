@@ -37,11 +37,13 @@
 #define THEMEMANAGER_H
 
 #include "tglobal.h"
+#include "themedocument.h"
 
 #include <QXmlDefaultHandler>
 #include <QPalette>
+#include <QApplication>
 
-class ThemeDocument;
+// class ThemeDocument;
 
 /**
  * @author David Cuadrado

@@ -34,26 +34,26 @@
  ***************************************************************************/
 
 #include "tupdebugterm.h"
-#include "tdebug.h"
 
-#include <QIcon>
-#include <QBoxLayout>
-#include <QTextBrowser>
+#ifdef K_DEBUG
 
 TupDebugTerm::TupDebugTerm(QWidget *parent, int width) : QWidget(parent)
 {
-    #ifdef K_DEBUG
-           TINIT;
-           QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this); 
-           mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
-           debugBrowser = TDebug::browser(this, width);
-           mainLayout->addWidget(debugBrowser);
-    #endif
+    TINIT;
+    QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this); 
+    mainLayout->setSizeConstraint(QLayout::SetMaximumSize);
+    debugBrowser = TDebug::browser(this, width);
+    mainLayout->addWidget(debugBrowser);
 }
 
 TupDebugTerm::~TupDebugTerm()
 {
-    #ifdef K_DEBUG
-           TEND;
-    #endif
+    TEND;
 }
+
+void TupDebugTerm::setProjectStatus(bool status)
+{
+    TDebug::setProjectStatus(status);     
+}
+
+#endif

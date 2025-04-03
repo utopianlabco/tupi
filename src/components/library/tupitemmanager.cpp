@@ -34,12 +34,6 @@
  ***************************************************************************/
 
 #include "tupitemmanager.h"
-#include "tglobal.h"
-#include "tdebug.h"
-#include "tapplication.h"
-
-#include <QHeaderView>
-#include <QMenu>
 
 /**
  * This class provides some methods for the TupLibraryWidget.
@@ -52,7 +46,8 @@ TupItemManager::TupItemManager(QWidget *parent) : TreeListWidget(parent), m_curr
     currentSelection = "";
     setHeaderLabels(QStringList() << "" << "");
 
-    header()->setResizeMode(QHeaderView::ResizeToContents);
+    header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
     setItemDelegate(new TupTreeDelegate(this));
     setColumnCount(3);
 
@@ -81,7 +76,6 @@ void TupItemManager::createFolder(const QString &name)
     newFolder->setText(1, folderName);
     newFolder->setText(2, "");
 
-    // SQA: Check if this instruction is really necessary
     newFolder->setFlags(newFolder->flags() | Qt::ItemIsEditable);
 
     foldersTotal++;
@@ -198,8 +192,12 @@ void TupItemManager::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
         QTreeWidgetItem *item = currentItem();
-        if (item)
-            emit itemRequired();
+        if (item) {
+            if (isFolder(item)) 
+                emit itemRenamed(item);    
+            else
+                emit itemRequired();
+        }
     }
 }
 
@@ -227,137 +225,154 @@ void TupItemManager::mousePressEvent(QMouseEvent *event)
         emit itemSelected(item);
 
         if (event->buttons() == Qt::RightButton) {
-
             QMenu *menu = new QMenu(tr("Options"));
 
-            if (item->text(2).compare("SVG")==0) {
-                QAction *edit = new QAction(tr("Edit with Inkscape"), this);
-                connect(edit, SIGNAL(triggered()), this, SLOT(callInkscapeToEdit()));
-#ifdef Q_OS_UNIX
-                if (!QFile::exists("/usr/bin/inkscape"))
-                    edit->setDisabled(true);
-#else
-                edit->setDisabled(true);
-#endif
-                menu->addAction(edit);
-            } else if (item->text(2).compare("OBJ")!=0) {
-                QAction *gimpEdit = new QAction(tr("Edit with Gimp"), this);
-                connect(gimpEdit, SIGNAL(triggered()), this, SLOT(callGimpToEdit()));
-#ifdef Q_OS_UNIX
-                if (!QFile::exists("/usr/bin/gimp"))
-                    gimpEdit->setDisabled(true);
-#else
-                gimpEdit->setDisabled(true);
-#endif
-                menu->addAction(gimpEdit);
+            if (isFolder(item)) {
+                QAction *rename = new QAction(tr("Rename"), this);
+                connect(rename, SIGNAL(triggered()), this, SLOT(renameItem()));
 
-                QAction *kritaEdit = new QAction(tr("Edit with Krita"), this);
-                connect(kritaEdit, SIGNAL(triggered()), this, SLOT(callKritaToEdit()));
-#ifdef Q_OS_UNIX
-                if (!QFile::exists("/usr/bin/krita"))
-                    kritaEdit->setDisabled(true);
-#else
-                kritaEdit->setDisabled(true);
-#endif
-                menu->addAction(kritaEdit);
+                QAction *remove = new QAction(tr("Delete"), this);
+                connect(remove, SIGNAL(triggered()), this, SIGNAL(itemRemoved()));
 
-                QAction *myPaintEdit = new QAction(tr("Edit with MyPaint"), this);
-                connect(myPaintEdit, SIGNAL(triggered()), this, SLOT(callMyPaintToEdit()));
-#ifdef Q_OS_UNIX
-                if (!QFile::exists("/usr/bin/mypaint"))
-                    myPaintEdit->setDisabled(true);
-#else
-                myPaintEdit->setDisabled(true);
-#endif
-                menu->addAction(myPaintEdit);
-            }
+                menu->addAction(rename);
+                menu->addAction(remove);
+            } else {
+                QString extension = item->text(2);
+                bool isSound = false;
+                if ((extension.compare("OGG") == 0) || (extension.compare("MP3") == 0) || (extension.compare("WAV") == 0))
+                    isSound = true; 
 
-            QAction *clone = new QAction(tr("Clone"), this);
-            connect(clone, SIGNAL(triggered()), this, SLOT(cloneItem()));
+                if (extension.compare("SVG") == 0) {
+                    QAction *edit = new QAction(tr("Edit with Inkscape"), this);
+                    connect(edit, SIGNAL(triggered()), this, SLOT(callInkscapeToEdit()));
+                    #ifdef Q_OS_UNIX
+                        if (!QFile::exists("/usr/bin/inkscape"))
+                            edit->setDisabled(true);
+                    #else
+                        edit->setDisabled(true);
+                    #endif
+                    menu->addAction(edit);
+                } else if ((extension.compare("OBJ") != 0) && !isSound) {
+                           QAction *gimpEdit = new QAction(tr("Edit with Gimp"), this);
+                           connect(gimpEdit, SIGNAL(triggered()), this, SLOT(callGimpToEdit()));
+                           #ifdef Q_OS_UNIX
+                               if (!QFile::exists("/usr/bin/gimp"))
+                                   gimpEdit->setDisabled(true);
+                           #else
+                               gimpEdit->setDisabled(true);
+                           #endif
+                           menu->addAction(gimpEdit);
 
-            QAction *exportObject = new QAction(tr("Export"), this);
-            connect(exportObject, SIGNAL(triggered()), this, SLOT(exportItem()));
+                           QAction *kritaEdit = new QAction(tr("Edit with Krita"), this);
+                           connect(kritaEdit, SIGNAL(triggered()), this, SLOT(callKritaToEdit()));
+                           #ifdef Q_OS_UNIX
+                               if (!QFile::exists("/usr/bin/krita"))
+                                   kritaEdit->setDisabled(true);
+                           #else
+                                   kritaEdit->setDisabled(true);
+                           #endif
+                           menu->addAction(kritaEdit);
 
-            QAction *rename = new QAction(tr("Rename"), this);
-            connect(rename, SIGNAL(triggered()), this, SLOT(renameItem()));
-
-            QAction *remove = new QAction(tr("Delete"), this);
-            connect(remove, SIGNAL(triggered()), this, SIGNAL(itemRemoved()));
-
-            menu->addAction(clone);
-            menu->addAction(exportObject);
-            menu->addAction(rename);
-            menu->addAction(remove);
-            menu->addSeparator();
-
-#ifdef Q_OS_UNIX
-            if (QFile::exists("/usr/bin/gimp") || QFile::exists("/usr/bin/krita") || QFile::exists("/usr/bin/mypaint")) {
-                QAction *raster = new QAction(tr("Create new raster item"), this);
-                connect(raster, SIGNAL(triggered()), this, SLOT(createNewRaster()));
-                menu->addAction(raster);
-            }
-#endif
-
-#ifdef Q_OS_UNIX
-            if (QFile::exists("/usr/bin/inkscape")) {
-                QAction *svg = new QAction(tr("Create new svg item"), this);
-                connect(svg, SIGNAL(triggered()), this, SLOT(createNewSVG()));
-                menu->addAction(svg);
-            }
-#endif
-            menu->exec(event->globalPos());
-
-        } else if (event->buttons() == Qt::LeftButton) {
-
-            // If the node has a parent, get the parent's name
-            QTreeWidgetItem *top = item->parent(); 
-            if (top)
-                parentNode = top->text(1);
-
-            // For directories, get the children
-            nodeChildren.clear();
-            if (item->text(2).length()==0 && item->childCount() > 0) {
-                for (int i=0;i<item->childCount();i++) {
-                     QTreeWidgetItem *node = item->child(i);
-                     nodeChildren << node;
+                           QAction *myPaintEdit = new QAction(tr("Edit with MyPaint"), this);
+                           connect(myPaintEdit, SIGNAL(triggered()), this, SLOT(callMyPaintToEdit()));
+                           #ifdef Q_OS_UNIX
+                               if (!QFile::exists("/usr/bin/mypaint"))
+                                   myPaintEdit->setDisabled(true);
+                           #else
+                               myPaintEdit->setDisabled(true);
+                           #endif
+                           menu->addAction(myPaintEdit);
                 }
-            } 
 
-            QPixmap pixmap = item->icon(0).pixmap(15, 15);
+                if (!isSound) {
+                    QAction *clone = new QAction(tr("Clone"), this);
+                    connect(clone, SIGNAL(triggered()), this, SLOT(cloneItem()));
+                    menu->addAction(clone);
+                }
 
-            QByteArray itemData;
-            QDataStream dataStream(&itemData, QIODevice::WriteOnly);
-            dataStream << pixmap << item->text(1) << item->text(2) << item->text(3);
+                QAction *exportObject = new QAction(tr("Export"), this);
+                connect(exportObject, SIGNAL(triggered()), this, SLOT(exportItem()));
 
-            QMimeData *mimeData = new QMimeData;
-            mimeData->setData("application/x-dnditemdata", itemData);
+                QAction *rename = new QAction(tr("Rename"), this);
+                connect(rename, SIGNAL(triggered()), this, SLOT(renameItem()));
 
-            QDrag *drag = new QDrag(this);
-            drag->setMimeData(mimeData);
-            drag->setPixmap(pixmap);
+                QAction *remove = new QAction(tr("Delete"), this);
+                connect(remove, SIGNAL(triggered()), this, SIGNAL(itemRemoved()));
 
-            if (drag->start(Qt::MoveAction) == Qt::MoveAction)
-                delete takeTopLevelItem(indexOfTopLevelItem(item));
+                menu->addAction(exportObject);
+                menu->addAction(rename);
+                menu->addAction(remove);
+                menu->addSeparator();
+
+                #ifdef Q_OS_UNIX
+                    if (!isSound) {
+                        if (QFile::exists("/usr/bin/gimp") || QFile::exists("/usr/bin/krita") || QFile::exists("/usr/bin/mypaint")) {
+                            QAction *raster = new QAction(tr("Create new raster item"), this);
+                            connect(raster, SIGNAL(triggered()), this, SLOT(createNewRaster()));
+                            menu->addAction(raster);
+                        }
+
+                        if (QFile::exists("/usr/bin/inkscape")) {
+                            QAction *svg = new QAction(tr("Create new svg item"), this);
+                            connect(svg, SIGNAL(triggered()), this, SLOT(createNewSVG()));
+                            menu->addAction(svg);
+                        }
+                    }
+                #endif
+            }
+
+            menu->exec(event->globalPos());
+        } else if (event->buttons() == Qt::LeftButton) {
+                   // SQA: This code doesn't work well at all. Reengineering is urgently required right here!
+                   // If the node has a parent, get the parent's name
+                   QTreeWidgetItem *top = item->parent(); 
+                   if (top)
+                       parentNode = top->text(1);
+
+                   // For directories, get the children
+                   nodeChildren.clear();
+                   if (item->text(2).length()==0 && item->childCount() > 0) {
+                       for (int i=0;i<item->childCount();i++) {
+                            QTreeWidgetItem *node = item->child(i);
+                            nodeChildren << node;
+                       }
+                   } 
+
+                   QPixmap pixmap = item->icon(0).pixmap(15, 15);
+
+                   QByteArray itemData;
+                   QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+                   dataStream << pixmap << item->text(1) << item->text(2) << item->text(3);
+
+                   QMimeData *mimeData = new QMimeData;
+                   mimeData->setData("application/x-dnditemdata", itemData);
+
+                   QDrag *drag = new QDrag(this);
+                   drag->setMimeData(mimeData);
+                   drag->setPixmap(pixmap);
+
+                   if (drag->start(Qt::MoveAction) == Qt::MoveAction)
+                       delete takeTopLevelItem(indexOfTopLevelItem(item));
         }
     } else {
+        if (event->buttons() == Qt::RightButton) {
             QMenu *menu = new QMenu(tr("Options"));
 
-#ifdef Q_OS_UNIX
+            #ifdef Q_OS_UNIX
             if (QFile::exists("/usr/bin/gimp") || QFile::exists("/usr/bin/krita") || QFile::exists("/usr/bin/mypaint")) {
                 QAction *raster = new QAction(tr("Create new raster item"), this);
                 connect(raster, SIGNAL(triggered()), this, SLOT(createNewRaster()));
                 menu->addAction(raster);
             }
-#endif
-
-#ifdef Q_OS_UNIX
             if (QFile::exists("/usr/bin/inkscape")) {
                 QAction *svg = new QAction(tr("Create new svg item"), this);
                 connect(svg, SIGNAL(triggered()), this, SLOT(createNewSVG()));
                 menu->addAction(svg);
             }
-#endif
+            #endif
+
             menu->exec(event->globalPos());
+        }
     }
 }
 

@@ -36,26 +36,54 @@
 #ifndef TGLOBAL_H
 #define TGLOBAL_H
 
+/**
+ * This class defines enumerations used in the whole code of the project.
+ *
+ * @author David Cuadrado
+*/
+
 #if defined(QT_SHARED) || defined(QT_PLUGIN)
-# define T_GUI_EXPORT Q_GUI_EXPORT
-# define T_CORE_EXPORT Q_DECL_EXPORT
-# define T_SOUND_EXPORT Q_DECL_EXPORT
+#define T_GUI_EXPORT Q_GUI_EXPORT
+#define T_CORE_EXPORT Q_DECL_EXPORT
+#define T_SOUND_EXPORT Q_DECL_EXPORT
+#define TUPI_EXPORT Q_GUI_EXPORT
+#define TUPI_PLUGIN Q_DECL_EXPORT
 #else
-# define T_GUI_EXPORT
-# define T_CORE_EXPORT
-# define T_SOUND_EXPORT
+#define T_GUI_EXPORT
+#define T_CORE_EXPORT
+#define T_SOUND_EXPORT
+#define TUPI_EXPORT
+#define TUPI_PLUGIN
 #endif
 
-// #include "tapplicationproperties.h"
+#ifdef K_DEBUG
 
-#define HOME_DIR kAppProp->homeDir()
-#define BIN_DIR kAppProp->binDir()
-#define SHARE_DIR kAppProp->shareDir()
-#define DATA_DIR kAppProp->dataDir()
-#define THEME_DIR kAppProp->themeDir()
-#define CONFIG_DIR kAppProp->configDir()
-#define PLUGINS_DIR kAppProp->pluginDir()
-#define CACHE_DIR kAppProp->cacheDir()
-#define REPOSITORY_DIR kAppProp->repositoryDir()
+#ifdef Q_OS_WIN32
+#include <QDebug>
+#else
+#include "tdebug.h"
+#endif
+
+#endif
+
+#define LIBRARY_DIR CONFIG_DIR+"/libraries"
+
+namespace Tupi 
+{
+    enum RenderType
+      {
+       Image = 0,
+       OpenGL,
+       Native
+      };
+
+    enum MessageType
+      {
+       Information = 0,
+       Warning,
+       Error,
+       Critical
+      };
+};
 
 #endif

@@ -36,14 +36,19 @@
 #ifndef TUPTOOLSTATUS_H
 #define TUPTOOLSTATUS_H
 
+#include "tglobal.h"
+#include "tconfig.h"
 #include "tupcolorwidget.h"
 #include "tapplicationproperties.h"
 
 #include <QLabel>
+#include <QLabel>
+#include <QDir>
+#include <QHBoxLayout>
 
-class TupColorWidget;
+// class TupColorWidget;
 
-class TupToolStatus : public QWidget
+class TUPI_EXPORT TupToolStatus : public QWidget
 {
     Q_OBJECT
 

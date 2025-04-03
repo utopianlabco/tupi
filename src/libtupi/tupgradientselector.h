@@ -36,7 +36,7 @@
 #ifndef TUPGRADIENTSELECTOR_H
 #define TUPGRADIENTSELECTOR_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
 
 #include <QAbstractSlider>
 #include <QColor>
@@ -49,7 +49,9 @@
 #include <QPoint>
 #include <QLinearGradient>
 #include <QPainterPath>
-
+#include <qdrawutil.h>
+#include <QMatrix>
+#include <QPolygon>
 #include <QList>
 
 /**
@@ -67,7 +69,7 @@ class TUPI_EXPORT TupGradientSelector : public QAbstractSlider
    
    private:
 
-      class TupGradientArrow : public QObject
+      class TUPI_EXPORT TupGradientArrow : public QObject
       {
          public:
 

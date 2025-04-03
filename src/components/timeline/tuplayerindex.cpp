@@ -34,25 +34,12 @@
  ***************************************************************************/
 
 #include "tuplayerindex.h"
-#include "tuprequestbuilder.h"
 
-#include <qlabel.h>
-#include <qlayout.h>
-
-#include <QPixmap>
-#include <QHeaderView>
-#include <QPainter>
-#include <QItemDelegate>
-
-#include "tseparator.h"
-#include "tapplication.h"
-#include "tdebug.h"
-
-const int LAYER_COLUMN = 0;
+// const int LAYER_COLUMN = 0;
 
 // Header
 
-class TupLayerIndexHeader : public QHeaderView
+class TUPI_EXPORT TupLayerIndexHeader : public QHeaderView
 {
     public:
         TupLayerIndexHeader(QWidget * parent = 0);
@@ -160,7 +147,11 @@ struct TupLayerIndex::Private
 TupLayerIndex::TupLayerIndex(int sceneIndex, QWidget *parent) : QTableWidget(0, 1, parent), k(new Private)
 {
     #ifdef K_DEBUG
-        TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupLayerIndex()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     k->sceneIndex = sceneIndex;
@@ -187,7 +178,11 @@ TupLayerIndex::TupLayerIndex(int sceneIndex, QWidget *parent) : QTableWidget(0, 
 TupLayerIndex::~TupLayerIndex()
 {
     #ifdef K_DEBUG
-        TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupLayerIndex()]";
+        #else
+            TEND;
+        #endif
     #endif
 
     delete k;
@@ -196,7 +191,6 @@ TupLayerIndex::~TupLayerIndex()
 void TupLayerIndex::insertLayer(int position, const QString &name)
 {
     if (position >= 0 && position <= rowCount()) {
-
         QTableWidgetItem *newLayer = new QTableWidgetItem(name);
         newLayer->setFont(QFont("Arial", 8, QFont::Normal, false));
         newLayer->setTextAlignment(Qt::AlignCenter);

@@ -34,22 +34,13 @@
  ***************************************************************************/
 
 #include "tupcamerawidget.h"
-#include "tupexportwidget.h"
-#include "tdebug.h"
-#include "tseparator.h"
-#include "tupprojectrequest.h"
-#include "tupprojectresponse.h"
-#include "tuprequestbuilder.h"
-
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QApplication>
-#include <QDesktopWidget>
 
 struct TupCameraWidget::Private
 {
     QFrame *container;
     TupScreen *screen;
+    TupCameraBar *cameraBar;
+    QProgressBar *progressBar;
     TupCameraStatus *status;
     TupProject *project;
     int currentSceneIndex;
@@ -62,7 +53,11 @@ struct TupCameraWidget::Private
 TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget *parent) : QFrame(parent), k(new Private)
 {
     #ifdef K_DEBUG
-           TINIT;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCameraWidget()]";
+        #else
+            TINIT;
+        #endif
     #endif
 
     QDesktopWidget desktop;
@@ -118,18 +113,27 @@ TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget 
     layout->addWidget(scaleWidget, 0, Qt::AlignCenter);
     layout->addLayout(labelLayout, Qt::AlignCenter);
 
+    k->progressBar = new QProgressBar(this); 
+    QString style = "QProgressBar { background-color: #DDDDDD; text-align: center; color: #FFFFFF; border-radius: 2px; } QProgressBar::chunk { background-color: #009500; border-radius: 2px; }";
+    k->progressBar->setStyleSheet(style);
+    k->progressBar->setMaximumHeight(5);
+    k->progressBar->setTextVisible(false);
+    k->progressBar->setRange(1, 100);
+    layout->addWidget(k->progressBar, 0, Qt::AlignCenter);
+
     k->screen = new TupScreen(k->project, k->playerDimension, k->isScaled);
+    connect(k->screen, SIGNAL(isRendering(int)), this, SLOT(updateProgressBar(int)));
+
     layout->addWidget(k->screen, 0, Qt::AlignCenter);
 
-    TupCameraBar *cameraBar = new TupCameraBar;
-    layout->addWidget(cameraBar, 0, Qt::AlignCenter);
-    cameraBar->show();
+    k->cameraBar = new TupCameraBar;
+    layout->addWidget(k->cameraBar, 0, Qt::AlignCenter);
 
-    connect(cameraBar, SIGNAL(play()), this, SLOT(doPlay()));
-    connect(cameraBar, SIGNAL(playBack()), this, SLOT(doPlayBack()));
-    connect(cameraBar, SIGNAL(stop()), k->screen, SLOT(stop()));
-    connect(cameraBar, SIGNAL(ff()), k->screen, SLOT(nextFrame()));
-    connect(cameraBar, SIGNAL(rew()), k->screen, SLOT(previousFrame()));
+    connect(k->cameraBar, SIGNAL(play()), this, SLOT(doPlay()));
+    connect(k->cameraBar, SIGNAL(playBack()), this, SLOT(doPlayBack()));
+    connect(k->cameraBar, SIGNAL(stop()), k->screen, SLOT(stop()));
+    connect(k->cameraBar, SIGNAL(ff()), k->screen, SLOT(nextFrame()));
+    connect(k->cameraBar, SIGNAL(rew()), k->screen, SLOT(previousFrame()));
 
     k->status = new TupCameraStatus(this, isNetworked);
     k->status->setScenes(k->project); 
@@ -147,7 +151,11 @@ TupCameraWidget::TupCameraWidget(TupProject *project, bool isNetworked, QWidget 
 TupCameraWidget::~TupCameraWidget()
 {
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupCameraWidget()]";
+        #else
+            TEND;
+        #endif
     #endif
 }
 
@@ -228,7 +236,11 @@ void TupCameraWidget::previousFrame()
 bool TupCameraWidget::handleProjectResponse(TupProjectResponse *response)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCameraWidget::handleProjectResponse()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     if (TupSceneResponse *sceneResponse = static_cast<TupSceneResponse *>(response)) {
@@ -276,7 +288,12 @@ bool TupCameraWidget::handleProjectResponse(TupProjectResponse *response)
             default:
             {
                  #ifdef K_DEBUG
-                        tFatal() << "TupCameraWidget::handleProjectResponse() - Unknown/Unhandled project action: " << sceneResponse->action();
+                     QString msg = "TupCameraWidget::handleProjectResponse() - Unknown/Unhandled project action: " + QString::number(sceneResponse->action());
+                     #ifdef Q_OS_WIN32
+                         qDebug() << msg;
+                     #else
+                         tFatal() << msg;
+                     #endif
                  #endif
             }
             break;
@@ -293,13 +310,23 @@ void TupCameraWidget::setFPS(int fps)
     k->screen->setFPS(fps);
 }
 
+void TupCameraWidget::setStatusFPS(int fps)
+{
+    k->status->blockSignals(true);
+    k->status->setFPS(fps);
+    k->status->blockSignals(false);
+
+    k->project->setFPS(fps);
+    k->screen->setFPS(fps);
+}
+
 void TupCameraWidget::updateFramesTotal(int sceneIndex)
 {
     TupScene *scene = k->project->scene(sceneIndex);
     if (scene) {
-        QString total = "";
-        total = total.setNum(scene->framesTotal()); 
-        k->status->setFramesTotal(total); 
+        int total = scene->framesTotal();
+        k->status->setFramesTotal(QString::number(total)); 
+        k->progressBar->setRange(0, total);
     }
 }
 
@@ -351,4 +378,9 @@ void TupCameraWidget::updateScenes(int sceneIndex)
 void TupCameraWidget::updateFirstFrame()
 {
     k->screen->updateAnimationArea();
+}
+
+void TupCameraWidget::updateProgressBar(int advance)
+{
+    k->progressBar->setValue(advance);
 }

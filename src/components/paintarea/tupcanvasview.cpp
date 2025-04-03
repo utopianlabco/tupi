@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tupcanvasview.h"
-#include "tdebug.h"
 
 struct TupCanvasView::Private
 {
@@ -46,6 +45,7 @@ struct TupCanvasView::Private
 TupCanvasView::TupCanvasView(QWidget *parent, const QSize &screenSize, const QSize &projectSize, 
                              const QColor &bg) : QGraphicsView(parent), k(new Private)
 {
+    setAccessibleName("FULL_SCREEN");
     k->screenSize = screenSize;
     k->projectSize = projectSize;
     k->bg = bg;

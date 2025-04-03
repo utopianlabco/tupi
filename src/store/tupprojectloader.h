@@ -36,9 +36,10 @@
 #ifndef TUPPROJECTLOADER_H
 #define TUPPROJECTLOADER_H
 
-#include <QString>
-
+#include "tglobal.h"
 #include "tuplibraryobject.h"
+
+#include <QString>
 
 class TupProject;
 
@@ -46,7 +47,7 @@ class TupProject;
  * @author David Cuadrado
 */
 
-class TupProjectLoader
+class TUPI_EXPORT TupProjectLoader
 {
     public:
     	TupProjectLoader();

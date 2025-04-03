@@ -40,8 +40,8 @@
 
 #include <QGroupBox>
 #include <QRadioButton>
-#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QBoxLayout>
 
 /**
  * @author David Cuadrado

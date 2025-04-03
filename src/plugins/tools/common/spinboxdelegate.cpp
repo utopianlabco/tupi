@@ -34,9 +34,6 @@
  ***************************************************************************/
 
 #include "spinboxdelegate.h"
-#include "tdebug.h"
-
-#include <QModelIndex>
 
 SpinBoxDelegate::SpinBoxDelegate(QObject *parent)
     : QItemDelegate(parent)
@@ -62,7 +59,7 @@ void SpinBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) c
 }
 
 void SpinBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index)
+                    const QModelIndex &index) const
 {
     QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
     spinBox->interpretText();

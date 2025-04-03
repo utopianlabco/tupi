@@ -36,17 +36,17 @@
 #ifndef TUPPROJECT_H
 #define TUPPROJECT_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal.h"
 #include "tapplicationproperties.h"
-#include "tupinthash.h"
-#include "tupglobal_store.h"
 #include "tuplibraryobject.h"
 
 #include <QObject>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QSize>
+#include <QDir>
+#include <QGraphicsView>
 
 class TupScene;
 class TupLayer;
@@ -56,7 +56,7 @@ class TupProjectResponse;
 class QGraphicsItem;
 class TupLibrary;
 
-typedef TupIntHash<TupScene *> Scenes;
+typedef QList<TupScene *> Scenes;
 
 /**
  * This class contains the project data structure including scenes.
@@ -64,7 +64,7 @@ typedef TupIntHash<TupScene *> Scenes;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
+class TUPI_EXPORT TupProject : public QObject, public TupAbstractSerializable
 {
     Q_OBJECT
 
@@ -102,7 +102,6 @@ class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
         TupScene *scene(int position) const;
 
         int visualIndexOf(TupScene *scene) const;
-        //int logicalIndexOf(TupScene *scene) const;
 
         Scenes scenes() const;
 
@@ -115,6 +114,10 @@ class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
         bool removeSymbol(const QString &name, TupLibraryObject::Type symbolType, TupProject::Mode spaceMode, 
                           int sceneIndex, int layerIndex, int frameIndex);
         bool removeSymbol(const QString &name);
+        bool addFolder(const QString &name);
+        bool removeFolder(const QString &name);
+
+        bool removeSound(const QString &name);
 
         bool insertSymbolIntoFrame(TupProject::Mode spaceMode, const QString &name, int scene, int layer, int frame);
         bool removeSymbolFromFrame(const QString &name, TupLibraryObject::Type type);
@@ -125,7 +128,6 @@ class STORE_EXPORT TupProject : public QObject, public TupAbstractSerializable
         void clear();
         void loadLibrary(const QString &filename);
 
-        //TupLibrary *library() const;
         TupLibrary *library();
         void emitResponse(TupProjectResponse *response);
 

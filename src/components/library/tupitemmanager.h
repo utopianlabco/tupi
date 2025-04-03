@@ -36,17 +36,22 @@
 #ifndef TUPITEMMANAGER_H
 #define TUPITEMMANAGER_H
 
+#include "tglobal.h"
 #include "tuptreedelegate.h"
 #include "treelistwidget.h"
 #include "tapplicationproperties.h"
 
 #include <QKeyEvent>
+#include <QHeaderView>
+#include <QMenu>
+#include <QMimeData>
+#include <QDrag>
 
 /**
  * @author David Cuadrado
 */
 
-class TupItemManager : public TreeListWidget
+class TUPI_EXPORT TupItemManager : public TreeListWidget
 {
     Q_OBJECT
 
@@ -113,7 +118,7 @@ class TupItemManager : public TreeListWidget
         QString parentNode;
         QString currentSelection;
         QList<QTreeWidgetItem *> nodeChildren;
-        typedef QList<QTreeWidgetItem *> Lists;
+        // typedef QList<QTreeWidgetItem *> Lists;
         // QHash<int, Lists> deepChildren;
 };
 

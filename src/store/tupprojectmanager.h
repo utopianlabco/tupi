@@ -36,7 +36,13 @@
 #ifndef TUPPROJECTMANAGER_H
 #define TUPPROJECTMANAGER_H
 
-#include "tupglobal_store.h"
+#include "tglobal.h"
+
+#include <QUndoStack>
+#include <QDir>
+#include <QFileInfo>
+#include <QObject>
+#include <QSize>
 
 class TupProject;
 class TupProjectRequest;
@@ -47,15 +53,12 @@ class QUndoStack;
 class TupCommandExecutor;
 class TupProjectResponse;
 
-#include <QObject>
-#include <QSize>
-
 /**
  * Events handler class for the project
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupProjectManager : public QObject
+class TUPI_EXPORT TupProjectManager : public QObject
 {
     Q_OBJECT
 
@@ -71,7 +74,8 @@ class STORE_EXPORT TupProjectManager : public QObject
 
         bool isOpen() const;
         bool isModified() const;
-        TupProject *project() const;
+        // TupProject *project() const;
+        TupProject *project();
         void setHandler(TupAbstractProjectHandler *handler, bool isNetworked);
         TupAbstractProjectHandler *handler() const;
 

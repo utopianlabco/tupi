@@ -36,14 +36,20 @@
 #ifndef TUPWORKSPACE_H
 #define TUPWORKSPACE_H
 
+#include "tglobal.h"
 #include "tupcamerawidget.h"
+
 #include <QMainWindow>
+#include <QMouseEvent>
+#include <QDropEvent>
+#include <QLinearGradient>
+#include <QBoxLayout>
 
 /**
  * @author David Cuadrado
 **/
 
-class TupAnimationspace : public QMainWindow
+class TUPI_EXPORT TupAnimationspace : public QMainWindow
 {
     Q_OBJECT
 

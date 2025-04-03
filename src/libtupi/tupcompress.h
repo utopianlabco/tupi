@@ -36,14 +36,17 @@
 #ifndef TUPCOMPRESS_H
 #define TUPCOMPRESS_H
 
+#include "tglobal.h"
+
 #include <QString>
+#include <QByteArray>
 
 /**
  * This class (un)compress and (un)hash a string
  * @author David Cuadrado
 */
 
-class TupCompress
+class TUPI_EXPORT TupCompress
 {
     public:
         TupCompress();

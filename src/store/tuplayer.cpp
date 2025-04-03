@@ -35,18 +35,17 @@
 
 #include "tuplayer.h"
 #include "tupscene.h"
-#include "tdebug.h"
 #include "tupprojectloader.h"
 
 struct TupLayer::Private
 {
     Frames frames;
+    Mouths lipsyncList;
     bool isVisible;
     QString name;
     int framesCount;
     bool isLocked;
     int index;
-    //int zLevelBase;
 };
 
 TupLayer::TupLayer(TupScene *parent, int index) : QObject(parent), k(new Private)
@@ -60,18 +59,14 @@ TupLayer::TupLayer(TupScene *parent, int index) : QObject(parent), k(new Private
 
 TupLayer::~TupLayer()
 {
-    k->frames.clear(true);
+    k->frames.clear();
+    k->lipsyncList.clear();
+
     delete k;
 }
 
 Frames TupLayer::frames()
 {
-   /*
-    tFatal() << "";
-    tFatal() << "TupLayer::frames - LAYER NAME: " << k->name;
-    tFatal() << "";
-    */
-
     return k->frames;
 }
 
@@ -135,9 +130,33 @@ TupFrame *TupLayer::createFrame(QString name, int position, bool loaded)
     k->frames.insert(position, frame);
 
     if (loaded)
-        TupProjectLoader::createFrame(scene()->objectIndex(), objectIndex(), position, frame->frameName(), project());
+        TupProjectLoader::createFrame(scene()->objectIndex(), objectIndex(), position, name, project());
 
     return frame;
+}
+
+TupLipSync *TupLayer::createLipSync(const QString &name, const QString &soundFile, int initFrame)
+{
+    TupLipSync *lipsync = new TupLipSync(name, soundFile, initFrame);
+    k->lipsyncList << lipsync;
+
+    return lipsync;
+}
+
+void TupLayer::addLipSync(TupLipSync *lipsync)
+{
+    if (lipsync)
+        k->lipsyncList << lipsync;
+}
+
+int TupLayer::lipSyncCount()
+{
+     return k->lipsyncList.count();
+}
+
+Mouths TupLayer::lipSyncList()
+{
+     return k->lipsyncList;
 }
 
 bool TupLayer::removeFrame(int position)
@@ -145,19 +164,26 @@ bool TupLayer::removeFrame(int position)
     TupFrame *toRemove = frame(position);
 
     if (toRemove) {
-        k->frames.removeObject(position);
+        k->frames.removeAt(position);
         toRemove->setRepeat(toRemove->repeat()-1);
-
-        /*
-        if (toRemove->repeat() < 1) {
-            tFatal() << "TupLayer::removeFrame -> Deleting pointer!";
-            delete toRemove;
-        }
-        */
 
         k->framesCount--;
 
         return true;
+    }
+
+    return false;
+}
+
+bool TupLayer::removeLipSync(const QString &name)
+{
+    int size = k->lipsyncList.size();
+    for (int i = 0; i < size; i++) {
+         TupLipSync *lipsync = k->lipsyncList.at(i);
+         if (lipsync->name().compare(name) == 0) {
+             k->lipsyncList.removeAt(i);
+             return true;
+         }
     }
 
     return false;
@@ -207,7 +233,7 @@ bool TupLayer::exchangeFrame(int from, int to)
     if (from < 0 || from >= k->frames.count() || to < 0 || to > k->frames.count())
         return false;
 
-    k->frames.exchangeObject(from, to);
+    k->frames.swap(from, to);
 
     return true;
 }
@@ -220,7 +246,9 @@ bool TupLayer::expandFrame(int position, int size)
     TupFrame *toExpand = frame(position);
 
     if (toExpand) {
-        k->frames.expandValue(position, size);
+        int limit = position + size;
+        for (int i = position + 1; i <= limit; i++)
+             k->frames.insert(i, toExpand);
         return true;
     }
 
@@ -230,11 +258,19 @@ bool TupLayer::expandFrame(int position, int size)
 
 TupFrame *TupLayer::frame(int position) const
 {
-    if (position < 0 || position >= k->frames.count()) {
+    if (position < 0 || position >= k->frames.count()) {        
         #ifdef K_DEBUG
-               tError() << "TupLayer::frame() - FATAL ERROR: frame index out of bound : " << position;
-               tError() << "TupLayer::frame() - FATAL ERROR: index limit : " << k->frames.count()-1;
-        #endif
+            QString msg1 = "TupLayer::frame() - FATAL ERROR: frame index out of bound : " + QString::number(position);
+            QString msg2 = "TupLayer::frame() - FATAL ERROR: index limit : " + QString::number(k->frames.count()-1);
+            #ifdef Q_OS_WIN32
+                qDebug() << msg1;
+                qDebug() << msg2;
+            #else
+                tError() << msg1;
+                tError() << msg2;
+            #endif
+        #endif    
+
         return 0;
     }
 
@@ -272,9 +308,20 @@ void TupLayer::fromXml(const QString &xml)
 
                        frame->fromXml(newDoc);
                    }
+               } else if (e.tagName() == "lipsync") {
+                          TupLipSync *lipsync = createLipSync(e.attribute("name"), e.attribute("soundFile"), e.attribute("initFrame").toInt()); 
+                          if (lipsync) {
+                              QString newDoc;
+
+                              {
+                                QTextStream ts(&newDoc);
+                                ts << n;
+                              }
+
+                              lipsync->fromXml(newDoc);
+                          }
                }
            }
-
            n = n.nextSibling();
     }
 }
@@ -285,8 +332,17 @@ QDomElement TupLayer::toXml(QDomDocument &doc) const
     root.setAttribute("name", k->name);
     doc.appendChild(root);
 
-    foreach (TupFrame *frame, k->frames.values())
-             root.appendChild(frame->toXml(doc));
+    int framesTotal = k->frames.size();
+    for (int i = 0; i < framesTotal; i++) {
+         TupFrame *frame = k->frames.at(i);
+         root.appendChild(frame->toXml(doc));
+    }
+
+    int lipsyncTotal = k->lipsyncList.size();
+    for (int i = 0; i < lipsyncTotal; i++) {
+         TupLipSync *lipSync = k->lipsyncList.at(i);
+         root.appendChild(lipSync->toXml(doc));
+    }
 
     return root;
 }
@@ -301,29 +357,20 @@ TupProject *TupLayer::project() const
     return scene()->project();
 }
 
+void TupLayer::updateLayerIndex(int index)
+{
+    k->index = index;
+}
+
 int TupLayer::layerIndex()
 {
     return k->index;
 }
 
-/*
-int TupLayer::logicalIndexOf(TupFrame *frame) const
-{
-    return k->frames.logicalIndex(frame);
-}
-*/
-
 int TupLayer::visualIndexOf(TupFrame *frame) const
 {
-    return k->frames.objectIndex(frame);
+    return k->frames.indexOf(frame);
 }
-
-/*
-int TupLayer::logicalIndex() const
-{
-    return scene()->logicalIndexOf(const_cast<TupLayer *>(this));
-}
-*/
 
 int TupLayer::objectIndex() const
 {

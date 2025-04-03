@@ -36,19 +36,24 @@
 #ifndef TOOLVIEW_H
 #define TOOLVIEW_H
 
-#include "tideality.h"
+#include "tglobal.h"
+#include "tviewbutton.h"
+#include "tmainwindow.h"
 
 #include <QDockWidget>
 #include <QIcon>
 #include <QKeySequence>
-
-class TViewButton;
+#include <QAction>
+#include <QMainWindow>
+#include <QMouseEvent>
+#include <QLayout>
+#include <QEvent>
 
 /**
  * @author David Cuadrado
 */
 
-class T_IDEAL_EXPORT ToolView : public QDockWidget
+class T_GUI_EXPORT ToolView : public QDockWidget
 {
     Q_OBJECT
 

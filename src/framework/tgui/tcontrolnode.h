@@ -33,13 +33,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef CONTROLNODE_H
-#define CONTROLNODE_H
+#ifndef TCONTROLNODE_H
+#define TCONTROLNODE_H
 
+#include "tglobal.h"
+
+#include <QCursor>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
+#include <QStyleOptionButton>
+#include <QApplication>
+#include <QCursor>
+#include <QGraphicsPathItem>
 #include <QGraphicsItem>
 #include <QObject>
 #include <QPointF>
-#include <QGraphicsScene>
 
 /**
  * @author Jorge Cuadrado
@@ -47,15 +57,10 @@
 
 class TNodeGroup;
 
-// class TControlNode : public QObject, public QGraphicsItem
-class TControlNode : public QGraphicsItem
+class T_GUI_EXPORT TControlNode : public QGraphicsItem
 {
-    // Q_OBJECT
-    
     public:
-
         enum State { Pressed = 1, Released };
-        
         TControlNode(int index, TNodeGroup *nodeGroup, const QPointF & pos = QPoint(0,0),  
                      QGraphicsItem * parent = 0, QGraphicsScene * scene = 0, int level = 0);
         
@@ -79,6 +84,7 @@ class TControlNode : public QGraphicsItem
         TControlNode *centralNode();
         
         void hasChanged(bool notChange);
+        void resize(qreal factor);
         
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);

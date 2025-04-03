@@ -36,7 +36,15 @@
 #ifndef TUPITEMPREVIEW_H
 #define TUPITEMPREVIEW_H
 
+#include "tglobal.h"
+#include "tupproxyitem.h"
+
 #include <QWidget>
+#include <QGraphicsItem>
+#include <QGraphicsTextItem>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
+#include <QGraphicsSvgItem>
 
 class QGraphicsItem;
 
@@ -45,7 +53,7 @@ class QGraphicsItem;
  * @author David Cuadrado
 */
 
-class TupItemPreview : public QWidget
+class TUPI_EXPORT TupItemPreview : public QWidget
 {
     Q_OBJECT
     

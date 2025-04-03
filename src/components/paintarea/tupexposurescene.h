@@ -36,9 +36,12 @@
 #ifndef TUPEXPOSURESCENE_H
 #define TUPEXPOSURESCENE_H 
 
+#include "tglobal.h"
 #include "tupscene.h" 
 
 #include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 class TupExposureScene : public QGroupBox 
 {

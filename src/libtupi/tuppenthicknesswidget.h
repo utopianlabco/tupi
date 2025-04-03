@@ -36,6 +36,7 @@
 #ifndef TUPPENTHICKNESSWIDGET_H
 #define TUPPENTHICKNESSWIDGET_H
 
+#include "tglobal.h"
 #include "tapplicationproperties.h"
 
 #include <QWidget>
@@ -49,7 +50,7 @@
  * @author Gustav Gonzalez <info@maefloresta.com>
  **/
 
-class TupPenThicknessWidget : public QWidget
+class TUPI_EXPORT TupPenThicknessWidget : public QWidget
 {
     Q_OBJECT
 

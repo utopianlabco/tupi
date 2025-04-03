@@ -36,13 +36,14 @@
 #ifndef TUPNETPROJECTMANAGERPARAMS_H
 #define TUPNETPROJECTMANAGERPARAMS_H
 
+#include "tglobal.h"
 #include "tupprojectmanagerparams.h"
 
 /**
  * @author David Cuadrado
 */
 
-class TupNetProjectManagerParams : public TupProjectManagerParams
+class TUPI_EXPORT TupNetProjectManagerParams : public TupProjectManagerParams
 {
     public:
         TupNetProjectManagerParams();

@@ -35,17 +35,6 @@
 
 #include "tcontrolnode.h"
 #include "tnodegroup.h"
-#include "tdebug.h"
-
-#include <QCursor>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QStyleOptionButton>
-#include <QApplication>
-#include <QCursor>
-#include <QGraphicsPathItem>
 
 struct TControlNode::Private
 {
@@ -61,7 +50,8 @@ struct TControlNode::Private
 
 TControlNode::TControlNode(int index, TNodeGroup *nodeGroup, const QPointF & pos, 
                            QGraphicsItem *graphicParent, QGraphicsScene *scene, int level) : 
-                           QGraphicsItem(0, scene), k(new Private)
+                           QGraphicsItem(), k(new Private)
+                           // QGraphicsItem(0, scene), k(new Private)
 {
     k->index  = index;
     k->graphicParent = 0;
@@ -77,13 +67,6 @@ TControlNode::TControlNode(int index, TNodeGroup *nodeGroup, const QPointF & pos
     setFlag(ItemIsMovable, true);
     setFlag(ItemSendsGeometryChanges, true);
     setPos(pos);
-
-    /*
-    if (level > 0)
-        setZValue(level + 1);
-    else
-        setZValue(graphicParent->zValue() + 1);
-    */
 
     setZValue(level);
     setGraphicParent(graphicParent);
@@ -102,15 +85,16 @@ void TControlNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // bool antialiasing = painter->renderHints() & QPainter::Antialiasing;
     // painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 
-    QColor c;
+    QColor color;
 
     if (k->centralNode) {
-        c = QColor("white");
+        color = QColor("white");
     } else {
-        c = QColor(55, 155, 55);
+        color = QColor(55, 155, 55);
+        color.setAlpha(200);
     }
 
-    painter->setBrush(c);
+    painter->setBrush(color);
     paintLinesToChildNodes(painter);
     painter->drawRoundRect(boundingRect());
 }
@@ -138,17 +122,17 @@ void TControlNode::paintLinesToChildNodes(QPainter *painter)
 
 QRectF TControlNode::boundingRect() const
 {
-    QSizeF size(8, 8);
+    QSizeF size(10, 10);
     QRectF rect(QPointF(-size.width()/2, -size.height()/2), size);
 
     if (k->rightNode) {
         if (k->rightNode->isVisible())
-            rect.unite(k->rightNode->boundingRect());
+            rect.united(k->rightNode->boundingRect());
     }
 
     if (k->leftNode) {
         if (k->leftNode->isVisible())
-           rect.unite(k->leftNode->boundingRect());
+           rect.united(k->leftNode->boundingRect());
     }
 
     return rect;
@@ -202,7 +186,6 @@ QVariant TControlNode::itemChange(GraphicsItemChange change, const QVariant &val
 void TControlNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (k->centralNode) {
-
         setSelected(true);
         k->centralNode->setSelected(true);
 
@@ -234,7 +217,11 @@ void TControlNode::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void TControlNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TControlNode::mouseReleaseEvent()]";
+        #else
            T_FUNCINFO;
+        #endif
     #endif
 
     Q_UNUSED(event);
@@ -340,3 +327,9 @@ void TControlNode::hasChanged(bool unchanged)
 {
     k->unchanged = unchanged;
 }
+
+void TControlNode::resize(qreal factor)
+{
+    setScale(factor);
+}
+

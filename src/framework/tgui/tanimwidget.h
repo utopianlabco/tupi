@@ -35,18 +35,22 @@
 
 #ifndef TANIMWIDGET_H
 #define TANIMWIDGET_H
+
 /**
  * @file tanimwidget.h
  * @brief Include this file if you need the class TAnimWidget
  */
 
+#include "tglobal.h"
+#include "tapplication.h"
+
 #include <QPixmap>
 #include <QHideEvent>
 #include <QShowEvent>
+#include <QPainter>
+#include <QFontMetricsF>
 #include <QList>
 #include <QWidget>
-
-#include "tglobal.h"
 
 typedef QList<QPixmap> ListOfPixmaps;
 

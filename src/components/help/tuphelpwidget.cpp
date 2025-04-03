@@ -34,14 +34,6 @@
  ***************************************************************************/
 
 #include "tuphelpwidget.h"
-// Tupi Framework
-#include "tdebug.h"
-#include "tglobal.h"
-
-#include <QLocale>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QHeaderView>
 
 TupHelpWidget::TupHelpWidget(const QString &path, QWidget *parent) : TupModuleWidgetBase(parent)
 {
@@ -58,6 +50,15 @@ TupHelpWidget::TupHelpWidget(const QString &path, QWidget *parent) : TupModuleWi
         m_helpPath = new QDir(path + "en");
     }
 
+    #ifdef K_DEBUG
+        QString msg = "TupHelpWidget() - Loading help files from -> " + m_helpPath->path();
+        #ifdef Q_OS_WIN32
+            qWarning() << msg;
+        #else
+            tWarning() << msg;
+        #endif
+    #endif	
+	
     QTreeWidget *contentsListView = new QTreeWidget(this);
     contentsListView->setHeaderLabels(QStringList() << tr(""));
     contentsListView->header()->hide();
@@ -107,13 +108,23 @@ TupHelpWidget::TupHelpWidget(const QString &path, QWidget *parent) : TupModuleWi
             }
         } else {
             #ifdef K_DEBUG
-                   tError() << "TupHelpWidget::TupHelpWidget() - Fatal Error: Can't set content";
+                QString msg = "TupHelpWidget::TupHelpWidget() - Fatal Error: Can't set content";
+                #ifdef Q_OS_WIN32
+                    qDebug() << msg;
+                #else
+                    tError() << msg;
+                #endif
             #endif
         }
         file.close();
     } else {
         #ifdef K_DEBUG
-               tError() << "TupHelpWidget::TupHelpWidget() - Fatal Error: Can't open 'help.xml' file";
+            QString msg = "TupHelpWidget::TupHelpWidget() - Fatal Error: Can't open 'help.xml' file";
+            #ifdef Q_OS_WIN32
+                qDebug() << msg;
+            #else
+                tError() << msg;
+            #endif
         #endif
     }
 

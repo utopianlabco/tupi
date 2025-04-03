@@ -36,11 +36,14 @@
 #ifndef TUPGRADIENTVIEWER_H
 #define TUPGRADIENTVIEWER_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
 
 #include <QFrame>
 #include <QGradient>
 #include <QList>
+#include <QPainter>
+#include <QMouseEvent>
+#include <QRectF>
 
 /**
  * @if english

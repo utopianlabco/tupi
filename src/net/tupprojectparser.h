@@ -33,16 +33,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef TUPROJECTPARSER_H
+#ifndef TUPPROJECTPARSER_H
 #define TUPPROJECTPARSER_H
 
 /**
  * @author Jorge Cuadrado
 */
 
+#include "tglobal.h"
 #include "tupxmlparserbase.h"
 
-class TupProjectParser : public TupXmlParserBase
+class TUPI_EXPORT TupProjectParser : public TupXmlParserBase
 {
     public:
         TupProjectParser();

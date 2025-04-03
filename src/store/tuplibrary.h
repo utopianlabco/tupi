@@ -36,10 +36,11 @@
 #ifndef TUPLIBRARY_H
 #define TUPLIBRARY_H
 
-#include <QObject>
-
-#include "tupglobal_store.h"
+#include "tglobal.h"
 #include "tuplibraryfolder.h"
+
+#include <QObject>
+#include <QTextStream>
 
 class TupProject;
 
@@ -47,7 +48,7 @@ class TupProject;
  * @author David Cuadrado
 */ 
 
-class STORE_EXPORT TupLibrary : public TupLibraryFolder
+class TUPI_EXPORT TupLibrary : public TupLibraryFolder
 {
     Q_OBJECT;
     

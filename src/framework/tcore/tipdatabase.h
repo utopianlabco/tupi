@@ -37,7 +37,10 @@
 #define TIPDATABASE_H
 
 #include "tglobal.h"
+#include "talgorithm.h"
 
+#include <QDomDocument>
+#include <QFile>
 #include <QWidget>
 #include <QString>
 #include <QList>

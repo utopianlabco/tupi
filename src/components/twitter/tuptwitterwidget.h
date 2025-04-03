@@ -36,16 +36,23 @@
 #ifndef TUPTWITTERWIDGET_H
 #define TUPTWITTERWIDGET_H
 
+#include "tglobal.h"
+#include "tuptwitter.h"
+
 #include <QWidget>
 #include <QSplitter>
 #include <QTextBrowser>
 #include <QTextDocument>
+#include <QBoxLayout>
+#include <QIcon>
+#include <QMenu>
+#include <QMouseEvent>
 
 /**
  * @author David Cuadrado
 */
 
-class TupTwitterWidget : public QWidget
+class TUPI_EXPORT TupTwitterWidget : public QWidget
 {
     Q_OBJECT
 
@@ -54,7 +61,6 @@ class TupTwitterWidget : public QWidget
         ~TupTwitterWidget();
 
     public slots:
-        void setDocument(const QString &doc);
         void setSource(const QString &filePath);
 
     private slots: 
@@ -65,10 +71,8 @@ class TupTwitterWidget : public QWidget
 
     private:
         void downLoadNews();
-
-        QSplitter *m_separator;
-        QTextBrowser *m_pageArea;
-        QTextDocument *m_document;
+        struct Private;
+        Private *const k;
 };
 
 #endif

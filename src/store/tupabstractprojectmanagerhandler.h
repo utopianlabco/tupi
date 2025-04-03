@@ -36,7 +36,8 @@
 #ifndef TUPABSTRACTPROJECTHANDLER_H
 #define TUPABSTRACTPROJECTHANDLER_H
 
-#include "tupglobal_store.h"
+#include "tglobal.h"
+
 #include <QObject>
 #include <QStringList>
 
@@ -50,7 +51,7 @@ class TupProject;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupAbstractProjectHandler : public QObject
+class TUPI_EXPORT TupAbstractProjectHandler : public QObject
 {
     Q_OBJECT
 

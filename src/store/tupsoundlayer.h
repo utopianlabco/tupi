@@ -36,13 +36,16 @@
 #ifndef TUPSOUNDLAYER_H
 #define TUPSOUNDLAYER_H
 
+#include "tglobal.h"
 #include "tuplayer.h"
+
+#include <QFileInfo>
 
 /**
     @author David Cuadrado
 **/
 
-class TupSoundLayer : public TupLayer
+class TUPI_EXPORT TupSoundLayer : public TupLayer
 {
     public:
         TupSoundLayer(TupScene *parent);

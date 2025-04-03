@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tupvideoexportpackage.h"
-#include "tdebug.h"
 
 // <project_video version="0">
 //     <video fps="24" scenes="0, 1, 2, N" />
@@ -60,9 +59,12 @@ TupVideoExportPackage::TupVideoExportPackage(const QString &title, const QString
     indexes.remove(indexes.length() - 1, 1);
 
     video.setAttribute("scenes", indexes);
-    QDomText titleDom = createTextNode(Qt::escape(title));
-    QDomText topicDom = createTextNode(Qt::escape(topics));
-    QDomText descDom = createTextNode(Qt::escape(description));
+    // QDomText titleDom = createTextNode(Qt::escape(title));
+    // QDomText topicDom = createTextNode(Qt::escape(topics));
+    // QDomText descDom = createTextNode(Qt::escape(description));
+    QDomText titleDom = createTextNode(title.toHtmlEscaped());
+    QDomText topicDom = createTextNode(topics.toHtmlEscaped());
+    QDomText descDom = createTextNode(description.toHtmlEscaped());
 
     video.appendChild(createElement("title")).appendChild(titleDom);
     video.appendChild(createElement("topics")).appendChild(topicDom);

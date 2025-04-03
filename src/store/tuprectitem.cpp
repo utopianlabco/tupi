@@ -37,17 +37,12 @@
 #include "tupgraphicalgorithm.h"
 #include "tupserializer.h"
 
-#include <QGraphicsSceneDragDropEvent>
-#include <QMimeData>
-#include <QBrush>
-#include <QGraphicsScene>
-
-TupRectItem::TupRectItem(QGraphicsItem * parent, QGraphicsScene * scene) : QGraphicsRectItem(parent, scene)
+TupRectItem::TupRectItem(QGraphicsItem *parent) : QGraphicsRectItem(parent)
 {
     setAcceptDrops(true);
 }
 
-TupRectItem::TupRectItem(const QRectF& rect, QGraphicsItem * parent , QGraphicsScene * scene) : QGraphicsRectItem(rect, parent, scene)
+TupRectItem::TupRectItem(const QRectF& rect, QGraphicsItem * parent) : QGraphicsRectItem(rect, parent)
 {
 }
 
@@ -64,10 +59,10 @@ QDomElement TupRectItem::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("rect");
     
-    root.setAttribute("x", rect().x());
-    root.setAttribute("y", rect().y());
-    root.setAttribute("width", rect().width());
-    root.setAttribute("height", rect().height());
+    root.setAttribute("x", QString::number(rect().x()));
+    root.setAttribute("y", QString::number(rect().y()));
+    root.setAttribute("width", QString::number(rect().width()));
+    root.setAttribute("height", QString::number(rect().height()));
     
     root.appendChild(TupSerializer::properties(this, doc));
     
@@ -102,9 +97,13 @@ void TupRectItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_dragOver = false;
     if (event->mimeData()->hasColor()) {
-        setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
+        // setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
+        QVariant color = event->mimeData()->colorData();
+        setBrush(QBrush(color.value<QColor>()));
     } else if (event->mimeData()->hasImage()) {
-               setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+               // setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+               QVariant pixmap = event->mimeData()->imageData();
+               setBrush(QBrush(pixmap.value<QPixmap>()));
     }
     update();
 }

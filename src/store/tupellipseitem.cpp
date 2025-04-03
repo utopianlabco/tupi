@@ -41,23 +41,21 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QMimeData>
 #include <QBrush>
-#include "tdebug.h"
 #include <QPainter>
 #include <QPainterPath>
 
-TupEllipseItem::TupEllipseItem(QGraphicsItem * parent, QGraphicsScene * scene): QGraphicsEllipseItem(parent, scene), m_dragOver(false)
+TupEllipseItem::TupEllipseItem(QGraphicsItem *parent): QGraphicsEllipseItem(parent), m_dragOver(false)
 {
     setAcceptDrops(true);
 }
 
-TupEllipseItem::TupEllipseItem(const QRectF & rect, QGraphicsItem * parent, QGraphicsScene * scene): QGraphicsEllipseItem(rect, parent, scene), m_dragOver(false)
+TupEllipseItem::TupEllipseItem(const QRectF &rect, QGraphicsItem *parent): QGraphicsEllipseItem(rect, parent), m_dragOver(false)
 {
     setAcceptDrops(true);
 }
 
 TupEllipseItem::~TupEllipseItem()
 {
-    
 }
 
 void TupEllipseItem::fromXml(const QString &xml)
@@ -68,11 +66,16 @@ void TupEllipseItem::fromXml(const QString &xml)
 QDomElement TupEllipseItem::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("ellipse");
+
+    QString cx = QString::number(rect().center().x());
+    QString cy = QString::number(rect().center().y());
+    QString rx = QString::number(rect().width()/2);
+    QString ry = QString::number(rect().height()/2);
     
-    root.setAttribute("cx", rect().center().x());
-    root.setAttribute("cy", rect().center().y());
-    root.setAttribute("rx", rect().width()/2);
-    root.setAttribute("ry", rect().height()/2);
+    root.setAttribute("cx", cx);
+    root.setAttribute("cy", cy);
+    root.setAttribute("rx", rx);
+    root.setAttribute("ry", ry);
     
     root.appendChild(TupSerializer::properties(this, doc));
     
@@ -134,9 +137,13 @@ void TupEllipseItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_dragOver = false;
     if (event->mimeData()->hasColor()) {
-        setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
+        // setBrush(QBrush(qVariantValue<QColor>(event->mimeData()->colorData())));
+        QVariant color = event->mimeData()->colorData();
+        setBrush(QBrush(color.value<QColor>()));
     } else if (event->mimeData()->hasImage()) {
-        setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+               // setBrush(QBrush(qVariantValue<QPixmap>(event->mimeData()->imageData())));
+               QVariant pixmap = event->mimeData()->imageData();
+               setBrush(QBrush(pixmap.value<QPixmap>()));
     }
     update();
 }

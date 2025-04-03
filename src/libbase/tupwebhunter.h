@@ -36,18 +36,23 @@
 #ifndef TUPWEBHUNTER_H
 #define TUPWEBHUNTER_H
 
+#include "tglobal.h"
 #include "tapplicationproperties.h"
 #include "tupsvgitem.h"
 
-#include <QWidget>
+#include <QObject>
+#include <QtNetwork>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QFile>
 #include <QByteArray>
 #include <QList>
+#include <QtGui>
+#include <QDomDocument>
+#include <QEventLoop>
 
-class TupWebHunter : public QObject
+class TUPI_EXPORT TupWebHunter : public QObject
 {
     Q_OBJECT
 

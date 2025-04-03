@@ -36,13 +36,15 @@
 #ifndef TUPNOTICEPACKAGE_H
 #define TUPNOTICEPACKAGE_H
 
+#include "tglobal.h"
+
 #include <QDomDocument>
 
 /**
  * @author Jorge Cuadrado
 */
 
-class TupNoticePackage : public QDomDocument
+class TUPI_EXPORT TupNoticePackage : public QDomDocument
 {
     public:
         TupNoticePackage(const QString &text);

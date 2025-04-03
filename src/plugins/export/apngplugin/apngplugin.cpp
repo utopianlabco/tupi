@@ -35,16 +35,6 @@
 
 #include "apngplugin.h"
 
-// Tupi Framework
-#include "tdebug.h"
-#include "tglobal.h"
-
-#include "tuplayer.h"
-#include "tupanimationrenderer.h"
-
-#include <QImage>
-#include <QPainter>
-
 APNGPlugin::APNGPlugin()
 {
 }
@@ -130,6 +120,6 @@ const char* APNGPlugin::getExceptionMsg() {
     return errorMsg;
 }
 
-#ifdef HAVE_THEORA
-       Q_EXPORT_PLUGIN( APNGPlugin );
-#endif
+// #ifdef HAVE_THEORA
+//        Q_EXPORT_PLUGIN( APNGPlugin );
+// #endif

@@ -36,10 +36,6 @@
 #include "tupexposurescene.h"
 #include "tpushbutton.h"
 #include "tuplayer.h"
-#include "tdebug.h"
-
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 
 struct TupExposureScene::Private
 {
@@ -65,7 +61,6 @@ TupExposureScene::TupExposureScene(const QString &title, TupScene *scene, int cu
     k->frameCounter = k->scene->framesTotal();
 
     for (int j=0; j< scene->layersTotal(); j++) {
-
          if (j < 4) { // SQA: Temporary condition
              QGroupBox *layerGroup = new QGroupBox(tr("Layer") + " " + QString::number(j+1));
              QHBoxLayout *layerLayout = new QHBoxLayout;
@@ -142,8 +137,8 @@ void TupExposureScene::addNewLayer()
 
 void TupExposureScene::addNewFrame()
 {
-    tError() << "TupExposureScene::addNewFrame() - frameList size: " << k->frameList.size();
-    tError() << "TupExposureScene::addNewFrame() - current layer: " << k->currentLayer;
+    // tError() << "TupExposureScene::addNewFrame() - frameList size: " << k->frameList.size();
+    // tError() << "TupExposureScene::addNewFrame() - current layer: " << k->currentLayer;
 
     for(int j=0; j<k->frameList.size(); j++) {
         k->frameList.at(j)->setChecked(false);
@@ -176,18 +171,18 @@ void TupExposureScene::addNewFrame()
 
         k->frameList.insert(position, frameButton);
  
-        tError() << "TupExposureScene::addNewFrame() -> inserting frame at position: " << position;
+        // tError() << "TupExposureScene::addNewFrame() -> inserting frame at position: " << position;
     }
 }
 
 void TupExposureScene::goToFrame(int frame, int layer)
 {
-    tError() << "TupExposureScene::goToFrame(int, int) - frame: " << frame << " - layer: " << layer;
+    // tError() << "TupExposureScene::goToFrame(int, int) - frame: " << frame << " - layer: " << layer;
 
     // int oneRow = k->scene->framesTotal();
     int index = frame + k->frameCounter*layer;
 
-    tError() << "TupExposureScene::goToFrame(int, int) - index: " << index;
+    // tError() << "TupExposureScene::goToFrame(int, int) - index: " << index;
 
     for(int i=0; i<k->frameList.size(); i++) {
         if (i == index) {

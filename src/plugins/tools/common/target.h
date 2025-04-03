@@ -33,25 +33,36 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#ifndef NODE_H
-#define NODE_H
+#ifndef TARGET_H
+#define TARGET_H
+
+#include "tglobal.h"
+#include "tupgraphicalgorithm.h"
+#include "tupgraphicobject.h"
 
 #include <QGraphicsItem>
 #include <QObject>
 #include <QPointF>
+#include <QCursor>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
+#include <QStyleOptionButton>
+#include <QApplication>
 
 /**
  * @author Gustav Gonzalez 
 */
 
-class Target : public QObject, public QGraphicsItem
+class TUPI_EXPORT Target : public QObject, public QGraphicsItem
 {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
     
     public:
         
-        Target(const QPointF & pos = QPoint(0,0), int zLevel = 0, QGraphicsScene * scene = 0);
+        Target(const QPointF & pos = QPoint(0,0), int zLevel = 0);
         ~Target();
         
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *);

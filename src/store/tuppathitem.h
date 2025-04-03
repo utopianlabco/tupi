@@ -36,18 +36,24 @@
 #ifndef TUPPATHITEM_H
 #define TUPPATHITEM_H
 
+#include "tglobal.h"
 #include "tupabstractserializable.h"
-#include "tupglobal_store.h"
 
 #include <QGraphicsPathItem>
+#include <QMimeData>
+#include <QBrush>
+#include <QGraphicsSceneDragDropEvent>
+#include <QPainter>
+#include <QPainterPath>
+#include <QCursor>
 
 /**
  * @author David Cuadrado
 */
-class STORE_EXPORT TupPathItem : public TupAbstractSerializable, public QGraphicsPathItem
+class TUPI_EXPORT TupPathItem : public TupAbstractSerializable, public QGraphicsPathItem
 {
     public:
-        TupPathItem(QGraphicsItem * parent = 0, QGraphicsScene * scene = 0);
+        TupPathItem(QGraphicsItem *parent = 0);
         ~TupPathItem();
         
         virtual void fromXml(const QString &xml);

@@ -36,10 +36,21 @@
 #ifndef TUPPAINTAREABASE_H
 #define TUPPAINTAREABASE_H
 
+#include "tglobal.h"
 #include "tuptoolplugin.h"
-#include "tupglobal.h"
 
 #include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QMouseEvent>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsRectItem>
+#include <QPolygon>
+#include <QApplication>
+#include <QTimer>
+#include <QStyleOptionGraphicsItem>
+#include <QClipboard>
+
+#include <cmath>
 
 class QGraphicsRectItem;
 class TupBrushManager;
@@ -57,7 +68,7 @@ class TUPI_EXPORT TupPaintAreaBase : public QGraphicsView
     Q_OBJECT
 
     public:
-        TupPaintAreaBase(QWidget * parent = 0, QSize dimension = QSize(0, 0));
+        TupPaintAreaBase(QWidget * parent = 0, QSize dimension = QSize(0, 0), TupLibrary *library = 0);
         ~TupPaintAreaBase();
 
         void setBgColor(const QColor color);
@@ -103,7 +114,7 @@ class TUPI_EXPORT TupPaintAreaBase : public QGraphicsView
         void cursorPosition(const QPointF &pos);
         void requestTriggered(const TupProjectRequest *event);
         void changedZero(const QPointF &zero);
-        void scaled(double scaleFactor);
+        void scaled(qreal scaleFactor);
         void rotated(int angle);
 
     public slots:

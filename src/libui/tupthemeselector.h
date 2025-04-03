@@ -36,6 +36,11 @@
 #ifndef TUPTHEMESELECTOR_H
 #define TUPTHEMESELECTOR_H
 
+#include "tglobal.h"
+#include "themedocument.h"
+#include "tvhbox.h"
+#include "tapplicationproperties.h"
+
 #include <QMap>
 #include <QTreeWidget>
 #include <QGroupBox>
@@ -48,17 +53,13 @@
 #include <QGridLayout>
 #include <QButtonGroup>
 
-#include "themedocument.h"
-#include "tvhbox.h"
-#include "tapplicationproperties.h"
-
 class QCheckBox;
 
 /**
  * @author David Cuadrado
 */
 
-class TupThemeSelector : public TVHBox
+class TUPI_EXPORT TupThemeSelector : public TVHBox
 {
     Q_OBJECT
 

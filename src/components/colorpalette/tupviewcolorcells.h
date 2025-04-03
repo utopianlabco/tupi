@@ -36,21 +36,26 @@
 #ifndef TUPVIEWCOLORCELLS_H
 #define TUPVIEWCOLORCELLS_H
 
+#include "tglobal.h"
+#include "tconfig.h"
+#include "timagebutton.h"
+#include "tupcellscolor.h"
+#include "tuppaletteparser.h"
+#include "tapplicationproperties.h"
+
 #include <QFrame>
 #include <QComboBox>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QBrush>
-
-#include "tupcellscolor.h"
-#include "tuppaletteparser.h"
-#include "tapplicationproperties.h"
+#include <QScrollArea>
+#include <QGroupBox>
 
 /**
     @author Jorge Cuadrado
 **/
 
-class TupViewColorCells : public QFrame
+class TUPI_EXPORT TupViewColorCells : public QFrame
 {
     Q_OBJECT
 
@@ -67,13 +72,14 @@ class TupViewColorCells : public QFrame
     private:
         void setupForm();
         void setupButtons();
-        void fillDefaultColors();
+        // void fillDefaultColors();
         void addDefaultColor(int i, int j, const QColor &);
         void fillNamedColor();
         void readPalettes(const QString &paletteDir);
         void addPalette(TupCellsColor *palette);
 
-    protected:
+    // protected:
+    //     QSize sizeHint() const;
 
     signals:
         void selectColor(const QBrush &);

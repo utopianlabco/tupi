@@ -36,13 +36,14 @@
 #ifndef TUPERRORPARSER_H
 #define TUPERRORPARSER_H
 
+#include "tglobal.h"
+#include "tupxmlparserbase.h"
+
 /**
  * @author Jorge Cuadrado
 */
 
-#include "tupxmlparserbase.h"
-
-class TupNotificationParser : public TupXmlParserBase
+class TUPI_EXPORT TupNotificationParser : public TupXmlParserBase
 {
     public:
         

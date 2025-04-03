@@ -36,8 +36,8 @@
 #ifndef TUPREQUESTBUILDER_H
 #define TUPREQUESTBUILDER_H
 
+#include "tglobal.h"
 #include "tuplibraryobject.h"
-#include "tupglobal_store.h"
 #include "tupproject.h"
 
 #include <QString>
@@ -51,7 +51,7 @@ class TupProjectResponse;
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupRequestBuilder
+class TUPI_EXPORT TupRequestBuilder
 {
     protected:
         TupRequestBuilder();
@@ -74,8 +74,8 @@ class STORE_EXPORT TupRequestBuilder
         
         static TupProjectRequest createSceneRequest(int sceneIndex, int action, const QVariant &arg= QString(), const QByteArray &data = QByteArray());
         
-        static TupProjectRequest createLibraryRequest(int actionId, const QVariant &arg, TupLibraryObject::Type type, TupProject::Mode spaceMode,
-                                                     const QByteArray &data, const QString &folder = QString(), int scene = -1, int layer = -1, int frame = -1);
+        static TupProjectRequest createLibraryRequest(int actionId, const QVariant &arg, TupLibraryObject::Type type, TupProject::Mode spaceMode = TupProject::FRAMES_EDITION,
+                                                      const QByteArray &data = QByteArray(), const QString &folder = QString(), int scene = -1, int layer = -1, int frame = -1);
         
         static TupProjectRequest fromResponse(TupProjectResponse *response);
         

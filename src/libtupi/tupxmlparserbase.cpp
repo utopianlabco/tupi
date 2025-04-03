@@ -34,7 +34,6 @@
  ***************************************************************************/
 
 #include "tupxmlparserbase.h"
-#include "tdebug.h"
 
 struct TupXmlParserBase::Private
 {
@@ -111,15 +110,34 @@ bool TupXmlParserBase::characters(const QString & ch)
 
 bool TupXmlParserBase::error(const QXmlParseException & exception)
 {
-     tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-     tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+#ifdef K_DEBUG	
+    #ifdef Q_OS_WIN32
+        QString msg1 = exception.lineNumber() + QString("x") + exception.columnNumber() + QString(": ") + exception.message();
+        qDebug() << msg1;
+    #else
+	    tWarning() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;		
+        #endif
+#else
+     Q_UNUSED(exception);
+#endif
      return true;
 }
 
 bool TupXmlParserBase::fatalError(const QXmlParseException & exception)
 {
-     tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
-     tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;
+#ifdef K_DEBUG	
+    #ifdef Q_OS_WIN32
+        QString msg1 = exception.lineNumber() + QString("x") + exception.columnNumber() + QString(": ") + exception.message();
+        qDebug() << msg1;
+    #else
+        tFatal() << exception.lineNumber() << "x" << exception.columnNumber() << ": " << exception.message();
+        tWarning() << __PRETTY_FUNCTION__ << " Document: " << k->document;	
+    #endif
+#else
+     Q_UNUSED(exception);
+#endif
+
      return true;
 }
 
@@ -139,6 +157,7 @@ QString TupXmlParserBase::currentTag() const
 }
 
 QString TupXmlParserBase::root() const
+
 {
      return k->root;
 }
@@ -158,12 +177,18 @@ bool TupXmlParserBase::parse(const QString &doc)
      return reader.parse(&xmlsource);
 }
 
-
 bool TupXmlParserBase::parse(QFile *file)
 {
      if (!file->isOpen()) {
          if (! file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-             tWarning() << "Cannot open file " << file->fileName();
+#ifdef K_DEBUG
+             QString msg = "TupXmlParserBase::parse() - Cannot open file " + file->fileName();
+             #ifdef Q_OS_WIN32
+                 qDebug() << msg;
+             #else
+                 tWarning() << msg;
+             #endif
+#endif
              return false;
          }
      }

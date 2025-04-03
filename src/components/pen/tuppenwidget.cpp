@@ -34,14 +34,6 @@
  ***************************************************************************/
 
 #include "tuppenwidget.h"
-#include "tglobal.h"
-#include "tdebug.h"
-#include "tconfig.h"
-
-#include "tuppaintareaevent.h"
-#include "tuppenthicknesswidget.h"
-
-#include <QListWidget>
 
 struct TupPenWidget::Private
 {
@@ -86,12 +78,25 @@ TupPenWidget::TupPenWidget(QWidget *parent) : TupModuleWidgetBase(parent), k(new
     
     k->style = new QComboBox();
     k->style->setIconSize(QSize(140, 13));
-    
+
+    int flag = Qt::SolidLine;
+    k->style->addItem(QIcon(THEME_DIR + "icons/line_style01.png"), tr("Solid"), QVariant(flag));
+    flag = Qt::DashLine;
+    k->style->addItem(QIcon(THEME_DIR + "icons/line_style02.png"), tr("Dash"), QVariant(flag));
+    flag = Qt::DotLine;
+    k->style->addItem(QIcon(THEME_DIR + "icons/line_style03.png"), tr("Dot"), QVariant(flag));
+    flag = Qt::DashDotLine;
+    k->style->addItem(QIcon(THEME_DIR + "icons/line_style04.png"), tr("Dash dot"), QVariant(flag));
+    flag = Qt::DashDotDotLine;
+    k->style->addItem(QIcon(THEME_DIR + "icons/line_style05.png"), tr("Dash dot dot"), QVariant(flag));
+
+/*    
     k->style->addItem(QIcon(THEME_DIR + "icons/line_style01.png"), tr("Solid"), Qt::SolidLine);
     k->style->addItem(QIcon(THEME_DIR + "icons/line_style02.png"), tr("Dash"), Qt::DashLine);
     k->style->addItem(QIcon(THEME_DIR + "icons/line_style03.png"), tr("Dot"), Qt::DotLine);
     k->style->addItem(QIcon(THEME_DIR + "icons/line_style04.png"), tr("Dash dot"), Qt::DashDotLine);
     k->style->addItem(QIcon(THEME_DIR + "icons/line_style05.png"), tr("Dash dot dot"), Qt::DashDotDotLine);
+*/
     
     addChild(k->style);
     connect(k->style, SIGNAL(currentIndexChanged(int)), this, SLOT(setStyle(int)));
@@ -146,9 +151,13 @@ TupPenWidget::TupPenWidget(QWidget *parent) : TupModuleWidgetBase(parent), k(new
 TupPenWidget::~TupPenWidget()
 {
     #ifdef K_DEBUG
-           TEND;
-    #endif
-
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TupPenWidget()]";
+        #else
+            TEND;
+        #endif
+    #endif 
+		
     delete k;
 }
 

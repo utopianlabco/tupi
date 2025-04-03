@@ -36,27 +36,59 @@
 #ifndef TUPLIBRARYWIDGET_H
 #define TUPLIBRARYWIDGET_H
 
+#include "tglobal.h"
 #include "tupmodulewidgetbase.h"
-#include "tupitempreview.h"
+#include "tuplibrarydisplay.h"
 #include "timagebutton.h"
 #include "tupitemmanager.h"
 #include "tupnewitemdialog.h"
 #include "tuplibraryobject.h"
+#include "tapplication.h"
+#include "toptionaldialog.h"
+#include "tconfig.h"
+#include "tuplibrary.h"
+#include "tupproject.h"
+#include "tupsymboleditor.h"
+#include "tuprequestbuilder.h"
+#include "tosd.h"
+#include "talgorithm.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QMap>
 #include <QDir>
 #include <QMouseEvent>
+#include <QApplication>
+#include <QGroupBox>
+#include <QFileDialog>
+#include <QGraphicsItem>
+#include <QLabel>
+#include <QMenu>
+#include <QMessageBox>
+#include <QProgressDialog>
+#include <QDesktopWidget>
+#include <QBuffer>
+#include <QGraphicsSvgItem>
+#include <QSvgRenderer>
+#include <QSvgGenerator>
+#include <QComboBox>
+#include <QTreeWidgetItemIterator>
+#include <QProcess>
+#include <QFileSystemWatcher>
+#include <QChar>
+#include <QPainter>
 
-class TupLibrary;
+#include <cstdlib>
+#include <ctime>
+
+// class TupLibrary;
 typedef QMap<QString, TupLibraryObject *> LibraryObjects;
 
 /**
  * @author David Cuadrado
 */
 
-class TupLibraryWidget : public TupModuleWidgetBase
+class TUPI_EXPORT TupLibraryWidget : public TupModuleWidgetBase
 {
     Q_OBJECT
 
@@ -75,13 +107,13 @@ class TupLibraryWidget : public TupModuleWidgetBase
     private slots:
         void previewItem(QTreeWidgetItem *item);
         void insertObjectInWorkspace();
-        void removeCurrentGraphic();
+        void removeCurrentItem();
         void cloneObject(QTreeWidgetItem *item);
         void exportObject(QTreeWidgetItem *item);
         void createRasterObject();
         void createVectorObject();
         void renameObject(QTreeWidgetItem *item);
-        void importGraphicObject();
+        void importLibraryObject();
         void refreshItem(QTreeWidgetItem *item);
         void updateLibrary(QString node, QString target);
         void activeRefresh(QTreeWidgetItem *item);
@@ -90,6 +122,7 @@ class TupLibraryWidget : public TupModuleWidgetBase
         void openKritaToEdit(QTreeWidgetItem *item);
         void openMyPaintToEdit(QTreeWidgetItem *item);
         void updateItemFromSaveAction();
+        void updateItemEditionState();
 
     public slots:
         void addFolder(const QString &folderName = QString());

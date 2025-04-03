@@ -36,11 +36,20 @@
 #ifndef TUPPACKAGEHANDLER_H
 #define TUPPACKAGEHANDLER_H
 
-#include "tupglobal.h"
+#include "tglobal.h"
+#include "tapplicationproperties.h"
+#include "quazip.h"
+#include "quazipfile.h"
+
+// SQA: Pending to enable in the future
+// #include <JlCompress.h>
 
 #include <QString>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
-class QuaZip;
+// class QuaZip;
 
 /**
  * @author David Cuadrado

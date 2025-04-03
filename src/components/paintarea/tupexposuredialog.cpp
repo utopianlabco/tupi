@@ -34,23 +34,6 @@
  ***************************************************************************/
 
 #include "tupexposuredialog.h"
-#include "tupexposurescene.h"
-#include "tdebug.h"
-#include "tapplicationproperties.h"
-#include "tseparator.h"
-#include "timagebutton.h"
-#include "tupscene.h"
-#include "tuplayer.h"
-#include "tpushbutton.h"
-
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QDialogButtonBox>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QListWidget>
-#include <QDesktopWidget>
 
 struct TupExposureDialog::Private
 {
@@ -127,7 +110,6 @@ void TupExposureDialog::setSheet(int sceneIndex, int layerIndex, int frameIndex)
     k->sceneColumn = new QVBoxLayout;
 
     for (int i=0; i < k->project->scenesTotal(); i++) {
-
          // List of scene buttons
          TPushButton *sceneButton = new TPushButton(this, tr("Scene") + " " + QString::number(i+1), 0, i);
          sceneButton->setFixedSize(100, 70);
@@ -184,11 +166,16 @@ void TupExposureDialog::setSheet(int sceneIndex, int layerIndex, int frameIndex)
 void TupExposureDialog::goToScene(int column, int sceneIndex)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupExposureDialog::goToScene()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
+
     Q_UNUSED(column);
 
-    tError() << "TupExposureDialog::goToScene() - sceneIndex: " << sceneIndex;
+    // tError() << "TupExposureDialog::goToScene() - sceneIndex: " << sceneIndex;
 
     TupExposureScene *oldScene = k->sceneGroupList.at(k->currentScene);
     oldScene->hide();
@@ -209,7 +196,7 @@ void TupExposureDialog::goToScene(int column, int sceneIndex)
     TupExposureScene *sceneTable = k->sceneGroupList.at(sceneIndex);
     sceneTable->show();
     int newFramesTotal = sceneTable->framesTotal();
-    int newLayersTotal = sceneTable->layersTotal();
+    int newLayersTotal = sceneTable->layersTotal(); 
 
     emit goToScene(k->currentScene);
     emit goToFrame(sceneTable->currentFrame(), sceneTable->currentLayer(), k->currentScene);
@@ -226,7 +213,11 @@ void TupExposureDialog::goToScene(int column, int sceneIndex)
 void TupExposureDialog::refreshUI(int frame, int layer)
 {
     #ifdef K_DEBUG
-           T_FUNCINFO;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupExposureDialog::refreshUI()]";
+        #else
+            T_FUNCINFO;
+        #endif
     #endif
 
     for(int i=0; i<k->sceneList.size(); i++) {
@@ -235,7 +226,7 @@ void TupExposureDialog::refreshUI(int frame, int layer)
 
     k->currentLayer = layer;
 
-    tError() << "TupExposureDialog::refreshUI() - Going to frame -> " << frame;
+    // tError() << "TupExposureDialog::refreshUI() - Going to frame -> " << frame;
 
     emit goToFrame(frame, layer, k->currentScene);
 }
@@ -282,8 +273,8 @@ void TupExposureDialog::createScene()
     k->sceneColumn->addWidget(sceneButton);
     k->sceneList << sceneButton;
 
-    tError() << "TupExposureDialog::createScene() - Scenes Total: " << scene;
-    tError() << "TupExposureDialog::createScene() - Last index: " << oldIndex;
+    // tError() << "TupExposureDialog::createScene() - Scenes Total: " << scene;
+    // tError() << "TupExposureDialog::createScene() - Last index: " << oldIndex;
 
     TupExposureScene *sceneGroup = new TupExposureScene(tr("Scene") + " " + QString::number(scene), k->project->scene(scene-1), 0, 0);
     connect(sceneGroup, SIGNAL(updateUI(int, int)), this, SLOT(refreshUI(int, int)));

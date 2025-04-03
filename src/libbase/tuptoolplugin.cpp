@@ -1,4 +1,5 @@
 /***************************************************************************
+
  *   Project TUPI: Magia 2D                                                *
  *   Project Contact: info@maefloresta.com                                 *
  *   Project Website: http://www.maefloresta.com                           *
@@ -38,12 +39,6 @@
 #include "tupinputdeviceinformation.h"
 #include "tupgraphicsscene.h"
 
-#include "tdebug.h"
-
-#include <QGraphicsView>
-#include <QCursor>
-#include <QMenu>
-
 struct TupToolPlugin::Private
 {
     QString currentTool;
@@ -80,12 +75,26 @@ QString TupToolPlugin::name() const
 
 void TupToolPlugin::begin()
 {
-    tDebug("tools") << "Begin: " << k->currentTool;
+#ifdef K_DEBUG
+    QString msg = "TupToolPlugin::begin() - Begin: " + k->currentTool;
+    #ifdef Q_OS_WIN32
+        qWarning() << msg;
+    #else
+        tWarning() << msg;
+    #endif
+#endif
 }
 
 void TupToolPlugin::end()
 {
-    tDebug("tools") << "End: " << k->currentTool;
+#ifdef K_DEBUG
+    QString msg = "TupToolPlugin::end() - End: " + k->currentTool;
+    #ifdef Q_OS_WIN32
+        qWarning() << msg;
+    #else
+        tWarning("tools") << msg;
+    #endif
+#endif
 }
 
 void TupToolPlugin::sceneResponse(const TupSceneResponse *event)
@@ -157,9 +166,11 @@ void TupToolPlugin::updateZoomFactor(qreal factor)
     Q_UNUSED(factor);
 }
 
+/*
 void TupToolPlugin::autoZoom()
 {
 }
+*/
 
 void TupToolPlugin::setProjectSize(const QSize size)
 {
@@ -233,6 +244,7 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
                  tool = TupToolPlugin::ContourTool;
             break;
 
+            /*
             case Qt::Key_Z:
                  menu = TupToolPlugin::ZoomMenu;
                  if (modifiers == Qt::ShiftModifier)
@@ -240,10 +252,11 @@ QPair<int, int> TupToolPlugin::setKeyAction(int key, Qt::KeyboardModifiers modif
                  else
                      tool = TupToolPlugin::ZoomInTool;
             break;
+            */
 
             case Qt::Key_H:
                  menu = TupToolPlugin::ZoomMenu;
-                 tool = TupToolPlugin::HandTool;
+                 tool = TupToolPlugin::ShiftTool;
             break;
 
             case Qt::Key_Right:
@@ -288,3 +301,23 @@ TupToolPlugin::EditMode TupToolPlugin::currentEditMode()
     return TupToolPlugin::None;
 }
 
+void TupToolPlugin::setActiveView(const QString &viewID)
+{
+    Q_UNUSED(viewID);
+}
+
+/*
+void TupToolPlugin::addNewItem(const QString &id)
+{
+    Q_UNUSED(id);
+}
+*/
+
+void TupToolPlugin::setCurrentItem(const QString &id)
+{
+    Q_UNUSED(id);
+}
+
+void TupToolPlugin::updateWorkSpaceContext()
+{
+}

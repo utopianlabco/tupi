@@ -36,10 +36,20 @@
 #ifndef TUPPENDIALOG_H
 #define TUPPENDIALOG_H
 
+#include "tglobal.h"
 #include "tupbrushmanager.h"
-#include <QDialog>
+#include "tapplicationproperties.h"
+#include "tseparator.h"
+#include "tuppenthicknesswidget.h"
+#include "timagebutton.h"
 
-class TupPenDialog : public QDialog
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QDialogButtonBox>
+
+class TUPI_EXPORT TupPenDialog : public QDialog
 {
     Q_OBJECT
 

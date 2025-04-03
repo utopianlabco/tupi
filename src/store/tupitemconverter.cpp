@@ -41,11 +41,6 @@
 #include "tupproxyitem.h"
 #include "tupitemgroup.h"
 
-#include "tdebug.h"
-
-#include <QBrush>
-#include <QPen>
-
 TupItemConverter::TupItemConverter()
 {
 }
@@ -81,12 +76,11 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
     if (!item) 
         return 0;
     
-    TupPathItem *path = new TupPathItem(item->parentItem(), 0);
+    TupPathItem *path = new TupPathItem(item->parentItem());
     
     QPainterPath ppath;
     
     switch (item->type()) {
-
         case TupPathItem::Type:
         {
             ppath = qgraphicsitem_cast<TupPathItem *>(item)->path();
@@ -95,7 +89,6 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
 
         case TupRectItem::Type:
         {
-            tFatal() << "TupItemConverter::convertToPath() - Converting rectangle to path!";
             ppath.addRect(qgraphicsitem_cast<TupRectItem *>(item)->rect());
         }
         break;
@@ -125,8 +118,13 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
         case TupItemGroup::Type:
         {
             #ifdef K_DEBUG
-                tWarning() << "TupItemConverter::convertToPath no support groups";
-            #endif
+                QString msg = "TupItemConverter::convertToPath - Error: Group items are not supported";
+                #ifdef Q_OS_WIN32
+                    qWarning() << msg;
+                #else
+                    tWarning() << msg;
+                #endif
+            #endif	
             delete path;
             return 0;
         }
@@ -135,8 +133,13 @@ TupPathItem *TupItemConverter::convertToPath(QGraphicsItem *item)
         default:
         {
             #ifdef K_DEBUG
-                tWarning() << "TupItemConverter::convertToPath use default";
-            #endif
+                QString msg = "TupItemConverter::convertToPath - Using default converter...";
+                #ifdef Q_OS_WIN32
+                    qWarning() << msg;
+                #else
+                    tWarning() << msg;
+                #endif
+            #endif			
             ppath = item->shape(); // TODO
         }
         break;
@@ -224,4 +227,3 @@ TupLineItem *TupItemConverter::convertToLine(QGraphicsItem *item)
     
     return line;
 }
-

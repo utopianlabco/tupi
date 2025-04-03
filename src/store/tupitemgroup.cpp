@@ -34,8 +34,6 @@
  ***************************************************************************/
 
 #include "tupitemgroup.h"
-#include "tdebug.h"
-
 #include "tupserializer.h"
 
 struct TupItemGroup::Private
@@ -43,7 +41,7 @@ struct TupItemGroup::Private
     QList<QGraphicsItem *> childs;
 };
 
-TupItemGroup::TupItemGroup(QGraphicsItem *parent , QGraphicsScene *scene) : QGraphicsItemGroup(parent, scene), k(new Private)
+TupItemGroup::TupItemGroup(QGraphicsItem *parent) : QGraphicsItemGroup(parent), k(new Private)
 {
 }
 
@@ -52,7 +50,7 @@ TupItemGroup::~TupItemGroup()
     delete k;
 }
 
-QVariant TupItemGroup::itemChange ( GraphicsItemChange change, const QVariant & value )
+QVariant TupItemGroup::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemChildRemovedChange) {
         // k->childs.removeAll( qvariant_cast<QGraphicsItem *>(value) );
@@ -91,11 +89,10 @@ QDomElement TupItemGroup::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("group");
     
-    root.appendChild( TupSerializer::properties( this, doc));
-    
-    foreach (QGraphicsItem *item, children()) {
-             root.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml( doc ));
-    }
+    foreach (QGraphicsItem *item, childItems())
+             root.appendChild(dynamic_cast<TupAbstractSerializable *>(item)->toXml(doc));
+
+    root.appendChild(TupSerializer::properties(this, doc));
     
     return root;
 }

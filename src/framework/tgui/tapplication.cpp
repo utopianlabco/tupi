@@ -34,24 +34,18 @@
  ***************************************************************************/
 
 #include "tapplication.h"
-#include "tdebug.h"
-#include "tactionmanager.h"
-
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QObject>
-#include <QLocale>
-
-#include <QApplication>
-#include <QMap>
 
 TApplication::TApplication(int & argc, char ** argv) : QApplication(argc, argv)
 {
+    /*
     #ifdef K_DEBUG
-           TINIT;
-    #endif 
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TApplication()]";
+        #else
+            TINIT;
+        #endif
+    #endif
+    */
 
     QApplication::setEffectEnabled(Qt::UI_AnimateMenu, true);
     QApplication::setEffectEnabled(Qt::UI_AnimateCombo, true);
@@ -67,9 +61,15 @@ TApplication::~TApplication()
 {
     TCONFIG->sync();
 
+    /*
     #ifdef K_DEBUG
-           TEND;
+        #ifdef Q_OS_WIN32
+            qDebug() << "[~TApplication()]";
+        #else
+            TEND;
+        #endif
     #endif
+    */
 }
 
 void TApplication::applyTheme(const QString &file)

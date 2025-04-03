@@ -35,10 +35,6 @@
 
 #include "tupserializer.h"
 #include "tupsvg2qt.h"
-#include "tdebug.h"
-
-#include <QGraphicsItem>
-#include <QFont>
 
 TupSerializer::TupSerializer()
 {
@@ -77,11 +73,11 @@ void TupSerializer::loadProperties(QGraphicsItem *item, const QXmlAttributes &at
     TupSvg2Qt::svgmatrix2qtmatrix(atts.value("transform"), matrix);
     QTransform transform(matrix);
     item->setTransform(transform);
-        
+
     QPointF pos;
     TupSvg2Qt::parsePointF(atts.value("pos"), pos);
+
     item->setPos(pos);
-        
     item->setEnabled(atts.value("pos") != "0"); // default true
     item->setFlags(QGraphicsItem::GraphicsItemFlags(atts.value("flags").toInt()));
 }
@@ -89,7 +85,6 @@ void TupSerializer::loadProperties(QGraphicsItem *item, const QXmlAttributes &at
 void TupSerializer::loadProperties(QGraphicsItem *item, const QDomElement &e)
 {
     if (e.tagName() == "properties") {
-
         QMatrix matrix;
         TupSvg2Qt::svgmatrix2qtmatrix(e.attribute("transform"), matrix);
         QTransform transform(matrix);

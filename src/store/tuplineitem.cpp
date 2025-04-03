@@ -35,9 +35,8 @@
 
 #include "tuplineitem.h"
 #include "tupserializer.h"
-#include "tdebug.h"
 
-TupLineItem::TupLineItem(QGraphicsItem * parent, QGraphicsScene * scene) : QGraphicsLineItem(parent, scene)
+TupLineItem::TupLineItem(QGraphicsItem *parent) : QGraphicsLineItem(parent)
 {
 }
 
@@ -54,10 +53,10 @@ QDomElement TupLineItem::toXml(QDomDocument &doc) const
 {
     QDomElement root = doc.createElement("line");
     
-    root.setAttribute("x1", line().x1());
-    root.setAttribute("y1", line().y1());
-    root.setAttribute("x2", line().x2());
-    root.setAttribute("y2", line().y2());
+    root.setAttribute("x1", QString::number(line().x1()));
+    root.setAttribute("y1", QString::number(line().y1()));
+    root.setAttribute("x2", QString::number(line().x2()));
+    root.setAttribute("y2", QString::number(line().y2()));
     
     root.appendChild(TupSerializer::properties(this, doc));
     

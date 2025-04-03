@@ -41,6 +41,24 @@
 #include "twizard.h"
 #include "txyspinbox.h"
 
+#ifdef K_DEBUG
+
+#ifdef Q_OS_WIN32
+#include <QDebug>
+#else
+#include "tdebug.h"
+#endif
+
+#endif
+
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QCheckBox>
+#include <QColorDialog>
+#include <QStyleOptionButton>
+#include <QComboBox>
+#include <QLineEdit>
+
 class TupProjectManagerParams;
 
 /**

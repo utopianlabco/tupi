@@ -36,7 +36,6 @@
 #include "tupbackground.h"
 #include "tupserializer.h"
 #include "tupbackgroundscene.h"
-#include "tdebug.h"
 
 #include <cmath>
 
@@ -73,11 +72,9 @@ void TupBackground::fromXml(const QString &xml)
     QDomNode n = root.firstChild();
 
     while (!n.isNull()) {
-
            QDomElement e = n.toElement();
 
            if (e.tagName() == "frame") {
-
                QString type = e.attribute("name", "none");
 
                if (type == "landscape_static") {
@@ -94,7 +91,6 @@ void TupBackground::fromXml(const QString &xml)
 
                        staticBg->fromXml(newDoc);
                    }
-
                } else if (type == "landscape_dynamic") {
                           dynamicBg = new TupFrame(this, "landscape_dynamic");
                           // dynamicBg->setFrameName("landscape_dynamic");
@@ -115,7 +111,12 @@ void TupBackground::fromXml(const QString &xml)
                           }
                } else {
                    #ifdef K_DEBUG
-                          tError() << "TupBackground::fromXml() - Error: The background input is invalid";
+                       QString msg = "TupBackground::fromXml() - Error: The background input is invalid";
+                       #ifdef Q_OS_WIN32
+                           qDebug() << msg;
+                       #else
+                           tError() << msg;
+                       #endif
                    #endif
                }
            }
@@ -158,9 +159,13 @@ TupFrame* TupBackground::dynamicFrame()
 void TupBackground::renderDynamicView()
 {
     #ifdef K_DEBUG
-       T_FUNCINFO;
-    #endif
-
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupBackground::renderDynamicView()]";
+        #else
+            T_FUNCINFO;
+        #endif
+    #endif 
+	
     TupBackgroundScene bgScene(dimension, bgColor, dynamicBg);
     QImage image(dimension, QImage::Format_ARGB32);
     {

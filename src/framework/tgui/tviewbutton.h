@@ -36,10 +36,17 @@
 #ifndef TVIEWBUTTON_H
 #define TVIEWBUTTON_H
 
-#include "tideality.h"
+#include "tglobal.h"
 
 #include <QToolButton>
 #include <QStyleOptionToolButton>
+#include <QToolBar>
+#include <QStylePainter>
+#include <QMenu>
+#include <QIcon>
+#include <QMouseEvent>
+#include <QMainWindow>
+#include <QTimer>
 
 class ToolView;
 
@@ -47,7 +54,7 @@ class ToolView;
  * @author David Cuadrado
 */
 
-class T_IDEAL_EXPORT TViewButton : public QToolButton
+class T_GUI_EXPORT TViewButton : public QToolButton
 {
     Q_OBJECT
 

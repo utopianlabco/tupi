@@ -35,8 +35,6 @@
 
 #include "tupprojectloader.h"
 #include "tupproject.h"
-#include "tdebug.h"
-
 #include "tupprojectresponse.h"
 #include "tuplibraryobject.h"
 
@@ -75,7 +73,6 @@ void TupProjectLoader::createFrame(int scenePosition, int layerPosition, int fra
 
     project->emitResponse(&response);
 }
-
 
 void TupProjectLoader::createLayer(int scenePosition, int layerPosition, const QString &name, TupProject *project)
 {

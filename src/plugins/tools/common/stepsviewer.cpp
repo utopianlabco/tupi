@@ -34,17 +34,6 @@
  ***************************************************************************/
 
 #include "stepsviewer.h"
-#include "tuptweenerstep.h"
-#include "spinboxdelegate.h"
-#include "tpushbutton.h"
-#include "tdebug.h"
-
-#include <cmath>
-#include <QGraphicsPathItem>
-#include <QDebug>
-#include <QBoxLayout>
-#include <QHeaderView>
-#include <QPainter>
 
 struct StepsViewer::Private
 {
@@ -100,7 +89,6 @@ void StepsViewer::setPath(const QGraphicsPathItem *path)
     QPolygonF points = path->path().toFillPolygon();
 
     if (points.count() > 2) {
-
         int count = 0; 
 
         k->points.clear();
@@ -216,6 +204,8 @@ QVector<TupTweenerStep *> StepsViewer::steps()
     for (int i=0; i < k->dots->size(); i++) {
          // TupTweenerStep *step = new TupTweenerStep(count);
          TupTweenerStep *step = new TupTweenerStep(i);
+
+         // QPointF point = k->dots->at(i); 
          step->setPosition(k->dots->at(i));
          stepsVector << step;
          // count++;

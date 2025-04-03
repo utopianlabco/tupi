@@ -36,9 +36,20 @@
 #ifndef TUPIMAGEDIALOG_H
 #define TUPIMAGEDIALOG_H
 
-#include <QDialog>
+#include "tglobal.h"
+#include "tapplicationproperties.h"
+#include "tconfig.h"
 
-class TupImageDialog : public QDialog
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QIcon>
+#include <QLabel>
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QPushButton>
+#include <QLocale>
+
+class TUPI_EXPORT TupImageDialog : public QDialog
 {
     Q_OBJECT
 

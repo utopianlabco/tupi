@@ -36,14 +36,18 @@
 #ifndef TUPIMAGEDEVICE_H
 #define TUPIMAGEDEVICE_H
 
+#include "tglobal.h"
+
 #include <QWidget>
 #include <QImage>
+#include <QPainter>
+#include <QPaintEngine>
 
 /**
  * @author David Cuadrado
 */
 
-class TupImageDevice : public QWidget
+class TUPI_EXPORT TupImageDevice : public QWidget
 {
     Q_OBJECT
 

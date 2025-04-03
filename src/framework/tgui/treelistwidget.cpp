@@ -34,12 +34,6 @@
  ***************************************************************************/
 
 #include "treelistwidget.h"
-#include "tdebug.h"
-
-#include <QHeaderView>
-#include <QItemDelegate>
-#include <QEvent>
-#include <QLineEdit>
 
 class TreeListWidgetDelegate : public QItemDelegate
 {
@@ -120,16 +114,17 @@ bool TreeListWidget::isEditable() const
 void TreeListWidget::closeEditor(QWidget * editor, QAbstractItemDelegate::EndEditHint hint)
 {
     #ifdef K_DEBUG
+        #ifdef Q_OS_WIN32
+            qDebug() << "[TupCommandExecutor::removeItem()]";
+        #else
            T_FUNCINFO;
+        #endif
     #endif
 
     QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
 
-    if (edit) {
-        QTreeWidgetItem *item = currentItem();
-        if (item)
-            emit itemRenamed(item);
-    }
+    if (edit)
+        emit editorClosed();
 
     QTreeWidget::closeEditor(editor, hint);
 }

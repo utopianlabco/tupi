@@ -1,4 +1,6 @@
-# src/shell/shell.pro
+QT += opengl core gui svg xml network
+QT += multimedia multimediawidgets printsupport
+QT += widgets
 
 macx {
     CONFIG += console static
@@ -23,7 +25,6 @@ macx {
 }
 
 unix:!mac {
-
     INSTALLS += tupidata \
                 launcher \
                 mime \
@@ -65,17 +66,12 @@ unix:!mac {
     TARGET = ../../bin/tupi.bin
 }
 
-# TRANSLATIONS += data/translations/tupi_es.ts \
-#                 data/translations/tupi_ca.ts \
-#                 data/translations/tupi_ru.ts \
-#                 data/translations/tupi_cs.ts
-
 HEADERS += tupmainwindow.h \
            tupstatusbar.h \
            tupnewproject.h \
            # tupsplash.h \
-           tupcrashhandler.h \
-           tupcrashwidget.h \
+           # tupcrashhandler.h \
+           # tupcrashwidget.h \
            tupapplication.h \
            tuplocalprojectmanagerhandler.h
 
@@ -84,36 +80,36 @@ SOURCES += main.cpp \
            tupstatusbar.cpp \
            tupnewproject.cpp \
            # tupsplash.cpp \
-           tupcrashhandler.cpp \
-           tupcrashwidget.cpp \
+           # tupcrashhandler.cpp \
+           # tupcrashwidget.cpp \
            tupapplication.cpp \
            tupmainwindow_gui.cpp \
            tuplocalprojectmanagerhandler.cpp
 
+unix {
+    HEADERS += tupcrashhandler.h \
+               tupcrashwidget.h
+    SOURCES += tupcrashhandler.cpp \
+               tupcrashwidget.cpp 
+}
+		   		   
 CONFIG += warn_on
 TEMPLATE = app
 
-linux-g{
-    TARGETDEPS += ../libtupi/libtupi.so \
-  ../libui/libtupiui.so \
-  ../store/libtupistore.so \
-  ../net/libtupinet.so \
-  ../components/paintarea/libtupipaintarea.so \
-  ../components/pen/libtupipen.so \
-  ../components/kinas/libtupikinas.so \
-  ../components/help/libtupihelp.so \
-  ../components/import/libtupimport.so \
-  ../components/export/libtupiexport.so \
-  ../components/exposure/libtupiexposure.so \
-  ../components/timeline/libtupitimeline.so \
-  ../components/library/libtupilibrary.so \
-  ../components/colorpalette/libtupicolorpalette.so \
-  ../components/scenes/libtupiscenes.so \
-  ../components/twitter/libtupitwitter.so
-}
-
 FRAMEWORK_DIR = ../framework
 include($$FRAMEWORK_DIR/framework.pri)
-include(shell_config.pri)
 
-include(../../tupiglobal.pri)
+unix {
+    !include(../../tupiglobal.pri) {
+        error("Please run configure first")
+    }
+}
+
+win32 {
+    TARGET = tupi
+    DEFINES += VERSION=\\\"0.2\\\" CODE_NAME=\\\"Amandy\\\" REVISION=\\\"git05\\\"
+    include(../../win.pri)
+    include(../../quazip.win.pri)
+}
+
+include(shell_config.pri)

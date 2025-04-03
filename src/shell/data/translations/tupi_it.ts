@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="it_IT" sourcelanguage="en_US">
+<TS version="2.1" language="it_IT" sourcelanguage="en_US">
 <context>
     <name>ButtonsPanel</name>
     <message>
@@ -81,17 +81,6 @@
     <message>
         <source>Run simulation</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ContourSelection</name>
-    <message>
-        <source>Line Selection</source>
-        <translation>Selezione di una linea</translation>
-    </message>
-    <message>
-        <source>N</source>
-        <translation>N</translation>
     </message>
 </context>
 <context>
@@ -204,13 +193,6 @@
     </message>
 </context>
 <context>
-    <name>GenericExportPlugin</name>
-    <message>
-        <source>Image Array</source>
-        <translation type="unfinished">Serie di immagini</translation>
-    </message>
-</context>
-<context>
     <name>GeometricTool</name>
     <message>
         <source>Rectangle</source>
@@ -238,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>ImagePlugin</name>
+    <message>
+        <source>Image Array</source>
+        <translation type="unfinished">Serie di immagini</translation>
+    </message>
+</context>
+<context>
     <name>InfoPanel</name>
     <message>
         <source>Tips</source>
@@ -246,10 +235,6 @@
     <message>
         <source>Shift + Left Mouse Button</source>
         <translation>Shift + Pulsante sinistro del mouse</translation>
-    </message>
-    <message>
-        <source>Mouse Double Click</source>
-        <translation>Doppio clic</translation>
     </message>
     <message>
         <source>Close the line path</source>
@@ -275,6 +260,10 @@
         <source>X key or Right mouse button</source>
         <translation>Tasto X o pulsante destro del mouse</translation>
     </message>
+    <message>
+        <source>Mouse Right Click</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>InkTool</name>
@@ -295,6 +284,48 @@
     </message>
 </context>
 <context>
+    <name>NodesTool</name>
+    <message>
+        <source>Nodes Selection</source>
+        <translation type="unfinished">Selezione di una linea</translation>
+    </message>
+    <message>
+        <source>N</source>
+        <translation type="unfinished">N</translation>
+    </message>
+</context>
+<context>
+    <name>PapagayoTool</name>
+    <message>
+        <source>Papagayo Lip-sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shift+R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">Errore</translation>
+    </message>
+    <message>
+        <source>Tween name is missing!</source>
+        <translation type="unfinished">Manca il nome dell&apos;intercalazione!</translation>
+    </message>
+    <message>
+        <source>Frame %1</source>
+        <translation type="unfinished">Fotogramma %1</translation>
+    </message>
+    <message>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tween %1 applied!</source>
+        <translation type="unfinished">Intercalazione %1 applicata!</translation>
+    </message>
+</context>
+<context>
     <name>PencilTool</name>
     <message>
         <source>Pencil</source>
@@ -306,14 +337,14 @@
     </message>
 </context>
 <context>
-    <name>PolyLine</name>
+    <name>PolyLineTool</name>
     <message>
         <source>PolyLine</source>
-        <translation>Polilinea</translation>
+        <translation type="unfinished">Polilinea</translation>
     </message>
     <message>
         <source>S</source>
-        <translation>S</translation>
+        <translation type="unfinished">S</translation>
     </message>
 </context>
 <context>
@@ -524,18 +555,18 @@
     </message>
 </context>
 <context>
-    <name>SelectTool</name>
+    <name>SelectionTool</name>
     <message>
-        <source>Select</source>
-        <translation>Seleziona</translation>
+        <source>Selection</source>
+        <translation type="unfinished">Selezione</translation>
     </message>
     <message>
         <source>Object Selection</source>
-        <translation>Selezione di un oggetto</translation>
+        <translation type="unfinished">Selezione di un oggetto</translation>
     </message>
     <message>
         <source>O</source>
-        <translation>O</translation>
+        <translation type="unfinished">O</translation>
     </message>
 </context>
 <context>
@@ -1076,6 +1107,10 @@
         <source>Can&apos;t create pictures directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Close manager</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TupCameraBar</name>
@@ -1205,6 +1240,10 @@
         <source>Can&apos;t create pictures directory</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Close manager</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TupCameraStatus</name>
@@ -1253,6 +1292,25 @@
     </message>
 </context>
 <context>
+    <name>TupCameraWindow</name>
+    <message>
+        <source>General Camera error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera invalid request error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera service missing error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera not supported error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TupCanvas</name>
     <message>
         <source>Sketch Tools</source>
@@ -1283,7 +1341,7 @@
         <translation>Riduci</translation>
     </message>
     <message>
-        <source>Hand</source>
+        <source>Shift</source>
         <translation type="unfinished">Mano</translation>
     </message>
     <message>
@@ -1363,7 +1421,7 @@
         <translation type="unfinished">Selezione di un oggetto</translation>
     </message>
     <message>
-        <source>Line Selection</source>
+        <source>Nodes Selection</source>
         <translation type="unfinished">Selezione di una linea</translation>
     </message>
     <message>
@@ -1575,10 +1633,6 @@
         <translation type="unfinished">Riempimento</translation>
     </message>
     <message>
-        <source>View</source>
-        <translation type="unfinished">Vista</translation>
-    </message>
-    <message>
         <source>Tweening</source>
         <translation type="unfinished">Intercalazione</translation>
     </message>
@@ -1663,7 +1717,7 @@
         <translation type="unfinished">Riduci</translation>
     </message>
     <message>
-        <source>Hand</source>
+        <source>Shift</source>
         <translation type="unfinished">Mano</translation>
     </message>
     <message>
@@ -1769,6 +1823,18 @@
     <message>
         <source>Frame %1</source>
         <translation type="unfinished">Fotogramma %1</translation>
+    </message>
+    <message>
+        <source>Nodes Selection</source>
+        <translation type="unfinished">Selezione di una linea</translation>
+    </message>
+    <message>
+        <source>Papagayo Lip-sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Papagayo file has been imported successfully</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2199,6 +2265,10 @@
     <message>
         <source>Compound Tween</source>
         <translation>Intercalazione composta</translation>
+    </message>
+    <message>
+        <source>Papagayo Lip-sync</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2838,6 +2908,30 @@
         <source>Shift+G</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Import Papagayo Lip-sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Papagayo lip-sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Papagayo project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Papagayo Project (*.pgo)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Papagayo project is invalid!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TupNetProjectManagerHandler</name>
@@ -3111,7 +3205,7 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
         <translation>Matita</translation>
     </message>
     <message>
-        <source>Line Selection</source>
+        <source>Nodes Selection</source>
         <translation>Selezione di una linea</translation>
     </message>
     <message>
@@ -3229,10 +3323,6 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
 </context>
 <context>
     <name>TupPaintAreaBase</name>
-    <message>
-        <source>OpenGL isn&apos;t supported</source>
-        <translation>OpenGL non supportato</translation>
-    </message>
     <message>
         <source>No Scene!</source>
         <translation>Nessuna scena!</translation>
@@ -3943,7 +4033,7 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
         <translation>Selezione di un oggetto</translation>
     </message>
     <message>
-        <source>Line Selection</source>
+        <source>Nodes Selection</source>
         <translation>Selezione di una linea</translation>
     </message>
     <message>
@@ -3957,6 +4047,29 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
     <message>
         <source>Opacity Value</source>
         <translation type="unfinished">Opacità</translation>
+    </message>
+</context>
+<context>
+    <name>TupTwitter</name>
+    <message>
+        <source>Latest version</source>
+        <translation type="unfinished">Ultima versione</translation>
+    </message>
+    <message>
+        <source>Revision</source>
+        <translation type="unfinished">Revisione</translation>
+    </message>
+    <message>
+        <source>Code Name</source>
+        <translation type="unfinished">Nome in codice</translation>
+    </message>
+    <message>
+        <source>It&apos;s time to upgrade! Click here!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Want to help us to make a better project? Click here!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3998,45 +4111,6 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
     <message>
         <source>Information Temporarily Unavailable</source>
         <translation>Informazione temporaneamente indisponibile</translation>
-    </message>
-</context>
-<context>
-    <name>Tupwitter</name>
-    <message>
-        <source>Latest version</source>
-        <translation>Ultima versione</translation>
-    </message>
-    <message>
-        <source>Revision</source>
-        <translation>Revisione</translation>
-    </message>
-    <message>
-        <source>Code Name</source>
-        <translation>Nome in codice</translation>
-    </message>
-    <message>
-        <source>Update here!</source>
-        <translation>Aggiorna qui!</translation>
-    </message>
-    <message>
-        <source>This is what&apos;s happening</source>
-        <translation>Questo è ciò che sta accadendo</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Nome</translation>
-    </message>
-    <message>
-        <source>Description</source>
-        <translation>Descrizione</translation>
-    </message>
-    <message>
-        <source>Website</source>
-        <translation>Sito web</translation>
-    </message>
-    <message>
-        <source>Followers</source>
-        <translation>Seguaci</translation>
     </message>
 </context>
 <context>
@@ -4301,7 +4375,7 @@ Contatta l&apos;amministratore del server per ottenere l&apos;accesso.</translat
         <translation>Riduci</translation>
     </message>
     <message>
-        <source>Hand</source>
+        <source>Shift</source>
         <translation>Mano</translation>
     </message>
     <message>

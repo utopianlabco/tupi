@@ -36,7 +36,7 @@
 #ifndef TUPPROJECTRESPONSE_H
 #define TUPPROJECTRESPONSE_H
 
-#include "tupglobal_store.h"
+#include "tglobal.h"
 #include "tupprojectrequest.h"
 #include "tupscene.h"
 #include "tuplibraryobject.h"
@@ -46,7 +46,7 @@
  * @author David Cuadrado
 */
 
-class STORE_EXPORT TupProjectResponse
+class TUPI_EXPORT TupProjectResponse
 {
     public:
         enum Mode
@@ -82,7 +82,7 @@ class STORE_EXPORT TupProjectResponse
         Private *const k;
 };
 
-class TupSceneResponse : public TupProjectResponse
+class TUPI_EXPORT TupSceneResponse : public TupProjectResponse
 {
     public:
         TupSceneResponse(int part, int action);
@@ -100,7 +100,7 @@ class TupSceneResponse : public TupProjectResponse
         Scenes m_scenes;
 };
 
-class TupLayerResponse : public TupSceneResponse
+class TUPI_EXPORT TupLayerResponse : public TupSceneResponse
 {
     public:
         TupLayerResponse(int part, int action);
@@ -112,7 +112,7 @@ class TupLayerResponse : public TupSceneResponse
         int m_layerIndex;
 };
 
-class TupFrameResponse : public TupLayerResponse
+class TUPI_EXPORT TupFrameResponse : public TupLayerResponse
 {
     public:
         TupFrameResponse(int part, int action);
@@ -127,7 +127,7 @@ class TupFrameResponse : public TupLayerResponse
         bool empty;
 };
 
-class TupItemResponse : public TupFrameResponse
+class TUPI_EXPORT TupItemResponse : public TupFrameResponse
 {
     public:
         TupItemResponse(int part, int action);
@@ -153,7 +153,7 @@ class TupItemResponse : public TupFrameResponse
         bool empty;
 };
 
-class TupLibraryResponse : public TupFrameResponse
+class TUPI_EXPORT TupLibraryResponse : public TupFrameResponse
 {
     public:
         TupLibraryResponse(int part, int action);
@@ -174,7 +174,7 @@ class TupLibraryResponse : public TupFrameResponse
         bool empty;
 };
 
-class TupProjectResponseFactory
+class TUPI_EXPORT TupProjectResponseFactory
 {
     private:
         TupProjectResponseFactory();
