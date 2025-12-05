@@ -11,7 +11,7 @@ QM_FILES := $(patsubst %.ts, %.qm, $(wildcard src/shell/data/translations/*.ts))
 	dh $@
 
 override_dh_auto_clean:
-	$(RM) -v configure.tests/*/Makefile $(QM_FILES)
+	$(RM) -v configure.tests/*/Makefile configure.tests/*/.qmake.stash $(QM_FILES)
 	dh_auto_clean
 
 override_dh_auto_configure:
