@@ -1,6 +1,5 @@
 Source: tupi
 Section: graphics
-Priority: optional
 Maintainer: Debian QA Group <packages@qa.debian.org>
 Build-Depends: debhelper-compat (= 13),
                libaspell-dev (>= 0.60.7~),
