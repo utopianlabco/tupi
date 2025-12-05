@@ -1,3 +1,13 @@
+tupi (0.2+git08-7) unstable; urgency=medium
+
+  * QA upload.
+  * Fix clean target. Closes: #1048732.
+  * d/control: Drop "Priority: optional" (default).
+  * d/control: Update standards-version.
+  * Add debian/salsa-ci.yml.
+
+ -- Santiago Vila <sanvila@debian.org>  Fri, 05 Dec 2025 23:50:00 +0100
+
 tupi (0.2+git08-6) unstable; urgency=medium
 
   * QA upload.
